@@ -1,4 +1,10 @@
-<!-- TFMS for libraries that references Uno.WinUI (i.e. WinUI) -->
+<!--
+	TFMS for Uno app heads and for the test/sample projects deployed into them.
+
+	Uno Platform 7.0 renders with Skia on every platform, so Uno.WinUI ships library assets only for
+	net10.0 and net10.0-windows10.0.19041 (see tfms-ui-winui.props). App heads still target the platform
+	they run on, which is what this list is for. Mac Catalyst is gone in 7.0 and has no entry.
+-->
 <Project>
 	<PropertyGroup Condition="'$(UnoTargetFrameworkOverride)'!=''">
 		<TargetFrameworks>$(UnoTargetFrameworkOverride)</TargetFrameworks>
@@ -7,6 +13,8 @@
 		<TargetFrameworks Condition="'$(Build_iOS)'=='true'">$(TargetFrameworks);net10.0-ios</TargetFrameworks>
 		<TargetFrameworks Condition="'$(Build_Android)'=='true'">$(TargetFrameworks);net10.0-android</TargetFrameworks>
 		<TargetFrameworks Condition="'$(Build_Windows)'=='true'">$(TargetFrameworks);net10.0-windows10.0.19041</TargetFrameworks>
+		<TargetFrameworks Condition="'$(Build_Desktop)'=='true'">$(TargetFrameworks);net10.0-desktop</TargetFrameworks>
+		<TargetFrameworks Condition="'$(Build_Web)'=='true'">$(TargetFrameworks);net10.0-browserwasm</TargetFrameworks>
 		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
 	</PropertyGroup>
 	<PropertyGroup>

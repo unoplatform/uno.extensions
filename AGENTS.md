@@ -9,7 +9,7 @@ This document defines strict guardrails for any AI-assisted or automated agent c
 
 `Uno.Extensions` is a multi-package library that layers Microsoft.Extensions-style hosting on top of Uno Platform / WinUI to provide Authentication, Configuration, DI, Hosting, Http, Localization, Logging, Navigation, Reactive (MVUX), Serialization, Storage, Toolkit and Validation extensions. ~50 NuGet packages are produced from `src/Uno.Extensions.*`.
 
-UWP support has been dropped. The repo targets the **Uno.Sdk** (see `global.json` — currently `Uno.Sdk` 6.0.x and an internal `Uno.Sdk.Private`). Versioning is driven by **Nerdbank.GitVersioning** (`version.json`); never bump `<Version>` in csproj files — the `255.255.255.255` value in `src/Directory.Build.props` is intentional (NuGet replaces it at pack time from `version.json`).
+UWP support has been dropped. The repo targets the **Uno.Sdk** (see `global.json` — currently `Uno.Sdk.Private` 7.0.x; no public `Uno.Sdk` 7.x exists yet). Versioning is driven by **Nerdbank.GitVersioning** (`version.json`); never bump `<Version>` in csproj files — the `255.255.255.255` value in `src/Directory.Build.props` is intentional (NuGet replaces it at pack time from `version.json`).
 
 The deliverable is a **public NuGet API consumed by external apps**. Stability matters more than in an app-only codebase.
 
@@ -30,7 +30,7 @@ Folder layout:
 src/                          The 50 published packages, plus generators and test projects.
   Uno.Extensions.<Area>/      Cross-platform "core" of an area (e.g. Reactive, Navigation, Authentication).
   Uno.Extensions.<Area>.UI/   WinUI/Uno-flavored host with .csproj named *.WinUI.csproj.
-  Uno.Extensions.<Area>.Tests/        Plain net9.0 unit tests (run by package CI via dotnet test / VSTest).
+  Uno.Extensions.<Area>.Tests/        Plain net10.0 unit tests (run by package CI via dotnet test / VSTest).
   Uno.Extensions.<Area>.UI.Tests/     UI tests that require an Uno runtime — run by runtime-test stages, NOT by package CI.
   Uno.Extensions.<Area>.Generators/   Roslyn source generators (referenced via OutputItemType="Analyzer").
   Uno.Extensions.RuntimeTests/        MSTest hosted inside an Uno UI head via Uno.UI.RuntimeTests.Engine.
@@ -53,15 +53,15 @@ There is **no `Directory.Build.props` at the root** that flows into `src/` autom
 
 Target frameworks are managed by the props files under `src/`:
 
-- `tfms-non-ui.props` — non-UI core packages (net9.0 + per-platform suffixes).
+- `tfms-non-ui.props` — non-UI core packages (net10.0).
 - `tfms-ui-winui.props` — WinUI-flavored UI heads (`*.WinUI.csproj`).
 - `tfms-ui-maui.props` — MAUI-embedded heads.
-- `tfms-ui-winui-runtimetests.props` — runtime-test heads.
+- `tfms-ui-winui-apps.props` — app heads (Playground, TestHarness, RuntimeTests) and the projects deployed into them, including every `*.UI.Tests`.
 - `Uno.CrossTargeting.props` — shared cross-targeting infrastructure imported by `src/Directory.Build.props`.
 
-The published TFMs typically include `net9.0`, `net9.0-android`, `net9.0-ios`, `net9.0-maccatalyst`, `net9.0-windows10.0.19041.0`, and `browserwasm`. The Uno SDK version is pinned in `global.json` (`Uno.Sdk` and `Uno.Sdk.Private`).
+Uno Platform 7.0 renders with Skia everywhere, so `Uno.WinUI` ships library assets only for `net10.0` and `net10.0-windows10.0.19041.0`. The published libraries therefore target exactly those two; app heads add `net10.0-ios`, `net10.0-android`, `net10.0-desktop` and `net10.0-browserwasm`. Mac Catalyst is not supported on 7.0. The Uno SDK version is pinned in `global.json` (`Uno.Sdk.Private`).
 
-The top-level `Directory.Build.props` exposes `Build_Android`, `Build_iOS`, `Build_MacCatalyst`, `Build_Windows`, `Build_Desktop`, and `Build_Web` switches; non-Windows hosts default `Build_Windows=false`. Drop a local `DebugPlatforms.props` (template at `DebugPlatforms.props.sample`) to disable platforms you don't have SDKs for — this dramatically shortens local builds. The same file gates the `*.WinUI` cross-targeted heads.
+The top-level `Directory.Build.props` exposes `Build_Android`, `Build_iOS`, `Build_Windows`, `Build_Desktop`, and `Build_Web` switches; non-Windows hosts default `Build_Windows=false`. Drop a local `DebugPlatforms.props` (template at `DebugPlatforms.props.sample`) to disable platforms you don't have SDKs for — this dramatically shortens local builds. The same file gates the `*.WinUI` cross-targeted heads.
 
 </repository_orientation>
 
@@ -194,7 +194,7 @@ This repository targets WASM as a first-class platform (sample apps and runtime 
 ✅ Hosting-as-entry-point: every area exposes its public surface as `IHostBuilder UseFoo(this IHostBuilder, Action<IFooBuilder>? configure = null)`. Service registration goes through `IServiceCollection`; options through `IOptions<FooConfiguration>` bound to `IConfiguration`. Code that reaches into a static service locator, constructs an `IServiceProvider` ad-hoc, or registers services outside the `UseFoo` chain is a layering violation.
 ✅ Constructor injection only — no service locator, no `IServiceProvider.GetService<T>()` calls inside business logic. Keep constructor parameters under control (under 7 ideal); when a constructor grows past that, refactor into options/aggregates rather than adding more parameters.
 ✅ Correct DI lifetimes: `Singleton` only when stateless or thread-safe (be aware of WASM's single-thread model — captured state is fine, captured locks are not); `Scoped` where the consuming host establishes a scope (typically per-navigation/per-request in app code); `Transient` for lightweight stateless services. A new singleton that holds mutable state is a bug magnet on the public surface.
-✅ Multi-platform aware: code that compiles for net9.0, net9.0-android, net9.0-ios, net9.0-maccatalyst, net9.0-windows10.*, and browserwasm. When platform behavior diverges, isolate it behind partial classes / conditional compilation symbols (`__WASM__`, `__ANDROID__`, `__IOS__`, `__MACCATALYST__`, `__WINDOWS__`) — don't sprinkle `#if` blocks across method bodies if a platform-specific partial would do the job.
+✅ Multi-platform aware: code that compiles for net10.0 and net10.0-windows10.* as a library, and additionally net10.0-android, net10.0-ios, net10.0-desktop and net10.0-browserwasm as an app head. When platform behavior diverges, isolate it behind partial classes / conditional compilation symbols (`__WASM__`, `__ANDROID__`, `__IOS__`, `__WINDOWS__`) — don't sprinkle `#if` blocks across method bodies if a platform-specific partial would do the job.
 
 ---
 
@@ -231,7 +231,7 @@ dotnet test src/Uno.Extensions.Serialization.Tests/Uno.Extensions.Serialization.
 dotnet test src/Uno.Extensions.Reactive.Tests/Uno.Extensions.Reactive.Tests.csproj --filter "FullyQualifiedName~Given_Feed.When_..."
 ```
 
-CI test selector (`build/ci/stage-build-packages.yml`) targets `**/*.Tests.dll` + `**/*.AotTests.dll` and **excludes** `**/*UI.Tests.dll` — those run in dedicated runtime-test stages because they require a real Uno UI host. `build/tests.runsettings` pins net9.0 / x86 and `TreatNoTestsAsError=true` — keep new test projects discoverable or that filter will fail the build.
+CI test selector (`build/ci/stage-build-packages.yml`) targets `**/*.Tests.dll` + `**/*.AotTests.dll` and **excludes** `**/*UI.Tests.dll` — those run in dedicated runtime-test stages because they require a real Uno UI host. `build/tests.runsettings` pins net10.0 / x86 and `TreatNoTestsAsError=true` — keep new test projects discoverable or that filter will fail the build.
 
 ✅ Zero warnings in Release is mandatory (`TreatWarningsAsErrors=true`).
 ✅ Suppress a warning only with justification in PR + targeted scope (`#pragma` with comment).
@@ -242,7 +242,7 @@ CI test selector (`build/ci/stage-build-packages.yml`) targets `**/*.Tests.dll` 
 
 The repo has three distinct test surfaces — each with a different runner:
 
-- **Unit tests** in `src/Uno.Extensions.<Area>.Tests/` — plain net9.0 MSTest. Run with `dotnet test`. Included by package CI's VSTest filter.
+- **Unit tests** in `src/Uno.Extensions.<Area>.Tests/` — plain net10.0 MSTest. Run with `dotnet test`. Included by package CI's VSTest filter.
 - **WinUI tests** in `src/Uno.Extensions.<Area>.UI.Tests/` — MSTest that requires an Uno UI host. **Excluded** by package CI (`!**/*UI.Tests.dll`); built and run by the runtime-test stages.
 - **Runtime tests** in `src/Uno.Extensions.RuntimeTests/` — **MSTest hosted inside an Uno UI head** via `Uno.UI.RuntimeTests.Engine`. There is no `dotnet test` entry point for these; they ride along with a sample-app head selected by the runtime-test stages (`stage-build-runtimetests-skia.yml`, `stage-build-runtimetests-skia-hotreload.yml`).
 
@@ -470,7 +470,7 @@ Unexplained deviations block merge.
 | Build | Release: zero warnings (TreatWarningsAsErrors) |
 | Tests | New behavior + edge case in correct project (`*.Tests` / `*.UI.Tests` / `RuntimeTests`) |
 | SOLID | All five applied |
-| Layering | Core (net9.0) ⊄ UI (WinUI); UI ⊄ Markup; Generators stay netstandard2.0 |
+| Layering | Core (net10.0) ⊄ UI (WinUI); UI ⊄ Markup; Generators stay netstandard2.0 |
 | Allocations | Minimize hot paths; WASM-aware; feeds must be completable |
 | Logging | Structured; no PII / tokens / cookies |
 | Errors | Surface via `IFeed<T>` errors or async results; specific catches |

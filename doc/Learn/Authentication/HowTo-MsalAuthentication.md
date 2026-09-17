@@ -167,7 +167,7 @@ cross-platform app does not need a per-platform `#if` block in its `Builder(...)
 | iOS | `msauth.{BundleId}://auth` |
 | WebAssembly | the `WebAuthenticationBroker` callback URI |
 | Desktop (Windows, macOS, Linux) | MSAL's `WithDefaultRedirectUri()` — `http://localhost` on .NET, for the system-browser flow |
-| WinAppSDK (`net9.0-windows10.*`) | none — the WAM broker owns the redirect URI |
+| WinAppSDK (`net10.0-windows10.*`) | none — the WAM broker owns the redirect URI |
 
 Each value still has to be registered in your app registration, and Android and iOS additionally
 require the app to declare the matching platform entry — an `Activity` deriving from

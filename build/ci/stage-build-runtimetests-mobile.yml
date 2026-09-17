@@ -40,7 +40,7 @@ jobs:
       # installs a standalone artifact, so the assemblies have to be inside it.
       - script: |
           dotnet publish src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
-            -c Debug -f net9.0-android \
+            -c Debug -f net10.0-android \
             -p:EmbedAssembliesIntoApk=true \
             -p:Build_Windows=false -p:Build_iOS=false -p:Build_MacCatalyst=false -p:Build_Web=false \
             -p:UnoDisableHotDesign=true -p:UnoDisableMCPSupport=true \
@@ -83,7 +83,7 @@ jobs:
       # engine discovers tests by reflection, which is exactly what the trimmer removes.
       - script: |
           dotnet build src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
-            -c Debug -f net9.0-browserwasm \
+            -c Debug -f net10.0-browserwasm \
             -p:Build_Windows=false -p:Build_iOS=false -p:Build_MacCatalyst=false -p:Build_Android=false \
             -p:UseWebAssemblyAOT=false \
             -p:UnoDisableHotDesign=true -p:UnoDisableMCPSupport=true \
@@ -94,7 +94,7 @@ jobs:
       - task: CopyFiles@2
         displayName: 'Stage WebAssembly output'
         inputs:
-          SourceFolder: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin/Uno.Extensions.RuntimeTests/Debug/net9.0-browserwasm/wwwroot
+          SourceFolder: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin/Uno.Extensions.RuntimeTests/Debug/net10.0-browserwasm/wwwroot
           Contents: '**/*.*'
           TargetFolder: $(build.artifactstagingdirectory)/wasm-runtime-tests
 
@@ -168,7 +168,7 @@ jobs:
       # build and never to a device build.
       - script: |
           dotnet build src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj \
-            -c Debug -f net9.0-ios \
+            -c Debug -f net10.0-ios \
             -p:CodesignRequireProvisioningProfile=false \
             -p:Build_Windows=false -p:Build_Android=false -p:Build_MacCatalyst=false -p:Build_Web=false \
             -p:UnoDisableHotDesign=true -p:UnoDisableMCPSupport=true \

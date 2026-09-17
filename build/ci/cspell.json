@@ -118,7 +118,10 @@
 		"datamap",
 		"rollbackable",
 		"navigations",
-		"reparented"
+		"reparented",
+		"reparent",
+		"retarget",
+		"MSIX"
 	],
 	"ignoreWords": [
 		"ADAL",

@@ -10,6 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Sources;
 using Uno.Extensions.Reactive.Testing;
+using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Tests.Core;
 

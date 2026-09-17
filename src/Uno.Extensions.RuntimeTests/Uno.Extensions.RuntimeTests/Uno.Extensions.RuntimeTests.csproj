@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Uno.Sdk.Private">
-	<Import Project="..\..\tfms-ui-winui.props" />
+	<Import Project="..\..\tfms-ui-winui-apps.props" />
   <PropertyGroup>
 		
 		<OutputType>Exe</OutputType>
@@ -44,24 +44,19 @@
 
   <ItemGroup>
     <!--<PackageReference Include="Uno.UI.RuntimeTests.Engine" />-->
-    <PackageReference Include="SkiaSharp.Skottie" VersionOverride="2.88.8" Condition="$(TargetFramework.Contains('desktop'))" />
+    <PackageReference Include="SkiaSharp.Skottie" Condition="$(TargetFramework.Contains('desktop'))" />
   </ItemGroup>
 
-  <!--
-    Uno.Sdk.Private injects an implicit Microsoft.Extensions.Logging.Console reference whose
-    version (see the Sdk's packages.json) is ahead of the centrally pinned Microsoft.Extensions.*
-    versions in src/Directory.Packages.props. Re-pin them here, for this app head only, to avoid
-    NU1109 downgrades without raising the dependency versions of the published packages.
-  -->
-  <PropertyGroup>
-    <MicrosoftLoggingVersion>9.0.18</MicrosoftLoggingVersion>
-  </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Update="Microsoft.Extensions.Logging" Version="$(MicrosoftLoggingVersion)" />
-    <PackageVersion Update="Microsoft.Extensions.Logging.Abstractions" Version="$(MicrosoftLoggingVersion)" />
-    <PackageVersion Update="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftLoggingVersion)" />
-    <PackageVersion Update="Microsoft.Extensions.DependencyInjection" Version="$(MicrosoftLoggingVersion)" />
+    <!--
+      AndroidX Emoji2 still depends on Lifecycle.Process 2.9.2.1, which caps Lifecycle.Runtime below 2.9.3,
+      while the AndroidX Core and Activity versions Uno 7 pins need Lifecycle.Runtime 2.10.0.2 (NU1608).
+      Pinned in this head only, so the shipped packages' dependency floors are unaffected. Transitive
+      pinning only applies it where the package is in the graph (the Android target).
+    -->
+    <PackageVersion Include="Xamarin.AndroidX.Lifecycle.Process" Version="2.10.0.2" />
   </ItemGroup>
+
 
   <ItemGroup>
     <!--

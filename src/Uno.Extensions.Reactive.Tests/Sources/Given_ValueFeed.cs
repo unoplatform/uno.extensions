@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +6,7 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Sources;
 using Uno.Extensions.Reactive.Testing;
+using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Tests.Sources;
 

@@ -21,6 +21,5 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" />
 		<PackageReference Include="Microsoft.Extensions.Logging" />
-		<PackageReference Include="System.Collections.Immutable" />
 	</ItemGroup>
 </Project>
