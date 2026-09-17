@@ -20,7 +20,7 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 | WebAssembly | ✅ Popup | ✅ Browser storage, `localStorage` by default — cleartext, see [below](#webassembly-token-cache) |
 | Mac Catalyst | ❌ Not supported (`AddMsal` throws `PlatformNotSupportedException`) | — |
 
-MSAL's own cache (refresh and ID tokens) is what the last column describes. The access token that `IAuthenticationService` hands to HTTP handlers is kept separately, in the host's default `IKeyValueStorage` — `KeyStore` / Keychain on native Android and iOS, but plain `ApplicationData` on Android and iOS heads built with `UnoFeatures=SkiaRenderer`, where the Uno SDK loads the storage package's plain `netX.0` build. See [Key-value storage](xref:Uno.Extensions.Storage.Overview#key-value-storage).
+MSAL's own cache (refresh and ID tokens) is what the last column describes. The access token that `IAuthenticationService` hands to HTTP handlers, and a copy of the ID token for [reading claims](#reading-the-users-claims), are kept separately, in the host's default `IKeyValueStorage` — `KeyStore` / Keychain on native Android and iOS, but plain `ApplicationData` on Android and iOS heads built with `UnoFeatures=SkiaRenderer`, where the Uno SDK loads the storage package's plain `netX.0` build. See [Key-value storage](xref:Uno.Extensions.Storage.Overview#key-value-storage).
 
 The set of identity scenarios (Microsoft accounts, work/school accounts, B2C, sovereign clouds, ...) is determined by MSAL itself — see [MSAL.NET supported platforms and scenarios](https://learn.microsoft.com/entra/msal/dotnet/getting-started/scenarios) for details.
 
@@ -105,7 +105,7 @@ The set of identity scenarios (Microsoft accounts, work/school accounts, B2C, so
 
 - The `IAuthenticationBuilder` is responsible for managing the lifecycle of the associated provider that was built.
 
-- Because it is configured to use MSAL, the user will eventually be prompted to sign in to their Microsoft account when they use your application. `MsalAuthenticationProvider` will then store the user's access token in credential storage. The token will be automatically refreshed when it expires.
+- Because it is configured to use MSAL, the user will eventually be prompted to sign in to their Microsoft account when they use your application. `MsalAuthenticationProvider` will then store the user's access and ID tokens in credential storage. The tokens will be automatically refreshed when they expire.
 
 ### 3. Configure the provider
 
@@ -155,6 +155,41 @@ The set of identity scenarios (Microsoft accounts, work/school accounts, B2C, so
     Exception thrown: 'Microsoft.Identity.Client.MsalClientException' in Microsoft.Identity.Client.dll
     No ClientId was specified.
     ```
+
+#### Azure AD B2C
+
+`MsalConfiguration` composes a Microsoft Entra authority from `Instance` and `TenantId`, so a B2C
+authority (which carries the user flow, or policy, in its path) cannot be expressed in
+configuration. Set it from `Builder(...)`:
+
+```csharp
+builder.AddMsal(window, msal => msal
+    .Builder(msalBuilder => msalBuilder
+        .WithB2CAuthority("https://contoso.b2clogin.com/tfp/contoso.onmicrosoft.com/B2C_1_signupsignin"))
+    .Scopes(new[] { "https://contoso.onmicrosoft.com/api/tasks.read" }));
+```
+
+Things to know when the tenant is B2C:
+
+- **Request an API scope.** With only `openid` / `offline_access`, B2C issues an ID token but no
+  access token. The provider keys "authenticated" off the access token, so `LoginAsync` returns
+  `false`, logs a warning naming the requested scopes, and removes the account MSAL cached so
+  no refresh token is left behind. Request your API's scope, or the app's own client ID as a
+  scope, so an access token comes back.
+- **Windows (WinAppSDK).** The Windows broker (WAM) does not support B2C authorities and MSAL
+  falls back to the system browser. The provider leaves the redirect URI to the broker on
+  WinAppSDK, and the browser flow needs a loopback one, so add `.WithRedirectUri("http://localhost")`
+  to the `Builder(...)` callback and register `http://localhost` under **Mobile and desktop
+  applications** on the app registration. `AddMsal(window, ...)` is still the overload to use.
+- **One user flow per provider.** The authority, and therefore the user flow, is fixed for the
+  provider's lifetime. A second, named provider with its own `Builder(...)` and authority can run
+  another flow (password reset, profile edit), but there is one token cache: completing a sign-in
+  through the second provider replaces the first provider's session.
+- **Windows (packaged) value size.** On packaged WinAppSDK apps the token cache is backed by
+  `ApplicationData.LocalSettings`, which caps each value at 8 KB. A B2C ID token carrying many
+  custom attributes or group claims can exceed that once encrypted. The sign-in still succeeds,
+  but the ID token is not cached (a warning is logged) and the claims are unreadable; keep the
+  user flow's claims to what the app needs.
 
 ### 4. Redirect URIs
 
@@ -456,7 +491,7 @@ It is a **storage** setting, not an MSAL one — it selects the host's single de
 
 An invalid value throws while the host is being built rather than silently falling back.
 
-One setting covers the Uno token cache (the access token) and the MSAL cache (the refresh and ID tokens) — splitting them would let the access token outlive both the tab and the refresh token. Because it belongs to storage rather than to a provider, it applies whatever you name your provider (`AddMsal(window, name: "MyMsal")`) and whichever provider you use. It is ignored on every other platform, where the platform's own protected store applies.
+One setting covers the Uno token cache (the access and ID tokens) and the MSAL cache (the refresh and ID tokens) — splitting them would let the access token outlive both the tab and the refresh token. Because it belongs to storage rather than to a provider, it applies whatever you name your provider (`AddMsal(window, name: "MyMsal")`) and whichever provider you use. It is ignored on every other platform, where the platform's own protected store applies.
 
 Signing out removes both: `LogoutAsync` removes every signed-in account and then deletes the serialized MSAL cache. Note this clears *our* storage, not the identity provider's session cookie — the next "Sign in" may complete without a prompt because the IdP still recognises the browser. Use the `end_session_endpoint` if you need a full sign-out. Clearing `ITokenCache` directly has the same storage effect.
 
@@ -524,4 +559,51 @@ builder.AddMsal(window, msal =>
 
 - Finally, we can run the application and sign in with our Microsoft account. The user will be prompted to sign in to their Microsoft account when they tap the button in the application.
 
-- `MsalAuthenticationProvider` will then store the user's access token in credential storage. The token will be automatically refreshed when it expires.
+- `MsalAuthenticationProvider` will then store the user's access and ID tokens in credential storage. The tokens will be automatically refreshed when they expire.
+
+#### Reading the user's claims
+
+When the identity provider issued one, the provider stores the ID token next to the access token,
+under `TokenCacheExtensions.IdTokenKey` (sessions signed in before this version gain it on their
+next refresh). Its payload carries the signed-in user's claims - `name`, `emails`, B2C custom
+attributes such as `extension_Role`, the user flow in `tfp` - which is what an app should gate
+navigation and UI on. Read it from `ITokenCache` and deserialize the payload into a model with
+just the claims you need (`Base64Url` is `System.Buffers.Text`, .NET 9 and later):
+
+```csharp
+using System.Buffers.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Uno.Extensions.Authentication;
+
+public sealed record UserClaims(
+    [property: JsonPropertyName("name")] string? Name,
+    [property: JsonPropertyName("extension_Role")] string? Role);
+
+[JsonSerializable(typeof(UserClaims))]
+internal partial class UserClaimsContext : JsonSerializerContext;
+
+public static class TokenCacheClaimsExtensions
+{
+    public static async ValueTask<UserClaims?> ClaimsAsync(this ITokenCache tokens, CancellationToken ct)
+    {
+        var idToken = await tokens.TokenAsync(TokenCacheExtensions.IdTokenKey, ct);
+        if (idToken?.Split('.') is not [_, var payload, _])
+        {
+            return null;
+        }
+
+        var json = Base64Url.DecodeFromChars(payload);
+        return JsonSerializer.Deserialize(json, UserClaimsContext.Default.UserClaims);
+    }
+}
+```
+
+Decode once after sign-in or refresh and keep the result, clearing it on `ITokenCache.Cleared`,
+rather than calling this from every binding: each call reads storage and re-parses the token.
+
+> [!IMPORTANT]
+> Decoding the payload is enough for the app to decide what to show. It is not validation: a
+> public client cannot be trusted to enforce authorization. Your API must validate the token's
+> signature, issuer, audience and expiry itself and enforce roles there, regardless of what the
+> app does with the claims. Send the API the access token; the ID token is for the app only.

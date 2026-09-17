@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -28,6 +29,12 @@ internal sealed class FakeKeyValueStorage : IKeyValueStorage
 	/// </summary>
 	public int WriteCount { get; private set; }
 
+	/// <summary>
+	/// When set, <see cref="SetAsync"/> rejects longer string values the way packaged WinAppSDK
+	/// <c>LocalSettings</c> rejects a value over its 8 KB cap.
+	/// </summary>
+	public int? MaxValueLength { get; set; }
+
 	public ValueTask ClearAsync(string key, CancellationToken ct)
 	{
 		Values.Remove(key);
@@ -44,6 +51,10 @@ internal sealed class FakeKeyValueStorage : IKeyValueStorage
 		where TValue : notnull
 	{
 		WriteCount++;
+		if (value is string text && text.Length > MaxValueLength)
+		{
+			throw new InvalidOperationException($"Value for '{key}' exceeds the {MaxValueLength} character limit");
+		}
 		Values[key] = value;
 		return default;
 	}

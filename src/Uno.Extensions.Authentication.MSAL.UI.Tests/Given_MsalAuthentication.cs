@@ -161,6 +161,22 @@ public class Given_MsalAuthentication
 	}
 
 	[TestMethod]
+	public async Task When_Login_Then_IdTokenCached()
+	{
+		// The ID token is the only place the app can read the user's claims (B2C custom
+		// attributes, roles, ...) for in-app authorization, so it must be cached next to the
+		// access token the same way the OIDC provider does.
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(harness.Dispatcher, cancellationToken: cts.Token);
+
+		var tokens = await harness.Tokens.GetAsync(cts.Token);
+		tokens.Should().ContainKey(TokenCacheExtensions.IdTokenKey);
+		tokens[TokenCacheExtensions.IdTokenKey].Should().Be(harness.Tenant.LastIdToken);
+	}
+
+	[TestMethod]
 	public async Task When_RefreshAfterLogin_Then_TokenRenewedWithoutPrompting()
 	{
 		using var harness = await CreateHarnessAsync();
@@ -174,10 +190,44 @@ public class Given_MsalAuthentication
 		var refreshed = await harness.Authentication.RefreshAsync(cts.Token);
 
 		refreshed.Should().BeTrue();
-		var refreshedToken = (await harness.Tokens.GetAsync(cts.Token))[TokenCacheExtensions.AccessTokenKey];
+		var refreshedTokens = await harness.Tokens.GetAsync(cts.Token);
+		var refreshedToken = refreshedTokens[TokenCacheExtensions.AccessTokenKey];
 		refreshedToken.Should().NotBeNullOrEmpty();
 		harness.Tenant.IssuedAccessTokens.Should().Contain(refreshedToken);
 		refreshedToken.Should().Be(firstToken, "a valid cached token should be reused rather than re-minted");
+
+		// SaveAsync clears and rewrites, so an ID token missing from the refresh result would
+		// silently vanish here - the claims must survive the first silent refresh.
+		refreshedTokens.Should().ContainKey(TokenCacheExtensions.IdTokenKey);
+		harness.Tenant.IssuedIdTokens.Should().Contain(refreshedTokens[TokenCacheExtensions.IdTokenKey]);
+	}
+
+	[TestMethod]
+	public async Task When_TokenResponseHasNoAccessToken_Then_NotAuthenticated()
+	{
+		// Azure AD B2C issues no access token when only openid / offline_access are requested. The
+		// provider keys "authenticated" off the access token, so that must read as a failed sign-in
+		// rather than a session with nothing to send - and nothing may be left in the cache.
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+		harness.Tenant.OmitAccessTokens();
+		await SeedMsalCacheEntry(harness, cts.Token);
+
+		var result = await harness.Authentication.LoginAsync(harness.Dispatcher, cancellationToken: cts.Token);
+
+		result.Should().BeFalse();
+		harness.WebUi.WasInvoked.Should().BeTrue();
+		harness.Tenant.TokenRequestCount.Should().Be(1, "the sign-in must have failed on the token response, not before it");
+		(await harness.Tokens.HasTokenAsync(cts.Token)).Should().BeFalse();
+		harness.Logs.Text.Should().Contain("MSAL returned no access token",
+			"a browser sign-in that succeeds and a LoginAsync that returns false needs a diagnosable reason");
+
+		// MSAL cached the account and its refresh token before the provider saw the result. For a
+		// user the app reports as signed out that is a redeemable refresh token left in storage -
+		// cleartext localStorage on WebAssembly - and a silent redemption on every later sign-in.
+		(await HasMsalCacheEntry(harness, cts.Token)).Should().BeFalse("a failed sign-in must not leave the serialized MSAL cache behind");
+		await harness.Authentication.LoginAsync(harness.Dispatcher, cancellationToken: cts.Token);
+		harness.Tenant.TokenRequestCount.Should().Be(2, "with the account removed the next sign-in goes straight to the prompt, without redeeming a signed-out user's refresh token first");
 	}
 
 	[TestMethod]
@@ -327,6 +377,11 @@ public class Given_MsalAuthentication
 		var log = harness.Logs.Text;
 		log.Should().NotContain(harness.Tenant.LastAccessToken);
 		foreach (var token in harness.Tenant.IssuedAccessTokens)
+		{
+			log.Should().NotContain(token);
+		}
+
+		foreach (var token in harness.Tenant.IssuedIdTokens)
 		{
 			log.Should().NotContain(token);
 		}
