@@ -185,6 +185,25 @@ and logout does nothing."* Both symptoms, both platforms, one root cause.
   single-user-flow notes and a "Reading the user's claims" section in
   `doc/Learn/Authentication/HowTo-MsalAuthentication.md`.
 
+### Review-panel fixes (2026-09-17)
+
+- [x] **An oversized ID token could fail a sign-in that worked before.** `TokenCache.SaveAsync`
+  wrote keys in dictionary order with no failure isolation; on packaged WinAppSDK (`LocalSettings`
+  8 KB value cap) a claim-heavy ID token threw after the access token was written, so
+  `LoginAsync` / `RefreshAsync` threw while `HasTokenAsync` was true. Fixed in the shared cache
+  (covers OIDC too): the ID token is written last and best-effort - Warning with key + length,
+  any in-memory remnant cleared, session kept. Red/green:
+  `Given_TokenCache.When_IdTokenRejectedByStorage_Then_SessionKeptWithoutIt`;
+  `When_AccessTokenRejectedByStorage_Then_SaveThrows` pins that only the ID token is optional.
+- [x] **No access token left MSAL's account and refresh token behind, silently.**
+  `TokensOrSignOutAsync` (login and refresh) now logs a Warning naming the scopes and removes
+  the MSAL accounts + serialized cache via `RemoveAccountsAsync`, shared with logout. Red/green on
+  the desktop head: `When_TokenResponseHasNoAccessToken_Then_NotAuthenticated` now asserts the
+  warning, the removed cache entry, and that the next sign-in makes one token request, not two.
+- Open from the panel, not done here: the refresh-token-redemption ID-token assertion, the
+  narrower-than-claimed token-leak guard, the two-named-providers / `accounts.FirstOrDefault()`
+  question, and whether to add `IdTokenAsync`.
+
 ## Follow-ups (not this change)
 
 - ~~REGRESSION found 2026-08-19, spec'd as `specs/010-msal-skia-mobile-runtime-dispatch/`~~ —

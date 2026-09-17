@@ -211,11 +211,23 @@ public class Given_MsalAuthentication
 		using var harness = await CreateHarnessAsync();
 		using var cts = Cts();
 		harness.Tenant.OmitAccessTokens();
+		await SeedMsalCacheEntry(harness, cts.Token);
 
 		var result = await harness.Authentication.LoginAsync(harness.Dispatcher, cancellationToken: cts.Token);
 
 		result.Should().BeFalse();
+		harness.WebUi.WasInvoked.Should().BeTrue();
+		harness.Tenant.TokenRequestCount.Should().Be(1, "the sign-in must have failed on the token response, not before it");
 		(await harness.Tokens.HasTokenAsync(cts.Token)).Should().BeFalse();
+		harness.Logs.Text.Should().Contain("MSAL returned no access token",
+			"a browser sign-in that succeeds and a LoginAsync that returns false needs a diagnosable reason");
+
+		// MSAL cached the account and its refresh token before the provider saw the result. For a
+		// user the app reports as signed out that is a redeemable refresh token left in storage -
+		// cleartext localStorage on WebAssembly - and a silent redemption on every later sign-in.
+		(await HasMsalCacheEntry(harness, cts.Token)).Should().BeFalse("a failed sign-in must not leave the serialized MSAL cache behind");
+		await harness.Authentication.LoginAsync(harness.Dispatcher, cancellationToken: cts.Token);
+		harness.Tenant.TokenRequestCount.Should().Be(2, "with the account removed the next sign-in goes straight to the prompt, without redeeming a signed-out user's refresh token first");
 	}
 
 	[TestMethod]

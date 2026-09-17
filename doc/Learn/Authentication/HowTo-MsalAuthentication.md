@@ -173,8 +173,9 @@ Things to know when the tenant is B2C:
 
 - **Request an API scope.** With only `openid` / `offline_access`, B2C issues an ID token but no
   access token. The provider keys "authenticated" off the access token, so `LoginAsync` returns
-  `false` and nothing is cached. Request your API's scope, or the app's own client ID as a scope,
-  so an access token comes back.
+  `false`, logs a warning naming the requested scopes, and removes the account MSAL cached so
+  no refresh token is left behind. Request your API's scope, or the app's own client ID as a
+  scope, so an access token comes back.
 - **Windows (WinAppSDK).** The Windows broker (WAM) does not support B2C authorities and MSAL
   falls back to the system browser. The provider leaves the redirect URI to the broker on
   WinAppSDK, and the browser flow needs a loopback one, so add `.WithRedirectUri("http://localhost")`
@@ -186,8 +187,9 @@ Things to know when the tenant is B2C:
   through the second provider replaces the first provider's session.
 - **Windows (packaged) value size.** On packaged WinAppSDK apps the token cache is backed by
   `ApplicationData.LocalSettings`, which caps each value at 8 KB. A B2C ID token carrying many
-  custom attributes or group claims can exceed that once encrypted; keep the user flow's claims
-  to what the app needs.
+  custom attributes or group claims can exceed that once encrypted. The sign-in still succeeds,
+  but the ID token is not cached (a warning is logged) and the claims are unreadable; keep the
+  user flow's claims to what the app needs.
 
 ### 4. Redirect URIs
 
