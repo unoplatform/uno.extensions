@@ -343,3 +343,88 @@ no content change. `lessons.md`'s rule stands: preserve each file's existing sta
 
 Runtime tests were not re-run locally: the rebase changes no UI or navigator behavior, and the device
 lanes were green on the pre-rebase tip. CI on the force-push is the check.
+
+## Second review panel (2026-09-16)
+
+`/review-panel` over `main..HEAD` (all seven lenses) returned **fix-first**: no blockers, 5 high,
+10 medium. High and medium addressed below, keyed to the panel's numbering; lows were not in scope.
+
+- [x] H1 - a failed or rejected re-login wiped the existing session. `AuthenticationService.LoginAsync`
+  saved whatever the provider returned, and `TokenCache.SaveAsync` clears first - without raising
+  `Cleared`, so no `LoggedOut`. On Skia Desktop any page hitting the loopback callback during a
+  re-login was a silent remote sign-out. The service now saves nothing and returns `false` when a
+  login yields no tokens. Red: `Given_AuthenticationService.When_LoginReturnsNoTokens_Then_PreviousSessionKept`
+  / `...EmptyTokens...` (2 failed, 9 passed before the fix; 22/22 after), plus
+  `When_ReLoginFails_...` and `When_StateMismatchOnReLogin_Then_PreviousSessionSurvives` (Web) and
+  `When_ReLoginFails_Then_PreviousSessionSurvives` (Oidc).
+- [x] H2 - cancelling sign-in threw `OperationCanceledException` at consumers; before this branch it
+  returned `false`. With H1 in the service the providers no longer need the throw to protect the
+  session, so Web and Oidc return null and `LoginAsync` is back to `false`. **This reverses F5's
+  mechanism, not its goal** - see the revision note in spec.md. The panel's suggested fix (catch in
+  the service) was not taken: it would also have swallowed MSAL's interactive-timeout cancellation,
+  which is `main`'s shipped behavior. A caller-cancelled token still throws.
+- [x] H3 - `IsTokenEndpointError` was an RFC 6749 allow-list, so a provider-specific rejection
+  (`interaction_required`) kept the session on a dead refresh token. Now any OAuth-code-shaped
+  error is a verdict, `temporarily_unavailable`/`server_error` excepted. Tests
+  `When_RefreshRejectedWithProviderSpecificCode_Then_NotAuthenticated`,
+  `When_RefreshTemporarilyUnavailable_Then_SessionKept`. Left as is, deliberately: a 4xx with no
+  OAuth body (a captive portal's 403, say) still reads as "no verdict".
+- [x] H4 - MSAL write watchdog: extracted, tested, and four defects fixed on the way. Details in
+  spec 016, "Second review panel". `Given_MsalCacheWriteWatchdog`, 7 tests; the stale-file case goes
+  red under the old existence-only rule (1 failed / 50 passed) and green under the new one (51/51).
+- [x] H5 - the cancelled-sign-in fix was only ever tested against `StubBrowser`.
+  `Given_WebAuthenticatorBrowser` drives the real adapter over the stub broker (success, cancel with
+  a null `Error`, broker timeout, HTTP error). The adapter's catch-all now tells its own timeout
+  from a flow that cancelled itself (WinUIEx on a user cancel) instead of calling both `Timeout`, and
+  reports `ex.Message`, not a stack trace. With H1/H2 the session no longer depends on an `IBrowser`
+  leaving `Error` null on a cancel - only the log level does.
+- [x] M1 - a sign-in on a loopback callback with no `{State}` logs a Warning. Not refused: an app's
+  own callbacks may bind the flow another way (PKCE in `PostLogin`).
+- [x] M2 - `form_post` bodies are capped at 32 KB and read inside the keep-listening guard; an
+  unreadable POST no longer ends the flow; the completion page is written under its own 5 s budget
+  so the flow timeout cannot discard a response that already arrived.
+- [x] M3 - a default port that fails to bind is forgotten, so the next flow probes again; a second
+  concurrent flow throws `InvalidOperationException` instead of a bind error. **Not done:**
+  switching the default from `localhost` to `127.0.0.1`. The IPv6-first concern is unverified (no
+  Linux lane), and it changes the redirect URI every existing IdP registration has to match.
+- [x] M4 - decided: `DesktopWebAuthenticationBrokerProvider` stays unsealed and
+  `LaunchBrowserAsync` is documented as a supported extension point (custom browser, private
+  window, tests) rather than hidden behind `InternalsVisibleTo`. No WinAppSDK stub of the type was
+  added - a class named "broker provider" that is not one is worse than the documented `#if`.
+- [x] M5 - the broker announces itself at Information on its first flow, which is how to tell it
+  from an app-supplied provider under first-wins registration; the tripled call-site comment now
+  points at `TryRegister`. **Not done:** an opt-out. Registering your own provider first already is
+  one, and nobody has a use for "no broker at all" on a platform where Uno's default throws.
+- [x] M6 - no code change needed, and the panel's fix would have been wrong to take on trust:
+  `Type.GetType(literal).GetProperty(literal)` is a pattern the trimmer already follows, whereas the
+  nested-type spelling `[DynamicDependency]` expects could not be confirmed from the docs - a wrong
+  one is a silent no-op plus an IL2036 warning in every consumer's publish. Comment corrected to
+  say why the literals must stay literals.
+- [x] M7 - non-transient `AddClient` named its `HttpClient` by short type name, so two `Api` types
+  shared a pipeline (handlers and authorization included); now the full name. `Transient` on the
+  single-generic overload delegates to the lifetime-less overload, so it accepts an interface as
+  documented; `nameof(TInterface)` is gone from the `ArgumentException`. Red: 2 failed / 8 passed
+  with the fix stashed, 10/10 with it. **Not done:** splitting spec 014 into its own PR - a history
+  decision for Steve, not a code change.
+- [x] M8 - docs narrowed, code unchanged. The handler path (401, refresh keeps the old tokens,
+  retry, 401, clear) cannot be told apart from a Custom provider's default "refresh returns the
+  current tokens" without a new signal on `IAuthenticationProvider.RefreshAsync`; comparing tokens
+  in the handler would leave those apps authenticated on a dead token forever. Same limitation as
+  MSAL on `main`.
+- [x] M9 - the Web/OIDC upgrade notes moved under 7.4 (where `main` put this cycle's MSAL notes);
+  the duplicate 7.0 MSAL list is gone and its one unique bullet joined the 7.4 list.
+- [x] M10 - the seven stale `Spec 013` breadcrumbs now say 017, or are gone.
+
+### Verification (2026-09-16)
+
+| Check | Result |
+| --- | --- |
+| `Uno.Extensions-packageonly.slnf` Release via `MSBuild.exe -t:Restore,Build` | exit 0; only the CS1591 / NETSDK1202 warnings already present on `main` |
+| Unit tests, the package-CI filter | 1640 passed, 0 failed, 19 skipped (was 1626) |
+| Runtime tests, Skia desktop head, Web + Oidc suites **with the five production files stashed** | 14 failed / 32 passed - the ten new cases, plus four existing broker cases that cascade from the concurrent-flow case leaving its listener bound under the old code |
+| Runtime tests, Skia desktop head, the exact CI filter, fixes restored | **71/71 passed** (was 57) |
+| cspell + markdownlint on the touched markdown | clean |
+
+Not run here: the Android, iOS and WebAssembly lanes (CI on the next push), and anything on
+WinAppSDK - the `#if WINDOWS` branch of `WebAuthenticatorBrowser`'s new catch is compiled by the
+Release build but exercised by no lane.

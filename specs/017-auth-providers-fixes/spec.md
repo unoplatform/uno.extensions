@@ -55,10 +55,18 @@ the WinUIEx path waits forever. Port MSAL's interactive-timeout treatment (`534f
 
 On user-cancel the broker returns non-Success and `ResponseData` is empty; the provider still returns
 an **empty (non-null) dictionary**, and `TokenCache.SaveAsync` unconditionally `ClearAllAsync`s before
-writing. So cancelling a re-login destroys the tokens the user still had. MSAL semantics (after
-`a260ebf75`): user-cancel must surface as `OperationCanceledException` *before* any save, leaving the
-cache untouched; a genuine error returns null. The provider must inspect `WebAuthenticationResult.ResponseStatus`
-(`UserCancel` → throw OCE; `ErrorHttp` → null) instead of ignoring it.
+writing. So cancelling a re-login destroys the tokens the user still had. The provider must inspect
+`WebAuthenticationResult.ResponseStatus` instead of ignoring it, and return null - never an empty
+dictionary - for `UserCancel` and `ErrorHttp` alike.
+
+*Revised 2026-09-16 (second review panel).* The first fix threw `OperationCanceledException` on
+user-cancel so that nothing was saved. That left two holes: every *other* no-token outcome (HTTP
+error, a `{State}` mismatch, an Oidc browser error) still returned null, which
+`AuthenticationService.LoginAsync` saved - wiping the session without raising `LoggedOut` - and
+`LoginAsync`, which had always returned `false` on a cancel, now threw into consumers' click
+handlers. Both are closed in one place: `AuthenticationService.LoginAsync` saves nothing and returns
+`false` when the provider returns no tokens, so the providers simply return null and the cancel path
+is back to its pre-branch `false`. A caller-cancelled token still throws.
 
 ### F6 — Web: logout ignores the broker result
 
@@ -173,6 +181,8 @@ Every bug fix follows red/fix/green; the failing test is committed with the fix.
 ## Out of scope
 
 - F9 (unpackaged WinAppSDK) — docs only.
-- Making `TokenCache.SaveAsync`'s clear-before-write semantics safer service-wide (behavior is shared
-  with MSAL and predates this branch; F5 is fixed at the provider level to match MSAL semantics).
+- Changing `TokenCache.SaveAsync`'s clear-before-write semantics themselves. (What was out of scope
+  here originally - the service saving a no-token login - was brought in by the 2026-09-16 revision
+  of F5; `SaveAsync` is untouched, `AuthenticationService.LoginAsync` just no longer calls it with
+  nothing.)
 - tvOS (`WebAuthenticationBroker` is compiled out there entirely).
