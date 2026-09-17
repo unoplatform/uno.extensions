@@ -138,7 +138,15 @@ internal record TokenCache : ITokenCache
 			{
 				foreach (var tk in tokens)
 				{
-					await _secureCache.SetAsync($"{TokenPrefix}{tk.Key}", tk.Value, cancellation);
+					if (tk.Key != TokenCacheExtensions.IdTokenKey)
+					{
+						await _secureCache.SetAsync($"{TokenPrefix}{tk.Key}", tk.Value, cancellation);
+					}
+				}
+
+				if (tokens.TryGetValue(TokenCacheExtensions.IdTokenKey, out var idToken))
+				{
+					await SaveIdTokenAsync(idToken, cancellation);
 				}
 			}
 			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage("Save tokens - complete");
@@ -146,6 +154,51 @@ internal record TokenCache : ITokenCache
 		finally
 		{
 			tokenLock.Release();
+		}
+	}
+
+	/// <summary>
+	/// Writes the ID token last and best-effort: it only carries claims for the app to read, so a
+	/// store that rejects it must not fail a sign-in whose session tokens are already saved.
+	/// </summary>
+	/// <remarks>
+	/// The case this exists for is packaged WinAppSDK, where <c>LocalSettings</c> caps a value at
+	/// 8 KB and a claim-heavy ID token (B2C custom attributes, an Entra groups claim) exceeds it.
+	/// Throwing there left the access token written - so <see cref="HasTokenAsync"/> true - while
+	/// LoginAsync / RefreshAsync failed.
+	/// </remarks>
+	private async ValueTask SaveIdTokenAsync(string idToken, CancellationToken cancellation)
+	{
+		var key = $"{TokenPrefix}{TokenCacheExtensions.IdTokenKey}";
+		try
+		{
+			await _secureCache.SetAsync(key, idToken, cancellation);
+		}
+		catch (OperationCanceledException)
+		{
+			throw;
+		}
+		catch (Exception ex)
+		{
+			// Length, never the value (AGENTS.md §7); the exception comes from the store, not the token.
+			if (_logger.IsEnabled(LogLevel.Warning))
+			{
+				_logger.LogWarning(ex, "Unable to store the {Key} ({Length} chars), so the user's claims won't be readable from the token cache; the session is unaffected", TokenCacheExtensions.IdTokenKey, idToken.Length);
+			}
+
+			// The caching stores write their in-memory layer before the backing store, so a rejected
+			// value would otherwise be readable until restart and then silently vanish.
+			try
+			{
+				await _secureCache.ClearAsync(key, CancellationToken.None);
+			}
+			catch (Exception clearEx)
+			{
+				if (_logger.IsEnabled(LogLevel.Warning))
+				{
+					_logger.LogWarning(clearEx, "Unable to remove the partially stored {Key}", TokenCacheExtensions.IdTokenKey);
+				}
+			}
 		}
 	}
 }
