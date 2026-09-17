@@ -20,7 +20,7 @@ App heads still target the platform they run on. Libraries and heads therefore n
 target-framework lists, which is why `tfms-ui-winui.props` was split (see below).
 
 Mac Catalyst is gone entirely. The 7.0 SDK declares Android, iOS, tvOS, Desktop, Wasm and Windows
-platform folders and no longer recognises `Platforms/MacCatalyst`, so files left there leak into
+platform folders and no longer recognizes `Platforms/MacCatalyst`, so files left there leak into
 the default compile glob of every target framework.
 
 ## Target versions
@@ -54,7 +54,7 @@ Fallout fixed:
   Ix.NET-only APIs still in use are re-homed into the internal `AsyncEnumerableExtensions`, and
   `MoveNextAsync(ct)` comes back as `AsyncEnumeratorExtensions`.
 - **BC53** — `Uno.UI.Toolkit` is renamed to `Uno.UI.Extras`, but the types move to their natural
-  namespaces rather than travelling as a block. `StorageFileHelper` is now `Uno.Storage.StorageFileHelper`.
+  namespaces rather than traveling as a block. `StorageFileHelper` is now `Uno.Storage.StorageFileHelper`.
   Note that `using:Uno.UI.Extras` **compiles and resolves nothing** — the namespace exists, the
   types are not in it.
 - NU1510 on `System.Collections.Immutable` / `System.Text.Json` /
