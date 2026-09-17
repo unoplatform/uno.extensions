@@ -78,9 +78,20 @@ Steady-state macOS launches now make **zero** extra secure-store round-trips.
 `Given_MsalStorageDefaults` covers the decision table (`Auto` both ways, `Always`, `Never`) and pins
 `Auto` as both the configuration default and `default(MsalCachePersistenceCheck)`.
 
-Not covered by a test: the write watchdog and the read check below run against a real
-`MsalCacheHelper`, which is sealed and owns its accessors; the user-visible outcome ("no second
-prompt on the next launch") was observed on a Mac, not asserted.
+`Given_MsalCacheWriteWatchdog` covers the write watchdog against real files in a temp folder: a
+first write that creates the file, nothing reaching it, a previous run's file left untouched, that
+file rewritten, a read not consuming the check, the check being one-shot, and the retry being
+bounded to one.
+
+Exception (AGENTS.md "Exceptions Process") for what is still untested:
+
+- **Constraint:** `VerifyReadableAsync`, registering and detaching the helper, and
+  `LoggerTraceListener` only do anything against a real `MsalCacheHelper`, which is sealed, owns its
+  platform accessors and cannot be constructed over a fake store.
+- **Impact:** a regression in those three would not fail a test. The decisions they hang off -
+  whether to probe, whether a write landed, whether to retry - are all covered.
+- **Mitigation:** the user-visible outcome ("no second prompt on the next launch") was observed on a
+  Mac; the MSAL runtime suite exercises the whole setup path on the desktop lane on every run.
 
 ## Review-panel follow-ups (2026-08-27)
 
@@ -103,3 +114,23 @@ Three gaps in the design above, closed together:
   rejected write failed with to its own `TraceSource` and swallows it. `CacheHelperTrace()` hands
   `CreateAsync` a `TraceSource` whose listener forwards Warning and above into the provider's
   logger, so the keychain or keyring reason appears next to the watchdog's error.
+
+## Second review panel (2026-09-16)
+
+- **The watchdog moved out of the provider** into `MsalCacheWriteWatchdog`. The provider is a
+  record that is copied with `with` while it is configured; the three interlocked fields were
+  copied with it while the token-cache callback stayed bound to the instance that registered it, so
+  a copy armed a check nothing would ever run. Every copy now shares one watchdog object, and the
+  callback captures that object, not the record. The re-setup request travels the same way
+  (`TakeResetupRequest`) instead of nulling a field on whichever copy the callback captured.
+- **`File.Exists` could not fail under `Auto`.** `Auto` skips the probe *because* the cache file is
+  there, so "the file exists after the write" was true whether or not the write landed. The watchdog
+  records the file's last-write time when it is armed and requires it to have changed.
+- **A watchdog-requested setup forces the probe**, for the same reason: the stale file that made
+  `Auto` skip it is the evidence that has just failed.
+- **A re-setup first detaches the previous `MsalCacheHelper`** (`ReplaceRegisteredCacheHelper`), so
+  "continuing with in-memory token cache" is true when it is logged.
+- **`VerifyReadableAsync` no longer reclassifies `MsalException`** as a persistence failure. With
+  `AllowUnprotectedTokenCacheFallback` set, that reclassification moved the token cache to a
+  plaintext file over an error that had nothing to do with the store.
+- Watchdog log lines name the cache *file*, not its full path, which contains the OS user name.
