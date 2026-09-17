@@ -103,6 +103,14 @@ internal record WebAuthenticationProvider
 			expectedState = NewState();
 			loginStartUri = loginStartUri.Replace(StatePlaceholder, expectedState);
 		}
+		else if (Uri.TryCreate(loginCallbackUri, UriKind.Absolute, out var callback) && callback.IsLoopback && ProviderLogger.IsEnabled(LogLevel.Warning))
+		{
+			// A loopback callback answers to any page in the system browser and any local process,
+			// so an unbound response can be someone else's tokens (login CSRF). Not refused: the
+			// app's own callbacks may bind the flow some other way (PKCE in PostLogin, say).
+			// The placeholder is an argument because its braces would read as a template hole.
+			ProviderLogger.LogWarning("LoginStartUri carries no {Placeholder} placeholder, so nothing ties the sign-in response on the loopback callback to this request. Add state={StateValue} to the start URI unless the flow is bound another way", StatePlaceholder, StatePlaceholder);
+		}
 
 		ApplyPrefersEphemeralWebBrowserSession();
 
@@ -115,19 +123,16 @@ internal record WebAuthenticationProvider
 			.AsTask(cancellationToken);
 		if (userResult?.ResponseStatus == WebAuthenticationStatus.UserCancel)
 		{
-			// Surfacing cancellation (instead of returning a result) keeps AuthenticationService
-			// from saving over - and thereby clearing - the previously cached tokens: a login the
-			// user backed out of must not sign them out (spec 017 F5). The desktop broker reports
-			// its own timeout the same way, marked by the error detail.
-			var timedOut = userResult.ResponseErrorDetail == DesktopWebAuthenticationBrokerProvider.TimeoutErrorDetail;
+			// No tokens, never an empty dictionary: AuthenticationService saves nothing for a login
+			// that produced nothing, so a sign-in the user backed out of leaves the previous
+			// session alone (spec 017 F5). The desktop broker reports its own timeout the same
+			// way, marked by the error detail.
 			if (ProviderLogger.IsEnabled(LogLevel.Information))
 			{
-				ProviderLogger.LogInformation("Sign-in flow {Outcome} before the identity provider redirected back; the previous session is kept", timedOut ? "timed out" : "was cancelled by the user");
+				ProviderLogger.LogInformation("Sign-in flow {Outcome} before the identity provider redirected back; the previous session is kept", userResult.ResponseErrorDetail == DesktopWebAuthenticationBrokerProvider.TimeoutErrorDetail ? "timed out" : "was cancelled by the user");
 			}
 
-			throw new OperationCanceledException(timedOut
-				? "The sign-in flow timed out before the identity provider redirected back to the app."
-				: "The user cancelled the sign-in flow.");
+			return default;
 		}
 		if (userResult?.ResponseStatus is { } responseStatus && responseStatus != WebAuthenticationStatus.Success)
 		{
@@ -292,7 +297,7 @@ internal record WebAuthenticationProvider
 	/// broker configuration - a setting that only exists on Apple targets.
 	/// </summary>
 	/// <remarks>
-	/// Spec 013 F7. On Skia iOS heads, Uno's runtime-asset selector substitutes this assembly's
+	/// Spec 017 F7. On Skia iOS heads, Uno's runtime-asset selector substitutes this assembly's
 	/// plain-TFM build (spec 010's mechanism) while the WinRT layer stays native - so
 	/// <c>WinRTFeatureConfiguration.WebAuthenticationBroker.PrefersEphemeralWebBrowserSession</c>
 	/// exists in the loaded Uno.dll but not on the plain reference surface this build compiles
@@ -307,12 +312,14 @@ internal record WebAuthenticationProvider
 #elif !WINDOWS
 		if (OperatingSystem.IsIOS() && !OperatingSystem.IsMacCatalyst())
 		{
+			// Both names stay literals at the call: Type.GetType(literal).GetProperty(literal) is a
+			// pattern the trimmer follows, so it keeps the property in a linked Release build. A
+			// name assembled at runtime would not be.
 			var property = Type.GetType("Uno.WinRTFeatureConfiguration+WebAuthenticationBroker, Uno")
 				?.GetProperty("PrefersEphemeralWebBrowserSession");
 			if (property is null)
 			{
-				// Also the outcome when the linker trimmed the setter from a Release build: say so
-				// at a level an app runs with, since the setting silently not applying is the bug.
+				// Say so at a level an app runs with: the setting silently not applying is the bug.
 				if (ProviderLogger.IsEnabled(LogLevel.Warning))
 				{
 					ProviderLogger.LogWarning("PrefersEphemeralWebBrowserSession is not available on the loaded Uno runtime (missing or trimmed); the setting is ignored");

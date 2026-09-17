@@ -110,8 +110,8 @@ public class Given_WebAuthentication
 	/// Red test for spec 017 F5: the provider used to ignore
 	/// <see cref="WebAuthenticationResult.ResponseStatus"/> and return an empty (non-null) token
 	/// dictionary on cancel, which <c>TokenCache.SaveAsync</c> turns into a wipe of the previously
-	/// cached session. Cancellation must surface as <see cref="OperationCanceledException"/> before
-	/// any save - the same contract as the MSAL provider.
+	/// cached session. A cancelled sign-in is a login that did not happen: <c>false</c>, as it
+	/// always was, with nothing saved.
 	/// </summary>
 	[TestMethod]
 	public async Task When_LoginCancelled_Then_PreviousSessionSurvives()
@@ -120,18 +120,38 @@ public class Given_WebAuthentication
 		using var cts = Cts();
 
 		await harness.Authentication.LoginAsync(default, cancellationToken: cts.Token);
+		var session = harness.Broker.LastAccessToken;
 		harness.Broker.NextStatus = WebAuthenticationStatus.UserCancel;
 
-		Func<Task> act = () => harness.Authentication.LoginAsync(default, cancellationToken: cts.Token).AsTask();
+		var result = await harness.Authentication.LoginAsync(default, cancellationToken: cts.Token);
 
-		await act.Should().ThrowAsync<OperationCanceledException>(
-			"backing out of the sign-in UI is a cancellation, not a failed login");
-		(await harness.Authentication.IsAuthenticated(cts.Token)).Should().BeTrue(
+		result.Should().BeFalse("backing out of the sign-in UI is a login that did not happen");
+		(await harness.Tokens.GetAsync(cts.Token))[TokenCacheExtensions.AccessTokenKey].Should().Be(session,
 			"a cancelled re-login must not wipe the session the user still has");
 	}
 
 	/// <summary>
-	/// Spec 013 F5, error branch: an HTTP error from the interactive flow is a failed login - no
+	/// The same rule for a re-login the identity provider failed: the session the user still has
+	/// is not the failed flow's to take away.
+	/// </summary>
+	[TestMethod]
+	public async Task When_ReLoginFails_Then_PreviousSessionSurvives()
+	{
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(default, cancellationToken: cts.Token);
+		var session = harness.Broker.LastAccessToken;
+		harness.Broker.NextStatus = WebAuthenticationStatus.ErrorHttp;
+
+		var result = await harness.Authentication.LoginAsync(default, cancellationToken: cts.Token);
+
+		result.Should().BeFalse();
+		(await harness.Tokens.GetAsync(cts.Token))[TokenCacheExtensions.AccessTokenKey].Should().Be(session);
+	}
+
+	/// <summary>
+	/// Spec 017 F5, error branch: an HTTP error from the interactive flow is a failed login - no
 	/// exception, no tokens.
 	/// </summary>
 	[TestMethod]
@@ -442,8 +462,92 @@ public class Given_WebAuthentication
 
 		result.Should().BeFalse("a response carrying a state this provider never issued must be rejected");
 		(await tokens.HasTokenAsync(cts.Token)).Should().BeFalse("nothing from a rejected response may be cached");
-		logs.Text.Should().Contain("state", "the rejection must be diagnosable from the log");
+		logs.Text.Should().Contain("Rejecting the sign-in response", "the rejection must be diagnosable from the log");
 		logs.Text.Should().NotContain(broker.LastAccessToken, "not even a rejected token may reach the log");
+	}
+
+	/// <summary>
+	/// On the desktop loopback broker any page in the system browser can reach the callback while
+	/// a sign-in is pending. A forged response must be rejected without costing the user the
+	/// session they already have - otherwise a foreign navigation is a remote sign-out.
+	/// </summary>
+	[TestMethod]
+	public async Task When_StateMismatchOnReLogin_Then_PreviousSessionSurvives()
+	{
+		StubWebAuthenticationBroker.EnsureRegistered();
+		var broker = StubWebAuthenticationBroker.Instance;
+		broker.Reset();
+
+		using var host = UnoHost
+			.CreateDefaultBuilder(typeof(Given_WebAuthentication).Assembly)
+			.UseAuthentication(auth => auth
+				.AddWeb(web => web
+					.LoginStartUri($"{LoginStartUri}?client_id=demo&redirect_uri={{RedirectUri}}&state={{State}}")))
+			.Build();
+
+		var authentication = host.Services.GetRequiredService<IAuthenticationService>();
+		var tokens = host.Services.GetRequiredService<ITokenCache>();
+		using var purge = Cts();
+		await tokens.ClearAsync(purge.Token);
+		using var cts = Cts();
+
+		(await authentication.LoginAsync(default, cancellationToken: cts.Token)).Should().BeTrue();
+		var session = broker.LastAccessToken;
+		broker.NextState = "forged-state";
+
+		var result = await authentication.LoginAsync(default, cancellationToken: cts.Token);
+
+		result.Should().BeFalse();
+		(await tokens.GetAsync(cts.Token))[TokenCacheExtensions.AccessTokenKey].Should().Be(session,
+			"a rejected response must not sign the user out of the session they still have");
+	}
+
+	/// <summary>
+	/// A loopback callback is reachable by any page in the system browser, so a sign-in that binds
+	/// nothing to it has to say so - and one that carries <c>{State}</c> must not be nagged.
+	/// </summary>
+	[TestMethod]
+	public Task When_LoopbackCallbackWithoutState_Then_Warns() => LoopbackStateWarning(string.Empty, expectWarning: true);
+
+	[TestMethod]
+	public Task When_LoopbackCallbackWithState_Then_NoWarning() => LoopbackStateWarning("&state={State}", expectWarning: false);
+
+	private static async Task LoopbackStateWarning(string stateParameter, bool expectWarning)
+	{
+		StubWebAuthenticationBroker.EnsureRegistered();
+		var broker = StubWebAuthenticationBroker.Instance;
+		broker.Reset();
+		var logs = new CapturingLoggerProvider();
+
+		using var host = UnoHost
+			.CreateDefaultBuilder(typeof(Given_WebAuthentication).Assembly)
+			.UseAuthentication(auth => auth
+				.AddWeb(web => web
+					.LoginStartUri($"{LoginStartUri}?client_id=demo{stateParameter}")
+					.LoginCallbackUri("http://localhost:53124/authentication-callback")))
+			.ConfigureServices(services => services
+				.AddLogging(logging => logging
+					.SetMinimumLevel(LogLevel.Trace)
+					.AddProvider(logs)))
+			.Build();
+
+		var authentication = host.Services.GetRequiredService<IAuthenticationService>();
+		var tokens = host.Services.GetRequiredService<ITokenCache>();
+		using var purge = Cts();
+		await tokens.ClearAsync(purge.Token);
+		using var cts = Cts();
+
+		(await authentication.LoginAsync(default, cancellationToken: cts.Token)).Should().BeTrue("the warning does not refuse the flow");
+
+		const string Warning = "nothing ties the sign-in response on the loopback callback";
+		if (expectWarning)
+		{
+			logs.Text.Should().Contain(Warning);
+		}
+		else
+		{
+			logs.Text.Should().NotContain(Warning);
+		}
 	}
 
 	/// <summary>

@@ -19,7 +19,7 @@ namespace Uno.Extensions.Authentication.UI.Tests;
 /// behavior is driven through mutable state (<see cref="NextStatus"/>) rather than fresh instances,
 /// and <see cref="Reset"/> runs at each harness creation.
 /// </remarks>
-internal sealed class StubWebAuthenticationBroker : IWebAuthenticationBrokerProvider
+public sealed class StubWebAuthenticationBroker : IWebAuthenticationBrokerProvider
 {
 	public static StubWebAuthenticationBroker Instance { get; } = new();
 
@@ -40,6 +40,12 @@ internal sealed class StubWebAuthenticationBroker : IWebAuthenticationBrokerProv
 	/// <see cref="WebAuthenticationStatus.UserCancel"/>) instead of succeeding, then resets.
 	/// </summary>
 	public WebAuthenticationStatus? NextStatus { get; set; }
+
+	/// <summary>
+	/// The error detail reported with <see cref="NextStatus"/> - how the desktop broker marks its
+	/// own timeout on a <see cref="WebAuthenticationStatus.UserCancel"/>. Resets with it.
+	/// </summary>
+	public uint? NextErrorDetail { get; set; }
 
 	/// <summary>
 	/// When set, <see cref="GetCurrentApplicationCallbackUri"/> throws with this message - what a
@@ -85,6 +91,7 @@ internal sealed class StubWebAuthenticationBroker : IWebAuthenticationBrokerProv
 		LastRequestUri = null;
 		LastCallbackUri = null;
 		NextStatus = null;
+		NextErrorDetail = null;
 		CallbackUriError = null;
 		NextState = null;
 	}
@@ -103,11 +110,10 @@ internal sealed class StubWebAuthenticationBroker : IWebAuthenticationBrokerProv
 
 		if (NextStatus is { } status && status != WebAuthenticationStatus.Success)
 		{
+			var errorDetail = NextErrorDetail ?? (status == WebAuthenticationStatus.ErrorHttp ? 500u : 0u);
 			NextStatus = null;
-			return Task.FromResult(new WebAuthenticationResult(
-				null,
-				status == WebAuthenticationStatus.ErrorHttp ? 500u : 0u,
-				status));
+			NextErrorDetail = null;
+			return Task.FromResult(new WebAuthenticationResult(null, errorDetail, status));
 		}
 
 		var accessToken = $"stub-access-token-{++_tokenCounter}";
