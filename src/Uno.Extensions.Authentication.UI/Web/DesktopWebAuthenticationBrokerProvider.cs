@@ -82,20 +82,49 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 	private ILogger Logger => this.Log();
 
 	/// <summary>
-	/// The loopback port used by <see cref="GetCurrentApplicationCallbackUri"/>: picked free on
-	/// first use, then fixed for the process lifetime so login and logout use the same redirect.
-	/// A race between probing and binding is possible but the bind failure is loud, not silent.
+	/// The largest <c>response_mode=form_post</c> body read, in characters. Any page in the system
+	/// browser can POST to the loopback port, so the read is bounded; an authorization response is
+	/// a code, a state and at most an id_token - a few KB. Small enough to stay off the LOH.
 	/// </summary>
-	private static readonly Lazy<int> _defaultPort = new(
-		() =>
+	private const int MaxFormPostLength = 32 * 1024;
+
+	/// <summary>
+	/// How long the "sign-in complete" page may take to write. The response has already arrived by
+	/// then, so this only bounds how long a stalled browser can hold the result back.
+	/// </summary>
+	private static readonly TimeSpan CompletionPageTimeout = TimeSpan.FromSeconds(5);
+
+	/// <summary>
+	/// The loopback port used by <see cref="GetCurrentApplicationCallbackUri"/>, or 0 before the
+	/// first use: picked free, then kept so login and logout use the same redirect - until a bind
+	/// on it fails, which forgets it so the next flow picks another instead of failing until the
+	/// app restarts. A race between probing and binding is possible but the bind failure is loud.
+	/// </summary>
+	private static int _defaultPort;
+
+	/// <summary>1 while this broker has a flow listening; a second one would only fail to bind.</summary>
+	private int _flowInProgress;
+
+	/// <summary>1 once the first flow has been announced in the log.</summary>
+	private int _announced;
+
+	private static int DefaultPort()
+	{
+		var port = Volatile.Read(ref _defaultPort);
+		if (port != 0)
 		{
-			using var probe = new TcpListener(IPAddress.Loopback, 0);
-			probe.Start();
-			var port = ((IPEndPoint)probe.LocalEndpoint).Port;
-			probe.Stop();
 			return port;
-		},
-		LazyThreadSafetyMode.ExecutionAndPublication);
+		}
+
+		using var probe = new TcpListener(IPAddress.Loopback, 0);
+		probe.Start();
+		port = ((IPEndPoint)probe.LocalEndpoint).Port;
+		probe.Stop();
+
+		// First writer wins, so concurrent first calls still agree on one port.
+		var winner = Interlocked.CompareExchange(ref _defaultPort, port, 0);
+		return winner == 0 ? port : winner;
+	}
 
 	/// <summary>
 	/// Registers this broker with Uno's extensibility registry when running on a desktop OS.
@@ -133,7 +162,7 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 	/// <inheritdoc />
 	public Uri GetCurrentApplicationCallbackUri() =>
 		WinRTFeatureConfiguration.WebAuthenticationBroker.DefaultReturnUri
-			?? new Uri($"http://localhost:{_defaultPort.Value}{WinRTFeatureConfiguration.WebAuthenticationBroker.DefaultCallbackPath}");
+			?? new Uri($"http://localhost:{DefaultPort()}{WinRTFeatureConfiguration.WebAuthenticationBroker.DefaultCallbackPath}");
 
 	/// <inheritdoc />
 	public async Task<WebAuthenticationResult> AuthenticateAsync(WebAuthenticationOptions options, Uri requestUri, Uri callbackUri, CancellationToken ct)
@@ -156,6 +185,32 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 				nameof(requestUri));
 		}
 
+		if (Interlocked.Exchange(ref _flowInProgress, 1) != 0)
+		{
+			// A double-clicked sign-in button, typically. The second flow could only fail to bind
+			// the port the first one holds; say what happened instead.
+			throw new InvalidOperationException("A sign-in or sign-out flow is already in progress on the desktop web authentication broker. Wait for it to complete, or cancel it, before starting another.");
+		}
+
+		try
+		{
+			return await ListenForCallbackAsync(requestUri, callbackUri, ct).ConfigureAwait(false);
+		}
+		finally
+		{
+			Volatile.Write(ref _flowInProgress, 0);
+		}
+	}
+
+	private async Task<WebAuthenticationResult> ListenForCallbackAsync(Uri requestUri, Uri callbackUri, CancellationToken ct)
+	{
+		if (Interlocked.Exchange(ref _announced, 1) == 0 && Logger.IsEnabled(LogLevel.Information))
+		{
+			// First-wins registration is otherwise invisible: this line's presence or absence is
+			// how to tell whether this broker or an app-supplied one is handling sign-in.
+			Logger.LogInformation("WebAuthenticationBroker flows are handled by the desktop loopback broker (system browser + {Callback})", callbackUri.GetLeftPart(UriPartial.Path));
+		}
+
 		using var timeout = new CancellationTokenSource(WinRTFeatureConfiguration.WebAuthenticationBroker.AuthenticationTimeout);
 		using var linked = CancellationTokenSource.CreateLinkedTokenSource(timeout.Token, ct);
 
@@ -172,9 +227,12 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 		}
 		catch (HttpListenerException ex)
 		{
+			// Forget a default port that would not bind, so the next flow probes for another rather
+			// than failing on this one until the app restarts. A pinned port is the app's to fix.
+			var wasDefault = Interlocked.CompareExchange(ref _defaultPort, 0, callbackUri.Port) == callbackUri.Port;
 			if (Logger.IsEnabled(LogLevel.Error))
 			{
-				Logger.LogError(ex, "Unable to listen on {Prefix} for the sign-in redirect: the port is in use, or this user may not bind it. Pin a different port through the callback URI, or free the port", prefix);
+				Logger.LogError(ex, "Unable to listen on {Prefix} for the sign-in redirect: the port is in use, or this user may not bind it. {Remedy}", prefix, wasDefault ? "The next sign-in attempt picks a new port" : "Pin a different port through the callback URI, or free the port");
 			}
 
 			throw;
@@ -227,7 +285,15 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 					continue;
 				}
 
-				var query = await ReadResponseQueryAsync(context.Request, linked.Token).ConfigureAwait(false);
+				var query = await TryReadResponseQueryAsync(context.Request, linked.Token).ConfigureAwait(false);
+				if (query is null)
+				{
+					// Oversized, aborted or cut off by the timeout: not a response this flow can
+					// use, and not a reason to end it - any page can POST here. Keep listening; if
+					// the timeout is what cut it off, the next wait ends the flow as a timeout.
+					TryClose(context.Response, HttpStatusCode.BadRequest);
+					continue;
+				}
 
 				if (IsBare(query, callbackUri))
 				{
@@ -255,8 +321,10 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 
 				// The sign-in is complete at this point; the completion page is a courtesy to the
 				// user, and a connection the browser dropped while it was written must not discard
-				// the response that already arrived.
-				await TryRespondAsync(context.Response, CompletionBody, linked.Token).ConfigureAwait(false);
+				// the response that already arrived. Nor must the flow's own timeout, so the write
+				// gets a short one of its own.
+				using var courtesy = new CancellationTokenSource(CompletionPageTimeout);
+				await TryRespondAsync(context.Response, CompletionBody, courtesy.Token).ConfigureAwait(false);
 				return result;
 			}
 		}
@@ -270,18 +338,52 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 	/// The response parameters carried by a callback request: the query string, or the body of a
 	/// <c>response_mode=form_post</c> POST in query form, so both shapes complete the flow.
 	/// </summary>
-	private static async Task<string> ReadResponseQueryAsync(HttpListenerRequest request, CancellationToken ct)
+	/// <returns>
+	/// The parameters, or <c>null</c> for a body that is longer than
+	/// <see cref="MaxFormPostLength"/> or could not be read to its end.
+	/// </returns>
+	private async Task<string?> TryReadResponseQueryAsync(HttpListenerRequest request, CancellationToken ct)
 	{
-		if (request.HttpMethod == "POST" &&
-			request.HasEntityBody &&
-			request.ContentType?.StartsWith("application/x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase) == true)
+		if (request.HttpMethod != "POST" ||
+			!request.HasEntityBody ||
+			request.ContentType?.StartsWith("application/x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase) != true)
 		{
-			using var reader = new StreamReader(request.InputStream, request.ContentEncoding);
-			var body = await reader.ReadToEndAsync(ct).ConfigureAwait(false);
-			return body.Length == 0 ? string.Empty : "?" + body;
+			return request.Url?.Query ?? string.Empty;
 		}
 
-		return request.Url?.Query ?? string.Empty;
+		if (request.ContentLength64 > MaxFormPostLength)
+		{
+			if (Logger.IsEnabled(LogLevel.Debug))
+			{
+				Logger.LogDebug("Ignoring a {Length}-byte POST to the sign-in callback; the limit is {Limit}", request.ContentLength64, MaxFormPostLength);
+			}
+
+			return null;
+		}
+
+		try
+		{
+			// One character past the limit is how a chunked body, which declares no length, is
+			// caught overrunning it.
+			var buffer = new char[MaxFormPostLength + 1];
+			using var reader = new StreamReader(request.InputStream, request.ContentEncoding);
+			var length = await reader.ReadBlockAsync(buffer.AsMemory(), ct).ConfigureAwait(false);
+			if (length > MaxFormPostLength)
+			{
+				return null;
+			}
+
+			return length == 0 ? string.Empty : string.Concat("?", buffer.AsSpan(0, length));
+		}
+		catch (Exception ex) when (ex is HttpListenerException or IOException or ObjectDisposedException or OperationCanceledException)
+		{
+			if (Logger.IsEnabled(LogLevel.Debug))
+			{
+				Logger.LogDebug(ex, "A POST to the sign-in callback could not be read to its end");
+			}
+
+			return null;
+		}
 	}
 
 	/// <summary>
@@ -308,11 +410,13 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 			response.Close();
 			return true;
 		}
-		catch (Exception ex) when (ex is HttpListenerException or IOException or ObjectDisposedException)
+		catch (Exception ex) when (ex is HttpListenerException or IOException or ObjectDisposedException or OperationCanceledException)
 		{
+			// Cancellation included: a page that was not written is never the flow's outcome. The
+			// caller's next wait on the same token is what ends the flow, as a timeout or a cancel.
 			if (Logger.IsEnabled(LogLevel.Debug))
 			{
-				Logger.LogDebug(ex, "The browser dropped the connection before the response page was written");
+				Logger.LogDebug(ex, "The response page was not written: the browser dropped the connection, or the flow ended first");
 			}
 
 			response.Abort();
@@ -339,9 +443,15 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 	}
 
 	/// <summary>
-	/// Opens the system browser at the authorization request URI. Overridable so tests can drive
-	/// the redirect without a real browser.
+	/// Opens the system browser at the authorization request URI.
 	/// </summary>
+	/// <remarks>
+	/// A supported extension point: override it to show the sign-in page some other way - a
+	/// specific browser, a private window, an embedded web view - or to drive the redirect in a
+	/// test, then register the derived type with <see cref="ApiExtensibility"/> before
+	/// <c>AddWeb</c>/<c>AddOidc</c> run. The loopback listener is already accepting requests when
+	/// this is called; an exception thrown here ends the flow.
+	/// </remarks>
 	/// <param name="requestUri">The authorization request to navigate to.</param>
 	/// <param name="ct">A cancellation token.</param>
 	/// <returns>A task that completes once the browser has been launched (not when sign-in ends).</returns>

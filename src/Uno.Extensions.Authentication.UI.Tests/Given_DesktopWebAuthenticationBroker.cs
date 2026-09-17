@@ -104,6 +104,95 @@ public class Given_DesktopWebAuthenticationBroker
 			"a posted response must complete the flow in the same shape as a query-string one");
 	}
 
+	/// <summary>
+	/// Any page in the system browser can POST to the loopback port (a urlencoded POST needs no
+	/// CORS preflight). A body past the limit must be neither buffered nor allowed to end the
+	/// flow: the real response, arriving afterwards, still completes it.
+	/// </summary>
+	[TestMethod]
+	public async Task When_OversizedFormPost_Then_RejectedAndFlowStillCompletes()
+	{
+		var broker = new TestBroker();
+		var callback = broker.GetCurrentApplicationCallbackUri();
+		using var http = new HttpClient();
+		using var oversized = new StringContent("junk=" + new string('x', 64 * 1024), System.Text.Encoding.ASCII, "application/x-www-form-urlencoded");
+		Task? browser = null;
+		broker.OnLaunch = (request, ct) =>
+		{
+			browser = Task.Run(async () =>
+			{
+				try
+				{
+					using var rejected = await http.PostAsync(callback, oversized, ct);
+					rejected.IsSuccessStatusCode.Should().BeFalse("an oversized body is not a sign-in response");
+				}
+				catch (HttpRequestException)
+				{
+					// Equally a rejection: the listener answered without draining the body, and
+					// the platform's HTTP stack reset the connection under the client.
+				}
+
+				(await http.GetAsync($"{callback}?code=stub-code", ct)).EnsureSuccessStatusCode();
+			}, ct);
+			return Task.CompletedTask;
+		};
+		using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+
+		var result = await broker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, callback, cts.Token);
+
+		await browser!;
+		result.ResponseStatus.Should().Be(WebAuthenticationStatus.Success);
+		result.ResponseData.Should().Be($"{callback}?code=stub-code");
+	}
+
+	/// <summary>
+	/// A double-clicked sign-in button: the second flow must fail with a message that says what
+	/// happened, not with a bind error on the port the first flow holds - and must not disturb it.
+	/// </summary>
+	[TestMethod]
+	public async Task When_FlowAlreadyInProgress_Then_SecondFlowRejectedAndFirstCompletes()
+	{
+		var broker = new TestBroker();
+		var callback = broker.GetCurrentApplicationCallbackUri();
+		using var http = new HttpClient();
+		var launched = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+		broker.OnLaunch = (request, ct) =>
+		{
+			launched.TrySetResult();
+			return Task.CompletedTask;
+		};
+		using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+
+		var first = broker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, callback, cts.Token);
+		await launched.Task.WaitAsync(cts.Token);
+
+		Func<Task> second = () => broker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, callback, cts.Token);
+		await second.Should().ThrowAsync<InvalidOperationException>().WithMessage("*already in progress*");
+
+		(await http.GetAsync($"{callback}?code=stub-code", cts.Token)).EnsureSuccessStatusCode();
+		(await first).ResponseStatus.Should().Be(WebAuthenticationStatus.Success);
+	}
+
+	/// <summary>
+	/// The default port is probed once and kept. If something else holds it when a flow starts,
+	/// every later flow used to fail the same way until the app restarted.
+	/// </summary>
+	[TestMethod]
+	public async Task When_DefaultPortTaken_Then_NextFlowPicksAnother()
+	{
+		var broker = new TestBroker();
+		var taken = broker.GetCurrentApplicationCallbackUri();
+		using var squatter = new System.Net.HttpListener();
+		squatter.Prefixes.Add($"http://{taken.Host}:{taken.Port}/");
+		squatter.Start();
+
+		Func<Task> act = () => broker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, taken, CancellationToken.None);
+		await act.Should().ThrowAsync<System.Net.HttpListenerException>();
+
+		broker.GetCurrentApplicationCallbackUri().Port.Should().NotBe(taken.Port,
+			"a default port that would not bind must not be handed out again");
+	}
+
 	[TestMethod]
 	public async Task When_RequestUriNotHttp_Then_Throws()
 	{
@@ -184,7 +273,7 @@ public class Given_DesktopWebAuthenticationBroker
 	}
 
 	/// <summary>
-	/// Spec 013 F12, empty branch: a redirect with neither query nor fragment (a bare logout
+	/// Spec 017 F12, empty branch: a redirect with neither query nor fragment (a bare logout
 	/// callback) must still complete rather than loop on the relay page.
 	/// </summary>
 	[TestMethod]
