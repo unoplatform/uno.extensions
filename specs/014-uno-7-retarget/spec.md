@@ -67,15 +67,28 @@ against Uno 6 still reference the `Uno` assembly, which 7.0 no longer ships. It 
 `CS0012: The type 'CoreDispatcher' is defined in an assembly that is not referenced ... 'Uno'`
 out of the `BindableTypeProviders` generator.
 
-| Surface | Blocked by | Upstream |
+| Surface | Blocked by | State |
 | --- | --- | --- |
-| Playground, TestHarness | `Uno.Toolkit.WinUI` 8.4.2, `Uno.Material`/`Uno.Themes.WinUI` 6.1.1 | `uno.toolkit.ui#1635`, `Uno.Themes#1722` |
-| RuntimeTests head | `Uno.Toolkit.WinUI`, via `Uno.Extensions.Navigation.Toolkit` | `uno.toolkit.ui#1635` |
-| The three `*.Markup` packages | `Uno.WinUI.Markup` — builds, but UNOB0020 says it will fail at runtime | `uno.csharpmarkup#906` |
+| Playground, TestHarness | `Uno.Toolkit.WinUI` 8.4.2, `Uno.Material`/`Uno.Themes.WinUI` 6.1.1 | Themes: resolved by `9.0.0-dev.15`. Toolkit: `uno.toolkit.ui#1635` builds every leg; waiting for a published `11.0.0-dev` package |
+| RuntimeTests head | `Uno.Toolkit.WinUI`, via `Uno.Extensions.Navigation.Toolkit` | Same Toolkit package |
+| The three `*.Markup` packages | `Uno.WinUI.Markup` 7.0.0-dev.9 (UNOB0020) | **Resolved**: C# Markup `7.0.0-dev.33` is built against Uno 7 |
 
-None of these can be worked around here: all three are locked to a pre-7.0 `Uno.WinUI` at the
-nuspec dependency-group level. The `*.Markup` packages are the subtle case — they build green, so
-only the UNOB0020 warning distinguishes "works" from "will throw on first use".
+Validated locally with the toolkit branch packed as `11.0.0-dev.local` and Uno.Themes `9.0.0-dev.15`:
+the RuntimeTests desktop head builds with 0 errors and no UNOB0020. The remaining step is bumping
+`UnoToolkitVersion` and `UnoThemesVersion` in `src/`, `samples/` and `testing/` once the package is
+published. Uno.UI.HotDesign has no Uno 7 build yet and itself depends on the Toolkit package, so the
+Debug heads either wait for it or register the window with `EnableHotReload()` (what the toolkit
+samples do).
+
+### Fixed along the way
+
+- CI pins the .NET SDK to `10.0.101`, the band `uno.check` 1.34.1 provisions `wasm-tools` for; on
+  `10.0.102` every `net10.0-ios` project failed `NETSDK1147` on Windows agents.
+- iOS lanes select Xcode 26.1.1: .NET for iOS 26.1 refuses Xcode 16.4.
+- The RuntimeTests head pins `Xamarin.AndroidX.Lifecycle.Process` 2.10.0.2 (NU1608 against the
+  `Lifecycle.Runtime` version Uno 7's AndroidX pins require).
+- `ModalFlyout` no longer carries `ios:`/`android:` templates using Toolkit's `NativeFramePresenter`,
+  which Toolkit 11 removes.
 
 ### Known, not yet addressed
 
