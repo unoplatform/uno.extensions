@@ -58,4 +58,16 @@ internal class MsalConfiguration
 	/// the session instead of being written unprotected to disk.
 	/// </summary>
 	public bool AllowUnprotectedTokenCacheFallback { get; init; }
+
+	/// <summary>
+	/// Desktop only: when the provider runs MsalCacheHelper's persistence self-check. Defaults to
+	/// <see cref="MsalCachePersistenceCheck.Auto"/>, which checks only the first time a cache is
+	/// persisted at a given location.
+	/// </summary>
+	/// <remarks>
+	/// Mostly a macOS concern. The check probes the keychain with an entry whose service name MSAL
+	/// randomizes on every run, so under <see cref="MsalCachePersistenceCheck.Always"/> a user is
+	/// asked to grant keychain access on every single launch and can never make the prompt stick.
+	/// </remarks>
+	public MsalCachePersistenceCheck VerifyCachePersistence { get; init; } = MsalCachePersistenceCheck.Auto;
 }

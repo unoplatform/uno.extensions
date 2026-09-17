@@ -103,6 +103,8 @@ Before the `WebAuthenticationProvider` is automatically built, there are platfor
 
 **Windows**: The `AddWeb()` extension method will initialize a `WebAuthenticator` to launch an out-of-process browser. This is done preemptively to support its usage within `WebAuthenticationProvider` during login and logout instead of the `WebAuthenticationBroker` used for other platforms.
 
+**Skia Desktop**: `AddWeb()` (and `AddOidc()`) automatically register a loopback `WebAuthenticationBroker`: the login page opens in the system browser and the redirect returns to a `localhost` listener, with URL-fragment responses relayed. See [Web Authentication: Platform support](xref:Uno.Extensions.Authentication.HowToWebAuthentication#platform-support).
+
 **Other platforms**: For a description of various subtle differences when displaying a web login prompt on multiple platforms, see [Web Authentication Broker](https://platform.uno/docs/articles/features/web-authentication-broker.html). The broker will only respond to the `PrefersEphemeralWebBrowserSession` setting value in iOS (versions 13.0+), while the other platforms will ignore it.
 
 ## Http Handlers

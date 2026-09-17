@@ -24,6 +24,37 @@ public class Given_AuthenticationService
 	}
 
 	[TestMethod]
+	public async Task When_LoginReturnsNoTokens_Then_PreviousSessionKept()
+	{
+		// A re-login that fails - cancelled, rejected by a state check, an identity-provider error -
+		// produced nothing to save. Saving that "nothing" clears the cache without raising LoggedOut,
+		// so the user is signed out of the session they still had and the app is never told.
+		var (service, tokens, provider, _) = Create();
+		await tokens.SaveAsync(provider.Name, SomeTokens, CancellationToken.None);
+		var loggedOut = 0;
+		service.LoggedOut += (_, _) => loggedOut++;
+
+		var result = await service.LoginAsync(dispatcher: null, credentials: null, cancellationToken: CancellationToken.None);
+
+		result.Should().BeFalse("the login itself did not succeed, whatever session is still cached");
+		(await tokens.GetAsync(CancellationToken.None)).Should().BeEquivalentTo(SomeTokens);
+		loggedOut.Should().Be(0);
+	}
+
+	[TestMethod]
+	public async Task When_LoginReturnsEmptyTokens_Then_PreviousSessionKept()
+	{
+		// An empty dictionary is "no tokens" too - the same rule RefreshAsync applies.
+		var (service, tokens, provider, _) = Create();
+		await tokens.SaveAsync(provider.Name, SomeTokens, CancellationToken.None);
+
+		var result = await service.LoginAsync(dispatcher: null, credentials: new Dictionary<string, string>(), cancellationToken: CancellationToken.None);
+
+		result.Should().BeFalse();
+		(await tokens.GetAsync(CancellationToken.None)).Should().BeEquivalentTo(SomeTokens);
+	}
+
+	[TestMethod]
 	public async Task When_RefreshReturnsNoTokens_Then_SignedOutAndLoggedOutRaised()
 	{
 		// The provider could not renew the session - an expired or revoked refresh token. The user

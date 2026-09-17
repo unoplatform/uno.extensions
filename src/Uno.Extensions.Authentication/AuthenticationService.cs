@@ -58,6 +58,16 @@ internal class AuthenticationService : IAuthenticationService
 		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Attempting to login");
 		var tokens = await authProvider.LoginAsync(dispatcher, credentials, ct);
 
+		if (tokens is not { Count: > 0 })
+		{
+			// The sign-in produced nothing to save: the user backed out, the flow timed out, or the
+			// response was rejected. Saving that would clear the cache - without raising Cleared, so
+			// no LoggedOut either - and sign the user out of a session they still have. The login
+			// failed; whatever was cached before it stands.
+			if (_logger.IsEnabled(LogLevel.Information)) _logger.LogInformationMessage($"Login produced no tokens; any existing session is kept");
+			return false;
+		}
+
 		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Login complete, saving tokens");
 		await _tokens.SaveAsync(authProvider.Name, tokens, ct);
 

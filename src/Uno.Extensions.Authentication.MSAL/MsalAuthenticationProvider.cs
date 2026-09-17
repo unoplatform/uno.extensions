@@ -1,6 +1,8 @@
 #if WINDOWS
 using Microsoft.Identity.Client.Broker;
 #endif
+using System.Diagnostics;
+using System.Globalization;
 using Uno.Extensions.Logging;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 #if UNO_EXT_MSAL
@@ -178,8 +180,9 @@ internal record MsalAuthenticationProvider(
 
 			// No token means "not signed in", not "signed in with an empty token": TokenCache keys
 			// off the entry's presence, not its value, so storing string.Empty here would leave
-			// IsAuthenticated reporting true with nothing to send. Returning default clears the
-			// cache instead. See InternalRefreshAsync for the path this actually happens on.
+			// IsAuthenticated reporting true with nothing to send. Returning default makes
+			// AuthenticationService report a failed login and save nothing. See
+			// InternalRefreshAsync for the path this actually happens on.
 			return TokensOrNull(result);
 		}
 		catch (OperationCanceledException)
@@ -335,26 +338,34 @@ internal record MsalAuthenticationProvider(
 
 	private Task<bool>? _setupStorageTask;
 
+	// Shared by every `with` copy of this record, which is the point: see MsalCacheWriteWatchdog.
+	private readonly MsalCacheWriteWatchdog _writeWatchdog = new(ProviderLogger);
+
 	private async ValueTask SetupStorage(CancellationToken cancellationToken)
 	{
 		// Retry on a later call if the previous attempt failed (e.g. the keychain was locked
-		// during the first login); latch only a successful setup or a deterministic skip.
-		var setup = _setupStorageTask;
-		if (setup is null || (setup.IsCompleted && (!setup.IsCompletedSuccessfully || !setup.Result)))
+		// during the first login) or the write watchdog found a write the store swallowed; latch
+		// only a successful setup or a deterministic skip. Racy by design: the worst outcome of two
+		// callers seeing the same stale task is one redundant setup. A watchdog-requested setup
+		// runs the persistence check whatever the mode, and either recovers or takes the
+		// AllowUnprotectedTokenCacheFallback path.
+		var resetupRequested = _writeWatchdog.TakeResetupRequest();
+		var setup = Volatile.Read(ref _setupStorageTask);
+		if (resetupRequested || setup is null || (setup.IsCompleted && (!setup.IsCompletedSuccessfully || !setup.Result)))
 		{
-			_setupStorageTask = setup = SetupStorageCore(cancellationToken);
+			_setupStorageTask = setup = SetupStorageCore(resetupRequested, cancellationToken);
 		}
 		await setup.ConfigureAwait(false);
 	}
 
-	private async Task<bool> SetupStorageCore(CancellationToken cancellationToken)
+	private async Task<bool> SetupStorageCore(bool forcePersistenceCheck, CancellationToken cancellationToken)
 	{
 		try
 		{
 #if UNO_EXT_MSAL_BROWSER
 			return SetupBrowserStorage();
 #else
-			return await SetupDesktopStorage(cancellationToken).ConfigureAwait(false);
+			return await SetupDesktopStorage(forcePersistenceCheck, cancellationToken).ConfigureAwait(false);
 #endif
 		}
 		catch (OperationCanceledException)
@@ -454,7 +465,7 @@ internal record MsalAuthenticationProvider(
 	/// file, falling back to an unprotected file only when the app opted in. Mobile targets return
 	/// immediately: MSAL.NET persists its cache natively there.
 	/// </summary>
-	private async Task<bool> SetupDesktopStorage(CancellationToken cancellationToken)
+	private async Task<bool> SetupDesktopStorage(bool forcePersistenceCheck, CancellationToken cancellationToken)
 	{
 		if (OperatingSystem.IsAndroid() || OperatingSystem.IsIOS() || OperatingSystem.IsMacCatalyst())
 		{
@@ -478,9 +489,10 @@ internal record MsalAuthenticationProvider(
 			return false;
 		}
 
+		var filePath = Path.Combine(folderPath, CacheFileName);
 		if (Logger.IsEnabled(LogLevel.Trace))
 		{
-			Logger.LogTraceMessage($"MSAL cache {Path.Combine(folderPath, CacheFileName)}");
+			Logger.LogTraceMessage($"MSAL cache {filePath}");
 		}
 
 		var config = Configuration.Get(Name);
@@ -495,11 +507,21 @@ internal record MsalAuthenticationProvider(
 			MsalStorageDefaults.ForCurrentOS());
 		Settings?.Store?.Invoke(builder);
 		var storage = builder.Build();
+
+		// A re-setup starts from nothing attached: if it fails, "continuing with in-memory token
+		// cache" below has to be true, not said over a helper the previous setup left registered.
+		ReplaceRegisteredCacheHelper(null);
 		try
 		{
-			var cacheHelper = await MsalCacheHelper.CreateAsync(storage).ConfigureAwait(false);
-			cacheHelper.VerifyPersistence();
-			cacheHelper.RegisterCache(_pca!.UserTokenCache);
+			var cacheHelper = await MsalCacheHelper.CreateAsync(storage, CacheHelperTrace()).ConfigureAwait(false);
+			var probed = VerifyPersistenceIfNeeded(cacheHelper, config, filePath, forcePersistenceCheck);
+			ReplaceRegisteredCacheHelper(cacheHelper);
+			if (!probed)
+			{
+				await VerifyReadableAsync().ConfigureAwait(false);
+			}
+
+			ArmWriteVerification(filePath);
 		}
 		catch (MsalCachePersistenceException ex)
 		{
@@ -524,9 +546,13 @@ internal record MsalAuthenticationProvider(
 			var fallback = fallbackBuilder
 				.WithUnprotectedFile()
 				.Build();
-			var cacheHelper = await MsalCacheHelper.CreateAsync(fallback).ConfigureAwait(false);
+			var cacheHelper = await MsalCacheHelper.CreateAsync(fallback, CacheHelperTrace()).ConfigureAwait(false);
+			// Always verified, whatever VerifyCachePersistence says: this path only runs because the
+			// protected store already failed, and an ordinary file carries none of the cost that
+			// makes the check worth skipping on the keychain.
 			cacheHelper.VerifyPersistence();
-			cacheHelper.RegisterCache(_pca!.UserTokenCache);
+			ReplaceRegisteredCacheHelper(cacheHelper);
+			ArmWriteVerification(Path.Combine(folderPath, UnprotectedCacheFileName));
 		}
 
 		if (Logger.IsEnabled(LogLevel.Trace))
@@ -535,6 +561,155 @@ internal record MsalAuthenticationProvider(
 		}
 
 		return true;
+	}
+
+	/// <summary>
+	/// Runs <see cref="MsalCacheHelper.VerifyPersistence"/> when the configured
+	/// <see cref="MsalConfiguration.VerifyCachePersistence"/> mode calls for it.
+	/// </summary>
+	/// <remarks>
+	/// The check costs a write, a read and a delete against the platform's secure store. On macOS it
+	/// also cannot ever be granted once and for all: MSAL probes with a keychain entry whose service
+	/// name carries a fresh <see cref="Guid"/> every run
+	/// (<c>MacKeychainAccessor.CreateForPersistenceValidation</c>), so the OS treats each launch as a
+	/// first-ever access and re-prompts no matter how many times the user answers "Always Allow".
+	/// Skipping it once the store has demonstrably worked is what keeps a signed-in user from being
+	/// asked again on every start.
+	/// </remarks>
+	/// <returns>Whether the probe ran.</returns>
+	private bool VerifyPersistenceIfNeeded(MsalCacheHelper cacheHelper, MsalConfiguration? config, string cacheFilePath, bool force)
+	{
+		var mode = config?.VerifyCachePersistence ?? MsalCachePersistenceCheck.Auto;
+		// Forced when the write watchdog asked for this setup: the cache file a previous run left
+		// behind is exactly the evidence that has just been shown not to hold any more.
+		if (!force && !MsalStorageDefaults.ShouldVerifyPersistence(mode, cacheAlreadyPersisted: File.Exists(cacheFilePath)))
+		{
+			if (Logger.IsEnabled(LogLevel.Trace))
+			{
+				Logger.LogTraceMessage($"Skipping the token-cache persistence check ({mode}); {cacheFilePath} shows the store already accepted a write");
+			}
+
+			return false;
+		}
+
+		cacheHelper.VerifyPersistence();
+		return true;
+	}
+
+	/// <summary>
+	/// Confirms the store can still be read when the probe was skipped. The cache file only proves
+	/// a past write; the secure store behind it may have gone away since (a Linux session with no
+	/// keyring daemon, a macOS keychain grant the user revoked), and <c>MsalCacheHelper</c> rethrows
+	/// read failures out of the first cache access - which would otherwise be a startup
+	/// <c>RefreshAsync</c>, past every fallback.
+	/// </summary>
+	/// <remarks>
+	/// <c>GetAccountsAsync</c> is the first cache read of any sign-in, so this moves that read to
+	/// where its failure still lands on the <see cref="MsalCachePersistenceException"/> path rather
+	/// than adding one: no extra secure-store round-trip, no extra prompt.
+	/// </remarks>
+	private async Task VerifyReadableAsync()
+	{
+		try
+		{
+			await _pca!.GetAccountsAsync().ConfigureAwait(false);
+		}
+		catch (MsalException ex)
+		{
+			// MSAL's own failure - a client or broker error - is no verdict on the store, and must
+			// not be turned into one: with AllowUnprotectedTokenCacheFallback set, a persistence
+			// failure moves the token cache to a plaintext file.
+			if (Logger.IsEnabled(LogLevel.Debug))
+			{
+				Logger.LogDebugMessage($"Reading accounts failed for a reason other than the token-cache store [{ex.ErrorCode}]; storage setup continues");
+			}
+		}
+		catch (Exception ex) when (ex is not OperationCanceledException)
+		{
+			// What MsalCacheHelper rethrows from a failed read is whatever the platform accessor
+			// threw (a keychain, libsecret or DPAPI error), so there is no narrower type to name.
+			ReplaceRegisteredCacheHelper(null);
+			throw new MsalCachePersistenceException("The persisted token cache could not be read back from the secure store", ex);
+		}
+	}
+
+	/// <summary>The helper currently registered on the user token cache, if any.</summary>
+	private MsalCacheHelper? _registeredCacheHelper;
+
+	/// <summary>
+	/// Registers <paramref name="cacheHelper"/> on the user token cache in place of whichever helper
+	/// an earlier storage setup registered; <c>null</c> just detaches that one.
+	/// </summary>
+	private void ReplaceRegisteredCacheHelper(MsalCacheHelper? cacheHelper)
+	{
+		Interlocked.Exchange(ref _registeredCacheHelper, cacheHelper)?.UnregisterCache(_pca!.UserTokenCache);
+		cacheHelper?.RegisterCache(_pca!.UserTokenCache);
+	}
+
+	/// <summary>
+	/// Routes <c>MsalCacheHelper</c>'s own diagnostics into the provider's logger. The helper logs
+	/// - and otherwise swallows - the exception a rejected write failed with, which is the one line
+	/// that names the keychain or keyring cause when the write watchdog reports a missing file.
+	/// </summary>
+	private TraceSource CacheHelperTrace()
+	{
+		var trace = new TraceSource("Uno.Extensions.Authentication.MSAL.CacheHelper", SourceLevels.Warning);
+		trace.Listeners.Clear();
+		trace.Listeners.Add(new LoggerTraceListener(Logger));
+		return trace;
+	}
+
+	private sealed class LoggerTraceListener(ILogger logger) : TraceListener
+	{
+		public override void Write(string? message)
+		{
+		}
+
+		public override void WriteLine(string? message)
+		{
+		}
+
+		public override void TraceEvent(TraceEventCache? eventCache, string source, TraceEventType eventType, int id, string? message)
+		{
+			var level = eventType switch
+			{
+				TraceEventType.Critical or TraceEventType.Error => LogLevel.Error,
+				TraceEventType.Warning => LogLevel.Warning,
+				_ => LogLevel.Debug,
+			};
+
+			if (logger.IsEnabled(level))
+			{
+				logger.Log(level, "MsalCacheHelper: {Message}", message);
+			}
+		}
+
+		public override void TraceEvent(TraceEventCache? eventCache, string source, TraceEventType eventType, int id, string? format, params object?[]? args) =>
+			TraceEvent(eventCache, source, eventType, id, format is not null && args is { Length: > 0 } ? string.Format(CultureInfo.InvariantCulture, format, args) : format);
+	}
+
+	/// <summary>
+	/// Arms the one-shot check that the next cache write actually reaches
+	/// <paramref name="cacheFilePath"/>; see <see cref="MsalCacheWriteWatchdog"/>.
+	/// </summary>
+	/// <remarks>
+	/// Safe alongside <c>RegisterCache</c>, which occupies the *synchronous*
+	/// <c>SetBeforeAccess</c>/<c>SetAfterAccess</c> slots: <c>TokenCache.OnAfterAccessAsync</c>
+	/// invokes the synchronous callback and then the asynchronous one, so the watchdog observes the
+	/// state the helper's own write left behind rather than displacing it. Setting the callback again
+	/// on a re-setup replaces it with an identical one.
+	/// </remarks>
+	private void ArmWriteVerification(string cacheFilePath)
+	{
+		// The watchdog, not this record: a callback that captured `this` would stay bound to
+		// whichever `with` copy registered it.
+		var watchdog = _writeWatchdog;
+		watchdog.Arm(cacheFilePath);
+		_pca!.UserTokenCache.SetAfterAccessAsync(args =>
+		{
+			watchdog.OnCacheAccessed(args.HasStateChanged);
+			return Task.CompletedTask;
+		});
 	}
 #endif
 

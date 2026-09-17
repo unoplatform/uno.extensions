@@ -3,9 +3,9 @@
     "path": "Uno.Extensions.sln",
     "projects": [
       "src\\Uno.Extensions.Authentication.MSAL.Tests\\Uno.Extensions.Authentication.MSAL.Tests.csproj",
+      "src\\Uno.Extensions.Authentication.Tests\\Uno.Extensions.Authentication.Tests.csproj",
       "src\\Uno.Extensions.Authentication.MSAL\\Uno.Extensions.Authentication.MSAL.WinUI.csproj",
       "src\\Uno.Extensions.Authentication.Oidc\\Uno.Extensions.Authentication.Oidc.WinUI.csproj",
-      "src\\Uno.Extensions.Authentication.Tests\\Uno.Extensions.Authentication.Tests.csproj",
       "src\\Uno.Extensions.Authentication.UI\\Uno.Extensions.Authentication.WinUI.csproj",
       "src\\Uno.Extensions.Authentication\\Uno.Extensions.Authentication.csproj",
       "src\\Uno.Extensions.Configuration.Tests\\Uno.Extensions.Configuration.Tests.csproj",
@@ -17,6 +17,7 @@
       "src\\Uno.Extensions.Hosting.UI\\Uno.Extensions.Hosting.WinUI.csproj",
       "src\\Uno.Extensions.Hosting\\Uno.Extensions.Hosting.csproj",
       "src\\Uno.Extensions.Http.Kiota\\Uno.Extensions.Http.Kiota.csproj",
+      "src\\Uno.Extensions.Http.Tests\\Uno.Extensions.Http.Tests.csproj",
       "src\\Uno.Extensions.Http.Refit\\Uno.Extensions.Http.Refit.csproj",
       "src\\Uno.Extensions.Http.UI\\Uno.Extensions.Http.WinUI.csproj",
       "src\\Uno.Extensions.Http\\Uno.Extensions.Http.csproj",
