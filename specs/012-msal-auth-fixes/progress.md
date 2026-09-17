@@ -170,6 +170,21 @@ and logout does nothing."* Both symptoms, both platforms, one root cause.
   spec 011 item 5 (all accounts removed + serialized cache deleted); see
   `specs/011-wasm-msal-token-cache/progress.md`.
 
+## ID token exposed for in-app authorization (2026-09-16)
+
+- [x] **The provider dropped the ID token.** `TokensOrNull` copied only `AccessToken` into the
+  Uno token cache, so `ITokenCache.TokenAsync(IdTokenKey)` was always empty for MSAL while the
+  OIDC provider populates it. A B2C app had no way to read the user's claims (custom attributes,
+  roles, user flow) to gate navigation. Fixed by storing `AuthenticationResult.IdToken` under
+  `TokenCacheExtensions.IdTokenKey` next to the access token. Red/green:
+  `Given_MsalAuthentication.When_Login_Then_IdTokenCached` (desktop head); the token-leak guard
+  now also asserts the ID token never reaches the logs. Review panel added: the ID token is also
+  asserted after a silent refresh (`SaveAsync` clears and rewrites, so a refresh result without
+  one would drop it), and `When_TokenResponseHasNoAccessToken_Then_NotAuthenticated` pins the
+  B2C openid-only case the docs describe (`StubEntra.OmitAccessTokens`). Docs: B2C authority / scope / broker /
+  single-user-flow notes and a "Reading the user's claims" section in
+  `doc/Learn/Authentication/HowTo-MsalAuthentication.md`.
+
 ## Follow-ups (not this change)
 
 - ~~REGRESSION found 2026-08-19, spec'd as `specs/010-msal-skia-mobile-runtime-dispatch/`~~ —

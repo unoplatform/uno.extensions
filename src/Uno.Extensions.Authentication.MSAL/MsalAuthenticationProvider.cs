@@ -327,10 +327,26 @@ internal record MsalAuthenticationProvider(
 	/// access token - which <c>AuthenticationService</c> turns into a cleared cache and a
 	/// not-authenticated result.
 	/// </summary>
-	private static IDictionary<string, string>? TokensOrNull(AuthenticationResult? result) =>
-		result?.AccessToken is { Length: > 0 } accessToken
-			? new Dictionary<string, string> { { TokenCacheExtensions.AccessTokenKey, accessToken } }
-			: null;
+	/// <remarks>
+	/// The ID token rides along under <see cref="TokenCacheExtensions.IdTokenKey"/>, as the OIDC
+	/// provider does: it is the only place an app can read the signed-in user's claims (B2C custom
+	/// attributes, roles, ...) for in-app authorization.
+	/// </remarks>
+	private static IDictionary<string, string>? TokensOrNull(AuthenticationResult? result)
+	{
+		if (result?.AccessToken is not { Length: > 0 } accessToken)
+		{
+			return null;
+		}
+
+		var tokens = new Dictionary<string, string> { { TokenCacheExtensions.AccessTokenKey, accessToken } };
+		if (result.IdToken is { Length: > 0 } idToken)
+		{
+			tokens[TokenCacheExtensions.IdTokenKey] = idToken;
+		}
+
+		return tokens;
+	}
 
 
 	private Task<bool>? _setupStorageTask;
