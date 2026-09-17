@@ -176,11 +176,7 @@ internal record MsalAuthenticationProvider(
 
 			var result = await AcquireTokenAsync(dispatcher, cancellationToken);
 
-			// No token means "not signed in", not "signed in with an empty token": TokenCache keys
-			// off the entry's presence, not its value, so storing string.Empty here would leave
-			// IsAuthenticated reporting true with nothing to send. Returning default clears the
-			// cache instead. See InternalRefreshAsync for the path this actually happens on.
-			return TokensOrNull(result);
+			return await TokensOrSignOutAsync(result);
 		}
 		catch (OperationCanceledException)
 		{
@@ -209,6 +205,25 @@ internal record MsalAuthenticationProvider(
 	{
 		await SetupStorage(cancellationToken);
 
+		var removed = await RemoveAccountsAsync();
+
+		if (removed == 0)
+		{
+			Logger.LogInformation("Unable to find any accounts to log out of.");
+		}
+		else if (Logger.IsEnabled(LogLevel.Information))
+		{
+			Logger.LogInformationMessage($"Removed {removed} account(s), user successfully logged out");
+		}
+
+		return true;
+	}
+
+	/// <summary>
+	/// Removes every MSAL account and the serialized cache; returns how many accounts went.
+	/// </summary>
+	private async ValueTask<int> RemoveAccountsAsync()
+	{
 		// Every account: a survivor keeps its refresh token and silent sign-in picks it up again.
 		// ToArray first: RemoveAsync mutates the cache this enumerable reads from.
 		var accounts = (await _pca!.GetAccountsAsync()).ToArray();
@@ -234,16 +249,7 @@ internal record MsalAuthenticationProvider(
 			await ClearTokenCacheStoreAsync(CancellationToken.None);
 		}
 
-		if (removed == 0)
-		{
-			Logger.LogInformation("Unable to find any accounts to log out of.");
-		}
-		else if (Logger.IsEnabled(LogLevel.Information))
-		{
-			Logger.LogInformationMessage($"Removed {removed} account(s), user successfully logged out");
-		}
-
-		return true;
+		return removed;
 	}
 
 	/// <summary>
@@ -295,10 +301,7 @@ internal record MsalAuthenticationProvider(
 
 		try
 		{
-			// null when the refresh token expired or was revoked (MsalUiRequiredException): the user
-			// has to sign in again. An empty access token here would leave TokenCache.HasTokenAsync
-			// - which counts keys, not values - reporting authenticated with nothing to send.
-			return TokensOrNull(await AcquireSilentTokenAsync(cancellationToken));
+			return await TokensOrSignOutAsync(await AcquireSilentTokenAsync(cancellationToken));
 		}
 		catch (OperationCanceledException)
 		{
@@ -320,6 +323,34 @@ internal record MsalAuthenticationProvider(
 			}
 			return await Tokens.GetAsync(cancellationToken);
 		}
+	}
+
+	/// <summary>
+	/// <see cref="TokensOrNull"/>, signing out of MSAL as well when it is <c>null</c>.
+	/// </summary>
+	/// <remarks>
+	/// No access token means "not signed in", not "signed in with an empty token": TokenCache counts
+	/// keys, not values, so storing <c>string.Empty</c> would leave IsAuthenticated true with nothing
+	/// to send. But MSAL has already cached the account and its refresh token by the time the result
+	/// gets here (Azure AD B2C with only openid / offline_access scopes is the usual cause), so
+	/// returning <c>null</c> alone leaves a redeemable refresh token in storage - cleartext
+	/// localStorage on WebAssembly - for a user the app reports as signed out, and makes every later
+	/// sign-in redeem it silently before prompting again.
+	/// </remarks>
+	private async ValueTask<IDictionary<string, string>?> TokensOrSignOutAsync(AuthenticationResult? result)
+	{
+		if (TokensOrNull(result) is { } tokens)
+		{
+			return tokens;
+		}
+
+		if (Logger.IsEnabled(LogLevel.Warning))
+		{
+			Logger.LogWarning("MSAL returned no access token (scopes: {Scopes}); treating the user as not signed in and removing the cached account. Request an API scope - openid / offline_access alone yield only an ID token", ToJson(_scopes));
+		}
+
+		await RemoveAccountsAsync();
+		return null;
 	}
 
 	/// <summary>
