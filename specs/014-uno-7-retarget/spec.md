@@ -110,14 +110,15 @@ Fallout fixed:
 
 ### Runtime-test state
 
-The desktop lane's remaining failures are **not** caused by the retarget. Building the merge base
-(`945312137`, Uno 6) in a worktree and running the same engine filters gives the same failures test
-for test: `Given_ChainedGetDataAsync` (7 of 13), the three `*_ComboBox` cases and
+**Run the runtime tests on Linux, not on a Windows host.** CI runs every runtime-test lane on
+`ubuntu-24.04` under xvfb, and on main all of them are green. A Windows host running the Win32 Skia
+backend is a different story: 12 desktop tests fail there on the Uno 6 merge base (`945312137`) just
+as they do on this branch — `Given_ChainedGetDataAsync` (7 of 13), the three `*_ComboBox` cases and
 `When_PreselectedItem_SelectedItems_ListView` in `Given_BindableCollection_Selection`,
 `Given_NavigatorStartup.When_DefaultRouteConfigured_Then_NavigationSucceeds`, and
-`Given_RouteNotifier.When_NavigateBack_Then_RouteChanged_Has_Route`. They need their own pass; the
-pipeline's `RuntimeTestsFilter` variable lives outside this repo, so which of them CI actually runs
-is not visible from here.
+`Given_RouteNotifier.When_NavigateBack_Then_RouteChanged_Has_Route`. Identical on both sides, so they
+are host-specific, not retarget fallout — but it does mean a local Windows run is not a usable signal
+for this lane.
 
 Two things did change:
 
@@ -128,6 +129,13 @@ Two things did change:
   `Given_ChainedGetDataAsync` opens one `new Window()` per test and never closes it, so the process
   dies mid-class with no results file at all — a hard job failure rather than a test failure. Whether
   the X11 host on a headless agent takes the same path is unverified. Recorded for upstream.
+- **XAML hot reload applies nothing on a Windows host.** All 16 `*ViaXamlHR*` cases fail while every
+  C#-only hot-reload case passes. The delta is compiled and sent, `ClientHotReloadProcessor` logs
+  `Deltas applied.`, then `HotReloadAgent.GetMetadataUpdateTypes` finds none of the updated types in
+  the running app and `UpdateApplication` is called with an empty `Type[]` — "Invalid metadata update,
+  ignore it." — so the visual tree is never re-applied. This is Uno core, before any Hot Design code
+  could participate, which contradicts the old pin comment claiming Hot Design's dev-server processor
+  is what applies XAML hot reload. Same Windows-host caveat as above: confirm against the CI lane.
 
 ### Known, not yet addressed
 
