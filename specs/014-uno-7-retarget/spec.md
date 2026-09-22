@@ -45,7 +45,7 @@ rather than copying them between repos — the sibling repos move on their own t
 ### Done — the package surface is green
 
 `Uno.Extensions-packageonly.slnf` builds with **0 errors** and produces all 38 packages, and the
-whole unit-test layer passes (1,608 tests, including 1,431 Reactive tests).
+whole unit-test layer passes (1,613 tests, including 1,433 Reactive tests).
 
 Fallout fixed:
 
@@ -60,25 +60,43 @@ Fallout fixed:
 - NU1510 on `System.Collections.Immutable` / `System.Text.Json` /
   `System.Threading.Tasks.Extensions`, which are framework-provided on net10.0.
 
-### Blocked upstream — app heads and UI tests
+### Done — the app heads and UI tests build
 
-Every app head and UI-test surface fails to build, all through the same root cause: packages built
-against Uno 6 still reference the `Uno` assembly, which 7.0 no longer ships. It surfaces as
-`CS0012: The type 'CoreDispatcher' is defined in an assembly that is not referenced ... 'Uno'`
-out of the `BindableTypeProviders` generator.
+The upstream block is cleared: `Uno.Toolkit.WinUI` `11.0.0-dev.90` and `Uno.Material`/`Uno.Themes.WinUI`
+`9.0.0-dev.16` are published against `Uno.WinUI` 7.0.0-dev.701, which is exactly what `global.json`
+pins. Both stay pinned explicitly — `Uno.Sdk.Private` 7.0.0-dev.701 still defaults its Toolkit group
+to 9.1.0-dev.2 and Themes to 7.1.0-dev.1, both on the Uno 6 line.
 
-| Surface | Blocked by | State |
-| --- | --- | --- |
-| Playground, TestHarness | `Uno.Toolkit.WinUI` 8.4.2, `Uno.Material`/`Uno.Themes.WinUI` 6.1.1 | Themes: resolved by `9.0.0-dev.15`. Toolkit: `uno.toolkit.ui#1635` builds every leg; waiting for a published `11.0.0-dev` package |
-| RuntimeTests head | `Uno.Toolkit.WinUI`, via `Uno.Extensions.Navigation.Toolkit` | Same Toolkit package |
-| The three `*.Markup` packages | `Uno.WinUI.Markup` 7.0.0-dev.9 (UNOB0020) | **Resolved**: C# Markup `7.0.0-dev.33` is built against Uno 7 |
+Verified locally: `Uno.Extensions-runtimetests.slnf` (desktop), `Playground.sln` (desktop + Windows),
+`TestHarness.sln` (desktop + Windows), and the Android head of every app all build with 0 errors. The
+wasm head compiles clean; only the native-asset link step needs the `wasm-tools` workload, which CI
+installs. iOS is not buildable on a Windows host.
 
-Validated locally with the toolkit branch packed as `11.0.0-dev.local` and Uno.Themes `9.0.0-dev.15`:
-the RuntimeTests desktop head builds with 0 errors and no UNOB0020. The remaining step is bumping
-`UnoToolkitVersion` and `UnoThemesVersion` in `src/`, `samples/` and `testing/` once the package is
-published. Uno.UI.HotDesign has no Uno 7 build yet and itself depends on the Toolkit package, so the
-Debug heads either wait for it or register the window with `EnableHotReload()` (what the toolkit
-samples do).
+Fallout fixed:
+
+- **Hot Design and MCP support are off repo-wide** (`UnoDisableHotDesign` / `UnoDisableMCPSupport` in
+  the root `Directory.Build.props`). Neither has an Uno 7 build: `Uno.UI.HotDesign` 1.23.0-dev.174 is
+  net9.0 against Uno 6.8 and drags `Uno.Toolkit.WinUI` 9.1.3 with it, and `Uno.UI.App.Mcp` 2.0.0-dev.4
+  is net9.0 against SkiaSharp 3.119 — its `GlobalStaticResources` initializer threw
+  `FileNotFoundException` for `SkiaSharp.Views.Windows` before `OnLaunched` ran, killing the
+  runtime-test host at startup. Disabling Hot Design does **not** cost XAML hot reload: the dev-server
+  processor that applies it is Uno's own, and the hot-reload suite still passes without it.
+- **The runtime-test engine moves to 2.0.0-dev.81.** Uno 7 moved `PointerPointProperties` from
+  `Windows.UI.Input` to `Microsoft.UI.Input`, and dev.79's `InputInjectorHelper` hard-casts to the
+  Windows type. That cast runs in `CleanupPointers` after every test, so the desktop lane reported 136
+  failures over 105 cases. dev.81 reads the button states reflectively and is otherwise identical;
+  dev.85 and later require MSTest 4.x, which this repo is not on.
+- **Android heads override `CreateHost()`.** `Microsoft.UI.Xaml.NativeApplication` is abstract in
+  Uno 7 and `CreateHost()` is the Android equivalent of `Main` (Android has no managed entry point).
+  `ConfigureUniversalImageLoader` goes with it — `Com.Nostra13.Universalimageloader` is the non-Skia
+  image pipeline and is no longer referenced.
+- **TestHarness loses its platform key-value stores.** `Uno.Extensions.Storage.UI` builds for net10.0
+  and net10.0-windows only, so `KeyStoreKeyValueStorage` / `KeyChainKeyValueStorage` exist in no
+  assembly a head can see. `TestingKeyValueStorage` now derives from `ApplicationDataKeyValueStorage`
+  everywhere, which is what the Skia mobile heads already resolved at runtime.
+- **AndroidX pins rise to the floors MAUI 10.0.90 requires** (Browser 1.8.0.11, Navigation 2.9.2.1,
+  SwipeRefreshLayout 1.1.0.29, Material 1.12.0.5); below them the MauiEmbedding Android head failed
+  NU1605 on seven packages.
 
 ### Fixed along the way
 
@@ -90,6 +108,27 @@ samples do).
 - `ModalFlyout` no longer carries `ios:`/`android:` templates using Toolkit's `NativeFramePresenter`,
   which Toolkit 11 removes.
 
+### Runtime-test state
+
+The desktop lane's remaining failures are **not** caused by the retarget. Building the merge base
+(`945312137`, Uno 6) in a worktree and running the same engine filters gives the same failures test
+for test: `Given_ChainedGetDataAsync` (7 of 13), the three `*_ComboBox` cases and
+`When_PreselectedItem_SelectedItems_ListView` in `Given_BindableCollection_Selection`,
+`Given_NavigatorStartup.When_DefaultRouteConfigured_Then_NavigationSucceeds`, and
+`Given_RouteNotifier.When_NavigateBack_Then_RouteChanged_Has_Route`. They need their own pass; the
+pipeline's `RuntimeTestsFilter` variable lives outside this repo, so which of them CI actually runs
+is not visible from here.
+
+Two things did change:
+
+- `Given_Region.When_ResetLogger_WithDifferentInstance_Then_CurrentLoggerKept` is fixed here.
+  `NullLoggerFactory.CreateLogger(name)` returns the shared `NullLogger.Instance` whatever name it is
+  given, so the test's "running" and "stopped" host loggers were the same object.
+- **Uno 7 segfaults on the 9th window** on a Win32 host whose GPU cannot create a Vulkan device.
+  `Given_ChainedGetDataAsync` opens one `new Window()` per test and never closes it, so the process
+  dies mid-class with no results file at all — a hard job failure rather than a test failure. Whether
+  the X11 host on a headless agent takes the same path is unverified. Recorded for upstream.
+
 ### Known, not yet addressed
 
 - **BC14** — `UserControl`/`Page` reparent onto `Control`, so
@@ -100,9 +139,11 @@ samples do).
 - **BC50** — `PrimaryLanguageOverride` is restart-to-apply, which is exactly what
   `LocalizationService.SetCurrentCultureAsync` depends on for live language switching. Produces no
   compile signal; needs a runtime test to confirm.
-- `Uno.UI.RuntimeTests.Engine` 2.0.0-dev.79 breaks MSIX packaging on the Windows leg of the
-  RuntimeTests head (APPX0002, an absolute path concatenated into a relative one). CI does not build
-  that leg.
+- `Uno.UI.RuntimeTests.Engine` breaks MSIX packaging on the Windows leg of the RuntimeTests head
+  (APPX0002, an absolute path concatenated into a relative one). CI does not build that leg.
+- `Uno.Extensions.Reactive` still ships a `Uno.Toolkit` 7.0.7 dependency with no visible consumer in
+  the package. It resolves upward next to Toolkit 11, but it is a stale floor to carry into a 7.0
+  release.
 - Version policy for the 7.0 line is unsettled. `version.json` still reads `7.4-dev.{height}`;
   sibling repos took a major bump (Themes to 9.0, Toolkit to 11.0). This is a release decision.
 
