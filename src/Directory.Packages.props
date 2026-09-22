@@ -75,7 +75,14 @@
     <PackageVersion Include="Uno.Extensions.Markup.WinUI" Version="7.0.0-dev.33" />
     <PackageVersion Include="Uno.Roslyn" Version="1.3.0-dev.12" />
     <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="$(UnoVersion)" />
-    <PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="2.0.0-dev.79" />
+    <!--
+      Uno 7 moved PointerPointProperties from Windows.UI.Input to Microsoft.UI.Input, and the
+      engine's InputInjectorHelper hard-cast to the Windows type. That cast runs in CleanupPointers
+      after *every* test, so on 2.0.0-dev.79 the desktop lane reported 136 failures over 105 cases.
+      dev.81 reads the button states reflectively and is otherwise identical to dev.79; dev.85 and
+      later additionally require MSTest 4.x, which this repo is not on.
+    -->
+    <PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="2.0.0-dev.81" />
     <PackageVersion Include="Uno.WinUI" Version="$(UnoVersion)" />
     <PackageVersion Include="Uno.WinUI.DevServer" Version="$(UnoVersion)" />
     <PackageVersion Include="Uno.WinUI.Markup" Version="7.0.0-dev.33" />
