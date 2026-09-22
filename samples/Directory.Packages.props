@@ -10,6 +10,8 @@
 		<MicrosoftIdentityClientVersion>4.87.0</MicrosoftIdentityClientVersion>
 		<CommunityToolkitMvvmVersion>8.4.2</CommunityToolkitMvvmVersion>
 		<PrismVersion>9.0.537</PrismVersion>
+		<!-- Browser, Navigation, SwipeRefreshLayout and Material are floors Microsoft.Maui.Core
+		     10.0.90 requires; below them the MauiEmbedding android head fails NU1605. -->
 		<AndroidMaterialVersion>1.12.0.5</AndroidMaterialVersion>
 		<AndroidXLegacySupportV4Version>1.0.0.33</AndroidXLegacySupportV4Version>
 		<AndroidXSplashScreenVersion>1.0.1.14</AndroidXSplashScreenVersion>
@@ -20,8 +22,6 @@
 		<AndroidXSwipeRefreshLayoutVersion>1.1.0.29</AndroidXSwipeRefreshLayoutVersion>
 		<AndroidXNavigationVersion>2.9.2.1</AndroidXNavigationVersion>
 		<AndroidXCollectionVersion>1.5.0.3</AndroidXCollectionVersion>
-		<!-- The AndroidX pins above are floors that Microsoft.Maui.Core 10.0.90 requires; below
-		     them the MauiEmbedding android head fails NU1605. -->
 		<MauiVersion>10.0.90</MauiVersion>
 		<!-- The first Toolkit/Themes builds against Uno.WinUI 7.0.0-dev.701; see
 		     src/Directory.Packages.props for why the SDK defaults cannot be used. -->
