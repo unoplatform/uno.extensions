@@ -33,9 +33,6 @@
 			Toolkit;
 			Mvvm;
 		</UnoFeatures>
-		
-
-		<UnoToolkitVersion>8.4.2</UnoToolkitVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
