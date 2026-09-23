@@ -20,7 +20,7 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 | WebAssembly | ✅ Popup | ✅ Browser storage, `localStorage` by default — cleartext, see [below](#webassembly-token-cache) |
 | Mac Catalyst | ❌ Not supported (`AddMsal` throws `PlatformNotSupportedException`) | — |
 
-MSAL's own cache (refresh and ID tokens) is what the last column describes. The access token that `IAuthenticationService` hands to HTTP handlers, and a copy of the ID token for [reading claims](#reading-the-users-claims), are kept separately, in the host's default `IKeyValueStorage` — `KeyStore` / Keychain on native Android and iOS, but plain `ApplicationData` on Android and iOS heads built with `UnoFeatures=SkiaRenderer`, where the Uno SDK loads the storage package's plain `netX.0` build. See [Key-value storage](xref:Uno.Extensions.Storage.Overview#key-value-storage).
+MSAL's own cache (refresh and ID tokens) is what the last column describes. The access token that `IAuthenticationService` hands to HTTP handlers, and a copy of the ID token for [reading claims](#reading-the-users-claims), are kept separately, in the host's default `IKeyValueStorage`, which is `KeyStore` / Keychain on Android and iOS. See [Key-value storage](xref:Uno.Extensions.Storage.Overview#key-value-storage).
 
 The set of identity scenarios (Microsoft accounts, work/school accounts, B2C, sovereign clouds, ...) is determined by MSAL itself — see [MSAL.NET supported platforms and scenarios](https://learn.microsoft.com/entra/msal/dotnet/getting-started/scenarios) for details.
 
