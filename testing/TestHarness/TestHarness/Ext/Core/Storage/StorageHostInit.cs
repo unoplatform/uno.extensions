@@ -38,12 +38,36 @@ public class StorageHostInit : BaseHostInitialization
 	}
 }
 
-// Uno 7 ships no android/ios flavour of Uno.WinUI, so Uno.Extensions.Storage.UI builds for net10.0
-// only and the KeyStore / KeyChain stores no longer exist on any head. Every platform now falls back
-// to ApplicationDataKeyValueStorage, which is what the Skia mobile heads were already getting.
-internal record TestingKeyValueStorage(
-	ILogger<TestingKeyValueStorage> TestingLogger,
+internal record TestingKeyValueStorage
+#if __ANDROID__
+			: KeyStoreKeyValueStorage
+			{
+	public TestingKeyValueStorage(
+		ILogger<TestingKeyValueStorage> logger,
+		InMemoryKeyValueStorage inmem,
+		KeyValueStorageSettings settings,
+		ISerializer serializer,
+	ISettings UnpackagedSettings) : base(logger, inmem, settings, serializer)
+	{
+
+	}
+#elif __IOS__
+			(ILogger<TestingKeyValueStorage> TestingLogger,
 	InMemoryKeyValueStorage InMemoryStorage,
 	KeyValueStorageSettings Settings,
 	ISerializer Serializer,
-	ISettings UnpackagedSettings) : ApplicationDataKeyValueStorage(TestingLogger, InMemoryStorage, Settings, Serializer, UnpackagedSettings);
+	ISettings UnpackagedSettings) : KeyChainKeyValueStorage(TestingLogger, InMemoryStorage, Settings, Serializer)
+{
+
+#else
+			(ILogger<TestingKeyValueStorage> TestingLogger,
+	InMemoryKeyValueStorage InMemoryStorage,
+	KeyValueStorageSettings Settings,
+	ISerializer Serializer,
+	ISettings UnpackagedSettings) : ApplicationDataKeyValueStorage(TestingLogger, InMemoryStorage, Settings, Serializer, UnpackagedSettings)
+{
+#endif
+
+}
+
+
