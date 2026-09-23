@@ -8,6 +8,17 @@ internal class MsalConfiguration
 	public string[]? Scopes { get; init; }
 
 	/// <summary>
+	/// Azure AD B2C authority, including the user flow (policy), for example
+	/// <c>https://contoso.b2clogin.com/tfp/contoso.onmicrosoft.com/B2C_1_signupsignin</c>.
+	/// </summary>
+	/// <remarks>
+	/// MSAL composes a Microsoft Entra authority from <c>Instance</c> and <c>TenantId</c> and cannot
+	/// express a B2C one, so this is applied through <c>WithB2CAuthority</c>. A <c>Builder(...)</c>
+	/// callback that sets an authority itself still wins, as it runs last.
+	/// </remarks>
+	public string? B2CAuthority { get; init; }
+
+	/// <summary>
 	/// macOS only: the keychain service name used to store the MSAL token cache.
 	/// Defaults to "uno.extensions.msal.{ClientId}" when not specified.
 	/// </summary>
