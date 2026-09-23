@@ -5,10 +5,7 @@
 
 	<!-- Define UNO_EXT_MSAL for every platform where this package ships a functional provider;
 		only Mac Catalyst keeps a stub. The plain netX.0 lib (empty platform identifier) must be
-		functional: on Skia iOS/Android heads, Uno.Sdk's ReplaceUnoRuntime substitutes it for the
-		platform lib for any package referencing Uno.UI
-		(RuntimeAssetsSelectorTask.HandleSkiaMobileForNonRuntimeEnabledPackages), so it is the
-		build that actually runs there. The platform is derived from the TFM: repo-internal build
+		functional because the desktop and WebAssembly heads run it. The platform is derived from the TFM: repo-internal build
 		properties are not available in consuming projects. Keep this allow-list in sync with the
 		same rule in Uno.Extensions.Authentication.MSAL.WinUI.csproj. -->
 	<PropertyGroup>
