@@ -29,25 +29,6 @@ public static class NavigatorExtensions
 	}
 
 
-#if __IOS__
-	public static Task<NavigationResultResponse<TSource>?> ShowPickerAsync<TSource>(
-	   this INavigator navigator,
-	   object sender,
-	   IEnumerable<TSource> itemsSource,
-	   object? itemTemplate = null,
-	   CancellationToken cancellation = default)
-	{
-		var data = new Dictionary<string, object?>()
-			{
-				{ RouteConstants.PickerItemsSource, itemsSource },
-				{ RouteConstants.PickerItemTemplate, itemTemplate }
-			};
-
-		var hint = new RouteHint { Route = typeof(Picker).Name, Qualifier = Qualifiers.Dialog, Result = typeof(TSource) };
-		return navigator.NavigateRouteHintForResultAsync<TSource>(hint, sender, data, cancellation);
-	}
-#endif
-
 	private static async Task<INavigator?> GoBackNavigator(this INavigator navigator)
 	{
 		var dispatcher = navigator.Get<IServiceProvider>()!.GetRequiredService<IDispatcher>();
