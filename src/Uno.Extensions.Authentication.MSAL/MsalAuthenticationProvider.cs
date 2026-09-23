@@ -40,6 +40,13 @@ internal record MsalAuthenticationProvider(
 		var config = Configuration.Get(Name) ?? new MsalConfiguration();
 		var builder = PublicClientApplicationBuilder.CreateWithApplicationOptions(config);
 
+		// PublicClientApplicationOptions can only describe an Entra authority (MSAL composes it from
+		// Instance and TenantId), so a B2C user flow is the one authority that needs a builder call.
+		if (config.B2CAuthority is { Length: > 0 } b2cAuthority)
+		{
+			builder.WithB2CAuthority(b2cAuthority);
+		}
+
 		ApplyPlatformRedirectUri(builder, config);
 
 #if WINDOWS
@@ -82,6 +89,7 @@ internal record MsalAuthenticationProvider(
 		if (Logger.IsEnabled(LogLevel.Information))
 		{
 			Logger.LogInformationMessage($"Using RedirectUri '{_pca.AppConfig.RedirectUri ?? "(none - platform managed)"}'; sign-in requires a matching redirect URI on the app registration");
+			Logger.LogInformationMessage($"Using Authority '{_pca.Authority}'");
 		}
 
 		// After _pca is assigned, so the handler always has a client id to key the entry with.
