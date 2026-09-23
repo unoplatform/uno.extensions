@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -52,6 +52,9 @@ internal sealed class StubEntra
 	/// <summary>Every access token this stub has minted, oldest first.</summary>
 	public List<string> IssuedAccessTokens { get; } = new();
 
+	/// <summary>Every ID token this stub has minted, oldest first.</summary>
+	public List<string> IssuedIdTokens { get; } = new();
+
 	/// <summary>Number of POSTs to the token endpoint, so tests can assert a network round-trip happened.</summary>
 	public int TokenRequestCount { get; private set; }
 
@@ -81,6 +84,19 @@ internal sealed class StubEntra
 		};
 
 	/// <summary>
+	/// Answers token requests the way Azure AD B2C does when only OpenID scopes were requested: an
+	/// ID token and a refresh token, but no access token.
+	/// </summary>
+	public void OmitAccessTokens() => TokenEndpointResponse = () =>
+	{
+		var idToken = BuildIdToken();
+		IssuedIdTokens.Add(idToken);
+		var clientInfo = Base64UrlEncode($$"""{"uid":"{{ObjectId}}","utid":"{{TenantId}}"}""");
+		return Json(
+			$$"""{"token_type":"Bearer","scope":"openid offline_access","expires_in":{{ExpiresInSeconds}},"refresh_token":"stub-refresh-token-{{_instanceId}}-no-access-token","id_token":"{{idToken}}","client_info":"{{clientInfo}}"}""");
+	};
+
+	/// <summary>
 	/// Answers token requests with <c>503</c>, standing in for an unreachable or struggling token
 	/// endpoint - a failure that says nothing about whether the session is still valid.
 	/// </summary>
@@ -93,6 +109,11 @@ internal sealed class StubEntra
 	/// <summary>The most recently minted access token.</summary>
 	public string LastAccessToken => IssuedAccessTokens.Count > 0
 		? IssuedAccessTokens[IssuedAccessTokens.Count - 1]
+		: throw new InvalidOperationException("No token has been issued yet.");
+
+	/// <summary>The most recently minted ID token.</summary>
+	public string LastIdToken => IssuedIdTokens.Count > 0
+		? IssuedIdTokens[IssuedIdTokens.Count - 1]
 		: throw new InvalidOperationException("No token has been issued yet.");
 
 	public IMsalHttpClientFactory HttpClientFactory => new StubHttpClientFactory(this);
@@ -182,6 +203,8 @@ internal sealed class StubEntra
 	{
 		var accessToken = $"stub-access-token-{++_tokenCounter}";
 		IssuedAccessTokens.Add(accessToken);
+		var idToken = BuildIdToken();
+		IssuedIdTokens.Add(idToken);
 
 		var response = new StubTokenResponse
 		{
@@ -191,7 +214,7 @@ internal sealed class StubEntra
 			ExtExpiresIn = ExpiresInSeconds,
 			AccessToken = accessToken,
 			RefreshToken = $"stub-refresh-token-{_instanceId}-{_tokenCounter}",
-			IdToken = BuildIdToken(),
+			IdToken = idToken,
 			ClientInfo = Base64UrlEncode($$"""{"uid":"{{ObjectId}}","utid":"{{TenantId}}"}"""),
 		};
 
