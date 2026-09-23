@@ -95,7 +95,9 @@ stages:
   # Don't trigger this stage if only docs files are changed
   condition: and(succeeded(), ne(dependencies.Determine_Changes.outputs['evaluate_changes.DetermineChanges.docsOnly'], 'true'))
   jobs:
-  - template: stage-build-uitests-wasm.yml
+  # Uno.UITest.Selenium drives the native WebAssembly DOM renderer, which Uno 7 removed
+  # (unoplatform/uno.extensions#3187).
+  # - template: stage-build-uitests-wasm.yml
   # Still disabled, but not for the original reason (unoplatform/uno#17668, long since merged).
   # Verified 2026-08-13: the full non-hot-reload runtime suite has 15 failing tests on this branch
   # AND at the pre-change baseline - navigation/ComboBox/logger cases that have rotted while the
