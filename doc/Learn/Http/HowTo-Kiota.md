@@ -117,3 +117,8 @@ public class MyViewModel
 * [Overview: HTTP](xref:Uno.Extensions.Http.Overview)
 * [How-To: Consume a web API with HttpClient](xref:Uno.Development.ConsumeWebApi)
 * [How-To: Register an Endpoint for HTTP Requests](xref:Uno.Extensions.Http.HowToHttp)
+
+### Kiota Samples and Tutorials from Microsoft
+
+* [Kiota with Dependency Injection](https://learn.microsoft.com/en-us/openapi/kiota/tutorials/dotnet-dependency-injection)
+* [Microsoft Kiota-Samples Repository](https://github.com/microsoft/kiota-samples/blob/main/README.md)
