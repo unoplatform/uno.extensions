@@ -107,6 +107,7 @@ public class Given_GeneratedMock : FeedUITests
 		var (count, _) = ctx.GetOrCreateState(vm.Model.ItemsCount).Record();
 
 		await count.WaitForData(2); // ItemsCount is left unset: the real Select runs over the mocked Items
+		count.Should().NotContain(message => message.Current.Error != null, "the real, null-injected Items never runs");
 	}
 
 	[TestMethod]
@@ -149,6 +150,51 @@ public class Given_GeneratedMock : FeedUITests
 	}
 
 	[TestMethod]
+	public async Task When_ScalarInputMocked_Then_ChainedDerivationsComputeOverTheMock()
+	{
+		var vm = PriceViewModelMock.Create(new PriceModelMock { Price = FeedMock.Value(10m) });
+		var ctx = SourceContext.GetOrCreate(vm.Model);
+		using var scope = ctx.AsCurrent();
+
+		var (rounded, _) = ctx.GetOrCreateState(vm.Model.Rounded).Record();
+
+		await rounded.WaitForData(9m); // two Select levels over the mocked Price
+		rounded.Should().NotContain(message => message.Current.Error != null, "the real, null-injected Price never runs");
+	}
+
+	[TestMethod]
+	public async Task When_ScalarInputReSwapped_Then_ChainedDerivationsRecompute()
+	{
+		var vm = PriceViewModelMock.Create(new PriceModelMock { Price = FeedMock.Value(10m) });
+		var ctx = SourceContext.GetOrCreate(vm.Model);
+		using var scope = ctx.AsCurrent();
+
+		var (rounded, _) = ctx.GetOrCreateState(vm.Model.Rounded).Record();
+		await rounded.WaitForData(9m);
+
+		vm.SetMock(PriceModelMock.Empty with { Price = FeedMock.Value(20m) });
+
+		await rounded.WaitForData(18m);
+	}
+
+	[TestMethod]
+	public async Task When_SetMockPassesTheOriginalFeed_Then_TheRealInputRuns()
+	{
+		var vm = MenuViewModelMock.Create(new MenuModelMock { Items = ListFeedMock.Value("a", "b") });
+		var ctx = SourceContext.GetOrCreate(vm.Model);
+		using var scope = ctx.AsCurrent();
+
+		var (count, _) = ctx.GetOrCreateState(vm.Model.ItemsCount).Record();
+		await count.WaitForData(2);
+
+		var before = count.Count;
+		vm.SetMock(MenuModelMock.Empty with { Items = vm.Model.Items });
+
+		await count.WaitForMessages(before + 1);
+		count.Last().Current.Error.Should().BeOfType<NullReferenceException>("the original Items runs again, over its null-injected service");
+	}
+
+	[TestMethod]
 	public async Task When_InputStateIsEdited_Then_DerivedFeedIgnoresTheEdit()
 	{
 		var vm = MenuViewModelMock.Create(new MenuModelMock { Items = ListFeedMock.Value("a", "b") });
@@ -176,6 +222,7 @@ public class Given_GeneratedMock : FeedUITests
 
 		IsRequired(mock.GetProperty(nameof(MenuModel.Items))).Should().BeTrue();
 		IsRequired(mock.GetProperty(nameof(MenuModel.ItemsCount))).Should().BeFalse();
+		IsRequired(mock.GetProperty(nameof(MenuModel.LongItems))).Should().BeFalse();
 		mock.GetProperty(nameof(MenuModel.Filter)).Should().BeNull();
 	}
 
