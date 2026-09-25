@@ -98,6 +98,45 @@ public class Given_GeneratedMock : FeedUITests
 	}
 
 	[TestMethod]
+	public async Task When_InputMocked_Then_DerivedFeedComputesOverTheMock()
+	{
+		var vm = MenuViewModelMock.Create(new MenuModelMock { Items = ListFeedMock.Value("a", "b") });
+		var ctx = SourceContext.GetOrCreate(vm.Model);
+		using var scope = ctx.AsCurrent();
+
+		var (count, _) = ctx.GetOrCreateState(vm.Model.ItemsCount).Record();
+
+		await count.WaitForData(2); // ItemsCount is left unset: the real Select runs over the mocked Items
+	}
+
+	[TestMethod]
+	public async Task When_InputReSwapped_Then_DerivedFeedRecomputes()
+	{
+		var vm = MenuViewModelMock.Create(new MenuModelMock { Items = ListFeedMock.Value("a", "b") });
+		var ctx = SourceContext.GetOrCreate(vm.Model);
+		using var scope = ctx.AsCurrent();
+
+		var (count, _) = ctx.GetOrCreateState(vm.Model.ItemsCount).Record();
+		await count.WaitForData(2);
+
+		vm.SetMock(MenuModelMock.Empty with { Items = ListFeedMock.Value("a", "b", "c") });
+
+		await count.WaitForData(3);
+	}
+
+	[TestMethod]
+	public async Task When_DerivedMemberMocked_Then_TheOverrideWins()
+	{
+		var vm = MenuViewModelMock.Create(new MenuModelMock { Items = ListFeedMock.Value("a", "b"), ItemsCount = FeedMock.Value(42) });
+		var ctx = SourceContext.GetOrCreate(vm.Model);
+		using var scope = ctx.AsCurrent();
+
+		var (count, _) = ctx.GetOrCreateState(vm.Model.ItemsCount).Record();
+
+		await count.WaitForData(42);
+	}
+
+	[TestMethod]
 	public void When_ModelHasDerivedAndIndependentMembers_Then_MockExposesOnlyTheDerivedOneAsOptional()
 	{
 		// MenuModel also declares a derived feed (ItemsCount) and an independent state (Filter): the record requires

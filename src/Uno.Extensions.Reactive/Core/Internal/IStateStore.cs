@@ -30,6 +30,17 @@ internal interface IStateStore : IAsyncDisposable
 	FeedSubscription<TValue> GetOrCreateSubscription<TValue>(ISignal<Message<TValue>> source);
 
 	/// <summary>
+	/// Get or create the swappable layer through which a mocking context observes <paramref name="source"/> (spec 013 D6):
+	/// shared by the state of the source and by every feed derived from it.
+	/// </summary>
+	/// <typeparam name="TValue">Type of the values of the <paramref name="source"/>.</typeparam>
+	/// <param name="source">The source feed.</param>
+	/// <returns>The swap layer of the given feed.</returns>
+	/// <remarks>Takes none of the locks of this store, so it can be called while creating a state or a subscription.</remarks>
+	/// <exception cref="ObjectDisposedException">This store has been disposed.</exception>
+	Operators.HotSwapFeed<TValue> GetOrCreateSwapLayer<TValue>(ISignal<Message<TValue>> source);
+
+	/// <summary>
 	/// Get or create a <see cref="IState{T}"/> for a given feed.
 	/// </summary>
 	/// <typeparam name="TSource">Type of the source feed.</typeparam>

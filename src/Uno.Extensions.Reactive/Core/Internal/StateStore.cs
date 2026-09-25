@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
+using Uno.Extensions.Reactive.Operators;
 using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Core;
@@ -13,6 +15,7 @@ internal class StateStore : IStateStore
 	private readonly SourceContext _root;
 	private Dictionary<object, IAsyncDisposable>? _states = new();
 	private Dictionary<object, IAsyncDisposable>? _subscriptions = new();
+	private ConcurrentDictionary<object, object>? _swapLayers; // Only mocking contexts use it: created on first request.
 
 	public StateStore(SourceContext root)
 	{
@@ -58,6 +61,19 @@ internal class StateStore : IStateStore
 		}
 
 		return subscription;
+	}
+
+	/// <inheritdoc />
+	public HotSwapFeed<T> GetOrCreateSwapLayer<T>(ISignal<Message<T>> source)
+	{
+		if (_states is null)
+		{
+			throw new ObjectDisposedException(nameof(SourceContext));
+		}
+
+		var layers = _swapLayers ?? Interlocked.CompareExchange(ref _swapLayers, new(), null) ?? _swapLayers;
+
+		return (HotSwapFeed<T>)layers.GetOrAdd(source, static s => new HotSwapFeed<T>((ISignal<Message<T>>)s));
 	}
 
 	public TState GetOrCreateState<TSource, TState>(TSource source, Func<SourceContext, TSource, TState> factory)
@@ -123,6 +139,7 @@ internal class StateStore : IStateStore
 	{
 		var states = Interlocked.Exchange(ref _states, null);
 		var subscriptions = Interlocked.Exchange(ref _subscriptions, null);
+		_swapLayers = null;
 
 		if (subscriptions is { Count: > 0 })
 		{

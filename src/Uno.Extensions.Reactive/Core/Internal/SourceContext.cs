@@ -283,7 +283,8 @@ public sealed class SourceContext : IAsyncDisposable
 	/// </summary>
 	/// <remarks>
 	/// This is the per-context gate that <c>MockingService.Enable()</c> drives, read at wrap time in
-	/// <see cref="StateImpl{T}"/>'s constructor instead of the global <see cref="Config.FeedConfiguration.EffectiveHotReload"/>.
+	/// <see cref="StateImpl{T}"/>'s constructor instead of the global <see cref="Config.FeedConfiguration.EffectiveHotReload"/>,
+	/// and by <see cref="GetSwappableSource{T}(ISignal{Message{T}})"/> so derived feeds observe the swapped input.
 	/// </remarks>
 	internal bool IsMockingActive { get; }
 
@@ -315,8 +316,50 @@ public sealed class SourceContext : IAsyncDisposable
 	/// <typeparam name="T">Type of the value of feed.</typeparam>
 	/// <param name="feed">The feed to get source from.</param>
 	/// <returns>The cached with replay async enumeration of messages produced by the given feed</returns>
+	/// <remarks>
+	/// In a mocking context (spec 013), the feed is observed through the swap layer it shares with its state,
+	/// so a mocked input also reaches every feed derived from it.
+	/// </remarks>
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	public IAsyncEnumerable<Message<T>> GetOrCreateSource<T>(ISignal<Message<T>> feed)
+		=> GetOrCreateRawSource(GetSwappableSource(feed));
+
+	/// <summary>
+	/// Same as <see cref="GetOrCreateSource{T}(ISignal{Message{T}})"/> for a list feed, which a mocking context
+	/// observes through the swap layer of its <see cref="ListFeed.AsFeed{T}"/>: the one a mock swaps.
+	/// </summary>
+	/// <typeparam name="T">Type of the items of the list feed.</typeparam>
+	/// <param name="feed">The list feed to get source from.</param>
+	/// <returns>The cached with replay async enumeration of messages produced by the given list feed</returns>
+	internal IAsyncEnumerable<Message<IImmutableList<T>>> GetOrCreateSource<T>(IListFeed<T> feed)
+		=> GetOrCreateRawSource(GetSwappableSource(feed));
+
+	/// <summary>
+	/// Gets what to subscribe to in order to observe <paramref name="feed"/>: in a mocking context, the swap layer the
+	/// feed shares with its state (spec 013 D6); otherwise the feed itself.
+	/// </summary>
+	/// <typeparam name="T">Type of the value of feed.</typeparam>
+	/// <param name="feed">The observed feed.</param>
+	/// <returns>The source to subscribe to.</returns>
+	internal ISignal<Message<T>> GetSwappableSource<T>(ISignal<Message<T>> feed)
+		=> IsMockingActive && feed is not IState<T>
+			? States.GetOrCreateSwapLayer(feed)
+			: feed;
+
+	/// <inheritdoc cref="GetSwappableSource{T}(ISignal{Message{T}})"/>
+	internal ISignal<Message<IImmutableList<T>>> GetSwappableSource<T>(IListFeed<T> feed)
+		=> IsMockingActive
+			? States.GetOrCreateSwapLayer(feed.AsFeed())
+			: feed;
+
+	/// <summary>
+	/// Subscribes to <paramref name="feed"/> as-is. For the plumbing of a state (and of the list adapter a state is
+	/// keyed on), which must never observe itself through <see cref="GetSwappableSource{T}(ISignal{Message{T}})"/>.
+	/// </summary>
+	/// <typeparam name="T">Type of the value of feed.</typeparam>
+	/// <param name="feed">The feed to get source from.</param>
+	/// <returns>The cached with replay async enumeration of messages produced by the given feed</returns>
+	internal IAsyncEnumerable<Message<T>> GetOrCreateRawSource<T>(ISignal<Message<T>> feed)
 	{
 		if (_isNone)
 		{

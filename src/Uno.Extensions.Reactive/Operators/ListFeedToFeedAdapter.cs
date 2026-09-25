@@ -11,5 +11,6 @@ internal sealed record ListFeedToFeedAdapter<T>(IListFeed<T> Source) : IFeed<IIm
 {
 	/// <inheritdoc />
 	public IAsyncEnumerable<Message<IImmutableList<T>>> GetSource(SourceContext context, CancellationToken ct = default)
-		=> context.GetOrCreateSource(Source);
+		// Raw: in a mocking context this adapter is the key of the swapped state, so observing Source through it would loop.
+		=> context.GetOrCreateRawSource(Source);
 }

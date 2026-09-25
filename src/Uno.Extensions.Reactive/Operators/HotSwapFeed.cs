@@ -172,7 +172,7 @@ internal sealed class HotSwapFeed<T> : IFeed<T>
 		private IAsyncEnumerator<Message<T>>? _enumerator;
 
 		public IAsyncEnumerator<Message<T>>? GetEnumerator(SourceContext context)
-			=> _enumerator ??= Feed is null ? null : context.GetOrCreateSource(Feed).GetAsyncEnumerator(_ct.Token);
+			=> _enumerator ??= Feed is null ? null : context.GetOrCreateRawSource(Feed).GetAsyncEnumerator(_ct.Token);
 
 		/// <inheritdoc />
 		public async ValueTask DisposeAsync()

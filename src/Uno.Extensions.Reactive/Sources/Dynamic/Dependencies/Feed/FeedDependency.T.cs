@@ -14,6 +14,7 @@ internal sealed class FeedDependency<T> : FeedDependency, IDependency
 {
 	private readonly FeedSession _session; // The session fo the dependent feed
 	private readonly ISignal<Message<T>> _feed; // The dependency feed on which the session depends
+	private readonly ISignal<Message<T>> _source; // What the session subscribes to: _feed, or its swap layer in a mocking context
 	private readonly FastAsyncLock _loadingGate = new();
 	private readonly List<MessageAxis> _touchedAxes = new();
 	private readonly TaskCompletionSource<Unit> _hasLast = new();
@@ -21,11 +22,12 @@ internal sealed class FeedDependency<T> : FeedDependency, IDependency
 	private Message<T> _last = Message<T>.Initial; // The most recent message we received from the dependency feed
 	private (FeedExecution execution, Message<T> message, IDisposable updateLock)? _current; // Temporary cached value while the dependent feed is loading (i.e. between IDependency.OnLoading and IDependency.OnLoaded)
 
-	public FeedDependency(FeedExecution execution, ISignal<Message<T>> feed)
+	public FeedDependency(FeedExecution execution, ISignal<Message<T>> feed, ISignal<Message<T>> source)
 		: base(feed)
 	{
 		_session = execution.Session;
 		_feed = feed;
+		_source = source;
 
 		_current = (execution, Message<T>.Initial, Disposable.Empty); // Dummy current that will be completed in the Subscribe with the first message.
 		_ = Subscribe(execution);
@@ -100,7 +102,7 @@ internal sealed class FeedDependency<T> : FeedDependency, IDependency
 		try
 		{
 			var isFirst = true;
-			var messages = _session.Context.States.GetOrCreateSubscription(_feed).GetMessages(_session.Context, _session.Token);
+			var messages = _session.Context.States.GetOrCreateSubscription(_source).GetMessages(_session.Context, _session.Token);
 			await foreach (var message in messages.WithCancellation(_session.Token).ConfigureAwait(false))
 			{
 				// We wait for the loading to complete before updating the value (and continue the enumeration of the dependency feed).

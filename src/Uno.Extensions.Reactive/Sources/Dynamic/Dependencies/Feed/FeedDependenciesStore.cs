@@ -35,7 +35,7 @@ internal sealed class FeedDependenciesStore : IDisposable
 		{
 			if (!_dependenciesPerFeed.TryGetValue(feed, out var dependency))
 			{
-				dependency = new FeedDependency<T>(execution, feed);
+				dependency = new FeedDependency<T>(execution, feed, _session.Context.GetSwappableSource(feed));
 				_dependenciesPerFeed.Add(dependency.Feed, dependency);
 				_session.RegisterDependency((IDependency)dependency);
 			}
@@ -52,7 +52,7 @@ internal sealed class FeedDependenciesStore : IDisposable
 		{
 			if (!_dependenciesPerFeed.TryGetValue(listFeed, out var dependency))
 			{
-				dependency = new FeedDependency<IImmutableList<T>>(execution, listFeed);
+				dependency = new FeedDependency<IImmutableList<T>>(execution, listFeed, _session.Context.GetSwappableSource(listFeed));
 				_dependenciesPerFeed.Add(dependency.Feed, dependency);
 				_session.RegisterDependency((IDependency)dependency);
 			}

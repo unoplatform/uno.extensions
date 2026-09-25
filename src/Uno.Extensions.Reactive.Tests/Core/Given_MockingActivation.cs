@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -99,4 +100,105 @@ public class Given_MockingActivation : FeedTests
 				"the swapped source must re-emit through the same cached wrapper");
 		}
 	}
+
+	[TestMethod]
+	public async Task When_MockableInputSwapped_Then_SelectRecomputes()
+	{
+		using var test = CreateMockingContext();
+		var input = Feed.Async(async ct => 1);
+		var (selected, _) = test.SourceContext.GetOrCreateState(input.Select(value => value * 10)).Record();
+		await selected.WaitForData(10);
+
+		SwapSource(test, input, Feed.Async(async ct => 2));
+
+		await selected.WaitForData(20);
+	}
+
+	[TestMethod]
+	public async Task When_MockableInputSwapped_Then_DynamicRecomputes()
+	{
+		using var test = CreateMockingContext();
+		var input = Feed.Async(async ct => 1);
+		var (dynamic, _) = test.SourceContext.GetOrCreateState(Feed.Dynamic(async ct => await input * 100)).Record();
+		await dynamic.WaitForData(100);
+
+		SwapSource(test, input, Feed.Async(async ct => 2));
+
+		await dynamic.WaitForData(200);
+	}
+
+	[TestMethod]
+	public async Task When_MockableListInputSwapped_Then_ListWhereRecomputes()
+	{
+		using var test = CreateMockingContext();
+		var items = ListFeed<int>.Async(async ct => (IImmutableList<int>)ImmutableList.Create(1, 2, 3));
+		var (large, _) = test.SourceContext.GetOrCreateListState(items.Where(item => item >= 2)).Record();
+		await large.WaitForData(list => list.Count == 2);
+
+		SwapSource(test, items.AsFeed(), ListFeed<int>.Async(async ct => (IImmutableList<int>)ImmutableList.Create(5, 6, 7, 8)).AsFeed());
+
+		await large.WaitForData(list => list.Count == 4);
+	}
+
+	[TestMethod]
+	public async Task When_MockableListInputSwapped_Then_DynamicAwaitingTheListRecomputes()
+	{
+		using var test = CreateMockingContext();
+		var items = ListFeed<int>.Async(async ct => (IImmutableList<int>)ImmutableList.Create(1, 2, 3));
+		var (count, _) = test.SourceContext.GetOrCreateState(Feed.Dynamic(async ct => (await items).Count)).Record();
+		await count.WaitForData(3);
+
+		SwapSource(test, items.AsFeed(), ListFeed<int>.Async(async ct => (IImmutableList<int>)ImmutableList.Create(5, 6, 7, 8)).AsFeed());
+
+		await count.WaitForData(4);
+	}
+
+	[TestMethod]
+	public async Task When_MockableInputStateIsEdited_Then_DerivedFeedIgnoresTheEdit()
+	{
+		using var test = CreateMockingContext();
+		var input = Feed.Async(async ct => 1);
+		var inputState = test.SourceContext.GetOrCreateState(input);
+		var (selected, _) = test.SourceContext.GetOrCreateState(input.Select(value => value * 10)).Record();
+		await selected.WaitForData(10);
+
+		await inputState.UpdateAsync(_ => 5);
+		SwapSource(test, input, Feed.Async(async ct => 2));
+		await selected.WaitForData(20);
+
+		selected.Should().NotContain(
+			message => message.Current.Data.SomeOrDefault() == 50,
+			"an edit of the state stays local to it, as in a live app, while the swap reaches the derived feed");
+	}
+
+	[TestMethod]
+	public async Task When_NoScope_Then_DerivedFeedCreatesNoSwapLayer()
+	{
+		using var test = new FeedTestContext();
+		var input = Feed.Async(async ct => 1);
+		var (selected, _) = test.SourceContext.GetOrCreateState(input.Select(value => value * 10)).Record();
+		await selected.WaitForData(10);
+
+		GetSwapLayers(test.SourceContext).Should().BeNull("a live-app context never observes a feed through a swap layer (G9/R7)");
+	}
+
+	private static FeedTestContext CreateMockingContext()
+	{
+		FeedTestContext context;
+		using (MockingService.Enable())
+		{
+			context = new FeedTestContext();
+		}
+
+		context.RestoreCurrent();
+		return context;
+	}
+
+	private static void SwapSource<T>(FeedTestContext test, IFeed<T> feed, IFeed<T> replacement)
+		=> ((IHotSwapState<T>)test.SourceContext.GetOrCreateState(feed)).HotSwap(replacement);
+
+	private static object? GetSwapLayers(SourceContext context)
+		=> typeof(StateStore)
+			.GetField("_swapLayers", BindingFlags.Instance | BindingFlags.NonPublic)!
+			.GetValue(context.States);
 }

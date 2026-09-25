@@ -16,6 +16,10 @@ internal class NoneStateStore : IStateStore
 		=> throw new InvalidOperationException("Cannot create a subscription on SourceContext.None. " + SourceContext.NoneContextErrorDesc);
 
 	/// <inheritdoc />
+	public Operators.HotSwapFeed<T> GetOrCreateSwapLayer<T>(ISignal<Message<T>> source)
+		=> throw new InvalidOperationException("Cannot create a swap layer on SourceContext.None. " + SourceContext.NoneContextErrorDesc);
+
+	/// <inheritdoc />
 	public TState GetOrCreateState<TSource, TState>(TSource source, Func<SourceContext, TSource, TState> factory)
 		where TSource : class
 		where TState : IState
