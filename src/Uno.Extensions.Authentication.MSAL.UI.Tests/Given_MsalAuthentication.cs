@@ -521,6 +521,22 @@ public class Given_MsalAuthentication
 		(await harness.Host.Services.GetRequiredDefaultInstance<IKeyValueStorage>().GetKeysAsync(ct))
 			.Contains(MsalCacheKey);
 
+#if __WASM__
+	[TestMethod]
+	public async Task When_LoginOnWebAssembly_Then_MsalCachePersistedToKeyValueStorage()
+	{
+		// The shipped library has no browserwasm build on Uno 7, so the browser gets the plain
+		// net10.0 one - a compile-time browser switch there silently loses the persisted cache.
+		using var harness = await CreateHarnessAsync();
+		using var cts = Cts();
+
+		await harness.Authentication.LoginAsync(harness.Dispatcher, cancellationToken: cts.Token);
+
+		(await HasMsalCacheEntry(harness, cts.Token)).Should().BeTrue(
+			"sign-in on WebAssembly must serialize the MSAL cache into the default IKeyValueStorage");
+	}
+#endif
+
 	[TestMethod]
 	public async Task When_Logout_Then_SerializedMsalCacheRemoved()
 	{
