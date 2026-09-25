@@ -16,8 +16,12 @@ this work: `Uno.WinUI` 7.0 ships library assets for `net10.0`, `net11.0`,
 `net10.0-windows10.0.19041.0` and `net11.0-windows10.0.19041.0` — and nothing else. There is no
 ios/android/maccatalyst/browserwasm flavour of the UI assembly to bind against any more.
 
-App heads still target the platform they run on. Libraries and heads therefore need different
-target-framework lists, which is why `tfms-ui-winui.props` was split (see below).
+A library can still build `net10.0-android` / `net10.0-ios` against that `net10.0` asset, and Uno 7
+deploys the library's own platform build on device (uno `bc6254848a0`), so the shipped libraries keep
+those two and their `__ANDROID__` / `__IOS__` code. They have no `browserwasm` or `desktop` build:
+the browser and desktop heads run the plain `net10.0` one, so anything browser- or desktop-specific
+inside a library has to be selected at runtime. App heads add `-desktop` and `-browserwasm`, which is
+why `tfms-ui-winui.props` was split (see below).
 
 Mac Catalyst is gone entirely. The 7.0 SDK declares Android, iOS, tvOS, Desktop, Wasm and Windows
 platform folders and no longer recognizes `Platforms/MacCatalyst`, so files left there leak into
@@ -28,14 +32,14 @@ the default compile glob of every target framework.
 | Component | Version | Source of truth |
 | --- | --- | --- |
 | `Uno.Sdk.Private` | `7.0.0-dev.701` | `global.json`; no public `Uno.Sdk` 7.x exists yet |
-| TFM (libraries) | `net10.0`, `net10.0-windows10.0.19041` | `src/tfms-ui-winui.props` |
-| TFM (app heads) | + `-ios`, `-android`, `-desktop`, `-browserwasm` | `src/tfms-ui-winui-apps.props` |
+| TFM (libraries) | `net10.0`, `net10.0-windows10.0.19041`, `-android`, `-ios` | `src/tfms-ui-winui.props` |
+| TFM (app heads) | + `-desktop`, `-browserwasm` | `src/tfms-ui-winui-apps.props` |
 | `Microsoft.Extensions.*` | `10.0.12` | MAUI 10 pulls 10.0.0 transitively |
 | `Microsoft.Maui.Controls` | `10.0.90` | the SDK's own `packages.json` |
 | `SkiaSharp` | `4.151.1` | the SDK's own `packages.json` |
 | `Microsoft.WindowsAppSDK` | `2.4.0` | `Uno.WinUI` 7.0 nuspec floor |
 | `Uno.Core.Extensions.Logging` | `5.0.0-dev.28` | required by `Uno.UI.Adapter.*` 7.0 |
-| .NET SDK (CI) | `10.0.102` | matches the Uno 7 sibling repos |
+| .NET SDK (CI) | `10.0.101` | the band `uno.check` 1.34.1 provisions `wasm-tools` for (see below) |
 
 Read versions from `D:\Packages\NuGet\uno.sdk.private\<version>\targets\netstandard2.0\packages.json`
 rather than copying them between repos — the sibling repos move on their own timelines.
@@ -90,10 +94,12 @@ Fallout fixed:
   Uno 7 and `CreateHost()` is the Android equivalent of `Main` (Android has no managed entry point).
   `ConfigureUniversalImageLoader` goes with it — `Com.Nostra13.Universalimageloader` is the non-Skia
   image pipeline and is no longer referenced.
-- **TestHarness loses its platform key-value stores.** `Uno.Extensions.Storage.UI` builds for net10.0
-  and net10.0-windows only, so `KeyStoreKeyValueStorage` / `KeyChainKeyValueStorage` exist in no
-  assembly a head can see. `TestingKeyValueStorage` now derives from `ApplicationDataKeyValueStorage`
-  everywhere, which is what the Skia mobile heads already resolved at runtime.
+- **The WebAssembly MSAL token cache is chosen at runtime.** With no `browserwasm` library build the
+  `UNO_EXT_MSAL_BROWSER` symbol was never defined in a shipped package, so the browser fell through
+  to `MsalCacheHelper` and kept the cache in memory only. `PlatformHelper.IsWebAssembly` selects
+  `MsalTokenCacheStore` instead.
+- **iOS heads start through `UnoPlatformHostBuilder...UseAppleUIKit()`.** `App` no longer derives
+  from `UIApplicationDelegate`, so `UIApplication.Main(args, null, typeof(App))` aborts at launch.
 - **AndroidX pins rise to the floors MAUI 10.0.90 requires** (Browser 1.8.0.11, Navigation 2.9.2.1,
   SwipeRefreshLayout 1.1.0.29, Material 1.12.0.5); below them the MauiEmbedding Android head failed
   NU1605 on seven packages.

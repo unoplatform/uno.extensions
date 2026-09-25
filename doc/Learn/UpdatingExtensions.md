@@ -4,6 +4,35 @@ uid: Uno.Extensions.Migration
 
 # Upgrading Extensions Version
 
+## Upgrading to Extensions 8.0
+
+Extensions 8.0 is the line for **Uno Platform 7.0**; use Extensions 7.x with Uno Platform 6.x. Follow the
+[Uno Platform 7.0 migration guide](xref:Uno.Development.MigratingToUno7) for the app itself — the notes
+below cover only what changes in Extensions.
+
+### Target frameworks
+
+- The packages target .NET 10 (`net10.0`, `net10.0-windows10.0.19041`, `net10.0-android`, `net10.0-ios`).
+  .NET 9 heads can't consume them.
+- Mac Catalyst is no longer supported, following Uno Platform 7.0. Retarget a `net*-maccatalyst` head
+  to `net10.0-desktop`.
+
+### Navigation
+
+- **Removed:** `NavigatorExtensions.ShowPickerAsync` (iOS only). It routed to the native UIKit picker,
+  which Uno Platform 7.0 removes, and no navigator had handled that route since the picker navigator
+  was dropped, so the call never completed. Show a `Flyout` or a dialog with a list instead.
+
+### Storage
+
+- Android and iOS heads that ran with `UnoFeatures=SkiaRenderer` on Uno Platform 6.x used unencrypted
+  `ApplicationData` settings as the default `IKeyValueStorage`. On 7.0 they get `KeyStore` / Keychain,
+  like native heads did. **Values those apps already stored are not migrated** — including the
+  access token `IAuthenticationService` keeps there, so signed-in users may have to sign in again
+  once after the upgrade.
+- Those iOS apps now need the Keychain [entitlements](xref:Uno.Extensions.Storage.HowToRequiredEntitlements)
+  for the default store.
+
 ## Upgrading to Extensions 7.4
 
 ### Minimum Uno Platform version
