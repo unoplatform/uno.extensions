@@ -31,7 +31,7 @@ We always instantiate the **real ViewModel wrapping the real Model** (null-injec
 public IFeed<int> StepsCount => Steps.Select(steps => steps.Count);   // business logic
 ```
 
-`StepsCount` **MUST keep computing over the mocked `Steps`** — that is the whole point of building a real VM+Model. Achieved by anchoring the swap at the **Model-feed level** (the feed-identity cache), so every composition (`Select`, `Where`, …) observes the swapped source. Live re-swap drives state transitions.
+`StepsCount` **MUST keep computing over the mocked `Steps`** — that is the whole point of building a real VM+Model. Achieved by anchoring the swap at a **swap layer of each feed**, which every composition (`Select`, `Where`, …) observes and which is swapped with the feed's state, so they all see the swapped source. Live re-swap drives state transitions.
 
 ```mermaid
 flowchart LR
@@ -66,7 +66,7 @@ flowchart TB
         natural feed evolution, custom axes"]
     end
     T2 --> PRIM["Shared core primitives (opt-in)
-    HotSwapFeed wrap at the feed cache · hidden hooks · dependency attributes"]
+    swap layer per feed, resolved by the mocking layer · hidden hooks · dependency attributes"]
     T1 --> FV["FeedView entry wrapper"]
 ```
 
