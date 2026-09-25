@@ -21,25 +21,30 @@ Grounded in the current tree. File refs relative to repo root. (Restored after w
 
 Every feed factory caches its instance via `AttachedProperty.GetOrCreate` keyed on the provider delegate (stable when lambdas capture only `this` — the MVUX norm). A derived feed `StepsCount => Steps.Select(...)` is itself a cached `SelectFeed(sourceFeed, selector)` **composed on the instance returned by `Steps`**.
 
-**Anchor:** when the owning `SourceContext.IsMockingActive` is set (§6 — the per-context bit the scope drives), the feed returned for a Model feed-property is wrapped in a `HotSwapFeed<T>` **at this cache level** (stable identity preserved — the wrapper is what gets cached). Consequences:
+**Anchor:** in a context where `SourceContext.IsMockingActive` is set (§6), each observed feed gets **one swap layer** — a `HotSwapFeed<T>` held by the context's state store, keyed by the feed. The feed's state wraps its source in that layer (D12), and `SourceContext.GetOrCreateSource` subscribes to the same layer rather than to the feed. `SelectFeed`, `WhereFeed`, `WhereListFeed`, `CombineFeed`, `Feed.Dynamic` and `Messages()` all reach their inputs that way. A list feed is keyed by its `AsFeed()`, the feed `SetMock` swaps. Consequences:
 
-- `Model.Steps` returns the wrapper → the VM state subscribes to it → **swap propagates to the VM member**;
-- `StepsCount`'s `SelectFeed` composes on the same wrapper → **swap propagates through business logic** (live: a re-swap re-emits through `Select`);
+- `Model.Steps`' state and `StepsCount`'s `SelectFeed` share one layer → **a swap reaches the VM member and the business logic** (live: a re-swap re-emits through `Select`), in whichever order they subscribed;
+- derivations observe the layer, below the state's own updates: an edit of the state stays local to it, as in a live app;
+- the layer registry takes none of the store's locks, so routing adds no lock ordering;
+- a state's own pipeline (`UpdateFeed`, the `HotSwapFeed` session reading its current source) and the `AsFeed()` adapter use the unrouted `GetOrCreateRawSource`: routing them would make a layer observe itself;
 - no `dynamic`, no duck-typed re-init needed for feeds: **`SetMock` = reflection over the context's `IHotSwapState<T>` members**, calling `HotSwap` per mocked feed (D11), reusing the hot-reload driver but **fail-hard** — a member that cannot be swapped throws. No per-member generated handle. (The HR `dynamic` path stays untouched, HR-only.)
+- outside a mocking context nothing changes: no layer is created and `GetOrCreateSource` keeps the shared-subscription path.
+
+The anchor was first planned one level lower, as a `HotSwapFeed` cached by each feed factory. It was not built: a factory runs with no context to read the gate from. A replacement feed must not be built from the feed it replaces, since its layer would then observe itself.
 
 ```mermaid
 flowchart TB
-    F["feed factory call
-    ListFeed.Async(...) in Model.Steps"] --> C{"AttachedProperty
-    feed identity cache"}
-    C -->|context.IsMockingActive| W["HotSwapFeed wrapper
-    (the wrapper IS the cached value)"]
-    C -->|not mocking — live app| RAW["raw feed — today's behavior,
+    F["Model.Steps
+    (cached feed instance)"] --> S{"SourceContext
+    GetOrCreateSource"}
+    S -->|context.IsMockingActive| L["swap layer of Model.Steps
+    HotSwapFeed, one per feed and context"]
+    S -->|not mocking — live app| RAW["shared subscription — today's behavior,
     byte-identical"]
-    W --> VMS["VM state subscription"]
-    W --> SEL["SelectFeed = StepsCount
-    (composes on the wrapper)"]
-    SWAP["reflection: IHotSwapState.HotSwap(mockFeed)"] -->|"wrapper.Set(mockFeed)"| W
+    L --> VMS["state of Model.Steps
+    (VM member)"]
+    L --> SEL["SelectFeed = StepsCount"]
+    SWAP["reflection: IHotSwapState.HotSwap(mockFeed)"] --> L
     SEL --> UI2["FeedView"]
     VMS --> UI1["FeedView"]
 ```
@@ -97,7 +102,7 @@ public static partial class RecipeViewModelMock
 
 - `Create()` constructs the **real VM** via `new {Vm}(default!, …)`; **compile-time guard**: if `[CtorDependency(Eager=true)]` names parameter `p`, `Create` **requires** a real/fake `p` argument (or the generator emits an error diagnostic if no safe overload is possible).
 - `SetMock` may be called repeatedly (live transitions, G6); `with`-expressions on the record make variants cheap (`Empty with { Steps = … }`).
-- `required init` on service-dependent inputs = compile-time completeness. **Derived members are optional overrides**: `null` (default) → the real derivation recomputes over the swapped inputs; non-null → that member's own wrapper is swapped too (the cache-level anchor wraps *every* feed property when the context is mockable, derived included) — lets a test pin a derived value without caring about its inputs.
+- `required init` on service-dependent inputs = compile-time completeness. **Derived members are optional overrides**: `null` (default) → the real derivation recomputes over the swapped inputs; non-null → that member's own swap layer is swapped too (every feed observed in a mocking context has one, derived members included) — lets a test pin a derived value without caring about its inputs.
 - **Tier 2 and tier 3 never accept `MessageEntry`, an untyped feed envelope, or any other tier-1 authoring abstraction. Their contracts remain `IFeed<T>`, `IListFeed<T>`, typed states and typed commands end to end.**
 
 ## 3. Tier 1 — declared `MessageEntry` as `FeedView.Source`

@@ -243,6 +243,20 @@ matched on their simple name, so any same-named attribute drove them; a construc
 rejected by both intake paths was diagnosed twice. A malformed implicit-model pattern is now reported as
 MOCK0003 on the attribute rather than swallowed.
 
+## v16 — derived feeds observe the mocked input
+
+The D6 anchor was only half built. States in a mocking context wrapped their source (D12), but a derivation such
+as `Select`, a list `Where` or `Feed.Dynamic` subscribed to its input through the context's subscription cache,
+which the swap never touches: a derived member left unset ran over the real, null-injected input and ended in an
+error. Each feed observed in a mocking context now has one swap layer in the context's state store, shared by its
+state and by `GetOrCreateSource`; a list feed is keyed by its `AsFeed()`. Routing through the state itself was
+tried and dropped in review: it let derivations see the state's local edits, took the state lock while a
+subscription lock could be held, and missed list feeds. The factory-cache wrap first described for D6 was dropped
+too, since a factory has no context to read the gate from. Tests: `Given_GeneratedMock` (a derived member
+computes over the mock, recomputes on a re-swap, and an override still wins) and `Given_MockingActivation`
+(`Select`, `Feed.Dynamic`, a list `Where` and a `Feed.Dynamic` awaiting a list over a swapped input; state edits
+stay local; a live context creates no layer).
+
 ---
 
 ## Final decision register
@@ -254,7 +268,7 @@ MOCK0003 on the attribute rather than swallowed.
 | D3 | A facade (`SetModel` and generated setters) sits in front of the hooks; `HotSwapFeed` and the handles stay non-public | v1 |
 | D4 | ~~Dedicated mockable flag in `FeedConfiguration`~~ **replaced in v7** by the per-context gate `SourceContext.IsMockingActive` (D12) | v1 to v7 |
 | D5 | Mocking code generation is **external** (consumer project); the MVUX generator only does analysis, attributes and hidden hooks | v1 |
-| D6 | The swap is anchored at the **model-feed cache**, so derived feeds survive (non-negotiable); derived members remain individually overridable | v1 and v2 |
+| D6 | The swap is anchored so derived feeds survive (non-negotiable): at a per-context swap layer of each feed, shared by its state and its derivations (v16; first planned at the model-feed cache); derived members remain individually overridable | v1, v2 and v16 |
 | D7 | The non-AOT nature of the mocking path is accepted (development and test only) | v1 |
 | D8 | Converters are application-owned illustrations at `FeedView.Source` (returning `IMessageEntry`); the feature implements none | v4 |
 | D9 | Tiers 2 and 3 are strictly typed; the tier 1 object is confined to tier 1 | v4 |

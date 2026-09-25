@@ -7,7 +7,7 @@ Concrete surfaces, touch-list, phasing, tests. Names negotiable; semantics fixed
 | Piece | Package | Notes |
 | --- | --- | --- |
 | Dependency attributes | `Uno.Extensions.Reactive` (core) | must survive as metadata in the app assembly |
-| Mockable gate + HotSwap wrap at feed cache | core | **`SourceContext.IsMockingActive`** (new per-context bit, D12) read in `StateImpl` ctor; wrap wired at the `AttachedProperty`/factory cache |
+| Mockable gate + per-feed swap layer | core | **`SourceContext.IsMockingActive`** (new per-context bit, D12) read in `StateImpl` ctor and `GetOrCreateSource`; swap layers held by the context's state store |
 | Author-declared `MessageEntry` + `AxisValue` (plain CLR) + internal `MessageEntryFeed` | core | tier-1, AOT-safe, **not** a `DependencyObject` |
 | `FeedView.Source` coercion bridge | `Uno.Extensions.Reactive.UI` | tier-1 |
 | Analysis + hidden hooks emission | `Uno.Extensions.Reactive.Generator` | on Model & VM partials, on by default (opt-out) |
@@ -46,7 +46,7 @@ public sealed class CtorDependencyAttribute : Attribute
 ### 2.2 Mockable gate + swap anchor
 
 - **`SourceContext.IsMockingActive`** (per-context bit, D12 — distinct from `HotReload`, no global static, no bespoke `AsyncLocal`) — **set by the activation scope (§6), off by default**; context not mockable → no wrap, so a live app pays nothing (spec G9/R7). Read at wrap time in `StateImpl` ctor **instead of** `FeedConfiguration.EffectiveHotReload`.
-- When the owning context is mockable: feed factories wrap the cached instance in `HotSwapFeed<T>` (the wrapper IS the cached value → stable identity; derivations compose on the wrapper). Minimal wiring: wrap inside `AttachedProperty.GetOrCreate` call sites in `Core/Feed.cs` / `Core/ListFeed.cs` factories (one helper reading the context bit).
+- When the owning context is mockable: each observed feed has one swap layer (`HotSwapFeed<T>`) in the context's state store, which its state wraps and `SourceContext.GetOrCreateSource` subscribes to, so derivations observe the swapped source (architecture §1). A state's own pipeline and the `AsFeed()` adapter use the unrouted `GetOrCreateRawSource`.
 - **Swap = reflection over the context's `IHotSwapState<T>` members** (D11), reusing the hot-reload driver (`BindableViewModelBase.HotReload`), **fail-hard**: a mocked member that cannot be swapped throws (no silent skip — the hot-reload delta).
 
 ### 2.3 Tier-1 core surfaces
@@ -173,7 +173,7 @@ Mechanism (resolved against source — `Core/Internal/SourceContext.cs`, D12):
 
 - **P0 — de-risk canaries (blocking):**
   a. (tier-1, on hold) `MessageEntry` wrapper visual states + push axis-diff — deferred with tier 1;
-  b. wrap-at-cache via `SourceContext.IsMockingActive`: swap `Steps` → `StepsCount` (`Select`) re-emits (D6/D12 — THE gate). The hot-reload path already proves derivation-survives-swap; this canary re-verifies it under the per-context gate;
+  b. swap layer via `SourceContext.IsMockingActive`: swap `Steps` → `StepsCount` (`Select`) re-emits (D6/D12 — THE gate). The hot-reload path already proves derivation-survives-swap; this canary re-verifies it under the per-context gate;
   c. null-inject construction on a lazy model; eager-ctor fixture NREs as predicted;
   d. feed-identity stability matrix (capture patterns) → informs FEED3202;
   e. `MockingService.Enable()` → `IsMockingActive` on the pre-seeded context: prove **no wrap when the context is not mockable**, and reflection swap is **fail-hard** on an un-swappable member (D11).
@@ -189,7 +189,7 @@ Mechanism (resolved against source — `Core/Internal/SourceContext.cs`, D12):
 - Every typed `FeedMock`/`ListFeedMock`/`CommandMock` state emits expected axes.
 - Author-declared entry maps to Data/Error/Progress/Undefined correctly; custom axes map and diff correctly.
 - Consecutive entry instances produce correct core + custom axis diffs.
-- Wrap identity (`AttachedProperty` returns the same wrapper); swap propagation through `Select`/`Where` and chained derived feeds; live re-swap.
+- Swap-layer identity (one layer per feed and context, shared by its state and its derivations); swap propagation through `Select`/`Where` and chained derived feeds; live re-swap.
 
 ### Generators
 
