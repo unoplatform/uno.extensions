@@ -49,6 +49,9 @@ public partial class MenuModel
 	// derived over the service-dependent list
 	public IFeed<int> ItemsCount => Items.AsFeed().Select(items => items.Count);
 
+	// derived over the list directly
+	public IListFeed<string> LongItems => Items.Where(item => item.Length > 1);
+
 	// independent state — not part of the mock
 	public IState<string> Filter => State<string>.Value(this, () => string.Empty);
 

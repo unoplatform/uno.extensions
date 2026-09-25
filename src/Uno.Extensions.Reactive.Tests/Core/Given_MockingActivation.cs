@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -31,6 +32,40 @@ public class Given_MockingActivation : FeedTests
 
 		var state = new StateImpl<string>(ctx.SourceContext, Option<string>.Some("v"));
 		GetHotSwap(state).Should().BeNull("a live-app context must never inject a HotSwapFeed indirection (G9/R7)");
+	}
+
+	[TestMethod]
+	public async Task When_NoScope_Then_DerivedFeedSubscribesToItsInputDirectly()
+	{
+		MockingService.Enable().Dispose(); // registers the mocking layer, as a test or preview process does
+		using var ctx = new FeedTestContext();
+		var input = Feed.Async(async ct => 1);
+
+		var (selected, _) = ctx.SourceContext.GetOrCreateState(input.Select(value => value * 10)).Record();
+		await selected.WaitForData(10);
+
+		ctx.SourceContext.States.HasSubscription(input).Should().BeTrue(
+			"a live context subscribes to the input itself, with no mocking layer in between (G9/R7)");
+	}
+
+	[TestMethod]
+	public async Task When_MockableInputSwapped_Then_DynamicFeedRecomputes()
+	{
+		var owner = new object();
+		SourceContext ctx;
+		using (MockingService.Enable())
+		{
+			ctx = SourceContext.GetOrCreate(owner);
+		}
+		using var scope = ctx.AsCurrent();
+		var items = ListFeed<int>.Async(async ct => (IImmutableList<int>)ImmutableList.Create(1, 2, 3));
+
+		var (count, _) = ctx.GetOrCreateState(Feed.Dynamic(async ct => (await items).Count)).Record();
+		await count.WaitForData(3);
+
+		MockingService.SwapListFeed(owner, items, ListFeedMock.Value(5, 6, 7, 8));
+
+		await count.WaitForData(4);
 	}
 
 	[TestMethod]
