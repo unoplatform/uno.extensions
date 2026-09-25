@@ -117,6 +117,17 @@ public class Given_GeneratedMock : FeedUITests
 		IsRequired(typeof(BasketModelMock).GetProperty(nameof(BasketModel.Lines))).Should().BeTrue();
 	}
 
+	[TestMethod]
+	public void When_DerivedMemberCombinesTwoInputs_Then_MockExposesItOnceAsOptional()
+	{
+		// The MVUX generator emits one [FeedDependency] per input for Total; the mock must still declare it once.
+		var mock = typeof(CartModelMock);
+
+		mock.GetProperties().Count(property => property.Name == nameof(CartModel.Total)).Should().Be(1);
+		IsRequired(mock.GetProperty(nameof(CartModel.Total))).Should().BeFalse();
+		IsRequired(mock.GetProperty(nameof(CartModel.Subtotal))).Should().BeTrue();
+	}
+
 	private static bool IsRequired(PropertyInfo? property)
 	{
 		property.Should().NotBeNull();
