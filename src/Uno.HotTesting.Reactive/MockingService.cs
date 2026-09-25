@@ -31,6 +31,7 @@ public static class MockingService
 		// touched (i.e. Enable() has been called) — a live app never touches this type, so Core's probe
 		// stays null and no context is ever wrapped.
 		SourceContext.IsMockingActiveProbe = static () => _ambient.Value;
+		SourceContext.MockingSourceResolver = MockingSourceResolver.Instance;
 	}
 
 	/// <summary>
@@ -78,6 +79,7 @@ public static class MockingService
 		}
 
 		hotSwap.HotSwap(replacement);
+		MockingSourceResolver.Instance.GetOrCreateLayer(ctx, current).Set(replacement);
 	}
 
 	/// <summary>
@@ -98,5 +100,7 @@ public static class MockingService
 		}
 
 		hotSwap.HotSwap(ListFeed.AsFeed(replacement));
+		MockingSourceResolver.Instance.GetOrCreateLayer(ctx, currentFeed).Set(ListFeed.AsFeed(replacement));
+		MockingSourceResolver.Instance.GetOrCreateLayer<IImmutableList<T>>(ctx, current).Set(replacement);
 	}
 }
