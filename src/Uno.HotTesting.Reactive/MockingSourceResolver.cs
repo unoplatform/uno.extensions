@@ -8,9 +8,9 @@ using Uno.Extensions.Reactive.Operators;
 namespace Uno.HotTesting.Reactive;
 
 /// <summary>
-/// Gives every feed observed in a mocking context one swap layer per state store (spec 013, D6). Derived feeds
-/// subscribe to the layer instead of the feed, and <see cref="MockingService"/> swaps it together with the state,
-/// so a mocked input reaches every feed derived from it.
+/// Gives every feed observed in a mocking context one swap layer per state store (spec 013, D6). The feed's state
+/// and every feed derived from it subscribe to the layer instead of the feed, so swapping the layer is how
+/// <see cref="MockingService"/> puts a mock in place.
 /// </summary>
 /// <remarks>
 /// Lock-free with respect to the state store: <see cref="Resolve{T}"/> runs while a subscription is being created.
@@ -23,8 +23,8 @@ internal sealed class MockingSourceResolver : IMockingSourceResolver
 
 	/// <inheritdoc />
 	public ISignal<Message<T>> Resolve<T>(SourceContext context, ISignal<Message<T>> feed)
-		=> feed is IState<T> or HotSwapFeed<T> or UnroutedFeed<T>
-			? feed // a state is observed as-is, and a layer or its own input must never be routed to itself
+		=> feed is IState or HotSwapFeed<T> or UnroutedFeed<T>
+			? feed // a state (list states included) is observed as-is, and a layer or its input must never be routed to itself
 			: GetOrCreateLayer(context, feed);
 
 	/// <summary>

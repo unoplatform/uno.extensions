@@ -23,8 +23,8 @@ public interface IMenuSnapshot
 /// <summary>
 /// Fixture for the constructor shapes the generated Create must handle: more than one dependency (each
 /// parameter null-injected) and two public constructors of equal arity (the parameter type must be spelled
-/// out, otherwise <c>new MenuViewModel(default!, default!)</c> is ambiguous, CS0121). The derived feed and
-/// the independent state pin the record's member classification: the derived feed is an optional override,
+/// out, otherwise <c>new MenuViewModel(default!, default!)</c> is ambiguous, CS0121). The derived feeds and
+/// the independent state pin the record's member classification: the derived feeds are optional overrides,
 /// the independent state is left out.
 /// </summary>
 public partial class MenuModel

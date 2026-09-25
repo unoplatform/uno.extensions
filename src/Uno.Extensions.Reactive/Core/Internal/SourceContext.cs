@@ -287,7 +287,8 @@ public sealed class SourceContext : IAsyncDisposable
 	/// </summary>
 	/// <remarks>
 	/// This is the per-context gate that <c>MockingService.Enable()</c> drives, read at wrap time in
-	/// <see cref="StateImpl{T}"/>'s constructor instead of the global <see cref="Config.FeedConfiguration.EffectiveHotReload"/>.
+	/// <see cref="StateImpl{T}"/>'s constructor instead of the global <see cref="Config.FeedConfiguration.EffectiveHotReload"/>,
+	/// and by <see cref="GetMockableSource{T}"/>.
 	/// </remarks>
 	internal bool IsMockingActive { get; }
 
@@ -319,7 +320,10 @@ public sealed class SourceContext : IAsyncDisposable
 	/// <typeparam name="T">Type of the value of feed.</typeparam>
 	/// <param name="feed">The feed to get source from.</param>
 	/// <returns>The cached with replay async enumeration of messages produced by the given feed</returns>
-	/// <remarks>In a mocking context (spec 013), a feed derived from a mocked input observes the mock.</remarks>
+	/// <remarks>
+	/// When mocking is enabled (<c>Uno.HotTesting.Reactive</c>), the sequence follows any mock swapped in for
+	/// the feed, and it does not complete when the feed completes.
+	/// </remarks>
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	public IAsyncEnumerable<Message<T>> GetOrCreateSource<T>(ISignal<Message<T>> feed)
 	{
