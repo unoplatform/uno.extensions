@@ -249,15 +249,16 @@ The D6 anchor was only half built. States in a mocking context wrapped their sou
 as `Select`, a list `Where` or a dynamic feed subscribed to its input through the context's subscription cache,
 which the swap never touches: a derived member left unset ran over the real, null-injected input and ended in an
 error. `SourceContext.GetOrCreateSource` now asks the mocking layer for the source to subscribe to;
-`Uno.HotTesting.Reactive` gives each observed feed one swap layer per state store and swaps it with the state, a
-list feed under both its keys. Core only gains that hook. Two drafts were dropped in review: routing through the
+`Uno.HotTesting.Reactive` gives each observed feed one swap layer per state store, which the state observes too,
+so `SetMock` only points the layer at the mock. Core only gains that hook. Two drafts were dropped in review: routing through the
 state (derivations saw its local edits, it took the state lock while a subscription lock could be held, and it
 missed list feeds), and swap layers held by core's state store (the same behaviour, with most of the change in
 the core package). The factory-cache wrap first described for D6 was dropped too, since a factory has no context
-to read the gate from. Tests: `Given_GeneratedMock` (a derived member computes over the mock, recomputes on a
-re-swap, a list `Where` computes over the mock, an override still wins, and a state edit stays local) and
-`Given_MockingActivation` (a dynamic feed recomputes over a swapped list; a live context subscribes to the input
-directly).
+to read the gate from. Review then kept list states out of the resolver and made a mock that is the member's own
+feed restore the real feed. Tests: `Given_GeneratedMock` (a derived member computes over the mock, recomputes
+on a re-swap, a list `Where` and a two-level scalar chain compute over the mock, an override still wins, a state
+edit stays local, and the member's own feed restores the real one) and `Given_MockingActivation` (a dynamic feed
+recomputes over a swapped list; a live context never consults the resolver).
 
 ---
 
