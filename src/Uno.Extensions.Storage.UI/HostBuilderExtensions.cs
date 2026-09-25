@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace Uno.Extensions;
 
@@ -57,9 +58,17 @@ public static class HostBuilderExtensions
 					// delegate before the first ConfigureServices one.
 					_ = services
 						.AddFileStorage()
-						.AddKeyedStorage(ctx.Configuration);
+						.AddKeyedStorage(ctx.Configuration)
+						// Trimmed and AOT heads (the WebAssembly head on Uno 7) disable reflection-based
+						// JSON, so the most common value type needs generated metadata.
+						.AddJsonTypeInfo(KeyValueStorageContext.Default);
 				}
 				configure?.Invoke(ctx, services);
 			});
 	}
+}
+
+[JsonSerializable(typeof(string))]
+internal partial class KeyValueStorageContext : JsonSerializerContext
+{
 }
