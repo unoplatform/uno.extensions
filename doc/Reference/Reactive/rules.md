@@ -38,3 +38,29 @@ emits no `{Model}Mock` / `{Vm}Mock` for that model.
 
 Make one of the model's constructors public to get the mock back, or suppress the warning for a model that is
 not meant to be mocked.
+
+## Mock0002
+
+**No mock is generated for a model none of whose feeds is fed by a constructor parameter.**
+
+A `{Model}Mock` replaces the model's _inputs_ — the feeds reading a service the model takes as a constructor
+parameter — and the feeds derived from them. A model whose feeds are all independent has nothing a mock could
+drive, so the generator emits none and says so rather than leaving you to wonder why nothing appeared.
+
+If you expected a mock, check that the feed really reaches a constructor parameter: a service obtained through
+a helper method or a locator is not visible to the analysis. Declaring
+`[FeedDependency("Member", OnParameter = "service")]` on the model states the dependency explicitly and takes
+precedence over what is inferred.
+
+This one is reported at information level, so that a model whose feeds are legitimately all independent cannot
+fail a build treating warnings as errors. `dotnet build` hides it at default verbosity: read it in the IDE's
+error list, build with `-v normal`, or raise it in `.editorconfig` with
+`dotnet_diagnostic.MOCK0002.severity = warning`.
+
+## Mock0003
+
+**An implicit model pattern is not a valid regular expression.**
+
+`[assembly: ImplicitBindables("…")]` decides which types are treated as models. A pattern that cannot compile
+matches nothing, so the types you expected to be models silently are not — and neither view-models nor mocks
+are generated for them. The warning names the offending pattern; fix or remove it.

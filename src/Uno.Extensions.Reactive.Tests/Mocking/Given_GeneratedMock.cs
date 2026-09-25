@@ -109,6 +109,14 @@ public class Given_GeneratedMock : FeedUITests
 		mock.GetProperty(nameof(MenuModel.Filter)).Should().BeNull();
 	}
 
+	[TestMethod]
+	public void When_ModelIsAPositionalRecord_Then_ItsServiceDependentFeedIsRequired()
+	{
+		// The service reaches the feed through the record's synthesized property, not through a
+		// constructor-body assignment: the classifier must still see it as a service dependency.
+		IsRequired(typeof(BasketModelMock).GetProperty(nameof(BasketModel.Lines))).Should().BeTrue();
+	}
+
 	private static bool IsRequired(PropertyInfo? property)
 	{
 		property.Should().NotBeNull();
