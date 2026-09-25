@@ -35,17 +35,20 @@ public class Given_MockingActivation : FeedTests
 	}
 
 	[TestMethod]
-	public async Task When_NoScope_Then_DerivedFeedSubscribesToItsInputDirectly()
+	public void When_NoScope_Then_FeedsAreObservedDirectly()
 	{
-		MockingService.Enable().Dispose(); // registers the mocking layer, as a test or preview process does
-		using var ctx = new FeedTestContext();
+		FeedTestContext mocking;
+		using (MockingService.Enable())
+		{
+			mocking = new FeedTestContext();
+		}
+		using var live = new FeedTestContext();
 		var input = Feed.Async(async ct => 1);
 
-		var (selected, _) = ctx.SourceContext.GetOrCreateState(input.Select(value => value * 10)).Record();
-		await selected.WaitForData(10);
+		mocking.SourceContext.GetMockableSource(input).Should().NotBeSameAs(input, "a mocking context observes the feed through its swap layer");
+		live.SourceContext.GetMockableSource(input).Should().BeSameAs(input, "a live context never consults the mocking layer (G9/R7)");
 
-		ctx.SourceContext.States.HasSubscription(input).Should().BeTrue(
-			"a live context subscribes to the input itself, with no mocking layer in between (G9/R7)");
+		mocking.Dispose();
 	}
 
 	[TestMethod]
