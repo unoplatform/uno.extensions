@@ -249,6 +249,105 @@ public class Given_FeedsMockGenerator
 		mock.Should().Contain("internal static partial class ItemsViewModelMock");
 	}
 
+	[TestMethod]
+	public void When_DerivedMemberDependsOnTwoFeeds_Then_MockDeclaresItOnce()
+	{
+		// The MVUX generator emits one [FeedDependency] per dependency, so a member combining two feeds carries two.
+		var (sources, diagnostics) = Run(Preamble + """
+			[Model(typeof(PriceViewModel))]
+			[FeedDependency("Price", OnParameter = "service")]
+			[FeedDependency("Discounted", OnFeed = "Price")]
+			[FeedDependency("Saving", OnFeed = "Price")]
+			[FeedDependency("Saving", OnFeed = "Discounted")]
+			public class PriceModel
+			{
+				public PriceModel(IService service) { }
+				public IFeed<decimal> Price => null!;
+				public IFeed<decimal> Discounted => null!;
+				public IFeed<decimal> Saving => null!;
+			}
+
+			public class PriceViewModel
+			{
+				public PriceViewModel(IService service) { }
+				protected PriceViewModel(PriceModel model) { }
+				public PriceModel Model => null!;
+			}
+			""");
+
+		diagnostics.Should().BeEmpty();
+		var mock = sources.Should().ContainSingle().Subject;
+		Occurrences(mock, " Saving { get; init; }").Should().Be(1);
+		Occurrences(mock, "if (mock.Saving is not null)").Should().Be(1);
+	}
+
+	[TestMethod]
+	public void When_InputDependsOnTwoParameters_Then_MockRequiresItOnce()
+	{
+		var (sources, diagnostics) = Run(Preamble + """
+			[Model(typeof(ItemsViewModel))]
+			[FeedDependency("Items", OnParameter = "service")]
+			[FeedDependency("Items", OnParameter = "snapshot")]
+			public class ItemsModel
+			{
+				public ItemsModel(IService service, ISnapshot snapshot) { }
+				public IListFeed<string> Items => null!;
+			}
+
+			public class ItemsViewModel
+			{
+				public ItemsViewModel(IService service, ISnapshot snapshot) { }
+				protected ItemsViewModel(ItemsModel model) { }
+				public ItemsModel Model => null!;
+			}
+			""");
+
+		diagnostics.Should().BeEmpty();
+		var mock = sources.Should().ContainSingle().Subject;
+		Occurrences(mock, "required global::Uno.Extensions.Reactive.IListFeed<string> Items { get; init; }").Should().Be(1);
+		Occurrences(mock, "Items = global::Uno.HotTesting.Reactive.ListFeedMock.Empty<string>()").Should().Be(1);
+	}
+
+	[TestMethod]
+	public void When_MemberIsDeclaredBothInputAndDerived_Then_MockTreatsItAsDerivedLikeTheSourcePath()
+	{
+		// Hand-declared attributes can mix both kinds; the source-path classification ranks derived first.
+		var (sources, diagnostics) = Run(Preamble + """
+			[Model(typeof(ItemsViewModel))]
+			[FeedDependency("Items", OnParameter = "service")]
+			[FeedDependency("Count", OnParameter = "service")]
+			[FeedDependency("Count", OnFeed = "Items")]
+			public class ItemsModel
+			{
+				public ItemsModel(IService service) { }
+				public IListFeed<string> Items => null!;
+				public IFeed<int> Count => null!;
+			}
+
+			public class ItemsViewModel
+			{
+				public ItemsViewModel(IService service) { }
+				protected ItemsViewModel(ItemsModel model) { }
+				public ItemsModel Model => null!;
+			}
+			""");
+
+		diagnostics.Should().BeEmpty();
+		var mock = sources.Should().ContainSingle().Subject;
+		Occurrences(mock, " Count { get; init; }").Should().Be(1);
+		mock.Should().NotContain("required global::Uno.Extensions.Reactive.IFeed<int> Count");
+	}
+
+	private static int Occurrences(string text, string value)
+	{
+		var count = 0;
+		for (var index = text.IndexOf(value, StringComparison.Ordinal); index >= 0; index = text.IndexOf(value, index + value.Length, StringComparison.Ordinal))
+		{
+			count++;
+		}
+		return count;
+	}
+
 	private static (string[] Sources, Diagnostic[] Diagnostics) Run(string source)
 	{
 		// The framework plus the Uno.Extensions assemblies of the test host: enough for the fixture source to
