@@ -153,8 +153,8 @@ internal record MsalAuthenticationProvider(
 			// is correct.
 			return MsalRedirectPlatform.BrokerManaged;
 #else
-			// Runtime, not compile-time: on Skia iOS/Android heads Uno.Sdk substitutes the plain
-			// netX.0 build of this assembly, so the TFM no longer implies the OS.
+			// Runtime, not compile-time: the plain net10.0 build also runs on desktop and in the
+			// browser, so the TFM alone doesn't identify the OS.
 			if (OperatingSystem.IsAndroid())
 			{
 				return MsalRedirectPlatform.Android;
