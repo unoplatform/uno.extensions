@@ -1,4 +1,4 @@
-﻿<Project Sdk="Uno.Sdk">
+﻿<Project Sdk="Uno.Sdk.Private">
 	<Import Project="..\tfms-ui-winui.props" />
 
 	<PropertyGroup>
@@ -57,11 +57,8 @@
 
 	<!-- Define UNO_EXT_MSAL for every platform that ships a functional provider; only Mac
 		Catalyst keeps a stub. The plain netX.0 lib (empty platform identifier) must be
-		functional: on Skia iOS/Android heads, Uno.Sdk's ReplaceUnoRuntime substitutes it for
-		the platform lib for any package referencing Uno.UI
-		(RuntimeAssetsSelectorTask.HandleSkiaMobileForNonRuntimeEnabledPackages), so it is the
-		build that actually runs there. Platform behavior inside it is selected at runtime via
-		OperatingSystem.Is*(). Keep this allow-list in sync with build/Package.targets, which
+		functional because the desktop and WebAssembly heads run it; platform behavior inside it
+		is selected at runtime via OperatingSystem.Is*(). Keep this allow-list in sync with build/Package.targets, which
 		applies the same rule in consuming projects. -->
 	<PropertyGroup>
 		<_UnoExtMsalTargetPlatform>$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)'))</_UnoExtMsalTargetPlatform>
@@ -69,13 +66,6 @@
 
 	<PropertyGroup Condition="'$(_UnoExtMsalTargetPlatform)'=='' or '$(_UnoExtMsalTargetPlatform)'=='android' or '$(_UnoExtMsalTargetPlatform)'=='ios' or '$(_UnoExtMsalTargetPlatform)'=='windows' or '$(_UnoExtMsalTargetPlatform)'=='desktop' or '$(_UnoExtMsalTargetPlatform)'=='browserwasm'">
 		<DefineConstants>$(DefineConstants);UNO_EXT_MSAL</DefineConstants>
-	</PropertyGroup>
-
-	<!-- The browser persists the token cache through IKeyValueStorage (MsalTokenCacheStore) rather
-		than MsalCacheHelper, which has no browser backend; the symbol selects that path and keeps
-		the unused MsalCacheHelper code out of the WebAssembly assembly. -->
-	<PropertyGroup Condition="'$(_UnoExtMsalTargetPlatform)'=='browserwasm'">
-		<DefineConstants>$(DefineConstants);UNO_EXT_MSAL_BROWSER</DefineConstants>
 	</PropertyGroup>
 
 	<ItemGroup>

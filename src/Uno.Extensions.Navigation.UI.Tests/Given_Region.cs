@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -35,13 +35,19 @@ public class Given_Region
 	[TestMethod]
 	public void When_ResetLogger_WithDifferentInstance_Then_CurrentLoggerKept()
 	{
-		var running = new NullLoggerFactory().CreateLogger("running-host");
+		// NullLoggerFactory.CreateLogger hands back the same NullLogger.Instance whatever the name, so
+		// the two hosts need loggers of distinct generic types to actually be distinct instances.
+		ILogger running = NullLogger<RunningHost>.Instance;
 		Region.Logger = running;
 
 		// A different (already stopped) host tries to reset — it must not clobber the running host's logger.
-		var stopped = new NullLoggerFactory().CreateLogger("stopped-host");
+		ILogger stopped = NullLogger<StoppedHost>.Instance;
 		Region.ResetLogger(stopped);
 
 		Region.Logger.Should().BeSameAs(running, "a non-matching reset must leave the current logger untouched");
 	}
+
+	private sealed class RunningHost;
+
+	private sealed class StoppedHost;
 }

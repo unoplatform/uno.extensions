@@ -1,5 +1,6 @@
 parameters:
-  DotNetVersion: '9.0.200'
+  # Keep in sync with dotnet-install-uno-check.yml (see the note on DotNetVersion there).
+  DotNetVersion: '10.0.101'
   UnoCheck_Version: ''
   UnoCheckParameters: ''
 

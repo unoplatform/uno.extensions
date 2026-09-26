@@ -4,6 +4,7 @@ using Uno.Resizetizer;
 using Uno.UI.RuntimeTests;
 
 namespace Uno.Extensions.RuntimeTests;
+
 public partial class App : Application
 {
 	private static void ForceAssemblyLoading()
@@ -35,12 +36,14 @@ public partial class App : Application
 	protected override void OnLaunched(LaunchActivatedEventArgs args)
 	{
 		MainWindow = new Window();
-		// UseStudio comes from Uno.UI.HotDesign.Client, which the iOS CI lane excludes via
-		// UnoDisableHotDesign - its iOS asset is built against Microsoft.iOS 26.0 while the
-		// installed workload is 18.2 (CS1705). Hot Design is a design-time tool with no role in
-		// an automated runtime-test run, so dropping it there costs nothing.
+		// XAML hot reload needs the window registered, or the client can't re-apply the visual tree.
+		// UseStudio does that but ships with Hot Design, so fall back to the core API without it.
 #if DEBUG && !UNO_HOT_DESIGN_DISABLED
 		MainWindow.UseStudio();
+#elif DEBUG
+#pragma warning disable UNO0008 // Obsolete in favor of UseStudio, which Hot Design provides
+		MainWindow.EnableHotReload();
+#pragma warning restore UNO0008
 #endif
 
 

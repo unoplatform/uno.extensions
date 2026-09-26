@@ -1,8 +1,6 @@
-// Compiled out on WebAssembly (UNO_EXT_MSAL_BROWSER), where the cache goes through
-// MsalTokenCacheStore rather than MsalCacheHelper. Keep this file free of other #if branches and of
-// dependencies beyond Microsoft.Identity.Client.Extensions.Msal: Uno.Extensions.Authentication.MSAL.Tests
-// compiles it as linked source (the WinUI assembly can't load in a plain test host).
-#if !UNO_EXT_MSAL_BROWSER
+// Keep this file free of #if branches and of dependencies beyond Microsoft.Identity.Client.Extensions.Msal:
+// Uno.Extensions.Authentication.MSAL.Tests compiles it as linked source (the WinUI assembly can't load in a
+// plain test host).
 namespace Uno.Extensions.Authentication.MSAL;
 
 /// <summary>
@@ -86,4 +84,3 @@ internal static class MsalStorageDefaults
 		: OperatingSystem.IsLinux() ? MsalSecureStore.LinuxKeyring
 		: MsalSecureStore.None;
 }
-#endif

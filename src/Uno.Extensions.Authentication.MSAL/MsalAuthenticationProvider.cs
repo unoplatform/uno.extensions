@@ -153,8 +153,8 @@ internal record MsalAuthenticationProvider(
 			// is correct.
 			return MsalRedirectPlatform.BrokerManaged;
 #else
-			// Runtime, not compile-time: on Skia iOS/Android heads Uno.Sdk substitutes the plain
-			// netX.0 build of this assembly, so the TFM no longer implies the OS.
+			// Runtime, not compile-time: the plain net10.0 build also runs on desktop and in the
+			// browser, so the TFM alone doesn't identify the OS.
 			if (OperatingSystem.IsAndroid())
 			{
 				return MsalRedirectPlatform.Android;
@@ -406,11 +406,11 @@ internal record MsalAuthenticationProvider(
 	{
 		try
 		{
-#if UNO_EXT_MSAL_BROWSER
-			return SetupBrowserStorage();
-#else
-			return await SetupDesktopStorage(cancellationToken).ConfigureAwait(false);
-#endif
+			// Runtime, not a symbol: Uno 7 ships no browserwasm build of this library, so the browser
+			// runs the plain net10.0 one.
+			return PlatformHelper.IsWebAssembly
+				? SetupBrowserStorage()
+				: await SetupDesktopStorage(cancellationToken).ConfigureAwait(false);
 		}
 		catch (OperationCanceledException)
 		{
@@ -428,7 +428,6 @@ internal record MsalAuthenticationProvider(
 		}
 	}
 
-#if UNO_EXT_MSAL_BROWSER
 	/// <summary>
 	/// WebAssembly: serializes the MSAL cache through the default <c>IKeyValueStorage</c>.
 	/// </summary>
@@ -503,7 +502,7 @@ internal record MsalAuthenticationProvider(
 
 		return true;
 	}
-#else
+
 	/// <summary>
 	/// Desktop: registers <see cref="MsalCacheHelper"/> (DPAPI / Keychain / libsecret) over a cache
 	/// file, falling back to an unprotected file only when the app opted in. Mobile targets return
@@ -591,7 +590,6 @@ internal record MsalAuthenticationProvider(
 
 		return true;
 	}
-#endif
 
 	private async Task<AuthenticationResult?> AcquireTokenAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
 	{

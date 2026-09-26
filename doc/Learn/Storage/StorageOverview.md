@@ -38,14 +38,13 @@ For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:U
 | Platform | Default store |
 | --- | --- |
 | Windows (WinAppSDK) | `ApplicationData` settings, DPAPI-encrypted |
-| Android (native renderer) | `KeyStore` |
-| iOS (native renderer) | Keychain |
-| Android / iOS with the Skia renderer | `ApplicationData` settings (unencrypted, inside the app sandbox) — see the note below |
+| Android | `KeyStore` |
+| iOS | Keychain |
 | WebAssembly | Browser storage — `localStorage` by default, see below |
 | Other (e.g. Skia Desktop) | `ApplicationData` settings (unencrypted file) |
 
 > [!NOTE]
-> On Android and iOS heads built with `UnoFeatures=SkiaRenderer`, the Uno SDK loads this package's plain `netX.0` build rather than its `netX.0-android` / `netX.0-ios` one (the same substitution it applies to every Uno.UI-referencing package), and the `KeyStore` / Keychain stores only exist in the platform builds. The default there is therefore `ApplicationData`, which the OS sandboxes per app but does not encrypt. Register your own `IKeyValueStorage` as the default if you need more than the sandbox on those heads.
+> Before Uno Platform 7.0, Android and iOS heads built with `UnoFeatures=SkiaRenderer` loaded this package's plain `netX.0` build, so they fell back to unencrypted `ApplicationData` settings. From 7.0 every Android and iOS head uses `KeyStore` / Keychain.
 
 ### WebAssembly: choosing the browser store
 
