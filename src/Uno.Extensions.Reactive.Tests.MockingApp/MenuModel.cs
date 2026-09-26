@@ -23,8 +23,8 @@ public interface IMenuSnapshot
 /// <summary>
 /// Fixture for the constructor shapes the generated Create must handle: more than one dependency (each
 /// parameter null-injected) and two public constructors of equal arity (the parameter type must be spelled
-/// out, otherwise <c>new MenuViewModel(default!, default!)</c> is ambiguous, CS0121). The derived feed and
-/// the independent state pin the record's member classification: the derived feed is an optional override,
+/// out, otherwise <c>new MenuViewModel(default!, default!)</c> is ambiguous, CS0121). The derived feeds and
+/// the independent state pin the record's member classification: the derived feeds are optional overrides,
 /// the independent state is left out.
 /// </summary>
 public partial class MenuModel
@@ -48,6 +48,9 @@ public partial class MenuModel
 
 	// derived over the service-dependent list
 	public IFeed<int> ItemsCount => Items.AsFeed().Select(items => items.Count);
+
+	// derived over the list directly
+	public IListFeed<string> LongItems => Items.Where(item => item.Length > 1);
 
 	// independent state — not part of the mock
 	public IState<string> Filter => State<string>.Value(this, () => string.Empty);

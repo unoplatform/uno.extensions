@@ -38,6 +38,10 @@ public sealed class SourceContext : IAsyncDisposable
 	// probe (root) or its parent (child), so the bit survives a lazy first subscription even after the
 	// activation scope has exited. Null in a live app -> IsMockingActive is always false -> zero cost.
 	internal static Func<bool>? IsMockingActiveProbe;
+
+	// Mocking (spec 013, D6): registered with the probe; in a mocking context, gives the source a feed is observed
+	// through, so feeds derived from a mocked input see the mock too. Never consulted outside a mocking context.
+	internal static IMockingSourceResolver? MockingSourceResolver;
 	private static readonly ConditionalWeakTable<object, SourceContext> _contexts = new();
 
 	/// <summary>
@@ -283,7 +287,8 @@ public sealed class SourceContext : IAsyncDisposable
 	/// </summary>
 	/// <remarks>
 	/// This is the per-context gate that <c>MockingService.Enable()</c> drives, read at wrap time in
-	/// <see cref="StateImpl{T}"/>'s constructor instead of the global <see cref="Config.FeedConfiguration.EffectiveHotReload"/>.
+	/// <see cref="StateImpl{T}"/>'s constructor instead of the global <see cref="Config.FeedConfiguration.EffectiveHotReload"/>,
+	/// and by <see cref="GetMockableSource{T}"/>.
 	/// </remarks>
 	internal bool IsMockingActive { get; }
 
@@ -315,6 +320,10 @@ public sealed class SourceContext : IAsyncDisposable
 	/// <typeparam name="T">Type of the value of feed.</typeparam>
 	/// <param name="feed">The feed to get source from.</param>
 	/// <returns>The cached with replay async enumeration of messages produced by the given feed</returns>
+	/// <remarks>
+	/// When mocking is enabled (<c>Uno.HotTesting.Reactive</c>), the sequence follows any mock swapped in for
+	/// the feed, and it does not complete when the feed completes.
+	/// </remarks>
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	public IAsyncEnumerable<Message<T>> GetOrCreateSource<T>(ISignal<Message<T>> feed)
 	{
@@ -329,9 +338,21 @@ public sealed class SourceContext : IAsyncDisposable
 		}
 		else
 		{
-			return States.GetOrCreateSubscription(feed).GetMessages(this, Token);
+			return States.GetOrCreateSubscription(GetMockableSource(feed)).GetMessages(this, Token);
 		}
 	}
+
+	/// <summary>
+	/// Gets the source to subscribe to in order to observe <paramref name="feed"/>: the feed itself, unless this is
+	/// a mocking context, where the mocking layer resolves it (spec 013, D6).
+	/// </summary>
+	/// <typeparam name="T">Type of the value of feed.</typeparam>
+	/// <param name="feed">The observed feed.</param>
+	/// <returns>The source to subscribe to.</returns>
+	internal ISignal<Message<T>> GetMockableSource<T>(ISignal<Message<T>> feed)
+		=> IsMockingActive && MockingSourceResolver is { } resolver
+			? resolver.Resolve(this, feed)
+			: feed;
 
 	/// <summary>
 	/// Get or create a <see cref="IState{T}"/> for a given feed.
