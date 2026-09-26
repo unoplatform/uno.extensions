@@ -107,6 +107,14 @@ internal sealed class HotSwapFeed<T> : IFeed<T>
 				return false;
 			}
 
+			// A swap made while no read was pending completed a TCS nobody awaits: catch up with the owner's current feed.
+			if (Volatile.Read(ref _owner._current) is var latest && !ReferenceEquals(latest, _currentEnumerator.Feed))
+			{
+				await _currentEnumerator.DisposeAsync().ConfigureAwait(false);
+				_currentEnumerator = new SessionCurrentEnumerator(this, latest);
+				_isFirstMessageOfCurrentEnumerator = true;
+			}
+
 			if (_currentEnumerator.GetEnumerator(_context) is { } enumerator)
 			{
 				var moveNext = enumerator.MoveNextAsync().AsTask();
