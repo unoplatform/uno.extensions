@@ -30,7 +30,6 @@ public static class MockingService
 		// Register the probe Core reads at context creation. Registered only once the mocking layer is
 		// touched (i.e. Enable() has been called) — a live app never touches this type, so Core's probe
 		// stays null and no context is ever wrapped.
-		SourceContext.MockingSourceResolver = MockingSourceResolver.Instance; // before the probe: a mocking context must find it
 		SourceContext.IsMockingActiveProbe = static () => _ambient.Value;
 	}
 
@@ -65,12 +64,17 @@ public static class MockingService
 	/// <summary>
 	/// Swaps the source of a scalar feed member (called by generated <c>SetModel</c>).
 	/// </summary>
-	/// <remarks>The replacement must not be derived from the member it replaces: it would observe itself.</remarks>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public static void SwapFeed<T>(object owner, IFeed<T> current, IFeed<T> replacement)
 		where T : notnull
 	{
 		var ctx = SourceContext.GetOrCreate(owner);
+		if (current is not IState)
+		{
+			SwapSubscription(ctx, current, replacement, $"Value type: {typeof(T)}.");
+			return;
+		}
+
 		var state = ctx.GetOrCreateState(current);
 		if (state is not IHotSwapState<T> hotSwap || !hotSwap.CanHotSwap)
 		{
@@ -79,19 +83,23 @@ public static class MockingService
 				+ $"Ensure the model was constructed inside a MockingService.Enable() scope. Value type: {typeof(T)}.");
 		}
 
-		// The state observes the layer of its feed, like the feeds derived from it: swapping the layer reaches both.
-		MockingSourceResolver.Instance.GetOrCreateLayer(ctx, current).Set(new UnroutedFeed<T>(replacement));
+		hotSwap.HotSwap(replacement);
 	}
 
 	/// <summary>
 	/// Swaps the source of a list-feed member (called by generated <c>SetModel</c>).
 	/// </summary>
-	/// <remarks>The replacement must not be derived from the member it replaces: it would observe itself.</remarks>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public static void SwapListFeed<T>(object owner, IListFeed<T> current, IListFeed<T> replacement)
 		where T : notnull
 	{
 		var ctx = SourceContext.GetOrCreate(owner);
+		if (current is not IState)
+		{
+			SwapSubscription<IImmutableList<T>>(ctx, current, replacement, $"Item type: {typeof(T)}.");
+			return;
+		}
+
 		var currentFeed = ListFeed.AsFeed(current);
 		var state = ctx.GetOrCreateState(currentFeed);
 		if (state is not IHotSwapState<IImmutableList<T>> hotSwap || !hotSwap.CanHotSwap)
@@ -101,7 +109,21 @@ public static class MockingService
 				+ $"Ensure the model was constructed inside a MockingService.Enable() scope. Item type: {typeof(T)}.");
 		}
 
-		// The state observes its AsFeed adapter, which observes the layer of the list feed, like its derived feeds.
-		MockingSourceResolver.Instance.GetOrCreateLayer<IImmutableList<T>>(ctx, current).Set(new UnroutedFeed<IImmutableList<T>>(replacement));
+		hotSwap.HotSwap(ListFeed.AsFeed(replacement));
+	}
+
+	// The member's state and the feeds derived from it all read the feed through this one subscription.
+	// A state input is swapped as a state instead: its bindable reads the state itself.
+	private static void SwapSubscription<T>(SourceContext ctx, ISignal<Message<T>> current, ISignal<Message<T>> replacement, string typeInfo)
+	{
+		var subscription = ctx.States.GetOrCreateSubscription(current);
+		if (!subscription.CanHotSwap)
+		{
+			throw new InvalidOperationException(
+				$"The feed for the mocked member is not swappable. "
+				+ $"Ensure the model was constructed inside a MockingService.Enable() scope. {typeInfo}");
+		}
+
+		subscription.HotSwap(replacement);
 	}
 }

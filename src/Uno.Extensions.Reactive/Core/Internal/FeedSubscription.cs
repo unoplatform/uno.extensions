@@ -24,16 +24,38 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 	private readonly SourceContext _rootContext;
 	private readonly SourceContext _context;
 	private readonly ReplayOneAsyncEnumerable<Message<T>> _messages;
+	private readonly HotSwapFeed<T>? _hotSwap;
 
 	public FeedSubscription(ISignal<Message<T>> feed, SourceContext rootContext)
 	{
 		_feed = feed;
 		_rootContext = rootContext;
 		_context = rootContext.CreateChild(this, _requests);
+
+		// A mocking context can swap the source of a feed for all its subscribers at once (spec 013).
+		// Not a state's UpdateFeed: it must listen for updates as soon as its subscription exists, and it is never mocked.
+		var source = feed;
+		if (rootContext.IsMockingActive && feed is not UpdateFeed<T>)
+		{
+			source = _hotSwap = HotSwapFeed<T>.Direct(feed);
+		}
+
 		_messages = new ReplayOneAsyncEnumerable<Message<T>>(
-			feed.GetSource(_context),
+			source.GetSource(_context),
 			isInitialSyncValuesSkippingAllowed: true);
 	}
+
+	/// <summary>
+	/// Gets a value indicating whether <see cref="HotSwap"/> can change the source of this subscription.
+	/// </summary>
+	internal bool CanHotSwap => _hotSwap is not null;
+
+	/// <summary>
+	/// Replaces the source of this subscription, for all its subscribers.
+	/// </summary>
+	/// <param name="source">The new source.</param>
+	internal void HotSwap(ISignal<Message<T>> source)
+		=> _hotSwap?.Set(source);
 
 	string ISourceContextOwner.Name => $"Sub on '{LogHelper.GetIdentifier(_feed)}' for ctx '{_context.Parent!.Owner.Name}'.";
 
