@@ -246,19 +246,20 @@ MOCK0003 on the attribute rather than swallowed.
 ## v16 — derived feeds observe the mocked input
 
 The D6 anchor was only half built. States in a mocking context wrapped their source (D12), but a derivation such
-as `Select`, a list `Where` or a dynamic feed subscribed to its input through the context's subscription cache,
-which the swap never touches: a derived member left unset ran over the real, null-injected input and ended in an
-error. `SourceContext.GetOrCreateSource` now asks the mocking layer for the source to subscribe to;
-`Uno.HotTesting.Reactive` gives each observed feed one swap layer per state store, which the state observes too,
-so `SetMock` only points the layer at the mock. Core only gains that hook. Two drafts were dropped in review: routing through the
+as `Select`, a list `Where` or a dynamic feed read its input through the context's subscription to it, which the
+swap never touched: a derived member left unset ran over the real, null-injected input and ended in an error. The
+state and its derivations already shared that one subscription per feed; the swap sat above it, in the state. In a
+mocking context a subscription now reads its feed through a `HotSwapFeed`, and `SetMock` swaps the member's
+subscription, so the state and every derivation see the mock. A state input is still swapped as a state, since its
+bindable reads the state itself, and a state's `UpdateFeed` is never wrapped. Dropped drafts: routing through the
 state (derivations saw its local edits, it took the state lock while a subscription lock could be held, and it
-missed list feeds), and swap layers held by core's state store (the same behaviour, with most of the change in
-the core package). The factory-cache wrap first described for D6 was dropped too, since a factory has no context
-to read the gate from. Review then kept list states out of the resolver and made a mock that is the member's own
-feed restore the real feed. Tests: `Given_GeneratedMock` (a derived member computes over the mock, recomputes
-on a re-swap, a list `Where` and a two-level scalar chain compute over the mock, an override still wins, a state
-edit stays local, and the member's own feed restores the real one) and `Given_MockingActivation` (a dynamic feed
-recomputes over a swapped list; a live context never consults the resolver).
+missed list feeds), swap layers held by core's state store, and a source resolver in core that the mocking package
+implemented, since core must not depend on the mocking feature. The factory-cache wrap first described for D6 was
+dropped too, since a factory has no context to read the gate from. Tests: `Given_GeneratedMock` (a derived member
+computes over the mock, recomputes on a re-swap, a list `Where` and a two-level scalar chain compute over the mock,
+an override still wins, a state edit stays local, and the member's own feed restores the real one) and
+`Given_MockingActivation` (a dynamic feed recomputes over a swapped list; a live context's subscriptions cannot be
+swapped).
 
 ---
 
@@ -271,7 +272,7 @@ recomputes over a swapped list; a live context never consults the resolver).
 | D3 | A facade (`SetModel` and generated setters) sits in front of the hooks; `HotSwapFeed` and the handles stay non-public | v1 |
 | D4 | ~~Dedicated mockable flag in `FeedConfiguration`~~ **replaced in v7** by the per-context gate `SourceContext.IsMockingActive` (D12) | v1 to v7 |
 | D5 | Mocking code generation is **external** (consumer project); the MVUX generator only does analysis, attributes and hidden hooks | v1 |
-| D6 | The swap is anchored so derived feeds survive (non-negotiable): at a swap layer per feed, resolved by the mocking layer for every derivation (v16; first planned at the model-feed cache); derived members remain individually overridable | v1, v2 and v16 |
+| D6 | The swap is anchored so derived feeds survive (non-negotiable): at the context's subscription to each feed, swappable in a mocking context and read by the state and every derivation (v16; first planned at the model-feed cache); derived members remain individually overridable | v1, v2 and v16 |
 | D7 | The non-AOT nature of the mocking path is accepted (development and test only) | v1 |
 | D8 | Converters are application-owned illustrations at `FeedView.Source` (returning `IMessageEntry`); the feature implements none | v4 |
 | D9 | Tiers 2 and 3 are strictly typed; the tier 1 object is confined to tier 1 | v4 |
