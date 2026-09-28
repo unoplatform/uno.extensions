@@ -35,7 +35,7 @@ public class Given_MockingActivation : FeedTests
 	}
 
 	[TestMethod]
-	public void When_NoScope_Then_FeedsAreObservedDirectly()
+	public void When_NoScope_Then_SubscriptionsCannotBeSwapped()
 	{
 		FeedTestContext mocking;
 		using (MockingService.Enable())
@@ -45,8 +45,8 @@ public class Given_MockingActivation : FeedTests
 		using var live = new FeedTestContext();
 		var input = Feed.Async(async ct => 1);
 
-		mocking.SourceContext.GetMockableSource(input).Should().NotBeSameAs(input, "a mocking context observes the feed through its swap layer");
-		live.SourceContext.GetMockableSource(input).Should().BeSameAs(input, "a live context never consults the mocking layer (G9/R7)");
+		mocking.SourceContext.States.GetOrCreateSubscription(input).CanHotSwap.Should().BeTrue("a mocking context can swap the source of a feed");
+		live.SourceContext.States.GetOrCreateSubscription(input).CanHotSwap.Should().BeFalse("a live context never wraps a subscription (G9/R7)");
 
 		mocking.Dispose();
 	}
