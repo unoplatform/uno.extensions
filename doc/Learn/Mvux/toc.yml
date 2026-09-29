@@ -48,6 +48,8 @@
       href: xref:Uno.Extensions.Mvux.Advanced.Messaging
     - name: Commands
       href: xref:Uno.Extensions.Mvux.Advanced.Commands
+    - name: Validation
+      href: xref:Uno.Extensions.Mvux.Advanced.Validation
     - name: Inspecting the generated code
       href: xref:Uno.Extensions.Mvux.Advanced.InspectGeneratedCode
 - name: FAQ

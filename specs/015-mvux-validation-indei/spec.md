@@ -1,6 +1,6 @@
 # 015 — MVUX validation via `INotifyDataErrorInfo` on the generated ViewModel
 
-**Status:** Draft — under review
+**Status:** Implemented (v1) with the proposed defaults for §7, pending review — see [progress.md](progress.md)
 **Area:** `Uno.Extensions.Reactive` (message axis, state hook, `BindableViewModelBase` / `Bindable<T>`), `Uno.Extensions.Reactive.Generator` (collision diagnostics only)
 **Related:** `Uno.Extensions.Validation` (`IValidator`) — optional producer, no hard dependency; spec 013 (mocking can drive the new axis)
 
@@ -41,7 +41,9 @@ MVUX has no validation story. `Uno.Extensions.Validation` (`IValidator.ValidateA
 - Builder/entry helpers mirroring `Error(...)` in `MessageAxisExtensions.cs`:
   - `TBuilder Validation<TBuilder>(this TBuilder, IEnumerable<ValidationResult>? results)` (null/empty = clear)
   - `IImmutableList<ValidationResult> GetValidation(this IMessageEntry)` + `MessageEntry<T>.Validation` property.
-- **Propagation:** the axis must **not** leak through projections (`Select`, `SelectAsync`, `Combine`, …) — a derived `FullName` must not show `Person`'s errors. Operators that forward parent axes must drop `Validation`. *(Verify current axis-forwarding behaviour of each operator during implementation — see Risks.)*
+- **Propagation:** the axis must **not** leak through projections (`Select`, `SelectAsync`, `Combine`, …) — a derived `FullName` must not show `Person`'s errors. Operators that forward parent axes must drop `Validation`.
+  - *Implemented:* all operators forwarded every parent axis (`MessageManager`, `CombineFeedHelper`, `DynamicParentMessage`), so the axis is flagged with a new internal `MessageAxis.IsLocal`. `MessageManager` (and `MessageBuilder`) ignore parent values of local axes, `CombineFeedHelper` skips them (`DynamicParentMessage` goes through a `MessageManager`).
+  - Exception: the `UpdateFeed` inside a state opts in (`forwardLocalAxes: true`), as its parent is the same logical feed (on hot-reload the source of the old state is the new state). A local value replaces the parent one (no aggregation).
 
 ### 4.2 Producer — how results get onto the state (MVUX side)
 
@@ -59,7 +61,8 @@ Two entry points, both writing the axis through the existing `StateImpl.UpdateMe
    - Registers a validator **on the `StateImpl` itself** and returns the same instance (the VM requires a `StateImpl<T>` — `BindableViewModelBase.Property(string, IState<T>)` throws for custom implementations, so a wrapping state is not an option).
    - Idempotent: model property getters are re-evaluated, so re-registration replaces, never stacks.
    - After every `Data` change: cancel the in-flight validation, run the validator off the UI thread, then write `Validation` **only if the data is still the version that was validated** (reference/version check) — stale results are discarded.
-   - Validator exceptions are logged and do not fault the state (not surfaced as `Error` axis).
+   - Validator exceptions are logged and do not fault the state (not surfaced as `Error` axis). Previous results are kept.
+   - The validator runs only when the state has a value: `None` clears the results, `Undefined` keeps them.
    - `IValidator` fits the delegate directly (`_validator.ValidateAsync`), so no bridge package is required. A convenience `Validate(this IState<T>, IValidator)` overload is an open question (§7 Q3).
 
 ### 4.3 Consumer — the VM reroutes to INDEI
@@ -76,11 +79,14 @@ Two entry points, both writing the axis through the existing `StateImpl.UpdateMe
 **`Bindable<T> : INotifyDataErrorInfo`** (generated record bindables, e.g. `BindablePerson`)
 - WinUI queries INDEI on the **source object of the leaf** of a binding path; for `{Binding Person.FirstName}` that is `BindablePerson`, so it must implement INDEI too.
 - `BindablePropertyInfo<T>` gains an internal error-subscription channel alongside `Subscribe(Action<T>)`; the parent pushes the member-scoped slice, the child applies the same store/raise logic, recursing for nested records via `Property<TProperty>(...)`.
-- `GetErrors(null or "")` returns the entity-level errors (matching WinUI's "whole object" convention).
+- `GetErrors(null or "")` returns the entity-level errors (matching WinUI's "whole object" convention). On the VM there is no entity-level error, so it returns an empty list.
+- A result targeting a record-typed member (`["Address"]`) is exposed on the owner (`GetErrors("Address")`) and as entity-level error of the sub-bindable.
+- Results received before a sub-bindable subscribes are re-routed when it subscribes (the base `Bindable<T>` ctor subscribes to its owner before the generated ctor creates the sub-bindables).
 
 **Generator**
 - No emission change needed: generated VMs and record bindables derive from the two bases above.
 - New diagnostic when a model/record already declares `HasErrors`, `GetErrors` or `ErrorsChanged` → base uses explicit interface implementation and the public `HasErrors` is not exposed for that type (§7 Q4).
+  - *Implemented:* both bases implement the three INDEI members explicitly, and expose a public `HasErrors` for bindings. Only `HasErrors` can therefore collide: the generated member hides it (generated code already disables warnings), INDEI keeps working, and `FEED1001` (Info, to not break `TreatWarningsAsErrors` apps) is reported.
 
 ### 4.4 Data flow
 ```
@@ -94,13 +100,13 @@ user types → Bindable.SetValue → StateImpl.UpdateMessageAsync (Data, Binding
 - `MessageAxes.Validation`, `MessageAxis.Validation`
 - `MessageAxisExtensions.Validation(...)`, `GetValidation(...)`, `MessageEntry<T>.Validation`
 - `State.Validate<T>(this IState<T>, Func<T, CancellationToken, ValueTask<IEnumerable<ValidationResult>>>)`
-- `BindableViewModelBase` and `Bindable<T>` now implement `INotifyDataErrorInfo` (`HasErrors`, `GetErrors`, `ErrorsChanged` — `EventHandler<DataErrorsChangedEventArgs>`, compliant with the events rule).
+- `BindableViewModelBase` and `Bindable<T>` now implement `INotifyDataErrorInfo` (`HasErrors`, `GetErrors`, `ErrorsChanged` — `EventHandler<DataErrorsChangedEventArgs>`, compliant with the events rule), explicitly, plus a public `bool HasErrors` on both.
 - Docs: new `doc/Learn/Mvux/Advanced/Validation.md` + TOC, cross-link from `doc/Learn/Validation/ValidationOverview.md`.
 
 Not breaking: interfaces are added to types marked `EditorBrowsable(Advanced/Never)` and intended for generated code only; the collision case is handled by §4.3 Generator.
 
 ## 6. Performance / platform
-- Zero cost when unused: one `Changes.Contains(axis)` check per message; no store allocation until a result arrives.
+- Zero cost when unused: one `Changes.Contains(axis)` check per message; no store allocation until a result arrives (except a small sub-bindable registry for VMs/bindables that have record-typed members).
 - UI-thread-only store; dispatch via the existing `_dispatcher` — no locks (WASM).
 - Validator runs off the UI thread with cancellation honoured.
 
@@ -116,7 +122,7 @@ Not breaking: interfaces are added to types marked `EditorBrowsable(Advanced/Nev
 - **Rendering:** WinUI 3 (Windows) dropped built-in INDEI visuals; Uno Skia behaviour needs verification. Value of v1 is the contract (templates, Toolkit, `HasErrors` binding, programmatic access). Verify on Windows + Skia desktop + WASM before merge.
 - **Axis forwarding in operators:** if operators forward all parent axes today, dropping `Validation` needs a per-axis rule (a flag on `MessageAxis`, e.g. `IsLocal`), which is itself a small core change.
 - **Stale results** if the version check in §4.2 is wrong — covered by tests below.
-- **Hot reload:** `BindableViewModelBase.HotReload.cs` swaps feeds/models; the error store must be cleared/re-subscribed on swap.
+- **Hot reload:** `BindableViewModelBase.HotReload.cs` swaps feeds/models; the error store must be cleared/re-subscribed on swap. *Implemented:* the error store is driven only by the messages of the (kept) state, so it follows the swap; the hot-swapped state stops its own validator, the updated state's validator owns validation.
 
 ## 9. Tests
 - `Uno.Extensions.Reactive.Tests`
