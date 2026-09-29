@@ -30,6 +30,11 @@ internal record BindableGenerationContext(
 	[ContextType(typeof(ImplicitCommandsAttribute))] INamedTypeSymbol ImplicitCommandsAttribute,
 	[ContextType(typeof(ImplicitFeedCommandParametersAttribute))]  INamedTypeSymbol ImplicitCommandParametersAttribute,
 
+	// Mocking (spec 013) — optional: absent on compilations that predate the feature
+	[ContextType(typeof(EnableFeedMockingAttribute))] INamedTypeSymbol? EnableFeedMockingAttribute,
+	[ContextType(typeof(FeedDependencyAttribute))] INamedTypeSymbol? FeedDependencyAttribute,
+	[ContextType(typeof(CtorDependencyAttribute))] INamedTypeSymbol? CtorDependencyAttribute,
+
 	// Bindable attributes
 	[ContextType(typeof(ReactiveBindableAttribute))] INamedTypeSymbol BindableAttribute,
 	[ContextType(typeof(InputAttribute))] INamedTypeSymbol InputAttribute,
@@ -60,6 +65,25 @@ internal record BindableGenerationContext(
 		=> symbol.FindAttributeValue<bool>(BindableAttribute, nameof(ReactiveBindableAttribute.IsEnabled), 0) is { isDefined: true } attribute
 			? attribute.value ?? true
 			: null;
+
+	/// <summary>
+	/// Spec 013 — whether the MVUX mocking instrumentation should be emitted. On by default (the runtime
+	/// decides activation); emit is skipped only when <c>[assembly: EnableFeedMocking(IsEnabled = false)]</c>
+	/// explicitly opts out.
+	/// </summary>
+	public bool IsMockingEnabled()
+	{
+		if (EnableFeedMockingAttribute is null)
+		{
+			return true; // attribute type not referenced → default on
+		}
+
+		var optOut = Context.Compilation.Assembly.GetAttributes().Any(a =>
+			SymbolEqualityComparer.Default.Equals(a.AttributeClass, EnableFeedMockingAttribute)
+			&& (a.NamedArguments.FirstOrDefault(na => na.Key == "IsEnabled").Value.Value as bool?) == false);
+
+		return !optOut;
+	}
 
 	public bool IsFeed(ITypeSymbol type)
 		=> type.GetAllInterfaces().Select(intf => intf.OriginalDefinition).Contains(Feed, SymbolEqualityComparer.Default);

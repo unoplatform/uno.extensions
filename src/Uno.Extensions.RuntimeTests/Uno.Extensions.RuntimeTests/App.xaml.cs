@@ -4,6 +4,7 @@ using Uno.Resizetizer;
 using Uno.UI.RuntimeTests;
 
 namespace Uno.Extensions.RuntimeTests;
+
 public partial class App : Application
 {
 	private static void ForceAssemblyLoading()
@@ -12,12 +13,13 @@ public partial class App : Application
 #if DEBUG // Hot-reload tests are only relevant in debug configuration
 		var reactive_HotReload_Tests = new Uno.Extensions.Reactive.WinUI.Tests.Given_HotReload();
 		var navigation_HotReload_Tests = new Uno.Extensions.Navigation.UI.Tests.Given_HotReload();
-		var navigation_HotReloadNav_Tests = new Uno.Extensions.Navigation.UI.Tests.Given_NavigationHotReload();
+		var navigation_HotReloadNav_Tests = new Uno.Extensions.Navigation.UI.Tests.Given_Navigation_HotReload();
 		var tabBar_HotReload_Tests = new Uno.Extensions.Navigation.UI.Tests.Given_TabBar_HotReload();
 #endif
 		var navigation_UI_Tests = new Given_RouteNotifier();
 		var navigation_ChainedResult_Tests = new Given_ChainedGetDataAsync();
 		var navigation_TabNavigation_Tests = new Given_TabNavigation();
+		var msal_UI_Tests = new Uno.Extensions.Authentication.MSAL.UI.Tests.Given_MsalAuthentication();
 	}
 
 	/// <summary>
@@ -34,8 +36,14 @@ public partial class App : Application
 	protected override void OnLaunched(LaunchActivatedEventArgs args)
 	{
 		MainWindow = new Window();
-#if DEBUG
+		// XAML hot reload needs the window registered, or the client can't re-apply the visual tree.
+		// UseStudio does that but ships with Hot Design, so fall back to the core API without it.
+#if DEBUG && !UNO_HOT_DESIGN_DISABLED
 		MainWindow.UseStudio();
+#elif DEBUG
+#pragma warning disable UNO0008 // Obsolete in favor of UseStudio, which Hot Design provides
+		MainWindow.EnableHotReload();
+#pragma warning restore UNO0008
 #endif
 
 
@@ -45,6 +53,10 @@ public partial class App : Application
 
 		MainWindow!.Content ??= new Uno.UI.RuntimeTests.UnitTestsControl();
 		MainWindow!.Activate();
+
+		// No-op unless UITEST_RUNTIME_AUTOSTART_RESULT_FILE is set, which only the Android/iOS CI
+		// scripts do. Those heads can't use the engine's own UNO_RUNTIME_TESTS_RUN_TESTS runner.
+		MobileRuntimeTestsAutostart.StartIfRequested(MainWindow);
 	}
 
 

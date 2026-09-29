@@ -9,7 +9,8 @@ namespace Uno.Extensions.Navigation.UI.Tests.Pages;
 /// Used by Test 13 to verify that auto-resolved routes work
 /// with dynamically added TabBarItems.
 /// </summary>
-public sealed class TabThreePage : Page
+// partial: see HotReloadNewRoutePage - required for the Android head (CS0260).
+public sealed partial class TabThreePage : Page
 {
 	public TabThreePage()
 	{

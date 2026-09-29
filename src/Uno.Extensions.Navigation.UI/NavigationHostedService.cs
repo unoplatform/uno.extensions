@@ -69,6 +69,11 @@ internal class NavigationHostedService : IHostedService, IStartupService
 			}
 		}
 
+		// Release the static Region.Logger so this host's logger (and its service provider) is not
+		// retained after shutdown. Guarded so we only clear our own logger, not one a concurrently
+		// running host installed after us.
+		Region.ResetLogger(_regionLogger);
+
 		if (_regionLogger.IsEnabled(LogLevel.Information))
 		{
 			_regionLogger.LogInformationMessage("Navigation engine stopped");

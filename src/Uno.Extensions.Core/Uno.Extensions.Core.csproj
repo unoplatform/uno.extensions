@@ -20,8 +20,6 @@
 				If ever a new dependency is required here, it should be an `.Abstractions` package, and has to be discussed and approved by the Uno Extensions maintainers team.
 		-->
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
-		<PackageReference Include="System.Collections.Immutable" />
-		<PackageReference Include="System.Threading.Tasks.Extensions" />
 	</ItemGroup>
 
 	<ItemGroup>

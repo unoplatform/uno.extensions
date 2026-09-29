@@ -27,6 +27,20 @@
 		<UnoIconUrl>https://uno-assets.platform.uno/logos/uno.png</UnoIconUrl>
 	</PropertyGroup>
 
+	<!--
+		Neither of the two design-time companions has an Uno 7 build yet:
+		- Uno.UI.HotDesign 1.23.0-dev.174 is still net9.0 against Uno 6.8 and drags
+		  Uno.Toolkit.WinUI 9.1.3 along with it, which fails CS0012 on the missing `Uno` assembly.
+		- Uno.UI.App.Mcp 2.0.0-dev.4 is net9.0 against SkiaSharp 3.119, so its GlobalStaticResources
+		  initializer throws FileNotFoundException for SkiaSharp.Views.Windows at startup - which
+		  kills the app before OnLaunched and takes every runtime test with it.
+		Drop each one once a 7.0-compatible package ships.
+	-->
+	<PropertyGroup>
+		<UnoDisableHotDesign>true</UnoDisableHotDesign>
+		<UnoDisableMCPSupport>true</UnoDisableMCPSupport>
+	</PropertyGroup>
+
 	<PropertyGroup>
 		<Build_Android>true</Build_Android>
 		<Build_iOS>true</Build_iOS>

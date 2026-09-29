@@ -28,7 +28,6 @@ jobs:
   #   parameters:
   #     sdkVersion: 19041
 
-  # - template: templates/update-vs-components.yml
 
   - task: DotNetCoreCLI@2
     displayName: Download uno.png
@@ -60,7 +59,7 @@ jobs:
     retryCountOnTaskFailure: 3
     inputs:
       packageType: sdk
-      version: 8.0.301
+      version: 10.0.101
 
   - task: VSTest@2
     inputs:

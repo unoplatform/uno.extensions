@@ -8,14 +8,37 @@ namespace Uno.Extensions.Reactive.Utils;
 
 internal static class AsyncEnumerableExtensions
 {
-	public static async ValueTask<TSource> FirstOrDefaultAsync<TSource>(this IAsyncEnumerable<TSource> source, TSource defaultValue, CancellationToken ct)
+	public static async Task ForEachAsync<TSource>(this IAsyncEnumerable<TSource> source, Action<TSource> action, CancellationToken ct = default)
 	{
-		await foreach (var value in source.WithCancellation(ct).ConfigureAwait(false))
+		await foreach (var item in source.WithCancellation(ct).ConfigureAwait(false))
 		{
-			return value;
+			action(item);
 		}
+	}
 
-		return defaultValue;
+	public static async Task ForEachAsync<TSource>(this IAsyncEnumerable<TSource> source, Action<TSource, int> action, CancellationToken ct = default)
+	{
+		var index = 0;
+		await foreach (var item in source.WithCancellation(ct).ConfigureAwait(false))
+		{
+			action(item, index++);
+		}
+	}
+
+	public static async Task ForEachAwaitAsync<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, Task> asyncAction, CancellationToken ct = default)
+	{
+		await foreach (var item in source.WithCancellation(ct).ConfigureAwait(false))
+		{
+			await asyncAction(item).ConfigureAwait(false);
+		}
+	}
+
+	public static async Task ForEachAwaitWithCancellationAsync<TSource>(this IAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, Task> asyncAction, CancellationToken ct)
+	{
+		await foreach (var item in source.WithCancellation(ct).ConfigureAwait(false))
+		{
+			await asyncAction(item, ct).ConfigureAwait(false);
+		}
 	}
 
 	public static Task ForEachAwaitWithCancellationAsync<TSource>(this IAsyncEnumerable<TSource> source, AsyncAction<TSource> asyncAction, ConcurrencyMode mode, CancellationToken ct)

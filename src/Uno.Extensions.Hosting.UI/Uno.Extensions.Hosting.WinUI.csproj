@@ -1,4 +1,4 @@
-﻿<Project Sdk="Uno.Sdk">
+﻿<Project Sdk="Uno.Sdk.Private">
 	<Import Project="..\tfms-ui-winui.props" />
 
 	<PropertyGroup>
@@ -26,7 +26,7 @@
 		<None Remove="WasmScripts\**" />
 	</ItemGroup>
 	
-	<ItemGroup Condition="'$(IsBrowserWasm)'=='true' or '$(TargetFramework)' == 'net9.0' ">
+	<ItemGroup Condition="'$(IsBrowserWasm)'=='true' or '$(TargetFramework)' == 'net10.0' ">
 		<None Remove="WasmScripts\**" />
 		<EmbeddedResource Include="WasmScripts\**" />
 	</ItemGroup>

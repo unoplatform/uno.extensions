@@ -1,4 +1,4 @@
-<Project ToolsVersion="15.0">
+﻿<Project ToolsVersion="15.0">
   <PropertyGroup>
 		<!--
 			The UnoTargetFrameworkOverride property is used to control the platforms compiled by Visual Studio, and
@@ -11,20 +11,19 @@
 
 			Available build targets
 
-				uap10.0.19041 (Windows)
-				net5.0-windows10.0.19041 (WinAppSDK Windows)
-				net9.0 (WebAssembly, Skia)
-				net9.0-ios (.NET iOS)
-				net9.0-android (.NET Android)
-				net9.0-maccatalyst (.NET macOS Catalyst)
-				net9.0-macos (.NET macOS AppKit)
+				net10.0 (Skia desktop; also the asset every other platform binds to)
+				net10.0-windows10.0.19041 (WinAppSDK Windows)
+				net10.0-ios (.NET iOS, app heads only)
+				net10.0-android (.NET Android, app heads only)
+				net10.0-desktop (app heads only)
+				net10.0-browserwasm (app heads only)
 
-			Include net9.0 to make sure all projects build
+			Include net10.0 to make sure all projects build
 
-      The UnoTargetFrameworkMobileOverride property is use only in Mobile (i.e. the single-project used by net6-ios/android/mac/catalyst)
+      The UnoTargetFrameworkMobileOverride property is use only in Mobile (i.e. the single-project used by net10-ios/android)
 		-->
-   <!-- <UnoTargetFrameworkMobileOverride>net9.0-ios</UnoTargetFrameworkMobileOverride>-->
-    <!-- <UnoTargetFrameworkOverride>$(UnoTargetFrameworkMobileOverride);net9.0</UnoTargetFrameworkOverride>-->
+   <!-- <UnoTargetFrameworkMobileOverride>net10.0-ios</UnoTargetFrameworkMobileOverride>-->
+    <!-- <UnoTargetFrameworkOverride>$(UnoTargetFrameworkMobileOverride);net10.0</UnoTargetFrameworkOverride>-->
 
 	<!--
 

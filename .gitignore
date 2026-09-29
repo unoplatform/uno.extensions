@@ -340,3 +340,9 @@ DebugPlatforms.props
 !build/ci/publish
 
 *.lscache
+# Runtime-test results/logs written into the tree by build/ci/stage-runtime-tests-*.yml
+/build/*-runtime-tests/
+/build/*-runtime-tests-app/
+/build/playwright-browsers/
+# --tool-path used by build/test-scripts/wasm-runtime-tests.sh for the WebAssembly runner
+/build/.dotnet-tools/

@@ -1,0 +1,62 @@
+jobs:
+  - job: RuntimeTestsWasm
+    displayName: 'Runtime Tests - WebAssembly'
+    timeoutInMinutes: 45
+    cancelTimeoutInMinutes: 0
+
+    pool:
+      vmImage: 'ubuntu-24.04'
+
+    variables:
+      RuntimeTestsArtifactPath: $(Build.SourcesDirectory)/build/wasm-runtime-tests-app
+
+    steps:
+      - checkout: self
+        clean: true
+
+      - template: templates/host-cleanup-linux.yml
+      # Provides the .NET 10 SDK the runner tool needs: `dotnet tool install` picks the tool asset
+      # from the SDK version, and Uno.UI.RuntimeTests.Engine.Wasm.Runner ships only tools/net10.0.
+      - template: templates/dotnet-install-uno-check.yml
+
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '18.x'
+
+      - task: DownloadPipelineArtifact@2
+        displayName: 'Download WebAssembly runtime tests artifact'
+        inputs:
+          artifact: wasm-runtime-tests
+          path: $(RuntimeTestsArtifactPath)
+
+      - bash: |
+          chmod +x build/test-scripts/wasm-runtime-tests.sh
+          build/test-scripts/wasm-runtime-tests.sh
+        displayName: 'Run WebAssembly runtime tests'
+        env:
+          BUILD_SOURCESDIRECTORY: $(Build.SourcesDirectory)
+          RuntimeTestsArtifactPath: $(RuntimeTestsArtifactPath)
+          # Same filter as the other three lanes. This lane used to run only
+          # Given_BrowserTokenCacheStorage because the provider invoked the app's Builder callback
+          # before WithUnoHelpers(), which on WebAssembly replaced the stub HttpClient factory with
+          # Uno's - so StubWebUi's fabricated code escaped to the real login.microsoftonline.com
+          # (AADSTS9002313). The callback now runs last, so the stub applies in the browser too.
+          TEST_FILTER: '$(RuntimeTestsFilter)'
+
+      - task: PublishTestResults@2
+        condition: always()
+        inputs:
+          testRunTitle: 'WebAssembly Runtime Tests'
+          testResultsFormat: 'NUnit'
+          testResultsFiles: '$(Build.SourcesDirectory)/build/wasm-runtime-tests/wasm-runtime-tests-results.xml'
+          failTaskOnFailedTests: true
+          failTaskOnMissingResultsFile: true
+
+      - task: PublishPipelineArtifact@1
+        condition: always()
+        inputs:
+          # The whole results directory, not just logs/: the NUnit XML carries the per-test failure
+          # messages, and without it a failing mobile run leaves nothing to diagnose from.
+          targetPath: '$(Build.SourcesDirectory)/build/wasm-runtime-tests'
+          artifact: 'wasm-runtime-tests-logs-$(System.StageAttempt)'
+          publishLocation: 'pipeline'

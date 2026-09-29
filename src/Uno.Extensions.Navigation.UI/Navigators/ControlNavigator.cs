@@ -145,6 +145,19 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 		return executedRoute;
 	}
 
+	/// <inheritdoc />
+	internal override async Task RefreshActiveRouteViewModelAsync()
+	{
+		var route = Route;
+		if (route is null || string.IsNullOrEmpty(route.Base))
+		{
+			return;
+		}
+
+		var mapping = Resolver.FindByPath(route.Base);
+		await InitializeCurrentView(new NavigationRequest(this, route), route, mapping, refresh: true);
+	}
+
 	protected async Task<object?> InitializeCurrentView(NavigationRequest request, Route route, RouteInfo? mapping, bool refresh = false)
 	{
 		var view = CurrentView;
@@ -302,6 +315,18 @@ public abstract class ControlNavigator : Navigator
 		return NavigateAsync(pending);
 	}
 
+	/// <summary>
+	/// Re-creates the view model of the route this navigator is currently on and rebinds it to
+	/// the current view, without issuing a navigation. Called by
+	/// <see cref="UI.NavigationRouteUpdateHandler"/> after a C# hot-reload delta updated the view
+	/// model mapped to the ACTIVE route (#3142): a metadata update never re-runs constructors or
+	/// property initializers on live instances, and no navigation-based path re-instantiates the
+	/// route the user is already on — the IsDefault cascade deliberately suppresses regions that
+	/// are already on their route, and re-issuing the same route short-circuits to a no-op
+	/// (0 forward segments, unchanged SourcePageType).
+	/// </summary>
+	internal virtual Task RefreshActiveRouteViewModelAsync() => Task.CompletedTask;
+
 	protected ControlNavigator(
 		ILogger logger,
 		IDispatcher dispatcher,
@@ -422,7 +447,23 @@ public abstract class ControlNavigator : Navigator
 
 					services.AddScopedInstance(request);
 
-					var created = services.GetService(mapping!.ViewModel);
+					object? created;
+					try
+					{
+						created = services.GetService(mapping!.ViewModel);
+					}
+					catch (Exception ex)
+					{
+						// A view-model constructor (or one of its DI dependencies) throwing
+						// here is app code failing, not a missing registration — don't fall
+						// through to the reflection path, which would run the same failing
+						// constructor again. Log before the fault propagates: no caller up
+						// the navigation chain logs it, and at startup the faulted task is
+						// typically unobserved, so this is the only diagnostic the app
+						// author ever gets (see #3136).
+						if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage(ex, $"Failed to create view model '{mapping!.ViewModel.Name}': the service provider threw while constructing it");
+						throw;
+					}
 
 					if (created is not null)
 					{
@@ -437,9 +478,9 @@ public abstract class ControlNavigator : Navigator
 							return ctr.Invoke(args);
 						}
 					}
-					catch
+					catch (Exception ex)
 					{
-						if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformationMessage("ViewModel not included in RouteMap, and unable to instance using Activator instead of ServiceProvider");
+						if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage(ex, $"Failed to create view model '{mapping.ViewModel.Name}' via the reflection fallback (type isn't registered with the service provider)");
 					}
 					return default;
 				});

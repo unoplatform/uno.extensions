@@ -224,6 +224,74 @@ Each child `Region.Name` is a selectable target. See docs:
 - **Risk**: `PanelVisiblityNavigator` reuses existing FrameViews, so the same VM instance is re-visible post-HR. The VM's property getter re-reads the HR'd method on each access — that's what makes the assertion work. If the VM cached the method return value, HR wouldn't be visible without re-instantiation.
 - **Status (2026-04-22)**: Implemented and passing end-to-end on Skia desktop.
 
+- **ID**: `When_PageXamlUpdatedWhileUnmaterialized_Then_RevealShowsUpdatedContent`
+- **Goal**: Deterministic repro for uno.extensions#3130 — the "stranded default page".
+  A page created while its host panel cannot lay out exists only as `Frame.Content`
+  (never a materialized visual child, `Loaded` never fires). Uno's HR visual-tree walk
+  enumerates `VisualTreeHelper` children only, so a XAML HR of the page's type replaces
+  nothing; navigation then declines to refresh (the keep-active-instance cascade skip +
+  `no segments to navigate`). Revealing the panel shows the pre-HR placeholder.
+- **Layout**: `HotReloadRegionPage` (visibility panel). The test collapses `ContentGrid`
+  BEFORE navigating `Stranded` → `HotReloadStrandedContentPage` into it — the deterministic
+  stand-in for "the hosted app's view gets no layout pass while its pages are filled",
+  which is why the original bug only reproduced in a hidden hosted app view (WASM) and
+  not in an always-composited desktop window.
+- **HR change**: XAML on `HotReloadStrandedContentPage.xaml` — `Text="placeholder"` →
+  `Text="filled"`.
+- **Trigger**: reveal the panel (`ContentGrid.Visibility = Visible`) after the HR delta.
+- **Assertion**: the materialized page shows `filled`. The test must NOT pin the stale
+  instance for this assertion — the fix is allowed to swap the instance.
+- **Risk / notes**: the navigation into the collapsed panel stalls at
+  `CheckLoadedAsync`/`EnsureLoaded` (same stall as the WASM repro) — the test fires it
+  without awaiting and polls for `Frame.Content` instead. Preconditions assert the
+  live-but-unmaterialized state so a harness regression can't silently turn this into a
+  test of nothing.
+- **Status (2026-07-17)**: red/fix/green verified locally. Red on stock Uno 6.6.0-dev.982;
+  green with the two-part fix: Uno `Frame.HotReload.cs` `PatchStrandedContent` (re-creates
+  unmaterialized `Frame.Content` when its type was updated — including in-place EnC updates
+  where the type identity is unchanged) + Extensions `NavigationFrameContentUpdateHandler`
+  (re-hooks `FrameNavigator` onto the replaced instance from `AfterVisualTreeUpdate`).
+  Goes green in CI once the Uno fix ships in the pinned Uno version.
+
+- **ID**: `Given_FrameContentRehook` (4 tests)
+- **Goal**: Pin `FrameNavigator.RehookCurrentViewAfterHotReload`'s view-model refresh
+  decision without the HR harness: the external content swap is simulated by assigning
+  `Frame.Content` directly (which, like Uno's frame element-update handler, raises no
+  `Frame.Navigated`).
+- **Assertions**: a delta that does NOT contain the mapped VM type preserves the copied
+  DataContext (un-persisted VM state survives a XAML-only edit); a delta containing the
+  VM type rebuilds the VM (an in-place EnC update keeps the type identity, so the
+  wrong-type check alone cannot detect it); a replacement without a DataContext gets a
+  VM built through the standard pipeline (#3130 recovery); no swap → no-op.
+- **Notes**: runs in the primary test app (no `[RunsInSecondaryApp]`), because no real
+  HR delta is applied. The refresh itself is deferred onto the dispatcher and guarded by
+  a token + content-identity check so a navigation that lands first wins.
+
+- **ID**: `When_ActiveRouteViewModelUpdated_Then_ActiveRegionVmReinstantiated`
+- **Goal**: Regression guard for uno.extensions#3142 — a C# delta that updates the view model of
+  a region's **active** route must re-instantiate that view model in place. Constructor /
+  property-initializer edits are only visible on a fresh instance, and before the fix no HR path
+  created one: the IsDefault cascade deliberately suppresses regions already on their route, and
+  the frame-content re-hook only reacts to element replacement.
+- **Layout**: Same visibility-region shape as the preserved-selection test (`HotReloadRegionPage`
+  with `RegionOne` IsDefault / `RegionTwo`); the test navigates to `RegionTwo` so it also proves
+  the refresh does not re-issue the IsDefault cascade.
+- **HR change**: `HotReloadRegionVm.ComputeCtorSeed()` — the VM's **own file**, so the delta
+  contains a navigation-registered view-model type (editing a helper class would not exercise
+  the refresh gate). The edited method only runs from a property initializer.
+- **Trigger**: none — the refresh must happen with no navigation at all; the test polls for the
+  region's DataContext to become a *different* `HotReloadRegionVm` instance.
+- **Assertion**: new VM instance with `CtorSeededValue == "ctor-updated"` AND the active region
+  is still `RegionTwo`.
+- **Risk**: the refresh triggers on **view-model** membership only — view deltas stay owned by
+  Uno's element walk; including them would regress the state preservation pinned by
+  `Given_FrameContentRehook.When_XamlOnlyDelta_Then_CopiedViewModelIsPreserved`.
+- **Status (2026-08-20)**: Implemented alongside the fix (spec `specs/009-hr-active-route-vm-refresh`).
+  The harness-free companion `Given_ActiveRouteVmRefresh` (primary app, synthetic delta via
+  `ScheduleCascadeForAllContextsIfRouteRelevant`) was verified red/fix/green locally on Skia
+  desktop; unit coverage for the type→view-model mapping (incl. the MVUX mapped-model shape)
+  lives in `Given_NavigationRouteUpdateHandler`.
+
 - **ID**: `When_UpdateStackPanelChildAfterHR_Then_NewlyShownChildReflectsUpdate`
 - **Goal**: Same as above but with a `StackPanel` instead of `Grid`.
 - **Risk**: `StackPanel` doesn't have rows/columns but the region mechanism is identical

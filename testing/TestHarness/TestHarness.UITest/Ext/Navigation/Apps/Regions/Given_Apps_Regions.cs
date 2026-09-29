@@ -35,11 +35,20 @@ public class Given_Apps_Regions : NavigationTestBase
 
 		App.WaitThenTap("RegionsTbDataPageTabOne");
 
+		// Wait for each tab's content before touching it. Tapping a TabBarItem returns as soon as the
+		// tap lands, not when the region has finished materializing the page, so SetText/GetText could
+		// run against a tree that does not contain the TextBox yet - which surfaced as
+		// "InvalidOperationException: The query returned no results" on the WebAssembly lane. The
+		// NavView test above already waits this way.
+		App.WaitElement("RegionsFirstTbiDataPageTextBox");
+
 		var textToSet = "Hello, World!";
 
 		App.SetText("RegionsFirstTbiDataPageTextBox", textToSet);
 
 		App.WaitThenTap("RegionsTbDataPageTabTwo");
+
+		App.WaitElement("RegionsSecondTbiDataPageTextBox");
 
 		var textFromTb = App.GetText("RegionsSecondTbiDataPageTextBox");
 

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Uno.Sdk">
+﻿<Project Sdk="Uno.Sdk.Private">
 	<Import Project="..\tfms-ui-winui.props" />
 
 	<PropertyGroup>
@@ -19,7 +19,7 @@
 	</PropertyGroup>
 
 	<ItemGroup >
-		<!-- MSAL isn't supported on skia targets, macos or maccatalyst -->
+		<!-- MSAL isn't supported on macOS or Mac Catalyst; Skia heads run the plain netX.0 build (see the allow-list below) -->
 		<PackageReference Include="Uno.WinUI" />
 		<PackageReference Include="Uno.WinUI.MSAL" />
 	</ItemGroup>
@@ -55,7 +55,16 @@
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(_IsNetStd)'!='true' and '$(_IsMacOS)'!='true' and '$(_IsCatalyst)'!='true'" >
+	<!-- Define UNO_EXT_MSAL for every platform that ships a functional provider; only Mac
+		Catalyst keeps a stub. The plain netX.0 lib (empty platform identifier) must be
+		functional because the desktop and WebAssembly heads run it; platform behavior inside it
+		is selected at runtime via OperatingSystem.Is*(). Keep this allow-list in sync with build/Package.targets, which
+		applies the same rule in consuming projects. -->
+	<PropertyGroup>
+		<_UnoExtMsalTargetPlatform>$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)'))</_UnoExtMsalTargetPlatform>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(_UnoExtMsalTargetPlatform)'=='' or '$(_UnoExtMsalTargetPlatform)'=='android' or '$(_UnoExtMsalTargetPlatform)'=='ios' or '$(_UnoExtMsalTargetPlatform)'=='windows' or '$(_UnoExtMsalTargetPlatform)'=='desktop' or '$(_UnoExtMsalTargetPlatform)'=='browserwasm'">
 		<DefineConstants>$(DefineConstants);UNO_EXT_MSAL</DefineConstants>
 	</PropertyGroup>
 
@@ -74,10 +83,6 @@
 
 	<ItemGroup Condition="$(TargetFramework.Contains('windows10'))">
 		<PackageReference Include="Microsoft.Identity.Client.Broker" />
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(IsBrowserWasm)'!='true'">
-		<Compile Remove="**\*.wasm.cs"/>
 	</ItemGroup>
 
 	<ItemGroup>

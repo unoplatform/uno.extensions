@@ -1,4 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
+using Uno.Extensions.Storage.KeyValueStorage;
 
 namespace Uno.Extensions;
 
@@ -25,6 +29,9 @@ public static class HostBuilderExtensions
 	/// <returns>
 	/// The <see cref="IAuthenticationBuilder"/> that was passed in.
 	/// </returns>
+	/// <exception cref="PlatformNotSupportedException">
+	/// MSAL authentication is not supported on this target platform (Mac Catalyst).
+	/// </exception>
 	[Obsolete("This method is obsolete. Please use the AddMsal overload that accepts a 'Window' parameter to specify the authentication window. The overload without 'Window' will be removed in a future release.", false)]
 	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
 	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
@@ -54,6 +61,9 @@ public static class HostBuilderExtensions
 	/// <returns>
 	/// The <see cref="IAuthenticationBuilder"/> that was passed in.
 	/// </returns>
+	/// <exception cref="PlatformNotSupportedException">
+	/// MSAL authentication is not supported on this target platform (Mac Catalyst).
+	/// </exception>
 	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
 	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static IAuthenticationBuilder AddMsal(
@@ -74,7 +84,9 @@ public static class HostBuilderExtensions
 		string name = MsalAuthenticationProvider.DefaultName)
 	{
 #if !UNO_EXT_MSAL
-		return builder;
+		// Loud by design: the silent `return builder;` this replaces surfaced only much later as
+		// AuthenticationService's "No providers specified" error, far from the actual cause.
+		throw new PlatformNotSupportedException("MSAL authentication is not supported on this target platform.");
 #else
 		var hostBuilder = (builder as IBuilder)?.HostBuilder;
 		if (hostBuilder is null)
@@ -86,7 +98,12 @@ public static class HostBuilderExtensions
 			.UseConfiguration(configure: configBuilder =>
 					configBuilder
 						.Section<MsalConfiguration>(name)
-				);
+				)
+			.ConfigureServices(services =>
+				// Try*, so an app that registered its own wrapper keeps it. UseStorage is already
+				// a prerequisite for authentication at all - UseAuthentication builds ITokenCache
+				// from the same default instance - so this adds no new requirement.
+				services.TryAddSingleton(sp => new MsalKeyValueStorage(sp.GetRequiredDefaultInstance<IKeyValueStorage>())));
 
 
 		var authBuilder = builder.AsBuilder<MsalAuthenticationBuilder>();

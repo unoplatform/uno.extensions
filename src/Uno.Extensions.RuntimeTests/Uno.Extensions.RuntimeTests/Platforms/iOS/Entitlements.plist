@@ -2,5 +2,24 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 	<dict>
+		<!--
+			MSAL on iOS always uses iOSTokenCacheAccessor (iOSPlatformProxy.CreateTokenCacheAccessor
+			returns it unconditionally - WithCacheOptions cannot opt out). Its constructor calls
+			GetTeamId(), which writes a probe item to the keychain and reads back its access group;
+			with no keychain-access-groups entitlement that fails and every PublicClientApplication
+			build throws MsalClientException(cannot_access_publisher_keychain). That failed all 10
+			Given_MsalAuthentication cases on the simulator lane in build 228812.
+
+			MSAL then uses "<first dot component of the access group>.com.microsoft.adalcache" as its
+			keychain group, so the entitled group has to be exactly that. A shipping app writes
+			"$(AppIdentifierPrefix)com.microsoft.adalcache" and gets the prefix from its provisioning
+			profile; this head is a CI test app that is never signed with a team, and the simulator
+			does not validate the group against a profile, so a synthetic prefix works and keeps the
+			build free of signing configuration.
+		-->
+		<key>keychain-access-groups</key>
+		<array>
+			<string>unoexttests.com.microsoft.adalcache</string>
+		</array>
 	</dict>
 </plist>

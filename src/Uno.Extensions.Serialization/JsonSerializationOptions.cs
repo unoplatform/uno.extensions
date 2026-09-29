@@ -9,6 +9,13 @@ namespace Uno.Extensions.Serialization;
 /// </summary>
 public class JsonSerializationOptions
 {
+	// Template only — never handed to a serializer directly.
+	//
+	// `System.Text.Json` caches a `JsonTypeInfo` on the options instance for every type it (de)serializes
+	// via reflection. If this shared static were handed to a serializer, it would accumulate `JsonTypeInfo`
+	// for every app type across every host, pinning those types — and, for a downstream host that loads
+	// previewed apps into their own collectible AssemblyLoadContexts, the app's ALC — for the process
+	// lifetime. Callers must obtain a host-scoped copy via <see cref="CreateSerializerOptions"/>.
 	internal static readonly JsonSerializerOptions DefaultSerializerOptions = new JsonSerializerOptions()
 	{
 		AllowTrailingCommas     = true,
@@ -24,9 +31,21 @@ public class JsonSerializationOptions
 	};
 
 	/// <summary>
+	/// Creates a fresh, host-scoped copy of the default serializer options.
+	/// </summary>
+	/// <remarks>
+	/// Each caller receives its own instance so the reflection-based `JsonTypeInfo` cache that
+	/// <c>System.Text.Json</c> builds up while (de)serializing app types is confined to that host
+	/// and released with it, rather than accumulating on the shared <see cref="DefaultSerializerOptions"/>
+	/// template.
+	/// </remarks>
+	internal static JsonSerializerOptions CreateSerializerOptions()
+		=> new JsonSerializerOptions(DefaultSerializerOptions);
+
+	/// <summary>
 	/// Gets the <see cref="JsonSerializerOptions"/>.
 	/// </summary>
-	public JsonSerializerOptions SerializerOptions { get; } = new JsonSerializerOptions(DefaultSerializerOptions);
+	public JsonSerializerOptions SerializerOptions { get; } = CreateSerializerOptions();
 
 	[UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "Only used when JsonSerializer.IsReflectionEnabledByDefault=true.")]
 	[UnconditionalSuppressMessage("Trimming", "IL3050", Justification = "Only used when JsonSerializer.IsReflectionEnabledByDefault=true.")]

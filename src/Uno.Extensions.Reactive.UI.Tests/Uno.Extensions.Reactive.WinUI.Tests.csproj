@@ -1,5 +1,5 @@
-﻿<Project Sdk="Uno.Sdk.Private">
-	<Import Project="..\tfms-ui-winui.props" />
+<Project Sdk="Uno.Sdk.Private">
+	<Import Project="..\tfms-ui-winui-apps.props" />
 
 	<PropertyGroup>
 		<Description>Test libarary for the reactive extensions for the Uno Platform (WinUI)</Description>
@@ -8,6 +8,7 @@
 
 		<UnoSingleProject>true</UnoSingleProject>
 		<OutputType>Library</OutputType>
+
 	</PropertyGroup>
 
 	<ItemGroup Condition="$(IsXamarinIOS) or $(IsXamarinMac) or $(IsMonoAndroid)">
@@ -15,7 +16,7 @@
 		<Reference Include="System.Xml.Linq" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)'!='net9.0-windows10.0.19041'">
+	<ItemGroup Condition="'$(TargetFramework)'!='net10.0-windows10.0.19041'">
 		<Content Include="Assets\**" />
 		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
 		<Compile Update="**\*.xaml.cs">
