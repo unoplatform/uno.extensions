@@ -25,6 +25,7 @@ internal partial class MessageManager<TParent, TResult>
 
 	private readonly object _gate = new();
 	private readonly Action<Message<TResult>>? _send;
+	private readonly bool _forwardLocalAxes;
 	
 	private IMessage? _parent;
 	// Locally, we only store a set of delegates that are upgrading the parent value into a local value.
@@ -36,9 +37,15 @@ internal partial class MessageManager<TParent, TResult>
 
 	public Message<TResult> Current => _local.result;
 
-	public MessageManager(Action<Message<TResult>>? send = null)
+	/// <param name="send">Callback invoked each time the <see cref="Current"/> message is updated.</param>
+	/// <param name="forwardLocalAxes">
+	/// Indicates if axes flagged as <see cref="MessageAxis.IsLocal"/> should be forwarded from the parent message.
+	/// This should be enabled only when the parent message is the same logical feed as the local one (e.g. the source of a state).
+	/// </param>
+	public MessageManager(Action<Message<TResult>>? send = null, bool forwardLocalAxes = false)
 	{
 		_send = send;
+		_forwardLocalAxes = forwardLocalAxes;
 
 		var initialMessage = Message<TResult>.Initial;
 		var initialUpdates = new Dictionary<MessageAxis, MessageAxisUpdate>
@@ -100,7 +107,7 @@ internal partial class MessageManager<TParent, TResult>
 			var changes = new ChangeCollection();
 			foreach (var axis in possiblyChangedAxes.Distinct())
 			{
-				var parentValue = parentEntry[axis];
+				var parentValue = axis.IsLocal && !_forwardLocalAxes ? MessageAxisValue.Unset : parentEntry[axis];
 				var currentValue = localEntry[axis];
 
 				// Note: If we don't have any "change" to apply to the given axis,
@@ -113,6 +120,7 @@ internal partial class MessageManager<TParent, TResult>
 					updated = update.GetValue(parentValue, currentValue);
 				}
 				else if (!_local.applied.ContainsKey(axis)
+					&& (!axis.IsLocal || _forwardLocalAxes)
 					&& (parent?.Changes.Contains(axis, out var parentChanges) ?? false))
 				{
 					// If we don't have any local value (neither in the change set being applied, neither in the previously applied change set),
