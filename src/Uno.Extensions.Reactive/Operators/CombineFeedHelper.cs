@@ -98,6 +98,11 @@ internal sealed class CombineFeedHelper<TResult>
 			{
 				builder.Data(_getData());
 			}
+			else if (changedAxis.IsLocal)
+			{
+				// Local axes (like validation) belong to the parent feeds, they are not forwarded to the combined feed.
+				continue;
+			}
 			else
 			{
 				var values = _parents.Select(p => p is not null && p.TryGetValue(changedAxis, out var value) ? value : default);
