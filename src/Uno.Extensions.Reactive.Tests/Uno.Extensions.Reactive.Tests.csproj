@@ -19,6 +19,7 @@
 		<PackageReference Include="MSTest.TestAdapter" />
 		<PackageReference Include="MSTest.TestFramework" />
 		<PackageReference Include="coverlet.collector" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -29,7 +30,8 @@
 		<ProjectReference Include="..\Uno.Extensions.Reactive.Tests.MockingApp\Uno.Extensions.Reactive.Tests.MockingApp.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Reactive.Tests.MockingApp.SingleProject\Uno.Extensions.Reactive.Tests.MockingApp.SingleProject.csproj" />
 		<ProjectReference Include="..\Uno.HotTesting.Reactive.Generator\Uno.HotTesting.Reactive.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-		<ProjectReference Include="..\Uno.Extensions.Reactive.Generator\Uno.Extensions.Reactive.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<!-- Also referenced (under an alias, as it embeds copies of the public Reactive attributes) to drive the generator in-process (cf. Given_ValidationDiagnostic) -->
+		<ProjectReference Include="..\Uno.Extensions.Reactive.Generator\Uno.Extensions.Reactive.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" Aliases="ReactiveGenerator" />
 	</ItemGroup>
 
 </Project>
