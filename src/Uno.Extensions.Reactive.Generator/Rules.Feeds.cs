@@ -10,6 +10,31 @@ internal static partial class Rules
 	// General usage [0000-0999]
 
 	// Bindings [1000-1999]
+	public static class FEED1001
+	{
+		private const string message = "The member '{0}' of '{1}' hides the '{0}' property of the generated bindable '{2}', which exposes the validation state (INotifyDataErrorInfo). "
+			+ "Validation errors are still available through the INotifyDataErrorInfo interface, but '{0}' cannot be used to bind to the validation state.";
+
+		public static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+			nameof(FEED1001),
+			"Member hides the validation state of the generated bindable",
+			message,
+			Category.Usage,
+			DiagnosticSeverity.Info,
+			helpLinkUri: "https://platform.uno/docs/articles/external/uno.extensions/doc/Overview/Reactive/rules.html#Feed1001",
+			isEnabledByDefault: true);
+
+		public static Diagnostic GetDiagnostic(INamedTypeSymbol type, ISymbol member, string bindableName)
+			=> Diagnostic.Create(
+				Descriptor,
+				member.DeclaringSyntaxReferences.FirstOrDefault() is { } syntax
+					? Location.Create(syntax.SyntaxTree, syntax.Span)
+					: Location.None,
+				member.Name,
+				type.Name,
+				bindableName);
+	}
+
 
 	// Commands [2000-2999]
 	public static class FEED2001
