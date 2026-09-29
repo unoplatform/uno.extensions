@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive;
@@ -351,5 +354,33 @@ partial class State
 		_ = ForEachAsync(state, action, caller, line);
 
 		return Disposable.Empty;
+	}
+
+	/// <summary>
+	/// Validates the value of a state each time it changes, publishing the results on the <see cref="MessageAxis.Validation"/> of the state.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to validate.</param>
+	/// <param name="validator">The async method which validates a value of the state.</param>
+	/// <returns>The given <paramref name="state"/>, so it can be used to chain other operations.</returns>
+	/// <remarks>
+	/// Validation never blocks a value: invalid values are still set on the state, validation results only annotate them.
+	/// The validator runs on a background thread each time the data changes (including the initial value) and the previous pending validation is cancelled.
+	/// Results produced for a value that is no longer the current value of the state are discarded.
+	/// When the state has no value, the validation results are cleared.
+	/// If the validator throws, the error is logged and the previous results are kept (the state is not set in error).
+	/// This is idempotent: invoking this method multiple times on the same state replaces the validator (starting at the next data change).
+	/// </remarks>
+	/// <exception cref="NotSupportedException">If the <paramref name="state"/> has not been created using the MVUX State factories.</exception>
+	public static IState<T> Validate<T>(this IState<T> state, Func<T, CancellationToken, ValueTask<IEnumerable<ValidationResult>>> validator)
+	{
+		if (state is not StateImpl<T> impl)
+		{
+			throw new NotSupportedException($"Validation is supported only on states created using the State factories (got '{state.GetType().Name}').");
+		}
+
+		impl.SetValidator(validator ?? throw new ArgumentNullException(nameof(validator)));
+
+		return state;
 	}
 }
