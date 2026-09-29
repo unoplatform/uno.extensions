@@ -78,7 +78,7 @@
 		<_IsNetCore Condition="'$(TargetFramework)'=='net5.0'">true</_IsNetCore>
 
 		<_IsNetStd>false</_IsNetStd>
-		<_IsNetStd Condition="'$(TargetFramework)'=='net9.0' or $(_IsNetCore)">true</_IsNetStd>
+		<_IsNetStd Condition="'$(TargetFramework)'=='net10.0' or $(_IsNetCore)">true</_IsNetStd>
 
 		<_IsUWP>false</_IsUWP>
 		<_IsUWP Condition="$(TargetFramework.StartsWith('uap'))">true</_IsUWP>
@@ -140,6 +140,15 @@
 			<PropertyGroup>
 				<GenerateDocumentationFile>False</GenerateDocumentationFile>
 				<NoWarn>$(NoWarn);CS1591</NoWarn>
+
+				<!-- Test and sample projects are never published trimmed, so trim/AOT analysis on
+					them only turns "this test calls the RequiresUnreferencedCode API it exists to
+					test" into a build error (IL2026 and friends, via TreatWarningsAsErrors). This
+					went unnoticed while no CI stage built the WebAssembly heads of the *.UI.Tests
+					projects; it blocks all three of them. The product packages keep full analysis -
+					Uno.Extensions.Serialization.AotTests remains the AOT backstop. -->
+				<EnableTrimAnalyzer>false</EnableTrimAnalyzer>
+				<EnableAotAnalyzer>false</EnableAotAnalyzer>
 			</PropertyGroup>
 		</When>
 	</Choose>

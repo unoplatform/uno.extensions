@@ -41,6 +41,7 @@
       "src\\Uno.Extensions.Serialization.AotTests\\Uno.Extensions.Serialization.AotTests.csproj",
       "src\\Uno.Extensions.Serialization.Tests\\Uno.Extensions.Serialization.Tests.csproj",
       "src\\Uno.Extensions.Serialization\\Uno.Extensions.Serialization.csproj",
+      "src\\Uno.Extensions.Storage.UI.Tests\\Uno.Extensions.Storage.WinUI.Tests.csproj",
       "src\\Uno.Extensions.Storage.UI\\Uno.Extensions.Storage.WinUI.csproj",
       "src\\Uno.Extensions.Storage\\Uno.Extensions.Storage.csproj",
       "src\\Uno.Extensions.Toolkit.UI\\Uno.Extensions.Toolkit.WinUI.csproj",

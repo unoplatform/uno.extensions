@@ -46,6 +46,13 @@ public static class ButtonExtensions
 	/// <summary>
 	/// Backing property for the LastExecutionError.
 	/// </summary>
+	// IL2026 fires on browserwasm, the only TFM where the trim analyzer runs: RegisterAttached's
+	// propertyType is treated as reflected-over, and Exception exposes TargetSite, whose getter is
+	// [RequiresUnreferencedCode] as of .NET 9. Nothing here reads a member of the exception - the
+	// property only stores and returns the instance the command surfaced - so the metadata the
+	// trimmer may drop is never used.
+	[UnconditionalSuppressMessage("Trimming", "IL2026:RequiresUnreferencedCode",
+		Justification = "The property stores an Exception instance; no member of it is reflected over.")]
 	public static readonly DependencyProperty LastExecutionErrorProperty = DependencyProperty.RegisterAttached(
 		"LastExecutionError", typeof(Exception), typeof(ButtonExtensions), new PropertyMetadata(default));
 

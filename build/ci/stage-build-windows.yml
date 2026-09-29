@@ -33,7 +33,6 @@ jobs:
   #   parameters:
   #     sdkVersion: 19041
 
-  - template: templates/update-vs-components.yml
 
   - task: MSBuild@1
     displayName: Build Samples

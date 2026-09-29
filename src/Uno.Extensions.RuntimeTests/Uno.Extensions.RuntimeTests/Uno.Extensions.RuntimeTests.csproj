@@ -1,9 +1,19 @@
-<Project Sdk="Uno.Sdk.Private">
-	<Import Project="..\..\tfms-ui-winui.props" />
+﻿<Project Sdk="Uno.Sdk.Private">
+	<Import Project="..\..\tfms-ui-winui-apps.props" />
   <PropertyGroup>
 		
 		<OutputType>Exe</OutputType>
     <UnoSingleProject>true</UnoSingleProject>
+  </PropertyGroup>
+
+  <!-- Surfaces UnoDisableHotDesign to the compiler so App.xaml.cs can skip the UseStudio() call
+       that Uno.UI.HotDesign.Client provides. Setting UnoDisableHotDesign alone removes the package
+       but leaves the call site, which then fails to compile. -->
+  <PropertyGroup Condition="'$(UnoDisableHotDesign)' == 'true'">
+    <DefineConstants>$(DefineConstants);UNO_HOT_DESIGN_DISABLED</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup>
 
     <!-- Display name -->
     <ApplicationTitle>Uno.Extensions.RuntimeTests</ApplicationTitle>
@@ -32,11 +42,21 @@
     </UnoFeatures>
   </PropertyGroup>
 
-
   <ItemGroup>
     <!--<PackageReference Include="Uno.UI.RuntimeTests.Engine" />-->
-    <PackageReference Include="SkiaSharp.Skottie" VersionOverride="2.88.8" Condition="$(TargetFramework.Contains('desktop'))" />
+    <PackageReference Include="SkiaSharp.Skottie" Condition="$(TargetFramework.Contains('desktop'))" />
   </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      AndroidX Emoji2 still depends on Lifecycle.Process 2.9.2.1, which caps Lifecycle.Runtime below 2.9.3,
+      while the AndroidX Core and Activity versions Uno 7 pins need Lifecycle.Runtime 2.10.0.2 (NU1608).
+      Pinned in this head only, so the shipped packages' dependency floors are unaffected. Transitive
+      pinning only applies it where the package is in the graph (the Android target).
+    -->
+    <PackageVersion Include="Xamarin.AndroidX.Lifecycle.Process" Version="2.10.0.2" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <!--
@@ -46,6 +66,8 @@
     <ProjectReference Include="..\..\Uno.Extensions.Core.UI.Tests\Uno.Extensions.Core.WinUI.Tests.csproj" />
     <ProjectReference Include="..\..\Uno.Extensions.Reactive.UI.Tests\Uno.Extensions.Reactive.WinUI.Tests.csproj" />
     <ProjectReference Include="..\..\Uno.Extensions.Navigation.UI.Tests\Uno.Extensions.Navigation.WinUI.Tests.csproj" />
+    <ProjectReference Include="..\..\Uno.Extensions.Storage.UI.Tests\Uno.Extensions.Storage.WinUI.Tests.csproj" />
+    <ProjectReference Include="..\..\Uno.Extensions.Authentication.MSAL.UI.Tests\Uno.Extensions.Authentication.MSAL.WinUI.Tests.csproj" />
     <ProjectReference Include="..\Uno.Extensions.RuntimeTests.Core\Uno.Extensions.RuntimeTests.Core.csproj" />
     <ProjectReference Include="..\..\Uno.Extensions.Reactive.Generator\Uno.Extensions.Reactive.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>

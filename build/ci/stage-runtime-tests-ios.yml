@@ -1,0 +1,78 @@
+jobs:
+  - job: RuntimeTestsIos
+    displayName: 'Runtime Tests - iOS Simulator'
+    timeoutInMinutes: 45
+    cancelTimeoutInMinutes: 0
+
+    pool:
+      vmImage: $(IosVmImage)
+
+    variables:
+      # Must match the pair used in stage-build-runtimetests-mobile.yml: the simulator runtime the
+      # .app was linked against has to exist on this agent too. Both come from pipeline.yml-level
+      # variables so they can only be changed together.
+      xCodeRoot: $(IosXCodeRoot)
+      RuntimeTestsArtifactPath: $(Build.SourcesDirectory)/build/ios-runtime-tests-app
+
+    steps:
+      - checkout: self
+        clean: true
+
+      - task: DownloadPipelineArtifact@2
+        displayName: 'Download iOS runtime tests artifact'
+        inputs:
+          artifact: ios-runtime-tests
+          path: $(RuntimeTestsArtifactPath)
+
+      # This job doesn't compile managed code - it boots a simulator and launches the .app - but the
+      # simulator runtime still has to match what the .app was linked against. See the note in
+      # stage-build-runtimetests-mobile.yml for why templates/ios-build-select-version.yml is not
+      # used here.
+      - bash: |
+          set -uo pipefail
+          if [ -d "$(xCodeRoot)" ]; then
+            sudo xcode-select --switch "$(xCodeRoot)"
+          else
+            echo "WARNING: $(xCodeRoot) not found - continuing with the agent default."
+            ls -d /Applications/Xcode*.app 2>/dev/null || true
+          fi
+          xcodebuild -version
+          echo "Installed simulator runtimes:"
+          xcrun simctl list runtimes || true
+          echo "Available devices:"
+          xcrun simctl list devices available || true
+        displayName: 'Select Xcode'
+
+      - bash: |
+          chmod +x build/test-scripts/ios-simulator-runtime-tests.sh
+          build/test-scripts/ios-simulator-runtime-tests.sh
+        displayName: 'Run iOS simulator runtime tests'
+        env:
+          BUILD_SOURCESDIRECTORY: $(Build.SourcesDirectory)
+          RuntimeTestsArtifactPath: $(RuntimeTestsArtifactPath)
+          SIMULATOR_DEVICE: $(IosSimulatorDevice)
+          SIMULATOR_RUNTIME_PREFIX: $(IosSimulatorRuntimePrefix)
+          # Without this the script falls back to its own '!_HotReload' default and runs the whole
+          # suite - including the 15 known-failing tests and cases that need input injection, which
+          # hangs a simulator run until the 1800s timeout.
+          TEST_FILTER: $(RuntimeTestsFilter)
+
+      - task: PublishTestResults@2
+        condition: always()
+        inputs:
+          testRunTitle: 'iOS Simulator Runtime Tests'
+          testResultsFormat: 'NUnit'
+          testResultsFiles: '$(Build.SourcesDirectory)/build/ios-runtime-tests/ios-runtime-tests-results.xml'
+          failTaskOnFailedTests: true
+          failTaskOnMissingResultsFile: true
+
+      # Managed Console output never survives into `log show` filtering reliably, so the collected
+      # os_log archive is often the only diagnostic a simulator failure leaves behind.
+      - task: PublishPipelineArtifact@1
+        condition: always()
+        inputs:
+          # The whole results directory, not just logs/: the NUnit XML carries the per-test failure
+          # messages, and without it a failing mobile run leaves nothing to diagnose from.
+          targetPath: '$(Build.SourcesDirectory)/build/ios-runtime-tests'
+          artifact: 'ios-runtime-tests-logs-$(System.StageAttempt)'
+          publishLocation: 'pipeline'

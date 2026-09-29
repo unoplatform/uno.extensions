@@ -1,7 +1,8 @@
-trigger:
+﻿trigger:
   branches:
     include:
       - main
+      - servicing/*
       - feature/*
       - release/*
       - legacy/*
@@ -10,9 +11,36 @@ pr:
   branches:
     include:
       - main
+      - servicing/*
       - feature/*
       - release/*
       - legacy/*
+
+variables:
+  # iOS agent image, Xcode root and simulator target are kept together on purpose: the simulator
+  # runtime the .app is linked against in the build job must exist on the agent that runs it, and
+  # splitting these across files is how that pairing silently drifts.
+  IosVmImage: 'macOS-15'
+  # Xcode and the simulator runtime are a matched pair: actool refuses to compile the asset
+  # catalog unless a simulator runtime matching the selected Xcode's iphonesimulator SDK is
+  # installed. Build 227563 pinned Xcode 16.2 (iOS 18.2 SDK, build 22C146) on an agent whose only
+  # installed runtimes were 18.5, 18.6 and 26.0-26.2, and failed with
+  # "No simulator runtime version from [...] available to use with iphonesimulator SDK version".
+  # .NET for iOS 26.1 (net10.0-ios) refuses any Xcode but 26.1, and Xcode 26.1.1 ships the iOS 26.1
+  # SDK, which matches the installed 26.1 runtime.
+  IosXCodeRoot: '/Applications/Xcode_26.1.1.app'
+  IosSimulatorDevice: 'iPhone 16'
+  IosSimulatorRuntimePrefix: 'com.apple.CoreSimulator.SimRuntime.iOS-26-1'
+
+  # Which runtime tests the four device stages run. Scoped to the namespaces whose suites are
+  # green on every lane: Storage.UI.Tests (default key-value store selection, browser-store
+  # round trip) and Authentication.MSAL.UI.Tests (the StubEntra-driven MSAL flows). The wider
+  # non-hot-reload suite has 15 failing tests (verified identical at the pre-change baseline, so
+  # they are rot rather than regressions); widen to '!_HotReload' once those are fixed - that is
+  # the whole point of turning these stages back on. The engine filter is a substring match on the
+  # fully-qualified test name with '|' for OR, so this MUST stay namespace fragments and never a
+  # class name: 'Given_MsalAuthentication' silently ran only half the auth suite.
+  RuntimeTestsFilter: 'Storage.UI.Tests | Authentication.MSAL.UI.Tests'
 
 stages:
 - stage: Determine_Changes
@@ -67,18 +95,50 @@ stages:
   # Don't trigger this stage if only docs files are changed
   condition: and(succeeded(), ne(dependencies.Determine_Changes.outputs['evaluate_changes.DetermineChanges.docsOnly'], 'true'))
   jobs:
-  - template: stage-build-uitests-wasm.yml
-  # Disabled waiting on uno fix: https://github.com/unoplatform/uno/pull/17668
+  # Uno.UITest.Selenium drives the native WebAssembly DOM renderer, which Uno 7 removed
+  # (unoplatform/uno.extensions#3187).
+  # - template: stage-build-uitests-wasm.yml
+  # Still disabled, but not for the original reason (unoplatform/uno#17668, long since merged).
+  # Verified 2026-08-13: the full non-hot-reload runtime suite has 15 failing tests on this branch
+  # AND at the pre-change baseline - navigation/ComboBox/logger cases that have rotted while the
+  # stage was off. Enabling it as-is turns CI red on day one. The device stages below run the same
+  # engine against a scoped filter instead; widening that filter is blocked on fixing those 15.
   # - template: stage-build-runtimetests-skia.yml
   - template: stage-build-runtimetests-skia-hotreload.yml
+  # Builds the mobile / wasm runtime-test apps as artifacts; the jobs below consume them.
+  - template: stage-build-runtimetests-mobile.yml
+
+- stage: Runtime_Tests_Devices
+  displayName: Runtime Tests - Devices
+  dependsOn: Build_Tests
+  jobs:
+  - template: stage-runtime-tests-desktop.yml
+  # Depends on a workaround: Uno.UI.RuntimeTests.Engine (source package, still true in 2.0.0-dev.81)
+  # guards its Console.CancelKeyPress registration with `#if !__WASM__`, and Uno.Sdk no longer defines
+  # __WASM__ for consumer projects, so the browser head used to throw PlatformNotSupportedException
+  # before the first test (build 228808). Uno.Extensions.RuntimeTests.Core defines the symbol for the
+  # browserwasm TFM and supplies the InvokeJS its other branches need - see WebAssemblyRuntimeShim.cs.
+  - template: stage-runtime-tests-wasm.yml
+  # Was disabled because the APK shipped without its ProjectReference closure and died at
+  # Application.OnCreate with `open_from_bundles: failed to load bundled assembly
+  # Uno.Extensions.Reactive.dll`. Root cause was ours: .NET Android rewrites an app head's
+  # OutputType to 'Library', so the head matched the library-only `Private=false` rule in
+  # src/Directory.Build.targets and every project reference stopped being copy-local on Android
+  # alone. See the lesson in specs/lessons.md before touching that ItemDefinitionGroup.
+  - template: stage-runtime-tests-android.yml
+  - template: stage-runtime-tests-ios.yml
 
 ##
 ## Publishing
 ##
 
+# A servicing/* branch continues a previous version line after main has moved on
+# to a newer one, so it publishes dev packages the same way main does. The same
+# pattern is added to the CI triggers, the dev-feed push step and version.json's
+# publicReleaseRefSpec.
 - stage: Publish_Dev
   displayName: 'Publish - Dev NuGet'
-  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature')), not(eq(variables['build.reason'], 'PullRequest')))
+  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/servicing/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/feature')), not(eq(variables['build.reason'], 'PullRequest')))
   dependsOn: Packages
   jobs:
   - template: publish/publish-nuget-dev.yml

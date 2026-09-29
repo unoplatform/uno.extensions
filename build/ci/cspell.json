@@ -2,6 +2,20 @@
 	"version": "0.2",
 	"language": "en",
 	"words": [
+		"binlogs",
+		"browserwasm",
+		"DPAPI",
+		"cref",
+		"libsecret",
+		"maccatalyst",
+		"monodroid",
+		"msauth",
+		"UXAML",
+		"refreshable",
+		"rehook",
+		"synchronise",
+		"nuspecs",
+		"unmaterialized",
 		"Avalonia",
 		"ambiently",
 		"binlog",
@@ -104,7 +118,10 @@
 		"datamap",
 		"rollbackable",
 		"navigations",
-		"reparented"
+		"reparented",
+		"reparent",
+		"retarget",
+		"MSIX"
 	],
 	"ignoreWords": [
 		"ADAL",

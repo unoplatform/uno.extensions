@@ -5,9 +5,9 @@ namespace Uno.Extensions.Navigation.UI.Tests;
 /// registered inside <c>HotReloadMainTabBarPage</c>. Flipping this from
 /// <c>false</c> to <c>true</c> via C# hot-reload simulates the developer
 /// completing route registration after authoring the TabBar XAML and the new
-/// page files. Kept in its own file so the
-/// <c>"return false;" -&gt; "return true;"</c> patch is unambiguous and does
-/// not collide with other gate targets in this project.
+/// page files. Kept in its own file so the hot-reload text patch of its return
+/// statement matches exactly once; don't quote that statement in this comment,
+/// or the patch and its revert hit the comment instead.
 /// </summary>
 internal static class HotReloadMainPageRouteGate
 {

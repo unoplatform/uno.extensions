@@ -30,3 +30,40 @@ Uno.Extensions.Storage facilitate local data storage across multiple platforms, 
 [!include[single-project](../includes/single-project.md)]
 
 For more information about `UnoFeatures` refer to our [Using the Uno.Sdk](xref:Uno.Features.Uno.Sdk) docs.
+
+## Key-value storage
+
+`UseStorage()` registers a default `IKeyValueStorage` per platform. Everything built on top of it — most visibly the authentication token cache — writes through this default:
+
+| Platform | Default store |
+| --- | --- |
+| Windows (WinAppSDK) | `ApplicationData` settings, DPAPI-encrypted |
+| Android | `KeyStore` |
+| iOS | Keychain |
+| WebAssembly | Browser storage — `localStorage` by default, see below |
+| Other (e.g. Skia Desktop) | `ApplicationData` settings (unencrypted file) |
+
+> [!NOTE]
+> Before Uno Platform 7.0, Android and iOS heads built with `UnoFeatures=SkiaRenderer` loaded this package's plain `netX.0` build, so they fell back to unencrypted `ApplicationData` settings. From 7.0 every Android and iOS head uses `KeyStore` / Keychain.
+
+### WebAssembly: choosing the browser store
+
+The browser has no protected store, so on WebAssembly the choice is about *lifetime*, not encryption. Configure it in the storage section:
+
+```json
+{
+  "KeyValueStorageConfiguration": {
+    "BrowserCacheLocation": "LocalStorage"
+  }
+}
+```
+
+| Value | Behavior |
+| --- | --- |
+| `LocalStorage` (default) | Survives a page reload, closing the tab, and restarting the browser. This is what WebAssembly used before the setting existed, so upgrading never relocates an app's existing data. |
+| `SessionStorage` | Survives a page reload; cleared when the tab closes. The tightest persistent lifetime — worth opting into for anything holding credentials. |
+| `MemoryStorage` | Nothing is written to browser storage; values live for the lifetime of the page only. |
+
+An invalid value throws while the host is being built rather than silently falling back — deliberate for a setting that decides where credentials live. Numeric values are rejected too. The setting is ignored on every other platform.
+
+Because this selects the single host-wide default store, it also governs the authentication token cache — whatever the authentication provider is, and whatever name it was registered under. For the security implications when tokens are involved (MSAL, refresh-token lifetime, the Entra `spa` registration), see [MSAL Authentication](xref:Uno.Extensions.Authentication.HowToMsalAuthentication).

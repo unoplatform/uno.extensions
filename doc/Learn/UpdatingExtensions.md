@@ -4,6 +4,152 @@ uid: Uno.Extensions.Migration
 
 # Upgrading Extensions Version
 
+## Upgrading to Extensions 8.0
+
+Extensions 8.0 is the line for **Uno Platform 7.0**; use Extensions 7.x with Uno Platform 6.x. Follow the
+[Uno Platform 7.0 migration guide](xref:Uno.Development.MigratingToUno7) for the app itself — the notes
+below cover only what changes in Extensions.
+
+### Target frameworks
+
+- The packages target .NET 10 (`net10.0`, `net10.0-windows10.0.19041`, `net10.0-android`, `net10.0-ios`).
+  .NET 9 heads can't consume them.
+- Mac Catalyst is no longer supported, following Uno Platform 7.0. Retarget a `net*-maccatalyst` head
+  to `net10.0-desktop`.
+
+### Navigation
+
+- **Removed:** `NavigatorExtensions.ShowPickerAsync` (iOS only). It routed to the native UIKit picker,
+  which Uno Platform 7.0 removes, and no navigator had handled that route since the picker navigator
+  was dropped, so the call never completed. Show a `Flyout` or a dialog with a list instead.
+
+### Storage
+
+- Android and iOS heads that ran with `UnoFeatures=SkiaRenderer` on Uno Platform 6.x used unencrypted
+  `ApplicationData` settings as the default `IKeyValueStorage`. On 7.0 they get `KeyStore` / Keychain,
+  like native heads did. **Values those apps already stored are not migrated** — including the
+  access token `IAuthenticationService` keeps there, so signed-in users may have to sign in again
+  once after the upgrade.
+- Those iOS apps now need the Keychain [entitlements](xref:Uno.Extensions.Storage.HowToRequiredEntitlements)
+  for the default store.
+
+## Upgrading to Extensions 7.4
+
+### Minimum Uno Platform version
+
+Extensions 7.4 requires **Uno Platform 6.8**. Every `*.WinUI` package declares an `Uno.WinUI` floor
+of `6.8.0-dev.46` — that is, while 6.8 is in preview, a **`6.8.0-dev` build** is required (this
+release was built against `Uno.Sdk` `6.8.0-dev.21`); once a stable 6.8.0 ships it satisfies the floor
+too. An older Uno fails at restore with a clear error rather than misbehaving at runtime:
+
+```console
+error NU1605: Detected package downgrade: Uno.WinUI from 6.8.0-dev.46 to 6.7.24
+```
+
+Update the Uno SDK version in your `global.json` — see [updating your Uno.Sdk](xref:Uno.Development.UpgradeUnoNuget):
+
+```diff
+ {
+   "msbuild-sdks": {
+-    "Uno.Sdk": "6.7.24"
++    "Uno.Sdk": "6.8.0-dev.21"
+   }
+ }
+```
+
+For apps using [MSAL authentication](xref:Uno.Extensions.Authentication.HowToMsalAuthentication) this
+is not a formality. Interactive sign-in on Android, iOS and WebAssembly heads built with
+`UnoFeatures=SkiaRenderer` depends on the fix for
+[unoplatform/uno#20601](https://github.com/unoplatform/uno/issues/20601), which shipped in `Uno.WinUI`
+after the 6.7.x releases. Without it `WithUnoHelpers()` silently does nothing and the sign-in UI never
+appears at all.
+
+`Microsoft.Identity.Client` also moves from 4.72.1 to 4.87.0, and `System.Text.Json` from 8.0.x to
+9.0.x. If your app pins either package explicitly, raise the pin or remove it and let the Uno SDK
+supply it.
+
+### MSAL authentication behavior changes
+
+These are binary-compatible but observable. Read them if your app calls `AddMsal`.
+
+- **Mac Catalyst: `AddMsal` now throws.** MSAL has no Catalyst build, so the provider was always a
+  stub there; `AddMsal` used to return silently and every later auth call failed with
+  "No providers specified". It now throws `PlatformNotSupportedException` at host build, so a shared
+  `App.xaml.cs` that registers MSAL crashes at startup on a Catalyst head. Guard the registration:
+
+  ```csharp
+  .UseAuthentication(auth =>
+  {
+      if (!OperatingSystem.IsMacCatalyst())
+      {
+          auth.AddMsal(window);
+      }
+  })
+  ```
+
+- **WebAssembly: your redirect URI is no longer overridden.** The provider used to apply Uno's
+  `WebAuthenticationBroker` callback URI *after* your `Builder(...)` callback, so a
+  `WithRedirectUri(...)` or a configured `Msal:RedirectUri` was silently replaced in the browser. It
+  now applies the broker URI only when you set nothing — the
+  [documented precedence](xref:Uno.Extensions.Authentication.HowToMsalAuthentication#4-redirect-uris).
+  If you set a redirect URI unconditionally for another platform (for example an Android scheme),
+  either remove it — the provider derives the Android and iOS values — or guard it with
+  `OperatingSystem.IsBrowser()`; otherwise WebAssembly sign-in fails with a redirect-URI mismatch.
+
+- **WebAssembly: the token cache is persisted by default.** Before 7.4 the MSAL cache lived in
+  memory only, so a page reload meant signing in again. It is now serialized through the host's
+  default `IKeyValueStorage` — `localStorage`, under the key `MsalCache_{ClientId}` — and therefore
+  holds the **refresh token** in cleartext browser storage. Register the redirect URI under the
+  Entra `spa` platform so that token is capped at 24 non-sliding hours (see the how-to's
+  [prerequisites](xref:Uno.Extensions.Authentication.HowToMsalAuthentication#prerequisites)). To
+  keep the pre-7.4 behavior set `KeyValueStorageConfiguration:BrowserCacheLocation` to
+  `MemoryStorage`; `SessionStorage` is the middle ground. Note that switching to `MemoryStorage`
+  (or downgrading) does not delete an entry a previous run left in `localStorage` — sign out first,
+  or clear the site's data.
+
+- **`Builder(...)` runs last.** Your `PublicClientApplicationBuilder` callback now runs after the
+  platform redirect URI, the Windows broker and `WithUnoHelpers()` have been applied, so what it sets
+  wins. Previously `WithUnoHelpers()` ran after it and, on WebAssembly, replaced an `HttpClient`
+  factory set from the callback.
+
+- **Interactive sign-in timeout.** Desktop (Skia) heads now cancel an interactive sign-in that has
+  not completed after 5 minutes — the system-browser flow cannot see a closed browser window. No
+  default applies on Windows, Android, iOS or WebAssembly. Set `Msal:InteractiveTimeout` to change
+  or disable it on any platform.
+
+- **iOS: MSAL's keychain entitlement is now reachable.** On Skia iOS heads `AddMsal` used to
+  register a stub, so nothing ever touched MSAL's cache. Now that sign-in runs there,
+  `Platforms/iOS/Entitlements.plist` has to grant `keychain-access-groups`
+  `$(AppIdentifierPrefix)com.microsoft.adalcache` — the template ships that file empty, and without
+  the group the first token save fails with `missing_entitlements`. See
+  [iOS: keychain access group](xref:Uno.Extensions.Authentication.HowToMsalAuthentication#ios-keychain-access-group).
+
+- **Sign-out removes every MSAL account**, not just the first, and also deletes the serialized cache
+  entry on WebAssembly.
+
+- **A refresh that cannot renew the session signs the user out.** When the refresh token has expired
+  or been revoked, `RefreshAsync` now returns `false`, clears the token cache and raises
+  `IAuthenticationService.LoggedOut` — the same as an explicit sign-out. It used to keep the user
+  "authenticated" with an empty access token. A refresh that fails for a *transient* reason (the
+  token endpoint unreachable, a 5xx) keeps the current tokens and does not sign out.
+
+- **`LoginAsync` rethrows MSAL exceptions untouched.** They used to be re-wrapped — an
+  `MsalClientException` into a new one carrying only the code and message, anything else into a
+  plain `Exception` with only the message. Callers now get the original type, error code and stack,
+  so `catch (MsalServiceException)` / `catch (MsalUiRequiredException)` work; a `catch (Exception)`
+  keeps working.
+
+- **Removed:** the vendored `Microsoft.Identity.Client.Extensions.Msal.Wasm.Storage` type that the
+  `browserwasm` build of `Uno.Extensions.Authentication.MSAL.WinUI` used to carry. It was dead code
+  — nothing in the package referenced it — and the browser cache now goes through
+  `IKeyValueStorage` as described above.
+
+### Storage
+
+- `IKeyValueStorage.IsEncrypted` is now reported truthfully: the Windows `EncryptedApplicationDataKeyValueStorage` (DPAPI) and `PasswordVaultKeyValueStorage` (Credential Locker) return `true`; the browser and plain `ApplicationData` stores return `false`. Code that branched on it to decide whether a store is safe for tokens gets the right answer now.
+- `ISettings` (used by the stores on unpackaged Windows) is registered by `UseStorage` itself, so storage no longer depends on the app also calling `UseToolkit` / `UseThemeSwitching`. An `ISettings` the app registers itself still wins.
+- On WebAssembly the default store is selectable via `KeyValueStorageConfiguration:BrowserCacheLocation` (`LocalStorage` — the default — `SessionStorage` or `MemoryStorage`); see [Key-value storage](xref:Uno.Extensions.Storage.Overview#key-value-storage). The default is what WebAssembly already used, so upgrading never relocates an app's data.
+
 ## Upgrading to Extensions 7.0
 
 ### OidcClient Authentication

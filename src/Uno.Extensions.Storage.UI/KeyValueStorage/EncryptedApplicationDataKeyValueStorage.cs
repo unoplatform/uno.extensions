@@ -21,26 +21,63 @@ internal record EncryptedApplicationDataKeyValueStorage(
 	private const string DataProtectionProviderDescriptor = "LOCAL=user";
 
 	/// <inheritdoc />
-	public override bool IsEncrypted => false;
+	/// <remarks>
+	/// Values are DPAPI-protected by <see cref="DataProtectionProvider"/> before they reach the
+	/// settings container - see <see cref="GetObjectValue{T}"/>. This reported <c>false</c> until
+	/// spec 011 item 6: the property is on the public <see cref="IKeyValueStorage"/> surface and is
+	/// exactly the flag a consumer would branch on to decide whether a store is safe for tokens, so
+	/// under-reporting it pushes callers away from the one Windows store that does protect them.
+	/// </remarks>
+	public override bool IsEncrypted => true;
 
 
 #nullable disable
-	protected override async Task<T> GetTypedValue<T>(object encryptedData, CancellationToken ct) 
+	protected override async Task<T> GetTypedValue<T>(object encryptedData, CancellationToken ct)
 	{
-		if (encryptedData is byte[] byteData)
+		// byte[] on the packaged path, base64 on the unpackaged one (the base store encodes binary
+		// values for the string-only ISettings - see ApplicationDataKeyValueStorage.SetSetting). Both
+		// are accepted here so a value written before that encoding existed still reads back.
+		var protectedBytes = encryptedData switch
 		{
+			byte[] bytes => bytes,
+			string text when text is { Length: > 0 } => TryDecodeBase64(text),
+			_ => null,
+		};
 
-			var encryptedBuffer = CryptographicBuffer.CreateFromByteArray(byteData);
-			var decryptedBuffer = await _provider.UnprotectAsync(encryptedBuffer).AsTask(ct);
-			var data = CryptographicBuffer.ConvertBinaryToString(BinaryStringEncoding.Utf8, decryptedBuffer);
-
-			var decryptedData = Deserialize<T>(data);
-			return decryptedData;
+		if (protectedBytes is null)
+		{
+			return default;
 		}
 
-		return default;
+		var encryptedBuffer = CryptographicBuffer.CreateFromByteArray(protectedBytes);
+		var decryptedBuffer = await _provider.UnprotectAsync(encryptedBuffer).AsTask(ct);
+		var data = CryptographicBuffer.ConvertBinaryToString(BinaryStringEncoding.Utf8, decryptedBuffer);
+
+		var decryptedData = Deserialize<T>(data);
+		return decryptedData;
 	}
 #nullable restore
+
+	/// <summary>
+	/// The protected bytes behind a base64 setting value, or <c>null</c> when it isn't base64.
+	/// </summary>
+	/// <remarks>
+	/// Unpackaged installs written before the base store encoded binary values hold the literal
+	/// <c>"System.Byte[]"</c>. Those are unrecoverable by construction; treat them as absent rather
+	/// than throwing on every read.
+	/// </remarks>
+	private static byte[]? TryDecodeBase64(string text)
+	{
+		try
+		{
+			return Convert.FromBase64String(text);
+		}
+		catch (FormatException)
+		{
+			return null;
+		}
+	}
+
 	protected override async Task<object> GetObjectValue<T>(T value, CancellationToken ct)
 	{
 		var data = Serializer.ToString(value);
@@ -49,6 +86,9 @@ internal record EncryptedApplicationDataKeyValueStorage(
 
 		CryptographicBuffer.CopyToByteArray(encryptedBuffer, out var encryptedData);
 
+		// Raw bytes on both paths: packaged installs hold them natively in ApplicationData, and the
+		// base store base64-encodes them for the string-only ISettings path. GetTypedValue accepts
+		// either shape, so values written before that encoding existed still read back.
 		return encryptedData;
 	}
 

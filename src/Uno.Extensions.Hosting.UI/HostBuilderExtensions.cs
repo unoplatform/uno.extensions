@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions;
+﻿using Microsoft.Extensions.DependencyInjection.Extensions;
+
+namespace Uno.Extensions;
 
 /// <summary>
 /// Extensions for <see cref="IHostBuilder"/> to register toolkit services
@@ -30,9 +32,10 @@ public static class HostBuilderExtensions
 		return hostBuilder
 			.ConfigureServices((ctx, services) =>
 			{
-				_ = services
-				.AddSingleton<ISettings, Settings>()
-				.AddScoped<IThemeService, ScopedThemeService>();
+				// ThemeService persists through ISettings. UseStorage registers the same
+				// implementation; TryAdd so whichever runs first wins and an app's own stays.
+				services.TryAddSingleton<ISettings, Settings>();
+				_ = services.AddScoped<IThemeService, ScopedThemeService>();
 			});
 	}
 }

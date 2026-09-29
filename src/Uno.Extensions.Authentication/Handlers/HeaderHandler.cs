@@ -23,7 +23,9 @@ internal class HeaderHandler : BaseAuthorizationHandler
 			!string.IsNullOrWhiteSpace(_settings.AuthorizationHeaderScheme))
 		{
 			request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(_settings.AuthorizationHeaderScheme, accessToken);
-			if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"Set Authorization header with scheme {_settings.AuthorizationHeaderScheme} and token {accessToken}");
+			// The scheme is safe to log; the token is not (AGENTS.md §7). Debug is a level
+			// consumers routinely enable, and this runs on every outbound request.
+			if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"Set Authorization header with scheme {_settings.AuthorizationHeaderScheme}");
 			return true;
 		}
 

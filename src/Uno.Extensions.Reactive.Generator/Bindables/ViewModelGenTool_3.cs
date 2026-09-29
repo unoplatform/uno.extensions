@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -14,9 +14,8 @@ using static Microsoft.CodeAnalysis.Accessibility;
 
 namespace Uno.Extensions.Reactive.Generator;
 
-internal class ViewModelGenTool_3 : ICodeGenTool
+internal partial class ViewModelGenTool_3 : ICodeGenTool
 {
-	private const string ViewModelSufix = "ViewModel";
 
 	private readonly BindableGenerationContext _ctx;
 	private readonly ViewModelGenerator_2 _bindables;
@@ -59,37 +58,21 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 		yield return _viewModelsMapping.Generate();
 	}
 
+	// Shared with the mocking generator, which has to recognize and name the very same view-model.
 	private bool IsSupported([NotNullWhen(true)] INamedTypeSymbol? type)
-	{
-		if (type is null)
-		{
-			return false;
-		}
-
-		if (_ctx.IsGenerationEnabled(type) is { } isEnabled)
-		{
-			// If the attribute is set, we don't check for the `partial`: the build as to fail if not
-			return isEnabled;
-		}
-
-		if (type.IsPartial()
-			&& (type.ContainingAssembly.FindAttribute<ImplicitBindablesAttribute>() ?? new()) is { IsEnabled: true } @implicit // Note: the type might be from another assembly than current
-			&& @implicit.Patterns.Any(pattern => Regex.IsMatch(type.ToString(), pattern)))
-		{
-			return true;
-		}
-
-		return false;
-	}
+		=> FeedModelDiscovery.IsModel(
+			type,
+			_ctx.BindableAttribute,
+			_ctx.Context.Compilation.GetTypeByMetadataName(FeedModelDiscovery.ImplicitBindablesAttributeName));
 
 	private static string GetModelName(INamedTypeSymbol type)
-		=> type.Name.TrimEnd("Model", StringComparison.Ordinal);
+		=> FeedModelDiscovery.GetModelName(type);
 
 	private static string GetViewModelName(INamedTypeSymbol model)
-		=> $"{GetModelName(model)}{ViewModelSufix}";
+		=> FeedModelDiscovery.GetViewModelName(model);
 
 	private static string GetViewModelFullName(INamedTypeSymbol model)
-		=> $"{model.ToFullString().TrimEnd(model.Name, StringComparison.Ordinal)}{GetModelName(model)}{ViewModelSufix}";
+		=> FeedModelDiscovery.GetViewModelFullName(model);
 
 	private string GenerateViewModel(INamedTypeSymbol model)
 	{
@@ -239,6 +222,8 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 					public {(hasBaseType ? "new ":"")}{model.ToFullString()} {N.Model} => global::System.Runtime.CompilerServices.Unsafe.As<{model.ToFullString()}>(__reactiveModel!);
 
 					{members.Select(member => member.GetDeclaration()).Align(5)}
+
+					{GenerateVmMockingSeam(members).Align(5)}
 				}}");
 
 
@@ -261,9 +246,10 @@ internal class ViewModelGenTool_3 : ICodeGenTool
 	private string GeneratePartialModel(INamedTypeSymbol model)
 	{
 		var vm = GetViewModelFullName(model);
+		var mockingAttributes = GenerateMockingMetadata(model);
 		return this.AsPartialOf(
 			model,
-			attributes: $"[{NS.Bindings}.Model(typeof({vm}))]\r\n[global::System.Runtime.CompilerServices.CreateNewOnMetadataUpdate]",
+			attributes: $"[{NS.Bindings}.Model(typeof({vm}))]\r\n[global::System.Runtime.CompilerServices.CreateNewOnMetadataUpdate]{mockingAttributes}",
 			bases: $"global::System.IAsyncDisposable, {NS.Core}.ISourceContextAware, {NS.Bindings}.IModel<{vm}>",
 			code: $@"
 				[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]

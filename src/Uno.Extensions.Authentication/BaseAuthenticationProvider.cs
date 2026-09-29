@@ -173,8 +173,19 @@ public abstract record BaseAuthenticationProvider(ILogger Logger, string Name, I
 internal record ProviderFactory<TProvider, TSettings>(string Name, TProvider Provider, TSettings Settings, Func<TProvider, TSettings, TProvider> ConfigureProvider) : IProviderFactory
 	where TProvider : IAuthenticationProvider
 {
-	private IAuthenticationProvider? configuredProvider;
-	public IAuthenticationProvider AuthenticationProvider => configuredProvider ??= ConfigureProvider(Provider, Settings);
+	/// <remarks>
+	/// <see cref="LazyThreadSafetyMode.ExecutionAndPublication"/> rather than the bare
+	/// <c>??=</c> this replaces: two concurrent resolves could both see null and both run
+	/// <see cref="ConfigureProvider"/>. That callback builds the provider - for MSAL it constructs an
+	/// <c>IPublicClientApplication</c> and subscribes to <c>ITokenCache.Cleared</c> - and it returns
+	/// a *copy* of the record each time, so the losing instance stays subscribed for the host's
+	/// lifetime with no reference left to unsubscribe it. Cheap to get wrong, invisible when it
+	/// happens.
+	/// </remarks>
+	private readonly Lazy<IAuthenticationProvider> _configuredProvider =
+		new(() => ConfigureProvider(Provider, Settings), LazyThreadSafetyMode.ExecutionAndPublication);
+
+	public IAuthenticationProvider AuthenticationProvider => _configuredProvider.Value;
 }
 
 internal interface IProviderFactory

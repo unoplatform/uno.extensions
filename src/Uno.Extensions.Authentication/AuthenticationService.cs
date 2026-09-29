@@ -7,7 +7,19 @@ internal class AuthenticationService : IAuthenticationService
 	private readonly ILogger _logger;
 	private readonly IEnumerable<IProviderFactory> _providerFactories;
 	private readonly ITokenCache _tokens;
-	private readonly IDictionary<string, IAuthenticationProvider> _providers = new Dictionary<string, IAuthenticationProvider>();
+
+	/// <summary>
+	/// The providers, built once on first use and never mutated afterwards.
+	/// </summary>
+	/// <remarks>
+	/// Was a plain <see cref="Dictionary{TKey, TValue}"/> populated by a <c>Count == 0</c> check.
+	/// Two concurrent authentication calls - an HTTP handler refreshing while the UI asks
+	/// <c>IsAuthenticated</c>, say - could both see it empty, both populate it, and corrupt it
+	/// mid-write; the <c>_providers.First()</c> fallback could throw on a dictionary being written
+	/// concurrently. <see cref="LazyThreadSafetyMode.ExecutionAndPublication"/> builds it exactly
+	/// once, and nothing writes to it after that.
+	/// </remarks>
+	private readonly Lazy<IDictionary<string, IAuthenticationProvider>> _providers;
 
 	public AuthenticationService
 	(
@@ -20,9 +32,23 @@ internal class AuthenticationService : IAuthenticationService
 		_providerFactories = providerFactories;
 		_tokens = tokens;
 		_tokens.Cleared += TokensCleared;
+		_providers = new Lazy<IDictionary<string, IAuthenticationProvider>>(
+			BuildProviders,
+			LazyThreadSafetyMode.ExecutionAndPublication);
 	}
 
-	public string[] Providers => _providers.Keys.ToArray();
+	/// <inheritdoc />
+	/// <remarks>
+	/// Deliberately does not force the providers to be built: it reports them only once something
+	/// else has. Building constructs real clients - MSAL builds an
+	/// <c>IPublicClientApplication</c> - and reading a property should not have that side effect,
+	/// nor start throwing where it used to return empty. Consumers bind to this during page
+	/// construction (see <c>MsalAuthenticationWelcomeViewModel</c>), so this preserves the previous
+	/// observable behaviour exactly; making it build on read would be a separate, deliberate change.
+	/// </remarks>
+	public string[] Providers => _providers.IsValueCreated
+		? _providers.Value.Keys.ToArray()
+		: Array.Empty<string>();
 
 	public async ValueTask<bool> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials = default, string? provider = null, CancellationToken? cancellationToken = default)
 	{
@@ -45,7 +71,24 @@ internal class AuthenticationService : IAuthenticationService
 		var authProvider = await AuthenticationProvider(default, ct);
 
 		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Attempting to logout");
-		if (!await authProvider.LogoutAsync(dispatcher, ct))
+		bool loggedOut;
+		try
+		{
+			loggedOut = await authProvider.LogoutAsync(dispatcher, ct);
+		}
+		catch (Exception ex)
+		{
+			// The provider failed part-way (a keychain or cache-file error, say). The user asked to
+			// sign out, so nothing this service holds may keep the session alive: clear the tokens
+			// before surfacing the failure, or IsAuthenticated stays true and the HTTP handlers keep
+			// sending the bearer. CancellationToken.None so a cancelled token cannot turn the clear
+			// into a no-op - that is the one outcome this guards.
+			if (_logger.IsEnabled(LogLevel.Warning)) _logger.LogWarning(ex, "Logout failed; clearing the token cache regardless so the user is not left signed in");
+			await _tokens.ClearAsync(CancellationToken.None);
+			throw;
+		}
+
+		if (!loggedOut)
 		{
 			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Logout failed (for example logout cancelled)");
 			return false;
@@ -67,6 +110,17 @@ internal class AuthenticationService : IAuthenticationService
 		{
 			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Attempting to refresh");
 			var tokens = await authProvider.RefreshAsync(ct);
+
+			if (tokens is not { Count: > 0 })
+			{
+				// The provider could not renew the session (an expired or revoked refresh token, say).
+				// Clear rather than save-empty so ITokenCache.Cleared fires: that is what raises
+				// LoggedOut and lets providers drop their own persisted state, exactly as an explicit
+				// sign-out would. The user was authenticated a moment ago and now is not.
+				if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Refresh produced no tokens, clearing token cache");
+				await _tokens.ClearAsync(ct);
+				return false;
+			}
 
 			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Refresh complete, saving new tokens");
 			await _tokens.SaveAsync(authProvider.Name, tokens, ct);
@@ -106,27 +160,27 @@ internal class AuthenticationService : IAuthenticationService
 			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"No provider specified, so retrieving current provider from token cache '{provider}'");
 		}
 
-		if (_providers.Count == 0)
-		{
-			BuildProviders();
-		}
+		var providers = _providers.Value;
 
-		if (_providers.Count == 0 &&
+		if (providers.Count == 0 &&
 			_logger.IsEnabled(LogLevel.Error))
 		{
 			_logger.LogErrorMessage($"No providers specified for the application");
 		}
 
-		return _providers.TryGetValue(provider ?? string.Empty, out var authProvider) ? authProvider : _providers.First().Value;
+		return providers.TryGetValue(provider ?? string.Empty, out var authProvider) ? authProvider : providers.First().Value;
 	}
 
-	private void BuildProviders()
+	private IDictionary<string, IAuthenticationProvider> BuildProviders()
 	{
 		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Building authentication providers");
+		var providers = new Dictionary<string, IAuthenticationProvider>();
 		foreach (var factory in _providerFactories)
 		{
-			_providers[factory.Name] = factory.AuthenticationProvider;
+			providers[factory.Name] = factory.AuthenticationProvider;
 			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Authentication provider '{factory.Name}' created");
 		}
+
+		return providers;
 	}
 }
