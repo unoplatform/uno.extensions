@@ -19,6 +19,11 @@ internal static class N
 	/// </summary>
 	public const string Model = "Model";
 
+	/// <summary>
+	/// Name of the property which exposes the validation state on BindableViewModelBase and Bindable&lt;T&gt;.
+	/// </summary>
+	public const string HasErrors = "HasErrors";
+
 	public static class ListFeed
 	{
 		public static class Extensions

@@ -153,6 +153,11 @@ internal class ViewModelGenerator_2 : ICodeGenTool
 
 		var vm = GetViewModelName(record);
 
+		if (properties.FirstOrDefault(prop => prop.name == N.HasErrors) is { symbol: { } hasErrors })
+		{
+			_ctx.Context.ReportDiagnostic(Rules.FEED1001.GetDiagnostic(record, hasErrors, vm));
+		}
+
 		var code = @$"{this.GetFileHeader()}
 
 using System;
