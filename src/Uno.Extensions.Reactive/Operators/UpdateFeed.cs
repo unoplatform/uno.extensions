@@ -100,7 +100,9 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 			_owner = owner;
 			_ct = ct;
 			_subject = new AsyncEnumerableSubject<Message<T>>(ReplayMode.EnabledForFirstEnumeratorOnly);
-			_message = new MessageManager<T, T>(_subject.SetNext);
+			// The parent is the source of the same logical feed (e.g. the source of a state, or the new state on hot-reload),
+			// so local axes (like validation) are forwarded.
+			_message = new MessageManager<T, T>(_subject.SetNext, forwardLocalAxes: true);
 			_activeUpdates = ImmutableList<IFeedUpdate<T>>.Empty;
 			_compactedUpdates = ImmutableDictionary<IFeedUpdate<T>, IFeedRollbackableUpdate<T>>.Empty;
 			_isParentReady = owner._waitForParent is null;

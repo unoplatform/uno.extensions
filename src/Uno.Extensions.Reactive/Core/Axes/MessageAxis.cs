@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Uno.Extensions.Reactive.Core;
@@ -31,6 +33,14 @@ public abstract class MessageAxis : IEquatable<MessageAxis>
 	/// The <see cref="MessageAxis"/> of the <see cref="MessageEntry{T}.IsTransient"/>.
 	/// </summary>
 	public static ProgressAxis Progress => ProgressAxis.Instance;
+
+	/// <summary>
+	/// The <see cref="MessageAxis"/> of the <see cref="MessageEntry{T}.Validation"/>.
+	/// </summary>
+	/// <remarks>
+	/// This axis is local to the feed (usually a state) which sets it: it is not forwarded to feeds derived from it (e.g. using Select or Combine).
+	/// </remarks>
+	public static MessageAxis<IImmutableList<ValidationResult>> Validation => ValidationAxis.Instance;
 
 	/// <summary>
 	/// For a refreshable source, this axis contains information about the version of this source.
@@ -72,6 +82,12 @@ public abstract class MessageAxis : IEquatable<MessageAxis>
 	public string Identifier { get; }
 
 	internal bool IsTransient { get; init; }
+
+	/// <summary>
+	/// Indicates that values of this axis belong to the feed which sets them,
+	/// i.e. they are not forwarded by operators from a parent feed to its derived feeds.
+	/// </summary>
+	internal bool IsLocal { get; init; }
 
 	[Pure]
 	internal virtual (MessageAxisValue values, IChangeSet? changes) GetLocalValue(MessageAxisValue parent, MessageAxisValue currentLocal, (MessageAxisValue value, IChangeSet? changes) updatedLocal)
