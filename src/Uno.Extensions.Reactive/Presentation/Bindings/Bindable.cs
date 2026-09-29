@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -20,7 +23,7 @@ namespace Uno.Extensions.Reactive.Bindings;
 public class Bindable<
 	[DynamicallyAccessedMembers(TRequirements)]
 	T
-> : IBindable, INotifyPropertyChanged, IFeed<T>
+> : IBindable, INotifyPropertyChanged, INotifyDataErrorInfo, IFeed<T>
 {
 	internal const DynamicallyAccessedMemberTypes TRequirements = DynamicallyAccessedMemberTypes.PublicProperties;
 
@@ -30,6 +33,9 @@ public class Bindable<
 
 	/// <inheritdoc />
 	public event PropertyChangedEventHandler? PropertyChanged;
+
+	private EventHandler<DataErrorsChangedEventArgs>? _errorsChanged;
+	private BindableValidationErrors? _validation; // Lazy, validation is opt-in
 
 	private T _value = default!; // This is going to be init by property.Subscribe(OnOwnerUpdated);, and anyway with bindings we cannot ensure non-null!
 	private CancellationTokenSource? _asyncSetCt;
@@ -46,6 +52,34 @@ public class Bindable<
 	public string PropertyName => _property.Name;
 
 	internal bool CanWrite => _property.CanWrite;
+
+	/// <summary>
+	/// Indicates if the value, or any of its members, has validation errors (cf. <see cref="INotifyDataErrorInfo"/>).
+	/// </summary>
+	/// <remarks>
+	/// Validation errors are the validation results published on the <see cref="MessageAxis.Validation"/> of the backing state (e.g. using <see cref="State.Validate{T}"/>).
+	/// If the value type already declares a member named HasErrors, it will hide this property, but the <see cref="INotifyDataErrorInfo"/> implementation remains valid.
+	/// </remarks>
+	public bool HasErrors => _validation?.HasErrors ?? false;
+
+	/// <inheritdoc />
+	bool INotifyDataErrorInfo.HasErrors => HasErrors;
+
+	/// <inheritdoc />
+	IEnumerable INotifyDataErrorInfo.GetErrors(string? propertyName)
+		=> _validation?.GetErrors(propertyName) ?? ImmutableList<ValidationResult>.Empty;
+
+	/// <inheritdoc />
+	event EventHandler<DataErrorsChangedEventArgs>? INotifyDataErrorInfo.ErrorsChanged
+	{
+		add => _errorsChanged += value;
+		remove => _errorsChanged -= value;
+	}
+
+	/// <remarks>This is not thread safe and is expected to be used only from the UI thread.</remarks>
+	private BindableValidationErrors Validation => _validation ??= new(
+		propertyName => _errorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName)),
+		() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasErrors))));
 
 	/// <summary>
 	/// Creates a new instance.
@@ -106,6 +140,13 @@ public class Bindable<
 		if (!_isInitialized)
 		{
 			_isInitialized = true;
+			if (_isDenormalizedBindable)
+			{
+				// Only de-normalized bindables are data-bound (i.e. used as source object by the binding engine),
+				// other bindables are wrapped by a property of their owner, which is then the one that exposes validation errors.
+				// Note: We subscribe to validation before the value, so the ViewModel-to-View synchronization is not yet running.
+				_property.SubscribeValidation(OnOwnerValidationUpdated);
+			}
 			_property.Subscribe(OnOwnerUpdated);
 		}
 	}
@@ -135,7 +176,8 @@ public class Bindable<
 			),
 			_property.CanWrite && set is not null
 				? (update, isLeafPropertyChanged, ct) => OnSubPropertyUpdated(propertyName, get, set, update, isLeafPropertyChanged, ct)
-				: default);
+				: default,
+			onValidationUpdated => Validation.Subscribe(propertyName, onValidationUpdated));
 
 	/// <summary>
 	/// Gets the current value.
@@ -196,6 +238,10 @@ public class Bindable<
 
 		return true;
 	}
+
+	/// <remarks>This is not thread safe and is expected to be invoked from the UI thread.</remarks>
+	private void OnOwnerValidationUpdated(IImmutableList<BindableValidationResult> results)
+		=> Validation.Update(results);
 
 	/// <remarks>This is not thread safe and is expected to be invoked from the UI thread.</remarks>
 	private void OnOwnerUpdated(T value)

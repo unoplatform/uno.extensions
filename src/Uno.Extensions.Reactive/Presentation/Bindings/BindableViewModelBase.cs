@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -22,13 +25,15 @@ namespace Uno.Extensions.Reactive.Bindings;
 /// </summary>
 /// <remarks>This is not expected to be used by application directly, but by generated code.</remarks>
 [EditorBrowsable(EditorBrowsableState.Advanced)]
-public abstract partial class BindableViewModelBase : IBindable, INotifyPropertyChanged, IAsyncDisposable
+public abstract partial class BindableViewModelBase : IBindable, INotifyPropertyChanged, INotifyDataErrorInfo, IAsyncDisposable
 {
 	internal static MessageAxis<object?> BindingSource { get; } = new(MessageAxes.BindingSource, _ => null) { IsTransient = true };
 
 	private readonly CompositeAsyncDisposable _disposables = new();
 	private readonly AsyncLazyDispatcherProvider _dispatcher = new();
 	private readonly EventManager<PropertyChangedEventHandler, PropertyChangedEventArgs> _propertyChanged;
+	private EventManager<EventHandler<DataErrorsChangedEventArgs>, DataErrorsChangedEventArgs>? _errorsChanged; // Lazy, validation is opt-in
+	private BindableValidationErrors? _validation; // Lazy, validation is opt-in
 
 	/// <inheritdoc />
 	public event PropertyChangedEventHandler? PropertyChanged
@@ -36,6 +41,47 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 		add => _propertyChanged.Add(value!);
 		remove => _propertyChanged.Remove(value!);
 	}
+
+	/// <summary>
+	/// Indicates if any of the properties of this view model has validation errors (cf. <see cref="INotifyDataErrorInfo"/>).
+	/// </summary>
+	/// <remarks>
+	/// Validation errors are the validation results published on the <see cref="MessageAxis.Validation"/> of the backing states (e.g. using <see cref="State.Validate{T}"/>).
+	/// If the model already declares a member named HasErrors, it will hide this property, but the <see cref="INotifyDataErrorInfo"/> implementation remains valid.
+	/// </remarks>
+	public bool HasErrors => _validation?.HasErrors ?? false;
+
+	/// <inheritdoc />
+	bool INotifyDataErrorInfo.HasErrors => HasErrors;
+
+	/// <inheritdoc />
+	IEnumerable INotifyDataErrorInfo.GetErrors(string? propertyName)
+		=> _validation?.GetErrors(propertyName) ?? ImmutableList<ValidationResult>.Empty;
+
+	/// <inheritdoc />
+	event EventHandler<DataErrorsChangedEventArgs>? INotifyDataErrorInfo.ErrorsChanged
+	{
+		add
+		{
+			var errorsChanged = _errorsChanged;
+			if (errorsChanged is null)
+			{
+				var created = new EventManager<EventHandler<DataErrorsChangedEventArgs>, DataErrorsChangedEventArgs>(this, h => h.Invoke, isCoalescable: false, schedulersProvider: _dispatcher.FindDispatcher);
+				errorsChanged = Interlocked.CompareExchange(ref _errorsChanged, created, null) ?? created;
+				if (errorsChanged != created)
+				{
+					created.Dispose();
+				}
+			}
+			errorsChanged.Add(value!);
+		}
+		remove => _errorsChanged?.Remove(value!);
+	}
+
+	/// <remarks>This is not thread safe and is expected to be used only from the UI thread.</remarks>
+	private BindableValidationErrors Validation => _validation ??= new(
+		propertyName => _errorsChanged?.Raise(new DataErrorsChangedEventArgs(propertyName)),
+		() => _propertyChanged.Raise(new PropertyChangedEventArgs(nameof(HasErrors))));
 
 	/// <summary>
 	/// Creates a new instance of BindableViewModelBase
@@ -130,7 +176,12 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 
 	private BindablePropertyInfo<TProperty> CreateProperty<TProperty>(string propertyName, StateImpl<TProperty> stateImpl, bool isReadOnly)
 	{
-		return new BindablePropertyInfo<TProperty>(this, propertyName, (stateImpl, ViewModelToView), isReadOnly ? default : ViewToViewModel);
+		return new BindablePropertyInfo<TProperty>(
+			this,
+			propertyName,
+			(stateImpl, ViewModelToView),
+			isReadOnly ? default : ViewToViewModel,
+			onValidationUpdated => Validation.Subscribe(propertyName, onValidationUpdated));
 
 		async void ViewModelToView(Action<TProperty> updated)
 		{
@@ -146,6 +197,8 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 				var source = FeedUIHelper.GetSource(stateImpl, stateImpl.Context);
 				var dispatcher = await _dispatcher.GetFirstResolved(ct).ConfigureAwait(false);
 				var updateScheduled = 0;
+				var validation = ImmutableList<ValidationResult>.Empty as IImmutableList<ValidationResult>;
+				var validationScheduled = 0;
 
 				// Note: We use for each here to deduplicate updates in case of fast updates of the source.
 				//		 This also ensure to not wait to for the UI thread before fetching MoveNext the source.
@@ -170,6 +223,17 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 							dispatcher.TryEnqueue(UpdateValue);
 						}
 					}
+
+					// Note: Unlike the data, validation results are propagated even if the update is coming from the view (i.e. the BindingSource),
+					//		 as they are produced asynchronously for the value that has been set by the view.
+					if (msg.Changes.Contains(MessageAxis.Validation))
+					{
+						validation = msg.Current.Validation;
+						if (Interlocked.CompareExchange(ref validationScheduled, 1, 0) is 0)
+						{
+							dispatcher.TryEnqueue(UpdateValidation);
+						}
+					}
 				}
 
 				void UpdateValue()
@@ -177,6 +241,12 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 					updateScheduled = 0;
 					updated(value);
 					_propertyChanged.Raise(new PropertyChangedEventArgs(propertyName));
+				}
+
+				void UpdateValidation()
+				{
+					validationScheduled = 0;
+					Validation.UpdateProperty(propertyName, validation);
 				}
 			}
 			catch (Exception error)
@@ -229,6 +299,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	{
 		await _disposables.DisposeAsync().ConfigureAwait(false);
 		_propertyChanged.Dispose();
+		_errorsChanged?.Dispose();
 		_dispatcher.Dispose();
 	}
 }
