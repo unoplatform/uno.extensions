@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Uno.Extensions.Reactive.Sources;
@@ -198,6 +199,31 @@ public static class MessageAxisExtensions
 	public static TBuilder Error<TBuilder>(this TBuilder builder, Exception? error)
 		where TBuilder : IMessageBuilder
 		=> builder.Set(MessageAxis.Error, error);
+
+	/// <summary>
+	/// Gets the validation results of an <see cref="MessageEntry{T}"/>
+	/// </summary>
+	/// <param name="entry">The entry.</param>
+	/// <returns>The validation results, or an empty list if none.</returns>
+	/// <remarks>Use <see cref="MessageEntry{T}.Validation"/> instead.</remarks>
+	[Pure]
+	[EditorBrowsable(EditorBrowsableState.Never)] // Use MessageEntry<T>.Validation instead
+	public static IImmutableList<ValidationResult> GetValidation(this IMessageEntry entry)
+		=> entry.Get(MessageAxis.Validation) ?? ImmutableList<ValidationResult>.Empty;
+
+	/// <summary>
+	/// Sets the validation results of an <see cref="MessageBuilder{T}"/>
+	/// </summary>
+	/// <param name="builder">The builder.</param>
+	/// <param name="results">The validation results to set, or null or empty to clear validation results.</param>
+	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
+	/// <remarks>
+	/// Validation results only annotate the data: they do not alter the data nor the error of the message.
+	/// They are local to the feed on which they are set, i.e. they are not forwarded to feeds derived from it (e.g. using Select or Combine).
+	/// </remarks>
+	public static TBuilder Validation<TBuilder>(this TBuilder builder, IEnumerable<ValidationResult>? results)
+		where TBuilder : IMessageBuilder
+		=> builder.Set(MessageAxis.Validation, results?.ToImmutableList());
 
 	/// <summary>
 	/// Gets the progress of an <see cref="MessageEntry{T}"/>
