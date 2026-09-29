@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,17 +16,20 @@ public readonly struct BindablePropertyInfo<T>
 	private readonly string _name;
 	private readonly Action<Action<T>> _subscribeOwnerUpdated;
 	private readonly AsyncAction<Func<T, T>, bool>? _update;
+	private readonly Action<Action<IImmutableList<BindableValidationResult>>>? _subscribeValidation;
 
 	internal BindablePropertyInfo(
 		IBindable owner,
 		string name,
 		(IFeed<T> feed, Action<Action<T>> syncUpdated) getter,
-		AsyncAction<Func<T, T>, bool>? setter)
+		AsyncAction<Func<T, T>, bool>? setter,
+		Action<Action<IImmutableList<BindableValidationResult>>>? subscribeValidation = null)
 	{
 		_owner = owner;
 		_name = name;
 		(Feed, _subscribeOwnerUpdated) = getter;
 		_update = setter;
+		_subscribeValidation = subscribeValidation;
 	}
 
 	internal string Name => _name;
@@ -43,6 +47,14 @@ public readonly struct BindablePropertyInfo<T>
 	/// <remarks>The <paramref name="onPropertyChanged"/> callback will be invoked sync on subscribe, then it will be invoked on the UI thread only.</remarks>
 	public void Subscribe(Action<T> onPropertyChanged)
 		=> _subscribeOwnerUpdated(onPropertyChanged);
+
+	/// <summary>
+	/// Adds a callback which is invoked when the validation results targeting the value of the property changed.
+	/// </summary>
+	/// <param name="onValidationUpdated">The callback to invoke, with results where member names are relative to the value of the property.</param>
+	/// <remarks>The <paramref name="onValidationUpdated"/> callback is invoked on the UI thread only (or sync on subscribe if results are already known).</remarks>
+	internal void SubscribeValidation(Action<IImmutableList<BindableValidationResult>> onValidationUpdated)
+		=> _subscribeValidation?.Invoke(onValidationUpdated);
 
 	/// <summary>
 	/// Updates the property.
