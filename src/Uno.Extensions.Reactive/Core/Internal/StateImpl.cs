@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -10,6 +11,7 @@ using Uno.Extensions.Reactive.Config;
 using Uno.Extensions.Reactive.Logging;
 using Uno.Extensions.Reactive.Operators;
 using Uno.Extensions.Reactive.Sources;
+using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Core;
 
@@ -22,6 +24,9 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 
 	private FeedSubscription<T>? _subscription;
 	private IDisposable? _subscriptionMode;
+
+	private Func<T, CancellationToken, ValueTask<IEnumerable<ValidationResult>>>? _validator;
+	private CancellationTokenSource? _validation;
 
 	/// <summary>
 	/// Gets the context to which this state belongs.
@@ -107,6 +112,10 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 				// Switch the _inner so when push a new update, it will actually be pushed to the new state.
 				// TODO: Should we also transfer the current updates? 
 				_inner = state._inner;
+
+				// The new state now owns the validation (if any, its results are forwarded to us through the source),
+				// so we stop our own validation so the previous validator cannot overwrite results of the updated one.
+				StopValidation();
 			}
 			else if (this.Log().IsEnabled(LogLevel.Information))
 			{
@@ -138,6 +147,106 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		await update.HasBeenApplied.ConfigureAwait(false); // Makes sure to forward (the first) error to the caller if any.
 	}
 
+	/// <summary>
+	/// Sets the validator which is used to produce the <see cref="MessageAxis.Validation"/> of this state each time its data changes.
+	/// </summary>
+	/// <remarks>
+	/// This is idempotent: if a validator has already been set, it is replaced (it will be used starting at the next data change).
+	/// </remarks>
+	internal void SetValidator(Func<T, CancellationToken, ValueTask<IEnumerable<ValidationResult>>> validator)
+	{
+		if (Interlocked.Exchange(ref _validator, validator) is not null)
+		{
+			return; // Validation loop already running, it will use the new validator on next data change.
+		}
+
+		var validation = CancellationTokenSource.CreateLinkedTokenSource(Context.Token);
+		if (Interlocked.CompareExchange(ref _validation, validation, null) is not null)
+		{
+			validation.Dispose();
+			return;
+		}
+
+		// Note: We use the AbortPrevious mode, so a pending validation is cancelled as soon as the data changes.
+		_ = Context
+			.GetOrCreateSource(this)
+			.Where(msg => msg.Changes.Contains(MessageAxis.Data))
+			.ForEachAwaitWithCancellationAsync(Validate, ConcurrencyMode.AbortPrevious, continueOnError: true, validation.Token);
+	}
+
+	private async ValueTask Validate(Message<T> msg, CancellationToken ct)
+	{
+		try
+		{
+			var data = msg.Current.Data;
+			if (data.IsUndefined())
+			{
+				return; // Nothing to validate yet, keep the previous results (if any).
+			}
+
+			if (_validator is not { } validator)
+			{
+				return; // Validation has been stopped.
+			}
+
+			var hasValue = TryGetValue(data, out var value);
+			var results = hasValue
+				? await Task.Run(async () => await validator(value!, ct).ConfigureAwait(false), ct).ConfigureAwait(false)
+				: null; // No value to validate (None), clear the results.
+
+			if (ct.IsCancellationRequested)
+			{
+				return;
+			}
+
+			await UpdateMessageAsync(
+					msg =>
+					{
+						// Makes sure to not publish results for a stale version of the data.
+						// As this is invoked by the update pipeline of the state, this check is atomic with other updates of the state.
+						var isSameData = TryGetValue(msg.CurrentData, out var currentValue)
+							? hasValue && EqualityComparer<T>.Default.Equals(currentValue, value)
+							: !hasValue;
+						if (isSameData)
+						{
+							msg.Validation(results);
+						}
+					},
+					ct)
+				.ConfigureAwait(false);
+		}
+		catch (OperationCanceledException) when (ct.IsCancellationRequested)
+		{
+		}
+		catch (Exception error)
+		{
+			// Validation must never fault the state: we only log the error and keep the previous results.
+			// Note: We do not log the message of the error as it might contain user input.
+			var log = this.Log();
+			if (log.IsEnabled(LogLevel.Error))
+			{
+				log.LogError("The validator of the state '{State}' failed with an '{ErrorType}'. Previous validation results are kept.", LogHelper.GetIdentifier(this), error.GetType().Name);
+			}
+			if (log.IsEnabled(LogLevel.Debug))
+			{
+				log.LogDebug(error, "Validator failure details for the state '{State}'.", LogHelper.GetIdentifier(this));
+			}
+		}
+	}
+
+	private void StopValidation()
+	{
+		if (Interlocked.Exchange(ref _validation, null) is { } validation)
+		{
+			validation.Cancel();
+			validation.Dispose();
+		}
+		_validator = null;
+	}
+
+	private static bool TryGetValue(Option<T> data, out T? value)
+		=> data.IsSome(out value) && value is not null;
+
 	[MemberNotNull(nameof(_subscription))]
 	private void Enable()
 	{
@@ -157,6 +266,8 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	/// <inheritdoc />
 	public async ValueTask DisposeAsync() 
 	{
+		StopValidation();
+
 		// Note: As the _innerFeed as been created by us, we dispose the _subscription (even it belongs to the StateStore)
 		//		 in order to make sure to release the original underlying feed.
 		//		 This is a temporary patch until we support dynamic updates of the subscription mode in FeedSubscription (i.e. the _subscriptionMode).
