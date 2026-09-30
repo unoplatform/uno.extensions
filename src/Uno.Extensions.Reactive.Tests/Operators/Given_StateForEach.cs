@@ -17,39 +17,45 @@ namespace Uno.Extensions.Reactive.Tests.Extensions;
 public class Given_StateForEach : FeedTests
 {
 	[TestMethod]
-	[ExpectedException(typeof(ArgumentNullException))] // Note: This is a compilation tests!
 	public async Task When_ForEachAsync_Then_AcceptsNotNullAndStruct()
 	{
-		_ = default(IState<int>)!.ForEach(async (i, ct) => this.ToString());
-		_ = default(IState<int?>)!.ForEach(async (i, ct) => this.ToString());
-		_ = default(IState<string>)!.ForEach(async (i, ct) => this.ToString());
+		// Note: This is a compilation tests!
+		await Assert.ThrowsExactlyAsync<ArgumentNullException>(async () =>
+		{
+			_ = default(IState<int>)!.ForEach(async (i, ct) => this.ToString());
+			_ = default(IState<int?>)!.ForEach(async (i, ct) => this.ToString());
+			_ = default(IState<string>)!.ForEach(async (i, ct) => this.ToString());
 #nullable disable
 #pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
-		_ =  default(IState<string?>)!.ForEach(async (i, ct) => this.ToString());
+			_ =  default(IState<string?>)!.ForEach(async (i, ct) => this.ToString());
 #pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
 #nullable restore
-		_ = default(IState<MyStruct>)!.ForEach(async (i, ct) => this.ToString());
-		_ = default(IState<MyStruct?>)!.ForEach(async (i, ct) => this.ToString());
-		_ = default(IState<MyClass>)!.ForEach(async (i, ct) => this.ToString());
+			_ = default(IState<MyStruct>)!.ForEach(async (i, ct) => this.ToString());
+			_ = default(IState<MyStruct?>)!.ForEach(async (i, ct) => this.ToString());
+			_ = default(IState<MyClass>)!.ForEach(async (i, ct) => this.ToString());
 #nullable disable
 #pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
-		_ = default(IState<MyClass?>)!.ForEach(async (i, ct) => this.ToString());
+			_ = default(IState<MyClass?>)!.ForEach(async (i, ct) => this.ToString());
 #pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
 #nullable restore
+		});
 	}
 
 	[TestMethod]
-	[ExpectedException(typeof(ArgumentNullException))] // Note: This is a compilation tests!
 	public async Task When_ForEachDataAsync_Then_AcceptsNotNullAndStruct()
 	{
-		_ = default(IState<int>)!.ForEach(async (i, ct) => this.ToString());
-		_ = default(IState<int?>)!.ForEachData(async (i, ct) => this.ToString());
-		_ = default(IState<string>)!.ForEachData(async (i, ct) => this.ToString());
-		_ = default(IState<string?>)!.ForEachData(async (i, ct) => this.ToString());
-		_ = default(IState<MyStruct>)!.ForEachData(async (i, ct) => this.ToString());
-		_ = default(IState<MyStruct?>)!.ForEachData(async (i, ct) => this.ToString());
-		_ = default(IState<MyClass>)!.ForEachData(async (i, ct) => this.ToString());
-		_ = default(IState<MyClass?>)!.ForEachData(async (i, ct) => this.ToString());
+		// Note: This is a compilation tests!
+		await Assert.ThrowsExactlyAsync<ArgumentNullException>(async () =>
+		{
+			_ = default(IState<int>)!.ForEach(async (i, ct) => this.ToString());
+			_ = default(IState<int?>)!.ForEachData(async (i, ct) => this.ToString());
+			_ = default(IState<string>)!.ForEachData(async (i, ct) => this.ToString());
+			_ = default(IState<string?>)!.ForEachData(async (i, ct) => this.ToString());
+			_ = default(IState<MyStruct>)!.ForEachData(async (i, ct) => this.ToString());
+			_ = default(IState<MyStruct?>)!.ForEachData(async (i, ct) => this.ToString());
+			_ = default(IState<MyClass>)!.ForEachData(async (i, ct) => this.ToString());
+			_ = default(IState<MyClass?>)!.ForEachData(async (i, ct) => this.ToString());
+		});
 	}
 
 	[TestMethod]

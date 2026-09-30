@@ -23,8 +23,10 @@
     <PackageVersion Include="Microsoft.Kiota.Serialization.Json" Version="1.22.2" />
     <PackageVersion Include="Microsoft.Kiota.Serialization.Multipart" Version="1.22.2" />
     <PackageVersion Include="Microsoft.Kiota.Serialization.Text" Version="1.22.2" />
-    <PackageVersion Include="MSTest.TestAdapter" Version="2.2.9" />
-    <PackageVersion Include="MSTest.TestFramework" Version="2.2.9" />
+    <!-- 4.3.3 is the floor Uno.UI.RuntimeTests.Engine 2.0.0-dev.85+ declares. The unit and runtime-test
+         graphs share Uno.Extensions.Reactive.Testing, so both move together. -->
+    <PackageVersion Include="MSTest.TestAdapter" Version="4.3.3" />
+    <PackageVersion Include="MSTest.TestFramework" Version="4.3.3" />
     <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.1.0" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.12" />
@@ -80,10 +82,9 @@
       Uno 7 moved PointerPointProperties from Windows.UI.Input to Microsoft.UI.Input, and the
       engine's InputInjectorHelper hard-cast to the Windows type. That cast runs in CleanupPointers
       after *every* test, so on 2.0.0-dev.79 the desktop lane reported 136 failures over 105 cases.
-      dev.81 reads the button states reflectively and is otherwise identical to dev.79; dev.85 and
-      later additionally require MSTest 4.x, which this repo is not on.
+      dev.81 reads the button states reflectively; dev.85 and later also require MSTest >= 4.3.3.
     -->
-    <PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="2.0.0-dev.81" />
+    <PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="2.0.0-dev.89" />
     <PackageVersion Include="Uno.WinUI" Version="$(UnoVersion)" />
     <PackageVersion Include="Uno.WinUI.DevServer" Version="$(UnoVersion)" />
     <PackageVersion Include="Uno.WinUI.Markup" Version="7.0.0-dev.33" />

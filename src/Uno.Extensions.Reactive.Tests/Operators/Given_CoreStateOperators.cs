@@ -11,25 +11,28 @@ public class Given_CoreStateOperators : FeedTests
 {
 	#region UpdateAsync
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: This is a compilation tests!
 	public async Task When_UpdateAsync_Then_AcceptsNotNullAndStruct()
 	{
-		await default(IState<int>)!.UpdateAsync(_ => 42, CT);
-		await default(IState<int?>)!.UpdateAsync(_ => default(int?), CT);
-		await default(IState<string>)!.UpdateAsync(_ => "", CT);
+		// Note: This is a compilation tests!
+		await Assert.ThrowsExactlyAsync<NullReferenceException>(async () =>
+		{
+			await default(IState<int>)!.UpdateAsync(_ => 42, CT);
+			await default(IState<int?>)!.UpdateAsync(_ => default(int?), CT);
+			await default(IState<string>)!.UpdateAsync(_ => "", CT);
 #nullable disable
 #pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
-		await default(IState<string?>)!.UpdateAsync(_ => default(string?), CT);
+			await default(IState<string?>)!.UpdateAsync(_ => default(string?), CT);
 #pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
 #nullable restore
-		await default(IState<MyStruct>)!.UpdateAsync(_ => new MyStruct(), CT);
-		await default(IState<MyStruct?>)!.UpdateAsync(_ => default(MyStruct?), CT);
-		await default(IState<MyClass>)!.UpdateAsync(_ => new MyClass(), CT);
+			await default(IState<MyStruct>)!.UpdateAsync(_ => new MyStruct(), CT);
+			await default(IState<MyStruct?>)!.UpdateAsync(_ => default(MyStruct?), CT);
+			await default(IState<MyClass>)!.UpdateAsync(_ => new MyClass(), CT);
 #nullable disable
 #pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
-		await default(IState<MyClass?>)!.UpdateAsync(_ => default(MyClass?), CT);
+			await default(IState<MyClass?>)!.UpdateAsync(_ => default(MyClass?), CT);
 #pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
 #nullable restore
+		});
 	}
 
 	[TestMethod]
@@ -145,17 +148,20 @@ public class Given_CoreStateOperators : FeedTests
 
 	#region UpdateDataAsync
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: This is a compilation tests!
 	public async Task When_UpdateDataAsync_Then_AcceptsNotNullAndStruct()
 	{
-		await default(IState<int>)!.UpdateDataAsync(_ => 42, CT);
-		await default(IState<int?>)!.UpdateDataAsync(_ => default(int?), CT);
-		await default(IState<string>)!.UpdateDataAsync(_ => "", CT);
-		await default(IState<string?>)!.UpdateDataAsync(_ => default(string?), CT);
-		await default(IState<MyStruct>)!.UpdateDataAsync(_ => new MyStruct(), CT);
-		await default(IState<MyStruct?>)!.UpdateDataAsync(_ => default(MyStruct?), CT);
-		await default(IState<MyClass>)!.UpdateDataAsync(_ => new MyClass(), CT);
-		await default(IState<MyClass?>)!.UpdateDataAsync(_ => default(MyClass?), CT);
+		// Note: This is a compilation tests!
+		await Assert.ThrowsExactlyAsync<NullReferenceException>(async () =>
+		{
+			await default(IState<int>)!.UpdateDataAsync(_ => 42, CT);
+			await default(IState<int?>)!.UpdateDataAsync(_ => default(int?), CT);
+			await default(IState<string>)!.UpdateDataAsync(_ => "", CT);
+			await default(IState<string?>)!.UpdateDataAsync(_ => default(string?), CT);
+			await default(IState<MyStruct>)!.UpdateDataAsync(_ => new MyStruct(), CT);
+			await default(IState<MyStruct?>)!.UpdateDataAsync(_ => default(MyStruct?), CT);
+			await default(IState<MyClass>)!.UpdateDataAsync(_ => new MyClass(), CT);
+			await default(IState<MyClass?>)!.UpdateDataAsync(_ => default(MyClass?), CT);
+		});
 	}
 
 	[TestMethod]
@@ -385,27 +391,30 @@ public class Given_CoreStateOperators : FeedTests
 
 	#region SetAsync
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: This is a compilation tests!
 	public async Task When_SetAsync_Then_AcceptsNotNullAndStruct()
 	{
-		await default(IState<int>)!.SetAsync(42, CT);
-		await default(IState<int>)!.SetAsync(null, CT);
+		// Note: This is a compilation tests!
+		await Assert.ThrowsExactlyAsync<NullReferenceException>(async () =>
+		{
+			await default(IState<int>)!.SetAsync(42, CT);
+			await default(IState<int>)!.SetAsync(null, CT);
 
-		await default(IState<int?>)!.SetAsync(42, CT);
-		await default(IState<int?>)!.SetAsync(null, CT);
+			await default(IState<int?>)!.SetAsync(42, CT);
+			await default(IState<int?>)!.SetAsync(null, CT);
 
-		await default(IState<string>)!.SetAsync("", CT);
-		await default(IState<string>)!.SetAsync(null, CT);
+			await default(IState<string>)!.SetAsync("", CT);
+			await default(IState<string>)!.SetAsync(null, CT);
 
-		await default(IState<string?>)!.SetAsync("", CT);
-		await default(IState<string?>)!.SetAsync(null, CT);
+			await default(IState<string?>)!.SetAsync("", CT);
+			await default(IState<string?>)!.SetAsync(null, CT);
 
-		await default(IState<MyStruct>)!.SetAsync(new MyStruct(), CT);
-		await default(IState<MyStruct?>)!.SetAsync(null, CT);
+			await default(IState<MyStruct>)!.SetAsync(new MyStruct(), CT);
+			await default(IState<MyStruct?>)!.SetAsync(null, CT);
 
-		// Forbidden for ACID, must use UpdateAsync instead
-		//await default(IState<MyClass>)!.SetAsync(new MyClass(), CT);
-		//await default(IState<MyClass?>)!.SetAsync(default(MyClass?), CT);
+			// Forbidden for ACID, must use UpdateAsync instead
+			//await default(IState<MyClass>)!.SetAsync(new MyClass(), CT);
+			//await default(IState<MyClass?>)!.SetAsync(default(MyClass?), CT);
+		});
 	}
 
 	[TestMethod]
