@@ -12,7 +12,7 @@ Grounded in the current tree. File refs relative to repo root. (Restored after w
 | **Feed identity cache (per property)** | `AttachedProperty.GetOrCreate(owner/delegate, factory)` | `Core/Feed.cs` (all factories), `Core/Internal/AttachedProperty*` |
 | Swap gate (**new, per-context**) | `SourceContext.IsMockingActive` read by `FeedSubscription`; hot reload uses the same wrapper through `EffectiveHotReload.HasFlag(State)` | `Core/Internal/FeedSubscription.cs`, `Core/Internal/SourceContext.cs` |
 | Mocking swap (fail-hard) | `MockingService.SwapFeed`/`SwapListFeed`: check the member's subscription is swappable (`FeedSubscription.CanHotSwap`), then swap it to the mock | `Uno.HotTesting.Reactive/MockingService.cs` |
-| Swappable subscription (new) | for hot reload or a mocking context, `FeedSubscription` reads its feed through `HotSwapFeed<T>.Direct` and exposes `CanHotSwap`/`HotSwap`; hot reload also aliases the replacement feed to that subscription | `Core/Internal/FeedSubscription.cs`, `Core/Internal/StateStore.cs`, `Operators/HotSwapFeed.cs` |
+| Swappable subscription (new) | for hot reload or a mocking context, `FeedSubscription` reads its feed through `HotSwapFeed<T>` and exposes `CanHotSwap`/`HotSwap`; hot reload also aliases the replacement feed to that subscription | `Core/Internal/FeedSubscription.cs`, `Core/Internal/StateStore.cs`, `Operators/HotSwapFeed.cs` |
 | HR model replacement (inspiration) | `HotPatch` → `__Reactive_CreateModelInstance` → `__Reactive_UpdateModel` → `__Reactive_BindableInitializeForUpdatedModel` | `Presentation/Bindings/BindableViewModelBase.HotReload.cs`, `ViewModelGenTool_3.cs:202` |
 | VM ctor wraps real Model | `{Vm}(params) : this(new Model(params))` | `ViewModelGenTool_3.cs:128` |
 | Visual state from axes | `FeedViewVisualStateSelector.GetVisualState` | `UI/View/FeedViewVisualStateSelector.cs:31` |
@@ -25,7 +25,7 @@ Every feed factory caches its instance via `AttachedProperty.GetOrCreate` keyed 
 
 - a swap reaches the VM member and the business logic through the same subscription, in whichever order they subscribed;
 - derivations read the subscription, below the state's own updates: an edit of the state stays local to it, as in a live app;
-- the subscription's `HotSwapFeed` reads its feed directly (`HotSwapFeed<T>.Direct`), not through the context, which would route it back to the subscription itself; a mock that is the member's own feed restores the real feed;
+- `HotSwapFeed` reads its feed directly, not through the context, which would route it back to the subscription itself; a mock that is the member's own feed restores the real feed;
 - feeds and states use the same subscription-level source replacement; when an actual `StateImpl` replaces another state, only future writes are handed off to the replacement state's `UpdateFeed`;
 - a state's `UpdateFeed` is never wrapped: it must listen for updates as soon as its subscription exists, and it is never mocked;
 - no `dynamic`, no duck-typed re-init needed for feeds: **`SetMock` = one typed swap per mocked member** (D11): a fail-hard check that the member's subscription is swappable, then the swap. No per-member generated handle. (The HR `dynamic` path stays untouched, HR-only.)

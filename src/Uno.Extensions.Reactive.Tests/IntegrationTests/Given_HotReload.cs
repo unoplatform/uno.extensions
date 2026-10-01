@@ -61,7 +61,7 @@ public partial class Given_HotReload : FeedUITests
 		var subscription = context.SourceContext.States.GetOrCreateSubscription(original);
 		subscription.CanHotSwap.Should().BeTrue();
 		subscription.HotSwap(replacement);
-		context.SourceContext.States.CacheSubscription(replacement, subscription);
+		context.SourceContext.States.SetSubscription(replacement, subscription);
 
 		context.SourceContext.States.GetOrCreateSubscription(replacement).Should().BeSameAs(subscription);
 		await stateValues.WaitForData("replacement");
