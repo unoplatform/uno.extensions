@@ -60,6 +60,36 @@ internal class StateStore : IStateStore
 		return subscription;
 	}
 
+	/// <inheritdoc />
+	public void CacheSubscription<T>(ISignal<Message<T>> source, FeedSubscription<T> subscription)
+	{
+		var subscriptions = _subscriptions;
+		if (subscriptions is null)
+		{
+			throw new ObjectDisposedException(nameof(SourceContext));
+		}
+
+		lock (subscriptions)
+		{
+			if (subscriptions.TryGetValue(source, out var existing))
+			{
+				if (!ReferenceEquals(existing, subscription))
+				{
+					throw new InvalidOperationException("The replacement feed already has a different subscription in this context.");
+				}
+			}
+			else
+			{
+				subscriptions.Add(source, subscription);
+			}
+		}
+
+		if (_subscriptions is null)
+		{
+			throw new ObjectDisposedException(nameof(SourceContext));
+		}
+	}
+
 	public TState GetOrCreateState<TSource, TState>(TSource source, Func<SourceContext, TSource, TState> factory)
 		where TSource : class
 		where TState : IState
@@ -129,7 +159,7 @@ internal class StateStore : IStateStore
 			Task disposeAsync;
 			lock (subscriptions)
 			{
-				disposeAsync = CompositeAsyncDisposable.DisposeAll(subscriptions.Values);
+				disposeAsync = CompositeAsyncDisposable.DisposeAll(subscriptions.Values.Distinct(ReferenceEqualityComparer<IAsyncDisposable>.Default));
 			}
 
 			await disposeAsync.ConfigureAwait(false);

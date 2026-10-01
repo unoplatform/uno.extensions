@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Uno.Extensions.Reactive.Config;
 using Uno.Extensions.Reactive.Logging;
 using Uno.Extensions.Reactive.Operators;
 using Uno.Extensions.Reactive.Utils;
@@ -32,10 +33,11 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 		_rootContext = rootContext;
 		_context = rootContext.CreateChild(this, _requests);
 
-		// A mocking context can swap the source of a feed for all its subscribers at once (spec 013).
-		// Not a state's UpdateFeed: it must listen for updates as soon as its subscription exists, and it is never mocked.
+		// Hot reload and mocking replace the source at the subscription shared by the state and all operators.
+		// An UpdateFeed is the mutable overlay owned by a state, not a model source that can be replaced.
 		var source = feed;
-		if (rootContext.IsMockingActive && feed is not UpdateFeed<T>)
+		if ((FeedConfiguration.EffectiveHotReload.HasFlag(HotReloadSupport.State) || rootContext.IsMockingActive)
+			&& feed is not UpdateFeed<T>)
 		{
 			source = _hotSwap = HotSwapFeed<T>.Direct(feed);
 		}

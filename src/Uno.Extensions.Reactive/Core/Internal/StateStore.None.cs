@@ -16,6 +16,10 @@ internal class NoneStateStore : IStateStore
 		=> throw new InvalidOperationException("Cannot create a subscription on SourceContext.None. " + SourceContext.NoneContextErrorDesc);
 
 	/// <inheritdoc />
+	public void CacheSubscription<T>(ISignal<Message<T>> source, FeedSubscription<T> subscription)
+		=> throw new InvalidOperationException("Cannot cache a subscription on SourceContext.None. " + SourceContext.NoneContextErrorDesc);
+
+	/// <inheritdoc />
 	public TState GetOrCreateState<TSource, TState>(TSource source, Func<SourceContext, TSource, TState> factory)
 		where TSource : class
 		where TState : IState
