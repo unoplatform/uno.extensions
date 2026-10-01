@@ -46,8 +46,10 @@ internal sealed class HotSwapFeed<T> : IFeed<T>
 	}
 
 	/// <summary>
-	/// Creates an instance that enumerates its source directly instead of through the context,
-	/// for the context's own subscription to that source (which would otherwise subscribe to itself).
+	/// Creates an instance that enumerates its source directly instead of through the context.
+	/// The context's subscription owns this wrapper, so resolving the wrapped feed through
+	/// <see cref="SourceContext.GetOrCreateSource{T}(ISignal{Message{T}})"/> would return that same
+	/// subscription and make it subscribe to itself.
 	/// </summary>
 	/// <param name="feed">The original feed.</param>
 	internal static HotSwapFeed<T> Direct(ISignal<Message<T>> feed)

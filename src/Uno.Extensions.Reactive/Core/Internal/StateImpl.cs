@@ -5,20 +5,17 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Uno.Extensions.Reactive.Config;
-using Uno.Extensions.Reactive.Logging;
 using Uno.Extensions.Reactive.Operators;
 using Uno.Extensions.Reactive.Sources;
 
 namespace Uno.Extensions.Reactive.Core;
 
-internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, IStateImpl, IHotSwapState<T>
+internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, IStateImpl
 {
 	private readonly SubscriptionMode _mode;
 	private readonly StateUpdateKind _updatesKind;
-	private /*readonly - but hot-reload*/ UpdateFeed<T> _inner;
-	private readonly HotSwapFeed<T>? _hotSwap;
+	private readonly UpdateFeed<T> _inner;
+	private StateImpl<T>? _updatesTarget;
 
 	private FeedSubscription<T>? _subscription;
 	private IDisposable? _subscriptionMode;
@@ -44,7 +41,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	/// <summary>
 	/// Gets direct access to the underlying UpdateFeed so we can have full control of update operation made on it.
 	/// </summary>
-	internal UpdateFeed<T> Inner => _inner;
+	internal UpdateFeed<T> Inner => _updatesTarget?.Inner ?? _inner;
 
 	/// <summary>
 	/// Legacy - Used only be legacy IInput syntax
@@ -71,15 +68,6 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		_mode = mode;
 		_updatesKind = updatesKind;
 
-		// Wrap the source in a HotSwapFeed when either:
-		//  - hot-reload is enabled globally (existing behavior), or
-		//  - this context is a mocking context (spec 013, D12): the per-context gate, so only contexts
-		//    created under a MockingService.Enable() scope wrap — a live app pays nothing (G9/R7).
-		if (FeedConfiguration.EffectiveHotReload.HasFlag(HotReloadSupport.State) || context.IsMockingActive)
-		{
-			// It's valid to use the HotSwap feed here, as we are caching it internally and the subscription is managed by the State itself on its own Context.
-			feed = _hotSwap = new HotSwapFeed<T>(feed);
-		}
 		_inner = new UpdateFeed<T>(feed);
 
 		if (updatesKind is StateUpdateKind.Persistent)
@@ -96,28 +84,12 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		}
 	}
 
-	bool IHotSwapState<T>.CanHotSwap => _hotSwap is not null;
-
-	void IHotSwapState<T>.HotSwap(IFeed<T>? source)
-	{
-		if (source is IState<T>)
-		{
-			if (source is StateImpl<T> state)
-			{
-				// Switch the _inner so when push a new update, it will actually be pushed to the new state.
-				// TODO: Should we also transfer the current updates? 
-				_inner = state._inner;
-			}
-			else if (this.Log().IsEnabled(LogLevel.Information))
-			{
-				this.Log().Info("Cannot hot swap a State that is not a StateImpl. Changes made on the current implementation won't be propagated to the new instance (but changes made on new instance will be visible in previous instance.)");
-			}
-		}
-
-		// If source is a state, we will still use it as source/parent.
-		// Changes made on it will be treated as parent feed update and will erase our local changes (unless persistent and compatible) which is fine.
-		_hotSwap?.Set(source);
-	}
+	/// <summary>
+	/// Redirects future updates made through this state to the state that replaced it.
+	/// Source replacement itself is owned by the shared <see cref="FeedSubscription{T}"/>.
+	/// </summary>
+	internal void TransferUpdatesTo(StateImpl<T> replacement)
+		=> _updatesTarget = ReferenceEquals(this, replacement) ? null : replacement;
 
 	public IAsyncEnumerable<Message<T>> GetSource(SourceContext context, CancellationToken ct = default)
 	{
@@ -134,7 +106,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		Enable();
 
 		var update = new Update(updater, _updatesKind);
-		_inner.Add(update);
+		Inner.Add(update);
 		await update.HasBeenApplied.ConfigureAwait(false); // Makes sure to forward (the first) error to the caller if any.
 	}
 

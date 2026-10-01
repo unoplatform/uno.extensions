@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,25 +12,18 @@ using Uno.HotTesting.Reactive;
 namespace Uno.Extensions.Reactive.Tests.Core;
 
 /// <summary>
-/// Spec 013 — substrate canaries for the per-context mocking gate (D12) and reflection swap (D11).
+/// Spec 013 — substrate canaries for the per-context mocking gate (D12) and subscription swap (D11).
 /// </summary>
 [TestClass]
 public class Given_MockingActivation : FeedTests
 {
-	private static HotSwapFeed<T>? GetHotSwap<T>(StateImpl<T> state)
-		=> (HotSwapFeed<T>?)typeof(StateImpl<T>)
-			.GetField("_hotSwap", BindingFlags.Instance | BindingFlags.NonPublic)!
-			.GetValue(state);
 
 	[TestMethod]
-	public void When_NoScope_Then_ContextNotMockable_And_NoWrap()
+	public void When_NoScope_Then_ContextNotMockable()
 	{
 		using var ctx = new FeedTestContext();
 
 		ctx.SourceContext.IsMockingActive.Should().BeFalse("no MockingService.Enable() scope was opened");
-
-		var state = new StateImpl<string>(ctx.SourceContext, Option<string>.Some("v"));
-		GetHotSwap(state).Should().BeNull("a live-app context must never inject a HotSwapFeed indirection (G9/R7)");
 	}
 
 	[TestMethod]
@@ -72,7 +64,7 @@ public class Given_MockingActivation : FeedTests
 	}
 
 	[TestMethod]
-	public void When_UnderScope_Then_ContextMockable_And_Wrapped()
+	public void When_UnderScope_Then_ContextSubscriptionIsSwappable()
 	{
 		FeedTestContext ctx;
 		using (MockingService.Enable())
@@ -84,8 +76,9 @@ public class Given_MockingActivation : FeedTests
 		{
 			ctx.SourceContext.IsMockingActive.Should().BeTrue("the context was created inside an EnableMocking() scope");
 
-			var state = new StateImpl<string>(ctx.SourceContext, Option<string>.Some("v"));
-			GetHotSwap(state).Should().NotBeNull("a mocking context wraps every state's source so it can be swapped");
+			var input = Feed.Async(async ct => "v");
+			ctx.SourceContext.States.GetOrCreateSubscription(input).CanHotSwap
+				.Should().BeTrue("the shared subscription is the single source-replacement point");
 		}
 	}
 
@@ -106,35 +99,72 @@ public class Given_MockingActivation : FeedTests
 	}
 
 	[TestMethod]
-	public async Task When_MockableStateSwapped_Then_ReEmits()
+	public async Task When_MockableFeedSwapped_Then_ItsStateReEmits()
 	{
-		FeedTestContext ctxHolder;
+		var owner = new object();
+		SourceContext ctx;
 		using (MockingService.Enable())
 		{
-			ctxHolder = new FeedTestContext();
+			ctx = SourceContext.GetOrCreate(owner);
 		}
 
-		using (ctxHolder)
-		{
-			ctxHolder.RestoreCurrent();
+		using var scope = ctx.AsCurrent();
+		var original = Feed.Async(async ct => "original");
+		var state = (StateImpl<string>)ctx.GetOrCreateState(original);
+		var (result, _) = state.Record();
 
-			var original = Feed.Async(async ct => "original");
-			var state = (StateImpl<string>)ctxHolder.SourceContext.GetOrCreateState(original);
-
-			// Sanity: a mocking context wraps the state source so it can be swapped.
-			GetHotSwap(state).Should().NotBeNull();
-
-			var (result, _) = state.Record();
-
-			await result.WaitForMessages(1);
-			result.Last().Current.Data.SomeOrDefault().Should().Be("original");
-
-			// Reflection swap (D11): the state exposes IHotSwapState<T>, like hot reload.
-			((IHotSwapState<string>)state).HotSwap(Feed.Async(async ct => "mocked"));
-
-			await result.WaitForMessages(2);
-			result.Last().Current.Data.SomeOrDefault().Should().Be("mocked",
-				"the swapped source must re-emit through the same cached wrapper");
-		}
+		await result.WaitForData("original");
+		MockingService.SwapFeed(owner, original, Feed.Async(async ct => "mocked"));
+		await result.WaitForData("mocked");
 	}
+
+	[TestMethod]
+	public async Task When_MockableStateReplaced_Then_WritesTargetReplacementState()
+	{
+		var owner = new object();
+		SourceContext ctx;
+		using (MockingService.Enable())
+		{
+			ctx = SourceContext.GetOrCreate(owner);
+		}
+
+		using var scope = ctx.AsCurrent();
+		var current = (StateImpl<string>)ctx.CreateState(Option.Some("current"));
+		var replacement = (StateImpl<string>)ctx.CreateState(Option.Some("replacement"));
+		await using var currentReader = ctx.GetOrCreateSource(current).GetAsyncEnumerator(CT);
+		await using var replacementReader = replacement.GetSource(ctx, CT).GetAsyncEnumerator(CT);
+
+		(await currentReader.MoveNextAsync()).Should().BeTrue();
+		currentReader.Current.Current.Data.SomeOrDefault().Should().Be("current");
+		(await replacementReader.MoveNextAsync()).Should().BeTrue();
+		replacementReader.Current.Current.Data.SomeOrDefault().Should().Be("replacement");
+
+		MockingService.SwapFeed(owner, current, replacement);
+		(await currentReader.MoveNextAsync()).Should().BeTrue();
+		currentReader.Current.Current.Data.SomeOrDefault().Should().Be("replacement");
+
+		await current.UpdateMessageAsync(message => message.Data("edited"), CT);
+		(await replacementReader.MoveNextAsync()).Should().BeTrue();
+		replacementReader.Current.Current.Data.SomeOrDefault().Should().Be("edited");
+	}
+
+	[TestMethod]
+	public async Task When_StateReplacedRepeatedly_Then_OldestStateWritesToLatest()
+	{
+		using var context = new FeedTestContext();
+		context.RestoreCurrent();
+		var first = (StateImpl<string>)context.SourceContext.CreateState(Option.Some("first"));
+		var second = (StateImpl<string>)context.SourceContext.CreateState(Option.Some("second"));
+		var latest = (StateImpl<string>)context.SourceContext.CreateState(Option.Some("latest"));
+		await using var latestReader = latest.GetSource(context.SourceContext, CT).GetAsyncEnumerator(CT);
+
+		(await latestReader.MoveNextAsync()).Should().BeTrue();
+		first.TransferUpdatesTo(second);
+		second.TransferUpdatesTo(latest);
+
+		await first.UpdateMessageAsync(message => message.Data("edited"), CT);
+		(await latestReader.MoveNextAsync()).Should().BeTrue();
+		latestReader.Current.Current.Data.SomeOrDefault().Should().Be("edited");
+	}
+
 }

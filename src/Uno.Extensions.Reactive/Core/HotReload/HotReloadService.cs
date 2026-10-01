@@ -170,7 +170,7 @@ public static class HotReloadService
 	/// <remarks>
 	/// Without this, a `new TBindable()` issued AFTER an HR delta would construct a `new TModel()`
 	/// of the original type — whose lambdas (e.g. those captured by `Feed.Async`) still resolve to the
-	/// pre-update IL. By piggy-backing on the same per-state hot-swap path used for normal HR deltas,
+	/// pre-update IL. By piggy-backing on the shared subscription hot-swap path used for normal HR deltas,
 	/// this fresh bindable observes the updated values.
 	/// </remarks>
 	[EditorBrowsable(EditorBrowsableState.Never)]

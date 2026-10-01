@@ -19,8 +19,8 @@ namespace Uno.Extensions.Reactive.Generator;
 /// The analysis itself lives in <see cref="FeedDependencyAnalysis"/>, shared with the mocking generator
 /// so the two cannot disagree about what a model's inputs are.
 ///
-/// There are deliberately NO per-feed swap hooks (D11): the runtime swap is reflection over the
-/// model's <c>IHotSwapState&lt;T&gt;</c> members, reusing the hot-reload driver, fail-hard.
+/// There are deliberately NO per-feed swap hooks (D11): generated mocking code makes strongly typed
+/// calls that replace each member's shared subscription source, fail-hard.
 ///
 /// When the opt-out is present, <see cref="GenerateMockingMetadata"/> returns an empty string, so the
 /// generated output is byte-identical (G5).
@@ -82,8 +82,8 @@ internal partial class ViewModelGenTool_3
 	}
 
 	/// <summary>
-	/// Emits the view-model mocking seam (spec 013, gated by opt-out). Commands have no
-	/// <c>IHotSwapState&lt;T&gt;</c> backing, so the reflection swap (D11) cannot reach them: a dedicated
+	/// Emits the view-model mocking seam (spec 013, gated by opt-out). Commands are not feeds and have
+	/// no shared subscription to swap (D11), so a dedicated
 	/// public <c>__Mock_SetCommand</c> hook lets the external mocking generator override a command
 	/// after construction. Fail-hard: an unknown command name throws (strict mocking, like D11).
 	///
