@@ -472,7 +472,7 @@ partial class BindableViewModelBase
 
 		// Keep both identities on the same state and subscription for later incremental updates.
 		context.States.GetOrCreateState<IFeed<T>, IState<T>>(updated, (ctx, f) => state);
-		context.States.CacheSubscription(updated, subscription);
+		context.States.SetSubscription(updated, subscription);
 		subscription.HotSwap(updated);
 		(_propertyFeedsCache ??= new())[(property, typeof(T))] = updated;
 	}

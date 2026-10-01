@@ -25,7 +25,6 @@ namespace Uno.Extensions.Reactive.Operators;
 internal sealed class HotSwapFeed<T> : IFeed<T>
 {
 	private readonly object _gate = new();
-	private readonly bool _enumeratesDirectly;
 	private ISignal<Message<T>>? _current;
 
 	private event EventHandler<ISignal<Message<T>>?>? _currentChanged;
@@ -35,25 +34,9 @@ internal sealed class HotSwapFeed<T> : IFeed<T>
 	/// </summary>
 	/// <param name="feed">The original feed.</param>
 	public HotSwapFeed(ISignal<Message<T>>? feed = null)
-		: this(feed, enumeratesDirectly: false)
-	{
-	}
-
-	private HotSwapFeed(ISignal<Message<T>>? feed, bool enumeratesDirectly)
 	{
 		_current = feed;
-		_enumeratesDirectly = enumeratesDirectly;
 	}
-
-	/// <summary>
-	/// Creates an instance that enumerates its source directly instead of through the context.
-	/// The context's subscription owns this wrapper, so resolving the wrapped feed through
-	/// <see cref="SourceContext.GetOrCreateSource{T}(ISignal{Message{T}})"/> would return that same
-	/// subscription and make it subscribe to itself.
-	/// </summary>
-	/// <param name="feed">The original feed.</param>
-	internal static HotSwapFeed<T> Direct(ISignal<Message<T>> feed)
-		=> new(feed, enumeratesDirectly: true);
 
 	/// <summary>
 	/// The current source feed.
@@ -110,8 +93,6 @@ internal sealed class HotSwapFeed<T> : IFeed<T>
 		}
 
 		public CancellationToken Token => _ct;
-
-		public bool EnumeratesDirectly => _owner._enumeratesDirectly;
 
 		/// <inheritdoc />
 		public Message<T> Current { get; private set; } = Message<T>.Initial;
@@ -215,7 +196,7 @@ internal sealed class HotSwapFeed<T> : IFeed<T>
 			=> _enumerator ??= Feed is null ? null : GetSource(Feed, context).GetAsyncEnumerator(_ct.Token);
 
 		private IAsyncEnumerable<Message<T>> GetSource(ISignal<Message<T>> feed, SourceContext context)
-			=> Session.EnumeratesDirectly ? feed.GetSource(context, _ct.Token) : context.GetOrCreateSource(feed);
+			=> feed.GetSource(context, _ct.Token);
 
 		/// <inheritdoc />
 		public async ValueTask DisposeAsync()

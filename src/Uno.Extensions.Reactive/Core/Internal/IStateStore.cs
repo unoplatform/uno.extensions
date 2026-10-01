@@ -33,7 +33,7 @@ internal interface IStateStore : IAsyncDisposable
 	/// Registers an additional feed identity for an existing subscription.
 	/// </summary>
 	/// <remarks>Hot reload uses this so the replacement feed and the previous feed keep one subscription.</remarks>
-	void CacheSubscription<TValue>(ISignal<Message<TValue>> source, FeedSubscription<TValue> subscription);
+	void SetSubscription<TValue>(ISignal<Message<TValue>> source, FeedSubscription<TValue> subscription);
 
 	/// <summary>
 	/// Get or create a <see cref="IState{T}"/> for a given feed.
