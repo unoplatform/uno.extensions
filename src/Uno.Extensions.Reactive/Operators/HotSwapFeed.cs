@@ -106,7 +106,7 @@ internal sealed class HotSwapFeed<T> : IFeed<T>
 				return false;
 			}
 
-			var currentEnumerator = await FollowCurrentFeedAsync().ConfigureAwait(false);
+			var currentEnumerator = await GetCurrentFeedEnumeratorAsync().ConfigureAwait(false);
 			if (currentEnumerator.GetEnumerator(_context) is { } enumerator)
 			{
 				var moveNext = enumerator.MoveNextAsync().AsTask();
@@ -148,7 +148,7 @@ internal sealed class HotSwapFeed<T> : IFeed<T>
 		}
 
 		// Created on the first read, and replaced when a swap was made while no read was pending: that swap completed a TCS nobody awaits.
-		private async ValueTask<SessionCurrentEnumerator> FollowCurrentFeedAsync()
+		private async ValueTask<SessionCurrentEnumerator> GetCurrentFeedEnumeratorAsync()
 		{
 			var feed = Volatile.Read(ref _owner._current);
 			if (_currentEnumerator is { } current)
