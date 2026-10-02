@@ -108,7 +108,7 @@ In our Model:
 message = message with
 {
     Content = response.Message,
-    Status = response.IsError ? Status.Error : Status.Value
+    status = response.IsError ? Status.Error : Status.Value
 };
 
 //Then you can update your message list displayed in the UI, thread-safe
