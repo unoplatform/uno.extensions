@@ -1,0 +1,76 @@
+<Page x:Class="Playground.Views.ValidationPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:controls="using:Playground.Controls"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+
+		<utu:NavigationBar Content="MVUX validation"
+						   Style="{StaticResource MaterialNavigationBarStyle}" />
+
+		<ScrollViewer Grid.Row="1">
+			<StackPanel Spacing="12"
+						Padding="16"
+						MaxWidth="800">
+				<TextBlock TextWrapping="Wrap"
+						   Text="Both states are validated by the model (State.Validate). Values are never blocked: invalid input still reaches the state. Each box below listens to INotifyDataErrorInfo.ErrorsChanged and lists GetErrors(PropertyName)." />
+
+				<StackPanel Orientation="Horizontal"
+							Spacing="8">
+					<Button Content="Fill valid values"
+							Command="{Binding Fill}" />
+					<Button Content="Reset"
+							Command="{Binding Reset}" />
+				</StackPanel>
+
+				<!-- Person: record state, errors are routed to the generated person bindable -->
+				<TextBlock Text="Person (IState&lt;PersonModel&gt;, validated by IValidator)"
+						   Style="{StaticResource TitleMedium}" />
+				<TextBox Header="First name"
+						 Text="{Binding Person.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				<controls:ValidationErrorsView Header="Person.GetErrors(&quot;FirstName&quot;)"
+											   Source="{Binding Person}"
+											   PropertyName="FirstName" />
+				<TextBox Header="Last name"
+						 Text="{Binding Person.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				<controls:ValidationErrorsView Header="Person.GetErrors(&quot;LastName&quot;)"
+											   Source="{Binding Person}"
+											   PropertyName="LastName" />
+				<controls:ValidationErrorsView Header="Person.GetErrors(null) (entity-level, e.g. same first and last name)"
+											   Source="{Binding Person}" />
+				<controls:ValidationErrorsView Header="ViewModel.GetErrors(&quot;Person&quot;) (results of the Person state without member names)"
+											   Source="{Binding}"
+											   PropertyName="Person" />
+
+				<!-- Reason: primitive state, errors are exposed by the view model itself -->
+				<TextBlock Text="Reason (IState&lt;string&gt;, validated inline, async)"
+						   Style="{StaticResource TitleMedium}" />
+				<TextBox Header="Reason"
+						 Text="{Binding Reason, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				<controls:ValidationErrorsView Header="ViewModel.GetErrors(&quot;Reason&quot;)"
+											   Source="{Binding}"
+											   PropertyName="Reason" />
+
+				<!-- Aggregated state -->
+				<TextBlock Text="HasErrors"
+						   Style="{StaticResource TitleMedium}" />
+				<StackPanel Orientation="Horizontal"
+							Spacing="16">
+					<TextBlock Text="ViewModel.HasErrors:" />
+					<TextBlock Text="{Binding HasErrors}" />
+					<TextBlock Text="Person.HasErrors:" />
+					<TextBlock Text="{Binding Person.HasErrors}" />
+				</StackPanel>
+				<TextBlock Text="Please fix the errors above before saving."
+						   Foreground="{ThemeResource ErrorBrush}"
+						   Visibility="{Binding HasErrors}" />
+			</StackPanel>
+		</ScrollViewer>
+	</Grid>
+</Page>
