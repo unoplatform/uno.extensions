@@ -9,7 +9,7 @@
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 	  mc:Ignorable="d">
 
-	<Grid RowDefinitions="Auto, *">
+	<Grid RowDefinitions="Auto, *, Auto">
 		<utu:NavigationBar Content="Favorites"
 						   AutomationProperties.AutomationId="FavoritesNavigationBar" />
 		<utu:AutoLayout Padding="16"
@@ -20,9 +20,11 @@
 						AutomationProperties.AutomationId="FavoritesTabBar"
 						SelectedIndex="0">
 				<utu:TabBarItem uen:Region.Name="MyRecipes"
+								AutomationProperties.AutomationId="MyRecipesFavoritesTabBar"
 								Content="My Recipes" />
 
 				<utu:TabBarItem uen:Region.Name="MyCookbooks"
+								AutomationProperties.AutomationId="MyCookbooksFavoritesTabBar"
 								Content="My Cookbooks" />
 			</utu:TabBar>
 
@@ -53,5 +55,13 @@
 				</Grid>
 			</Grid>
 		</utu:AutoLayout>
+		<StackPanel Grid.Row="2">
+			<TextBlock x:Name="TxtUrl"
+					   AutomationProperties.AutomationId="ChefsFavoriteRecipesPageTxtUrlFromBrowser" />
+
+			<Button AutomationProperties.AutomationId="ChefsFavoriteRecipesPageGetUrlFromBrowser"
+					Click="GetUrlFromBrowser"
+					Content="Get URL" />
+		</StackPanel>
 	</Grid>
 </Page>
