@@ -71,7 +71,7 @@ public static class MockingService
 		var ctx = SourceContext.GetOrCreate(owner);
 		if (current is StateImpl<T> currentState && replacement is StateImpl<T> replacementState)
 		{
-			currentState.TransferUpdatesTo(replacementState);
+			currentState.HotSwap(replacementState);
 		}
 
 		SwapSubscription(ctx, current, replacement, $"Value type: {typeof(T)}.");
@@ -87,7 +87,7 @@ public static class MockingService
 		var ctx = SourceContext.GetOrCreate(owner);
 		if (current is ListStateImpl<T> currentState && replacement is ListStateImpl<T> replacementState)
 		{
-			currentState.TransferUpdatesTo(replacementState);
+			currentState.HotSwap(replacementState);
 		}
 
 		SwapSubscription<IImmutableList<T>>(ctx, current, replacement, $"Item type: {typeof(T)}.");

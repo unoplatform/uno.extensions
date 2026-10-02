@@ -251,8 +251,9 @@ swap never touched: a derived member left unset ran over the real, null-injected
 state and its derivations already shared that one subscription per feed; the swap sat above it, in the state. In a
 mocking context a subscription now reads its feed through a `HotSwapFeed`, and `SetMock` swaps the member's
 subscription, so the state and every derivation see the mock. A state input is still swapped as a state, since its
-bindable reads the state itself, and a state's `UpdateFeed` is never wrapped. Dropped drafts: routing through the
-state (derivations saw its local edits, it took the state lock while a subscription lock could be held, and it
+bindable reads the state itself; its `HotSwap` redirects future writes, and its internal `UpdateFeed` is not
+wrapped because creating that subscription must activate it before there is a subscriber. Dropped drafts: routing
+through the state (derivations saw its local edits, it took the state lock while a subscription lock could be held, and it
 missed list feeds), swap layers held by core's state store, and a source resolver in core that the mocking package
 implemented, since core must not depend on the mocking feature. The factory-cache wrap first described for D6 was
 dropped too, since a factory has no context to read the gate from. Tests: `Given_GeneratedMock` (a derived member

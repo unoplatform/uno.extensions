@@ -88,7 +88,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	/// Redirects future updates made through this state to the state that replaced it.
 	/// Source replacement itself is owned by the shared <see cref="FeedSubscription{T}"/>.
 	/// </summary>
-	internal void TransferUpdatesTo(StateImpl<T> replacement)
+	internal void HotSwap(StateImpl<T> replacement)
 		=> _updatesTarget = ReferenceEquals(this, replacement) ? null : replacement;
 
 	public IAsyncEnumerable<Message<T>> GetSource(SourceContext context, CancellationToken ct = default)
