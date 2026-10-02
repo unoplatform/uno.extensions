@@ -27,7 +27,7 @@ Every feed factory caches its instance via `AttachedProperty.GetOrCreate` keyed 
 - derivations read the subscription, below the state's own updates: an edit of the state stays local to it, as in a live app;
 - `HotSwapFeed` reads its feed directly, not through the context, which would route it back to the subscription itself; a mock that is the member's own feed restores the real feed;
 - feeds and states use the same subscription-level source replacement; when an actual `StateImpl` replaces another state, its `HotSwap` redirects future writes to the replacement state's `UpdateFeed`;
-- a state's internal `UpdateFeed` is not wrapped: creating its subscription must activate it immediately, before there is a subscriber, so state updates can be applied;
+- a state's internal `UpdateFeed` uses the same subscription wrapper; eager states and updates without a subscriber explicitly activate that subscription;
 - no `dynamic`, no duck-typed re-init needed for feeds: **`SetMock` = one typed swap per mocked member** (D11): a fail-hard check that the member's subscription is swappable, then the swap. No per-member generated handle. (The HR `dynamic` path stays untouched, HR-only.)
 - outside a mocking context nothing is wrapped: a subscription reads its feed as before.
 
