@@ -4,7 +4,7 @@ uid: Uno.Extensions.KeyEquality.Concept
 # Concept
 
 When working with immutable objects (usually `record`), each modification on an entity means that a new instance is created.
-While this offers lots of [great advantages](https://en.wikipedia.org/wiki/Immutable_object), it makes more difficult to properly track (and animate) changes on an (immutable) item in a (immutable) collection.
+While this offers lots of [great advantages](https://en.wikipedia.org/wiki/Immutable_object), it makes it more difficult to properly track (and animate) changes on an (immutable) item in a (immutable) collection.
 
 The _key equality_ is a standardized way to determine that 2 objects that are not `Equals` are however representing the same entity.
 
@@ -30,7 +30,7 @@ Are the same person : true
 In this example, the _key_ is the `Name`, and any instance of `Person` that `Name == "John Doe"` is considered to represent the same person,
 no matter values of the other properties.
 
-Then if you are dealing with list:
+Then if you are dealing with a list:
 
 ```csharp
 var list1 = ImmutableList.Create(john1);
@@ -42,14 +42,14 @@ so visually we only need to update the current item and not animate the removal 
 
 The implementation of this concept is located in the `Uno.Extensions.Equality` namespace.
 
-## IKeyEquatable<T>
+## `IKeyEquatable<T>`
 
 This is like `IEquatable<T>` but specialized for the _key_ comparison.
 
 When you implement this, you should compare only the keys of your object.
 
 > [!TIP]
-> You usually don't have to implement it by yourself, see [generation](#generation).
+> If you work with records you usually don't have to implement it by yourself, see [generation](#generation).
 
 ## KeyEqualityComparer
 
