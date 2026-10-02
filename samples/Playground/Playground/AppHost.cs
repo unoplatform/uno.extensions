@@ -33,6 +33,9 @@ internal static class AppHost
 
 			.UseThemeSwitching()
 
+			// Register the IValidator service (used by the ValidationPageModel)
+			.UseValidation()
+
 			// Register Json serializer jsontypeinfo definitions
 			.UseSerialization(
 				services => services
@@ -131,6 +134,7 @@ internal static class AppHost
 			new ViewMap<AuthTokenDialog, AuthTokenViewModel>(),
 			new ViewMap<BasicFlyout, BasicViewModel>(),
 			new ViewMap<ThemeSwitchPage, ThemeSwitchViewModel>(),
+			new ViewMap<ValidationPage, ValidationPageModel>(),
 			confirmDialog,
 			localizedDialog
 		);
@@ -185,6 +189,7 @@ internal static class AppHost
 						new RouteMap("Auth", View: views.FindByView<AuthTokenDialog>())
 					}),
 					new RouteMap("List",View: views.FindByViewModel<ListViewModel>()),
+					new RouteMap("Validation",View: views.FindByViewModel<ValidationPageModel>(), DependsOn: "Home"),
 					new RouteMap("ItemDetails",View: views.FindByViewModel<ItemDetailsViewModel>()),
 					new RouteMap("Confirm", View: confirmDialog),
 					new RouteMap("LocalizedConfirm", View: localizedDialog)
