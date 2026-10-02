@@ -10,9 +10,9 @@ Grounded in the current tree. File refs relative to repo root. (Restored after w
 | One-message-then-complete feed | `ValueFeed<T>` (internal) | `Sources/ValueFeed.cs` |
 | Runtime feed substitution | `HotSwapFeed<T>.Set(feed)` (internal) | `Operators/HotSwapFeed.cs` |
 | **Feed identity cache (per property)** | `AttachedProperty.GetOrCreate(owner/delegate, factory)` | `Core/Feed.cs` (all factories), `Core/Internal/AttachedProperty*` |
-| Per-state swap seam | `IHotSwapState<T>.HotSwap` → `_hotSwap.Set` | `Core/Internal/StateImpl.cs:95` |
-| Swap gate (**new, per-context**) | `SourceContext.IsMockingActive` read in `StateImpl` ctor **instead of** `EffectiveHotReload.HasFlag(State)` | `StateImpl.cs:74`, `Core/Internal/SourceContext.cs` |
-| Reflection swap driver (reused) | iterate `IHotSwapState<T>` members → `HotSwap` (mocking = **fail-hard**, no silent skip) | `BindableViewModelBase.HotReload.cs:457` |
+| Swap gate (**new, per-context**) | `SourceContext.IsMockingActive` read by `FeedSubscription`; hot reload uses the same wrapper through `EffectiveHotReload.HasFlag(State)` | `Core/Internal/FeedSubscription.cs`, `Core/Internal/SourceContext.cs` |
+| Mocking swap (fail-hard) | `MockingService.SwapFeed`/`SwapListFeed`: check the member's subscription is swappable (`FeedSubscription.CanHotSwap`), then swap it to the mock | `Uno.HotTesting.Reactive/MockingService.cs` |
+| Swappable subscription (new) | for hot reload or a mocking context, `FeedSubscription` reads its feed through `HotSwapFeed<T>` and exposes `CanHotSwap`/`HotSwap`; hot reload also aliases the replacement feed to that subscription | `Core/Internal/FeedSubscription.cs`, `Core/Internal/StateStore.cs`, `Operators/HotSwapFeed.cs` |
 | HR model replacement (inspiration) | `HotPatch` → `__Reactive_CreateModelInstance` → `__Reactive_UpdateModel` → `__Reactive_BindableInitializeForUpdatedModel` | `Presentation/Bindings/BindableViewModelBase.HotReload.cs`, `ViewModelGenTool_3.cs:202` |
 | VM ctor wraps real Model | `{Vm}(params) : this(new Model(params))` | `ViewModelGenTool_3.cs:128` |
 | Visual state from axes | `FeedViewVisualStateSelector.GetVisualState` | `UI/View/FeedViewVisualStateSelector.cs:31` |
@@ -21,27 +21,33 @@ Grounded in the current tree. File refs relative to repo root. (Restored after w
 
 Every feed factory caches its instance via `AttachedProperty.GetOrCreate` keyed on the provider delegate (stable when lambdas capture only `this` — the MVUX norm). A derived feed `StepsCount => Steps.Select(...)` is itself a cached `SelectFeed(sourceFeed, selector)` **composed on the instance returned by `Steps`**.
 
-**Anchor:** when the owning `SourceContext.IsMockingActive` is set (§6 — the per-context bit the scope drives), the feed returned for a Model feed-property is wrapped in a `HotSwapFeed<T>` **at this cache level** (stable identity preserved — the wrapper is what gets cached). Consequences:
+**Anchor:** the context keeps one subscription per feed, and every reader of a feed goes through it: the feed's state and `SelectFeed`, `WhereFeed`, `WhereListFeed`, `CombineFeed`, the list adapters, `Messages()` and dynamic feeds (through `FeedDependency`). In a context where `SourceContext.IsMockingActive` is set (§6), that subscription reads its feed through a `HotSwapFeed<T>`, so `SetMock` swaps the member's subscription and every reader sees the mock. A list feed's `AsFeed()` adapter reads the list feed's subscription, so one swap reaches the list state and every derivation. Consequences:
 
-- `Model.Steps` returns the wrapper → the VM state subscribes to it → **swap propagates to the VM member**;
-- `StepsCount`'s `SelectFeed` composes on the same wrapper → **swap propagates through business logic** (live: a re-swap re-emits through `Select`);
-- no `dynamic`, no duck-typed re-init needed for feeds: **`SetMock` = reflection over the context's `IHotSwapState<T>` members**, calling `HotSwap` per mocked feed (D11), reusing the hot-reload driver but **fail-hard** — a member that cannot be swapped throws. No per-member generated handle. (The HR `dynamic` path stays untouched, HR-only.)
+- a swap reaches the VM member and the business logic through the same subscription, in whichever order they subscribed;
+- derivations read the subscription, below the state's own updates: an edit of the state stays local to it, as in a live app;
+- `HotSwapFeed` reads its feed directly, not through the context, which would route it back to the subscription itself; a mock that is the member's own feed restores the real feed;
+- feeds and states use the same subscription-level source replacement; when an actual `StateImpl` replaces another state, its `HotSwap` redirects future writes to the replacement state's `UpdateFeed`;
+- a state's internal `UpdateFeed` uses the same subscription wrapper; eager states and updates without a subscriber explicitly activate that subscription;
+- no `dynamic`, no duck-typed re-init needed for feeds: **`SetMock` = one typed swap per mocked member** (D11): a fail-hard check that the member's subscription is swappable, then the swap. No per-member generated handle. (The HR `dynamic` path stays untouched, HR-only.)
+- outside a mocking context nothing is wrapped: a subscription reads its feed as before.
+
+Costs and limits, accepted for a development-only path (D7): under mocking a subscription does not complete when its feed completes, and a mock derived from the member it replaces would observe itself.
 
 ```mermaid
 flowchart TB
-    F["feed factory call
-    ListFeed.Async(...) in Model.Steps"] --> C{"AttachedProperty
-    feed identity cache"}
-    C -->|context.IsMockingActive| W["HotSwapFeed wrapper
-    (the wrapper IS the cached value)"]
-    C -->|not mocking — live app| RAW["raw feed — today's behavior,
+    F["Model.Steps
+    (cached feed instance)"] --> S{"context's subscription
+    to Model.Steps"}
+    S -->|context.IsMockingActive| L["reads it through
+    a HotSwapFeed"]
+    S -->|not mocking — live app| RAW["reads it directly — today's behavior,
     byte-identical"]
-    W --> VMS["VM state subscription"]
-    W --> SEL["SelectFeed = StepsCount
-    (composes on the wrapper)"]
-    SWAP["reflection: IHotSwapState.HotSwap(mockFeed)"] -->|"wrapper.Set(mockFeed)"| W
+    L --> SEL["SelectFeed = StepsCount"]
+    L --> ST["state of Model.Steps
+    (VM member)"]
+    SWAP["SetMock"] --> L
     SEL --> UI2["FeedView"]
-    VMS --> UI1["FeedView"]
+    ST --> UI1["FeedView"]
 ```
 
 Identity risk (R6): lambdas capturing locals/params produce fresh delegate targets → unstable cache key. This pre-exists mocking (same constraint for state persistence); P0 canary + doc.
@@ -67,8 +73,8 @@ Identity risk (R6): lambdas capturing locals/params produce fresh delegate targe
 
 **c) Hidden hooks** (`EditorBrowsable(Never)`, emitted by default — opt-out via `EnableFeedMocking(IsEnabled = false)`):
 
-- on the **Model partial**: **nothing per-feed** — the swap is reflection over `IHotSwapState<T>` members at runtime (D11), reusing the hot-reload driver, fail-hard. The generator emits no `__Mock_Swap_{Member}`;
-- on the **VM partial**: **no construction seam** — null-inject uses the existing public ctors (`new {Vm}(default!, …)`) under an ambient `MockingService.Enable()` scope (D12: the `SourceContext` built at construction is mockable, captured on the instance). The only emitted seam is `__Mock_SetCommand(string name, IAsyncCommand)` (public, `EditorBrowsable(Never)`, fail-hard) which reassigns a command property post-construction — commands have no `IHotSwapState<T>` and are unreachable by the reflection swap (R2).
+- on the **Model partial**: **nothing per-feed** — the swap is a typed call per mocked member at runtime (D11), fail-hard, that swaps the member's subscription to the mock. The generator emits no `__Mock_Swap_{Member}`;
+- on the **VM partial**: **no construction seam** — null-inject uses the existing public ctors (`new {Vm}(default!, …)`) under an ambient `MockingService.Enable()` scope (D12: the `SourceContext` built at construction is mockable, captured on the instance). The only emitted seam is `__Mock_SetCommand(string name, IAsyncCommand)` (public, `EditorBrowsable(Never)`, fail-hard), because commands are not feeds and have no subscription swap path (R2).
 
 ### 2.2 Mocking generator (ships in `Uno.HotTesting.Reactive`, runs in the consuming project)
 
@@ -97,7 +103,7 @@ public static partial class RecipeViewModelMock
 
 - `Create()` constructs the **real VM** via `new {Vm}(default!, …)`; **compile-time guard**: if `[CtorDependency(Eager=true)]` names parameter `p`, `Create` **requires** a real/fake `p` argument (or the generator emits an error diagnostic if no safe overload is possible).
 - `SetMock` may be called repeatedly (live transitions, G6); `with`-expressions on the record make variants cheap (`Empty with { Steps = … }`).
-- `required init` on service-dependent inputs = compile-time completeness. **Derived members are optional overrides**: `null` (default) → the real derivation recomputes over the swapped inputs; non-null → that member's own wrapper is swapped too (the cache-level anchor wraps *every* feed property when the context is mockable, derived included) — lets a test pin a derived value without caring about its inputs.
+- `required init` on service-dependent inputs = compile-time completeness. **Derived members are optional overrides**: `null` (default) → the real derivation recomputes over the swapped inputs; non-null → that member's own subscription is swapped too, like an input's — lets a test pin a derived value without caring about its inputs.
 - **Tier 2 and tier 3 never accept `MessageEntry`, an untyped feed envelope, or any other tier-1 authoring abstraction. Their contracts remain `IFeed<T>`, `IListFeed<T>`, typed states and typed commands end to end.**
 
 ## 3. Tier 1 — declared `MessageEntry` as `FeedView.Source`
@@ -218,16 +224,16 @@ sequenceDiagram
     participant MG as Generated mocking code
     participant VM as RecipeViewModel (real)
     participant M as RecipeModel (real, null-injected)
-    participant W as HotSwapFeed wrappers
+    participant W as Swappable subscriptions
     participant UI as FeedView
 
     Note over T,MG: build time — the Mocking generator reads app metadata<br/>+ FeedDependency / CtorDependency attributes and emits<br/>RecipeModelMock + Create(...) + SetMock
     T->>MG: RecipeViewModelMock.Create(steps)
     MG->>VM: new RecipeViewModel(default!, ...)
     VM->>M: new RecipeModel(default!, ...)
-    Note over M,W: context.IsMockingActive ON — every Model feed property<br/>is cached as a HotSwapFeed wrapper
-    MG->>M: SetMock → reflection HotSwap over IHotSwapState members (fail-hard)
-    M->>W: wrapper.Set(steps)
+    Note over M,W: context.IsMockingActive ON — each subscription of the context<br/>reads its feed through a HotSwapFeed
+    MG->>M: SetMock → swap each mocked member's subscription (fail-hard)
+    M->>W: HotSwap(steps)
     W-->>UI: Steps emits the mock values
     W-->>UI: StepsCount recomputes through the real Select
     T->>M: SetMock(...) again — Loading / Value / Error
@@ -254,9 +260,9 @@ Resolved against the source:
 
 - **Carrier:** `SourceContext` gains `bool IsMockingActive`. It already exposes `AsyncLocal<SourceContext> Current`, per-owner contexts (`GetOrCreate(owner)`), and an eager pre-seed seam (`PreConfigure(type, ctx)` / `Set(owner, ctx)`).
 - **Eager vs lazy:** `Create(...)` pre-seeds a mockable context on the VM/Model owner (via the `PreConfigure`/`Set` seam) so a lazy first subscription **after** the `using` block still wraps — the bit lives on the context instance, not only on the ambient `AsyncLocal`.
-- **Wrap gate:** `StateImpl` ctor reads `context.IsMockingActive` instead of `FeedConfiguration.EffectiveHotReload` (D12).
+- **Wrap gate:** `FeedSubscription` wraps when either hot reload is enabled or its context has `IsMockingActive`; `StateImpl` contains no source hot-swap wrapper (D6/D12).
 - **Nested / concurrent / lifetime:** the bit is per-context-instance → concurrent tests don't leak; contexts created inside a scope stay mockable for their own lifetime after `Dispose`.
-- **No mock registry on the context needed:** swap is reflection over the context's `IHotSwapState<T>` members (D11); overrides are applied by `SetMock` at swap time.
+- **No mock registry on the context needed:** the swappable subscriptions are the context's own (D6); overrides are applied by `SetMock` at swap time.
 
 ## 7. Constraints
 
@@ -264,6 +270,6 @@ Resolved against the source:
 - Tier 2/3 APIs remain generic and strongly typed; they do not depend on the non-generic tier-1 `MessageEntry`, source conversion, or an untyped feed abstraction.
 - Tier 1 stays an isolated UI convenience.
 - **No wrap unless `SourceContext.IsMockingActive`** (§6, D10/D12): the per-feed `HotSwapFeed` indirection must never exist in a live app; a live-app context never has the bit set.
-- **Swap is reflection over `IHotSwapState<T>`, fail-hard** (D11): no per-member generated hook; an un-swappable mocked member throws.
+- **Swap is a typed call per member, fail-hard** (D11): no per-member generated hook; an un-swappable mocked member throws.
 - Frozen names (Hot Design + tests): `{Model}Mock`, `Empty`, `Create`, `SetMock`, `MockingService.Enable`, `SourceContext.IsMockingActive`, attribute names, the `__Mock_SetCommand` command seam.
 - MVUX output byte-identical only when explicitly opted out (`EnableFeedMocking(IsEnabled = false)`); instrumentation is emitted by default.

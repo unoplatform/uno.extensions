@@ -9,6 +9,7 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Bindings;
 using Uno.Extensions.Reactive.Config;
+using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Core.HotReload;
 using Uno.Extensions.Reactive.Testing;
 
@@ -40,6 +41,31 @@ public partial class Given_HotReload : FeedUITests
 		Console.WriteLine("Hot reload configuration has been restored to : " + FeedConfiguration.EffectiveHotReload);
 
 		base.Cleanup();
+	}
+
+	[TestMethod]
+	public async Task When_SharedSubscriptionHotSwapped_Then_StateAndOperatorFollow()
+	{
+		using var context = new FeedTestContext();
+		context.RestoreCurrent();
+		var original = Feed.Async(async ct => "original");
+		var state = context.SourceContext.GetOrCreateState(original);
+		var derived = original.Select(value => $"{value}-derived");
+		var (stateValues, _) = state.Record();
+		var (derivedValues, _) = derived.Record();
+
+		await stateValues.WaitForData("original");
+		await derivedValues.WaitForData("original-derived");
+
+		var replacement = Feed.Async(async ct => "replacement");
+		var subscription = context.SourceContext.States.GetOrCreateSubscription(original);
+		subscription.CanHotSwap.Should().BeTrue();
+		subscription.HotSwap(replacement);
+		context.SourceContext.States.SetSubscription(replacement, subscription);
+
+		context.SourceContext.States.GetOrCreateSubscription(replacement).Should().BeSameAs(subscription);
+		await stateValues.WaitForData("replacement");
+		await derivedValues.WaitForData("replacement-derived");
 	}
 
 	#region When_UpdateValueTypeFeedInModel_Then_BindableUpdated

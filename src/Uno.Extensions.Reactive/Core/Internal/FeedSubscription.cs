@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Uno.Extensions.Reactive.Config;
 using Uno.Extensions.Reactive.Logging;
 using Uno.Extensions.Reactive.Operators;
 using Uno.Extensions.Reactive.Utils;
@@ -24,16 +25,37 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 	private readonly SourceContext _rootContext;
 	private readonly SourceContext _context;
 	private readonly ReplayOneAsyncEnumerable<Message<T>> _messages;
+	private readonly HotSwapFeed<T>? _hotSwap;
 
 	public FeedSubscription(ISignal<Message<T>> feed, SourceContext rootContext)
 	{
 		_feed = feed;
 		_rootContext = rootContext;
 		_context = rootContext.CreateChild(this, _requests);
+
+		// Hot reload and mocking replace sources at the subscription shared by all consumers.
+		var source = feed;
+		if (FeedConfiguration.EffectiveHotReload.HasFlag(HotReloadSupport.State) || rootContext.IsMockingActive)
+		{
+			source = _hotSwap = new HotSwapFeed<T>(feed);
+		}
+
 		_messages = new ReplayOneAsyncEnumerable<Message<T>>(
-			feed.GetSource(_context),
+			source.GetSource(_context),
 			isInitialSyncValuesSkippingAllowed: true);
 	}
+
+	/// <summary>
+	/// Gets a value indicating whether <see cref="HotSwap"/> can change the source of this subscription.
+	/// </summary>
+	internal bool CanHotSwap => _hotSwap is not null;
+
+	/// <summary>
+	/// Replaces the source of this subscription, for all its subscribers.
+	/// </summary>
+	/// <param name="source">The new source.</param>
+	internal void HotSwap(ISignal<Message<T>> source)
+		=> _hotSwap?.Set(source);
 
 	string ISourceContextOwner.Name => $"Sub on '{LogHelper.GetIdentifier(_feed)}' for ctx '{_context.Parent!.Owner.Name}'.";
 
@@ -45,10 +67,17 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 
 	public IDisposable UpdateMode(SubscriptionMode mode)
 	{
-		// Not supported yet.
-		// Here we should compute the stricter mode
+		if (mode.HasFlag(SubscriptionMode.Eager))
+		{
+			Enable();
+		}
+
+		// Dynamic mode updates and ref-counting are not supported yet.
 		return Disposable.Empty;
 	}
+
+	internal void Enable()
+		=> _messages.Enable();
 
 	public async IAsyncEnumerable<Message<T>> GetMessages(SourceContext subscriberContext, [EnumeratorCancellation] CancellationToken ct)
 	{

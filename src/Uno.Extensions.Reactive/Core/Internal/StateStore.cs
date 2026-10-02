@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Utils;
@@ -36,6 +37,21 @@ internal class StateStore : IStateStore
 
 	/// <inheritdoc />
 	public FeedSubscription<T> GetOrCreateSubscription<T>(ISignal<Message<T>> source)
+		=> GetOrCreateSubscription(source, static (root, source) => new FeedSubscription<T>(source, root));
+
+	/// <inheritdoc />
+	public void SetSubscription<T>(ISignal<Message<T>> source, FeedSubscription<T> subscription)
+	{
+		var cached = GetOrCreateSubscription(source, (_, _) => subscription);
+		if (!ReferenceEquals(cached, subscription))
+		{
+			throw new InvalidOperationException("The replacement feed already has a different subscription in this context.");
+		}
+	}
+
+	private FeedSubscription<T> GetOrCreateSubscription<T>(
+		ISignal<Message<T>> source,
+		Func<SourceContext, ISignal<Message<T>>, FeedSubscription<T>> factory)
 	{
 		var subscriptions = _subscriptions;
 		if (subscriptions is null)
@@ -46,9 +62,21 @@ internal class StateStore : IStateStore
 		FeedSubscription<T> subscription;
 		lock (subscriptions)
 		{
-			subscription = (FeedSubscription<T>)(subscriptions.TryGetValue(source, out var existing)
-				? existing
-				: subscriptions[source] = new FeedSubscription<T>(source, _root));
+			ref var cached = ref CollectionsMarshal.GetValueRefOrAddDefault(subscriptions, source, out _);
+			if (cached is null)
+			{
+				try
+				{
+					cached = factory(_root, source);
+				}
+				catch
+				{
+					subscriptions.Remove(source);
+					throw;
+				}
+			}
+
+			subscription = (FeedSubscription<T>)cached;
 		}
 
 		if (_subscriptions is null) // The context has been disposed while we where creating the State ...
@@ -129,7 +157,7 @@ internal class StateStore : IStateStore
 			Task disposeAsync;
 			lock (subscriptions)
 			{
-				disposeAsync = CompositeAsyncDisposable.DisposeAll(subscriptions.Values);
+				disposeAsync = CompositeAsyncDisposable.DisposeAll(subscriptions.Values.Distinct(ReferenceEqualityComparer<IAsyncDisposable>.Default));
 			}
 
 			await disposeAsync.ConfigureAwait(false);

@@ -69,15 +69,12 @@ public static class MockingService
 		where T : notnull
 	{
 		var ctx = SourceContext.GetOrCreate(owner);
-		var state = ctx.GetOrCreateState(current);
-		if (state is not IHotSwapState<T> hotSwap || !hotSwap.CanHotSwap)
+		if (current is StateImpl<T> currentState && replacement is StateImpl<T> replacementState)
 		{
-			throw new InvalidOperationException(
-				$"The feed for the mocked member is not swappable (no HotSwapFeed wrapper). "
-				+ $"Ensure the model was constructed inside a MockingService.Enable() scope. Value type: {typeof(T)}.");
+			currentState.HotSwap(replacementState);
 		}
 
-		hotSwap.HotSwap(replacement);
+		SwapSubscription(ctx, current, replacement, $"Value type: {typeof(T)}.");
 	}
 
 	/// <summary>
@@ -88,15 +85,25 @@ public static class MockingService
 		where T : notnull
 	{
 		var ctx = SourceContext.GetOrCreate(owner);
-		var currentFeed = ListFeed.AsFeed(current);
-		var state = ctx.GetOrCreateState(currentFeed);
-		if (state is not IHotSwapState<IImmutableList<T>> hotSwap || !hotSwap.CanHotSwap)
+		if (current is ListStateImpl<T> currentState && replacement is ListStateImpl<T> replacementState)
 		{
-			throw new InvalidOperationException(
-				$"The list-feed for the mocked member is not swappable (no HotSwapFeed wrapper). "
-				+ $"Ensure the model was constructed inside a MockingService.Enable() scope. Item type: {typeof(T)}.");
+			currentState.HotSwap(replacementState);
 		}
 
-		hotSwap.HotSwap(ListFeed.AsFeed(replacement));
+		SwapSubscription<IImmutableList<T>>(ctx, current, replacement, $"Item type: {typeof(T)}.");
+	}
+
+	// The member's state and the feeds derived from it all read the feed through this one subscription.
+	private static void SwapSubscription<T>(SourceContext ctx, ISignal<Message<T>> current, ISignal<Message<T>> replacement, string typeInfo)
+	{
+		var subscription = ctx.States.GetOrCreateSubscription(current);
+		if (!subscription.CanHotSwap)
+		{
+			throw new InvalidOperationException(
+				$"The feed for the mocked member is not swappable. "
+				+ $"Ensure the model was constructed inside a MockingService.Enable() scope. {typeInfo}");
+		}
+
+		subscription.HotSwap(replacement);
 	}
 }

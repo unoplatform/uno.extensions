@@ -454,21 +454,26 @@ partial class BindableViewModelBase
 		// (If it's already an IState, we let to the context the responsibility to re-use it or not.)
 		var context = SourceContext.GetOrCreate(model);
 		var state = context.GetOrCreateState(previous);
-		if (state is not IHotSwapState<T> hotSwap)
+		var subscription = context.States.GetOrCreateSubscription(previous);
+		if (!subscription.CanHotSwap)
 		{
 			if (model.Log().IsEnabled(LogLevel.Information))
 			{
-				model.Log().Info($"The state '{state.GetType()}' used for '{property}' does not support hot-swap.");
+				model.Log().Info($"The subscription used for '{property}' does not support hot-swap.");
 			}
 
 			return;
 		}
 
-		hotSwap.HotSwap(updated);
+		if (previous is StateImpl<T> previousState && updated is StateImpl<T> updatedState)
+		{
+			previousState.HotSwap(updatedState);
+		}
 
-		// We also make sure to register the state as the backing state for the updated feed.
-		// This is useful for incremental updates, where we will search for state from the current `updated`.
+		// Keep both identities on the same state and subscription for later incremental updates.
 		context.States.GetOrCreateState<IFeed<T>, IState<T>>(updated, (ctx, f) => state);
+		context.States.SetSubscription(updated, subscription);
+		subscription.HotSwap(updated);
 		(_propertyFeedsCache ??= new())[(property, typeof(T))] = updated;
 	}
 }

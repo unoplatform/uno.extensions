@@ -38,6 +38,9 @@ internal class ListStateImpl<T> : FeedToListFeedAdapter<T>, IListState<T>, IStat
 	public ValueTask UpdateMessageAsync(Action<MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct)
 		=> _implementation.UpdateMessageAsync(updater, ct);
 
+	internal void HotSwap(ListStateImpl<T> replacement)
+		=> _implementation.HotSwap(replacement._implementation);
+
 	/// <inheritdoc />
 	public ValueTask DisposeAsync()
 		=> _implementation.DisposeAsync();

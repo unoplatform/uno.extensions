@@ -243,6 +243,44 @@ matched on their simple name, so any same-named attribute drove them; a construc
 rejected by both intake paths was diagnosed twice. A malformed implicit-model pattern is now reported as
 MOCK0003 on the attribute rather than swallowed.
 
+## v16 — derived feeds observe the mocked input
+
+The D6 anchor was only half built. States in a mocking context wrapped their source (D12), but a derivation such
+as `Select`, a list `Where` or a dynamic feed read its input through the context's subscription to it, which the
+swap never touched: a derived member left unset ran over the real, null-injected input and ended in an error. The
+state and its derivations already shared that one subscription per feed; the swap sat above it, in the state. In a
+mocking context a subscription now reads its feed through a `HotSwapFeed`, and `SetMock` swaps the member's
+subscription, so the state and every derivation see the mock. A state input is still swapped as a state, since its
+bindable reads the state itself; its `HotSwap` redirects future writes. The internal `UpdateFeed` uses the same
+subscription wrapper, and the state explicitly activates that subscription for eager mode and updates without a
+subscriber. Dropped drafts: routing through the state (derivations saw its local edits, it took the state lock
+while a subscription lock could be held, and it missed list feeds), swap layers held by core's state store, and a source resolver in core that the mocking package
+implemented, since core must not depend on the mocking feature. The factory-cache wrap first described for D6 was
+dropped too, since a factory has no context to read the gate from. Tests: `Given_GeneratedMock` (a derived member
+computes over the mock, recomputes on a re-swap, a list `Where` and a two-level scalar chain compute over the mock,
+an override still wins, a state edit stays local, and the member's own feed restores the real one) and
+`Given_MockingActivation` (a dynamic feed recomputes over a swapped list; a live context's subscriptions cannot be
+swapped).
+
+## v17 — one subscription-owned hot-swap mechanism
+
+Repository history confirmed the layering David suspected: `FeedSubscription` arrived in PR #711 (September
+2022), before `HotSwapFeed` was introduced in PR #1805 (August–October 2023). The latter therefore wrapped only
+`StateImpl`, while the shared-subscription path used by operators remained below that replacement point. That
+historical layering caused both the mocking regression and two competing source-replacement mechanisms.
+
+Hot reload and mocking now use the same `HotSwapFeed` owned by `FeedSubscription`. `StateImpl` no longer wraps its
+source and no longer implements a generic hot-swap interface. Hot reload caches the replacement feed identity onto
+the existing subscription, matching the state-cache continuity needed by incremental updates. An actual
+state-to-state replacement keeps only a narrow update-target handoff so writes made through the old state reach the
+replacement state. The separate state and subscription caches remain: local state edits therefore do not leak into
+operators that subscribe to the parent feed. `HotSwapFeed.Direct` explicitly documents why the subscription-owned
+wrapper must enumerate its wrapped feed directly instead of resolving it through the context, which would return the
+same subscription and recurse.
+
+Tests cover the shared state/operator update, replacement-feed subscription alias, mock re-swap, derived scalar/list
+chains, local state-edit isolation, live-context fail-hard behavior, and state-to-state update handoff.
+
 ---
 
 ## Final decision register
@@ -254,11 +292,11 @@ MOCK0003 on the attribute rather than swallowed.
 | D3 | A facade (`SetModel` and generated setters) sits in front of the hooks; `HotSwapFeed` and the handles stay non-public | v1 |
 | D4 | ~~Dedicated mockable flag in `FeedConfiguration`~~ **replaced in v7** by the per-context gate `SourceContext.IsMockingActive` (D12) | v1 to v7 |
 | D5 | Mocking code generation is **external** (consumer project); the MVUX generator only does analysis, attributes and hidden hooks | v1 |
-| D6 | The swap is anchored at the **model-feed cache**, so derived feeds survive (non-negotiable); derived members remain individually overridable | v1 and v2 |
+| D6 | The swap is anchored so derived feeds survive (non-negotiable): at the context's subscription to each feed, shared by hot reload and mocking and read by the state and every derivation; derived members remain individually overridable | v1, v2, v16 and v17 |
 | D7 | The non-AOT nature of the mocking path is accepted (development and test only) | v1 |
 | D8 | Converters are application-owned illustrations at `FeedView.Source` (returning `IMessageEntry`); the feature implements none | v4 |
 | D9 | Tiers 2 and 3 are strictly typed; the tier 1 object is confined to tier 1 | v4 |
 | D10 | **Scoped activation**: `using (MockingService.Enable())` — never an app-wide switch; an assembly init can cover a whole run. Outside a scope there is **no wrap** (`HotSwapFeed` has a cost and is forbidden in a live app). Only the internal mechanism was left to the P0-e spike | v6 |
-| D11 | **Fail-hard reflection swap**: reuse the hot-reload driver (`BindableViewModelBase.HotReload`, iterating `IHotSwapState<T>`); the MVUX generator emits **no `__Mock_Swap_{Member}`**, only metadata plus the null-inject constructor and command seam. **Difference from hot reload: a member that cannot be swapped throws** (mocking is strict, not best-effort) | v7 |
-| D12 | **The mockable gate is the per-context bit `SourceContext.IsMockingActive`**, read in the `StateImpl` constructor **instead of** the global `EffectiveHotReload` static, so only contexts under a scope wrap and everything else pays nothing (G9/R7 by construction). No separate static and no home-grown `AsyncLocal` (we reuse `AsyncLocal<SourceContext> Current`). **Core reflection accepted over strict AOT**: the two-assembly split forces reflection anyway, and the mocking path is development and test only, non-AOT (NG2/D7) | v7 |
+| D11 | **Fail-hard typed subscription swap**: generated mocking code resolves each member's shared `FeedSubscription` and replaces its source; the MVUX generator emits **no `__Mock_Swap_{Member}`**, only metadata plus the null-inject constructor and command seam. **Difference from hot reload: a member whose subscription cannot be swapped throws** (mocking is strict, not best-effort) | v7, superseded by v17 |
+| D12 | **The mockable gate is the per-context bit `SourceContext.IsMockingActive`**, read by `FeedSubscription`; hot reload uses the same subscription-owned wrapper through `EffectiveHotReload`. Only contexts under a mocking scope pay the mocking indirection (G9/R7 by construction). No separate static and no home-grown `AsyncLocal` (we reuse `AsyncLocal<SourceContext> Current`) | v7, refined by v17 |
 | D13 | **Mocks are generated for models of the consuming compilation too**, not only for compiled references: D5 still holds (emission stays in the consumer, never in Core), but where the metadata is unreadable because a sibling generator produces it, the mocking generator runs the shared `FeedDependencyAnalysis` over the source. Declared attributes win over the inferred classification, and a project that can already see generated mocks does not emit a second copy | v14 |

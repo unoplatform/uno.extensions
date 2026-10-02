@@ -31,7 +31,7 @@ We always instantiate the **real ViewModel wrapping the real Model** (null-injec
 public IFeed<int> StepsCount => Steps.Select(steps => steps.Count);   // business logic
 ```
 
-`StepsCount` **MUST keep computing over the mocked `Steps`** — that is the whole point of building a real VM+Model. Achieved by anchoring the swap at the **Model-feed level** (the feed-identity cache), so every composition (`Select`, `Where`, …) observes the swapped source. Live re-swap drives state transitions.
+`StepsCount` **MUST keep computing over the mocked `Steps`** — that is the whole point of building a real VM+Model. Achieved by anchoring the swap at the context's **subscription to each feed**, which the feed's state and every composition (`Select`, `Where`, …) read, so they all see the swapped source. Live re-swap drives state transitions.
 
 ```mermaid
 flowchart LR
@@ -39,8 +39,8 @@ flowchart LR
     applied via SetMock"]
     subgraph MODEL["Real RecipeModel — services null-injected"]
         W["Steps
-        stable HotSwapFeed wrapper
-        (feed identity cache)"]
+        read through one swappable
+        subscription"]
         BL["StepsCount = Steps.Select(...)
         real business logic — recomputes"]
         W --> BL
@@ -66,7 +66,7 @@ flowchart TB
         natural feed evolution, custom axes"]
     end
     T2 --> PRIM["Shared core primitives (opt-in)
-    HotSwapFeed wrap at the feed cache · hidden hooks · dependency attributes"]
+    swappable subscription per feed · hidden hooks · dependency attributes"]
     T1 --> FV["FeedView entry wrapper"]
 ```
 
@@ -88,7 +88,7 @@ flowchart TB
         GEN --> HOOKS["emitted seams (no per-feed hook)
         __Mock_SetCommand on the VM (commands only)
         construction = public ctors + ambient scope
-        swap = reflection over IHotSwapState (D11)"]
+        swap = typed call per member (D11)"]
     end
     subgraph TEST["Test / preview project — references the app"]
         MG["Mocking generator
@@ -104,7 +104,7 @@ flowchart TB
 - **MVUX generator (runs in the Model's assembly, on the partial Model):**
   a. **Dependency analysis** of each feed/command member + **ctor instrumentation** (detect eager service access that would NRE under null-inject);
   b. emits results as **metadata attributes** (also hand-declarable by the author — explicit declarations win/merge);
-  c. emits **only** the seams the reflection swap cannot synthesize (`EditorBrowsable(Never)`, on by default — opt-out): the VM `__Mock_SetCommand` seam for commands (R2 — commands have no `IHotSwapState<T>`). Construction needs no seam (public ctors + ambient scope, D12). **No per-feed `__Mock_Swap_{Member}` handles** — the swap itself is reflection over the Model's `IHotSwapState<T>` members at runtime (D11), reusing the hot-reload driver. It must **not** reuse `__Reactive_UpdateModel` (which reassigns `__reactiveModel`/INPC and is unsafe here).
+  c. emits only the VM `__Mock_SetCommand` seam (`EditorBrowsable(Never)`, on by default — opt-out), because commands are not feeds and have no subscription swap path (R2). Construction needs no seam (public ctors + ambient scope, D12). **No per-feed `__Mock_Swap_{Member}` handles** — the swap itself is a typed call per member at runtime (D11), which swaps the member's subscription. It must **not** reuse `__Reactive_UpdateModel` (which reassigns `__reactiveModel`/INPC and is unsafe here).
 - **Mocking generator (ships in `Uno.HotTesting.Reactive`, runs in the consuming project):** generates `{Model}Mock` records, `Create` factories and the `SetMock` facade as **new external, generic and strongly typed types/extensions** (no cross-assembly partial). It reaches models two ways: from the app assembly **metadata** (types + attributes) when the app is a compiled reference, and — when the models sit in the compilation being generated, as they do in a single-project app referencing the package directly — by running the same analysis over the source, because there the attributes are emitted by a sibling generator and a generator cannot observe another generator's output (D13). Declared attributes always win over the inferred classification.
 
 ## 5. End-to-end — a test drives a page through its states
@@ -119,9 +119,9 @@ sequenceDiagram
 
     T->>G: RecipeViewModelMock.Create(steps)
     G->>VM: new RecipeViewModel(default!, ...)
-    Note over VM: context.IsMockingActive ON —<br/>every Model feed property is<br/>cached as a HotSwapFeed wrapper
+    Note over VM: context.IsMockingActive ON —<br/>each feed is read through<br/>a swappable subscription
     G->>W: SetMock(Empty with Steps = steps)
-    W-->>VM: Steps swapped (reflection over IHotSwapState, fail-hard)
+    W-->>VM: Steps swapped (typed call, fail-hard)
     VM-->>UI: StepsCount recomputes through the real Select
     UI-->>UI: renders pinned states
     T->>W: SetMock(...) — Loading, Value, Error
@@ -250,13 +250,13 @@ No new mechanism: each overload is `Create()` + a `SetMock` of §7, so a preview
 | D3 | **Facade** (`SetMock` / generated setters) in front of hidden hooks; `HotSwapFeed`/handles stay non-public |
 | D4 | ~~Dedicated `FeedConfiguration` mockable flag~~ **superseded (2026-08-24)**: the gate lives on **`SourceContext.IsMockingActive`** (per-context, set by `MockingService.Enable()` on the ambient context). No separate static, no bespoke `AsyncLocal`. See D11–D12 |
 | D5 | Mock codegen is **external** (consumer project); MVUX gen only analyzes + emits attributes & hidden hooks |
-| D6 | Swap anchored at **Model-feed cache level** so derivations survive (non-negotiable) |
+| D6 | Swap anchored at the context's **subscription to each feed**, which the state and every derivation read, so derivations survive (non-negotiable) |
 | D7 | AOT non-compliance of the mocking path accepted (dev/test only) |
 | D8 | Converters (JSON or other) are **application-owned illustrations** attached at `FeedView.Source`, returning `IMessageEntry`; this feature defines and implements none |
 | D9 | Tiers 2/3 are **strongly typed end to end**; the tier-1 authoring object is confined to tier 1 |
 | D10 | Activation is an **explicit scope** — `using (MockingService.Enable())` — never an ambient app-wide switch. A test assembly may open it once at assembly init to cover its whole run. **Rationale: the wrap costs at runtime; it must exist only on demand, never in the feeds of a live app** (G9, R7). The scope's internal mechanism is now **resolved** — it rides `SourceContext` (§13) |
-| D11 | **Swap is reflection-driven over the members, fail-hard** — reuse the existing hot-reload reflection path (`BindableViewModelBase.HotReload`, iterating `IHotSwapState<T>`); the MVUX generator emits **no per-member `__Mock_Swap_{Member}` hooks**, only metadata attributes + the VM `__Mock_SetCommand` command seam (construction uses public ctors + ambient scope). **Delta vs hot reload: a member that cannot be swapped throws — no silent skip** (hot reload is best-effort; mocking is strict) |
-| D12 | **The mockable gate is a per-context bit on `SourceContext.IsMockingActive`**, read at wrap time in `StateImpl` ctor **instead of** the global `EffectiveHotReload` static — so only contexts created under an open scope wrap, every other context pays zero (G9/R7 by construction). **Reflection-core accepted over AOT-strict**: a 2-assembly split needs reflection anyway (generating the mock beside the Model would make the mocking assembly hollow); the mocking path stays dev/test-only, non-AOT (NG2/D7) |
+| D11 | **Swap is a strongly typed call per member, fail-hard**, targeting the context's `FeedSubscription`; the MVUX generator emits **no per-member `__Mock_Swap_{Member}` hooks**, only metadata attributes + the VM `__Mock_SetCommand` command seam (construction uses public ctors + ambient scope). **Delta vs hot reload: a member whose subscription cannot be swapped throws — no silent skip** (hot reload is best-effort; mocking is strict) |
+| D12 | **The mockable gate is a per-context bit on `SourceContext.IsMockingActive`**, read at wrap time by `FeedSubscription`; hot reload uses the same subscription-owned wrapper through `EffectiveHotReload`. Only contexts created under an open mocking scope wrap for mocking, so every other live context pays zero (G9/R7 by construction) |
 
 ## 13. Scoped activation — `MockingService.Enable()` (DECIDED shape AND mechanism)
 
@@ -269,13 +269,13 @@ var vm = RecipeViewModelMock.Create(new RecipeModelMock { Steps = ListFeedMock.V
 
 - **On demand only.** Wrapping every Model feed in a `HotSwapFeed` costs at runtime (one indirection per feed, per subscription path). That cost is acceptable in a test/preview run and **not** in a live app: outside an activation scope nothing is wrapped, and no published app head ever references the Mocking package (G9, R7, D7).
 - **Whole-run activation is the caller's choice, not the default.** A test assembly that wants mocking at large opens the scope once in its **assembly init** (and disposes it at assembly cleanup); a single test opens it around one `Create`. Same API either way — never a global flag flipped inside the framework.
-- The scope, not the ViewModel, is the boundary. The real boundary is the feed subscription/state **context** that owns states and subscriptions — **confirmed in source: `SourceContext`** (`Core/Internal/SourceContext.cs`), which already holds an `AsyncLocal<SourceContext> Current` and per-owner contexts. `Enable()` tags the ambient/created contexts `IsMockingActive`; `StateImpl` reads that bit at wrap time.
+- The scope, not the ViewModel, is the boundary. The real boundary is the feed subscription/state **context** that owns states and subscriptions — **confirmed in source: `SourceContext`** (`Core/Internal/SourceContext.cs`), which already holds an `AsyncLocal<SourceContext> Current` and per-owner contexts. `Enable()` tags the ambient/created contexts `IsMockingActive`; `FeedSubscription` reads that bit at wrap time.
 - `SourceContext.IsMockingActive` (D12) is the low-level per-context gate the scope drives — it is not a knob for app authors, and there is no global static equivalent.
 
 **Resolved mechanism** (source-verified, see [implementation.md §6](implementation.md)):
 
 - **Context type & carrier:** `SourceContext` (`Core/Internal/SourceContext.cs`) — already the owner of `States`/subscriptions, already ambient via `AsyncLocal<SourceContext> Current`, already created per-owner (`GetOrCreate(owner)`) with an eager pre-seed seam (`PreConfigure(type, ctx)` / `Set(owner, ctx)`). It carries a new `bool IsMockingActive`.
 - **Activation:** `MockingService.Enable()` opens a scope that marks the relevant `SourceContext`(s) `IsMockingActive` (ambient for async construction; eager pre-seed for the VM/Model context built by `Create(...)` so a lazy first subscription after the `using` block still wraps).
-- **Wrap gate:** `StateImpl` ctor reads `context.IsMockingActive` **instead of** `FeedConfiguration.EffectiveHotReload` — no scope ⇒ no wrap (G9/R7 hold by construction, per-context not per-process).
+- **Wrap gate:** `FeedSubscription` wraps when its context has `IsMockingActive`; hot reload uses the same wrapper through `FeedConfiguration.EffectiveHotReload`. `StateImpl` owns no source hot-swap logic. No mocking scope ⇒ no mocking wrap (G9/R7 hold by construction, per-context not per-process).
 - **Nested scopes / concurrency / lifetime:** inherited from `SourceContext` semantics — the bit lives on the context instance, so concurrent tests do not leak, and contexts created inside a scope stay mockable for their own lifetime after `Dispose`.
-- **Swap:** reflection over the context's `IHotSwapState<T>` members (D11), fail-hard.
+- **Swap:** a typed call per member that swaps its subscription (D11), fail-hard.
