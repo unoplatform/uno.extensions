@@ -179,7 +179,7 @@ public class Given_Navigation_VmCreationFailure
 		var completed = await Task.WhenAny(navigation, Task.Delay(Timeout));
 		completed.Should().Be(navigation, "a failing view-model constructor must fault the navigation, not hang it");
 
-		var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => navigation);
+		var exception = await Assert.ThrowsExactlyAsync<InvalidOperationException>(() => navigation);
 		exception.Message.Should().Be(ThrowingCtorViewModel.FailureMessage, "the original constructor exception must propagate unwrapped");
 
 		var errors = app.Logs.Entries.Where(e => e.Level == LogLevel.Error).ToArray();
@@ -195,7 +195,7 @@ public class Given_Navigation_VmCreationFailure
 		await using var app = await SetupAppAsync(cts.Token);
 
 		var navigation = app.FrameNavigator.NavigateRouteAsync(this, "TestPageTwo");
-		await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => navigation);
+		await Assert.ThrowsExactlyAsync<InvalidOperationException>(() => navigation);
 
 		// The faulted navigation must not wedge the pipeline: EndNavigation ran,
 		// so a follow-up navigation on the same navigator succeeds.

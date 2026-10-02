@@ -105,29 +105,24 @@ public class Given_DifferentialImmutableList
 		=> (GetSut() as IList).Contains(42).Should().BeFalse();
 
 	[TestMethod]
-	[ExpectedException(typeof(InvalidOperationException))]
 	public void When_AsList_Add()
-		=> (GetSut() as IList).Add(42);
+		=> Assert.ThrowsExactly<InvalidOperationException>(() => (GetSut() as IList).Add(42));
 
 	[TestMethod]
-	[ExpectedException(typeof(InvalidOperationException))]
 	public void When_AsList_Insert()
-		=> (GetSut() as IList).Insert(5, 42);
+		=> Assert.ThrowsExactly<InvalidOperationException>(() => (GetSut() as IList).Insert(5, 42));
 
 	[TestMethod]
-	[ExpectedException(typeof(InvalidOperationException))]
 	public void When_AsList_Remove()
-		=> (GetSut() as IList).Remove(5);
+		=> Assert.ThrowsExactly<InvalidOperationException>(() => (GetSut() as IList).Remove(5));
 
 	[TestMethod]
-	[ExpectedException(typeof(InvalidOperationException))]
 	public void When_AsList_RemoveAt()
-		=> (GetSut() as IList).RemoveAt(5);
+		=> Assert.ThrowsExactly<InvalidOperationException>(() => (GetSut() as IList).RemoveAt(5));
 
 	[TestMethod]
-	[ExpectedException(typeof(InvalidOperationException))]
 	public void When_AsList_Clear()
-		=> (GetSut() as IList).Clear();
+		=> Assert.ThrowsExactly<InvalidOperationException>(() => (GetSut() as IList).Clear());
 
 	private DifferentialImmutableList<int> GetSut()
 		=> new(Enumerable.Range(0, 10).ToImmutableList());

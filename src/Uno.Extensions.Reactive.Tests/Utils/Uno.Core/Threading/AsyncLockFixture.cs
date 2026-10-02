@@ -37,7 +37,7 @@ namespace Uno.Core.Tests.Threading
 		public TestContext TestContext { get; set; }
 
 #if DEBUG
-		private const TestTimeout _timeout = TestTimeout.Infinite;
+		private const int _timeout = int.MaxValue; // No timeout while debugging
 #else
 		private const int _timeout = 5000;
 #endif

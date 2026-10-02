@@ -12,30 +12,32 @@ public class Given_CoreFeedOperators
 {
 	#region GetAwaiter
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))]
 	public async Task When_GetAwaiter_Then_AcceptsNotNullAndStruct()
 	{
-		// Note: Those ar compilation tests! Will always throw null ref
+		await Assert.ThrowsExactlyAsync<NullReferenceException>(async () =>
+		{
+			// Note: Those ar compilation tests! Will always throw null ref
 
-		var intValue = await default(IFeed<int>)!;
-		var nullableIntValue = await default(IFeed<int?>)!;
+			var intValue = await default(IFeed<int>)!;
+			var nullableIntValue = await default(IFeed<int?>)!;
 
-		var stringValue = await default(IFeed<string>)!;
+			var stringValue = await default(IFeed<string>)!;
 #nullable disable
 #pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
-		var nullableStringValue = await default(IFeed<string?>)!;
+			var nullableStringValue = await default(IFeed<string?>)!;
 #pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
 #nullable restore
 
-		var structValue = await default(IFeed<MyStruct>)!;
-		var nullableStructValue = await default(IFeed<MyStruct?>)!;
+			var structValue = await default(IFeed<MyStruct>)!;
+			var nullableStructValue = await default(IFeed<MyStruct?>)!;
 
-		var classValue = await default(IFeed<MyClass>)!;
+			var classValue = await default(IFeed<MyClass>)!;
 #nullable disable
 #pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
-		var nullableClassValue = await default(IFeed<MyClass?>)!;
+			var nullableClassValue = await default(IFeed<MyClass?>)!;
 #pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
 #nullable restore
+		});
 	}
 
 	[TestMethod]
@@ -124,28 +126,31 @@ public class Given_CoreFeedOperators
 
 	#region Value
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: Those are compilation tests! Will always throw null ref
 	public async Task When_Value_Then_AcceptsNotNullAndStruct()
 	{
-		var intValue = await default(IFeed<int>)!.Value();
-		var nullableIntValue = await default(IFeed<int?>)!.Value();
+		// Note: Those are compilation tests! Will always throw null ref
+		await Assert.ThrowsExactlyAsync<NullReferenceException>(async () =>
+		{
+			var intValue = await default(IFeed<int>)!.Value();
+			var nullableIntValue = await default(IFeed<int?>)!.Value();
 
-		var stringValue = await default(IFeed<string>)!.Value();
+			var stringValue = await default(IFeed<string>)!.Value();
 #nullable disable
 #pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
-		var nullableStringValue = await default(IFeed<string?>)!.Value();
+			var nullableStringValue = await default(IFeed<string?>)!.Value();
 #pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
 #nullable restore
 
-		var structValue = await default(IFeed<MyStruct>)!.Value();
-		var nullableStructValue = await default(IFeed<MyStruct?>)!.Value();
+			var structValue = await default(IFeed<MyStruct>)!.Value();
+			var nullableStructValue = await default(IFeed<MyStruct?>)!.Value();
 
-		var classValue = await default(IFeed<MyClass>)!.Value();
+			var classValue = await default(IFeed<MyClass>)!.Value();
 #nullable disable
 #pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
-		var nullableClassValue = await default(IFeed<MyClass?>)!.Value();
+			var nullableClassValue = await default(IFeed<MyClass?>)!.Value();
 #pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
 #nullable restore
+		});
 	}
 
 	[TestMethod]
@@ -181,20 +186,23 @@ public class Given_CoreFeedOperators
 
 	#region Data
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: Those are compilation tests! Will always throw null ref
 	public async Task When_Data_Then_AcceptsNotNullAndStruct()
 	{
-		var intValue = await default(IFeed<int>)!.Data();
-		var nullableIntValue = await default(IFeed<int?>)!.Data();
+		// Note: Those are compilation tests! Will always throw null ref
+		await Assert.ThrowsExactlyAsync<NullReferenceException>(async () =>
+		{
+			var intValue = await default(IFeed<int>)!.Data();
+			var nullableIntValue = await default(IFeed<int?>)!.Data();
 
-		var stringValue = await default(IFeed<string>)!.Data();
-		var nullableStringValue = await default(IFeed<string?>)!.Data();
+			var stringValue = await default(IFeed<string>)!.Data();
+			var nullableStringValue = await default(IFeed<string?>)!.Data();
 
-		var structValue = await default(IFeed<MyStruct>)!.Data();
-		var nullableStructValue = await default(IFeed<MyStruct?>)!.Data();
+			var structValue = await default(IFeed<MyStruct>)!.Data();
+			var nullableStructValue = await default(IFeed<MyStruct?>)!.Data();
 
-		var classValue = await default(IFeed<MyClass>)!.Data();
-		var nullableClassValue = await default(IFeed<MyClass?>)!.Data();
+			var classValue = await default(IFeed<MyClass>)!.Data();
+			var nullableClassValue = await default(IFeed<MyClass?>)!.Data();
+		});
 	}
 
 	[TestMethod]
@@ -216,37 +224,43 @@ public class Given_CoreFeedOperators
 
 	#region Message
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: Those are compilation tests! Will always throw null ref
 	public async Task When_Message_Then_AcceptsNotNullAndStruct()
 	{
-		var intValue = await default(IFeed<int>)!.Message();
-		var nullableIntValue = await default(IFeed<int?>)!.Message();
+		// Note: Those are compilation tests! Will always throw null ref
+		await Assert.ThrowsExactlyAsync<NullReferenceException>(async () =>
+		{
+			var intValue = await default(IFeed<int>)!.Message();
+			var nullableIntValue = await default(IFeed<int?>)!.Message();
 
-		var stringValue = await default(IFeed<string>)!.Message();
-		var nullableStringValue = await default(IFeed<string?>)!.Message();
+			var stringValue = await default(IFeed<string>)!.Message();
+			var nullableStringValue = await default(IFeed<string?>)!.Message();
 
-		var structValue = await default(IFeed<MyStruct>)!.Message();
-		var nullableStructValue = await default(IFeed<MyStruct?>)!.Message();
+			var structValue = await default(IFeed<MyStruct>)!.Message();
+			var nullableStructValue = await default(IFeed<MyStruct?>)!.Message();
 
-		var classValue = await default(IFeed<MyClass>)!.Message();
-		var nullableClassValue = await default(IFeed<MyClass?>)!.Message();
+			var classValue = await default(IFeed<MyClass>)!.Message();
+			var nullableClassValue = await default(IFeed<MyClass?>)!.Message();
+		});
 	}
 
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: Those are compilation tests! Will always throw null ref
 	public async Task When_Messages_Then_AcceptsNotNullAndStruct()
 	{
-		var intValue = default(IFeed<int>)!.Messages();
-		var nullableIntValue = default(IFeed<int?>)!.Messages();
+		// Note: Those are compilation tests! Will always throw null ref
+		await Assert.ThrowsExactlyAsync<NullReferenceException>(async () =>
+		{
+			var intValue = default(IFeed<int>)!.Messages();
+			var nullableIntValue = default(IFeed<int?>)!.Messages();
 
-		var stringValue = default(IFeed<string>)!.Messages();
-		var nullableStringValue = default(IFeed<string?>)!.Messages();
+			var stringValue = default(IFeed<string>)!.Messages();
+			var nullableStringValue = default(IFeed<string?>)!.Messages();
 
-		var structValue = default(IFeed<MyStruct>)!.Messages();
-		var nullableStructValue = default(IFeed<MyStruct?>)!.Messages();
+			var structValue = default(IFeed<MyStruct>)!.Messages();
+			var nullableStructValue = default(IFeed<MyStruct?>)!.Messages();
 
-		var classValue = default(IFeed<MyClass>)!.Messages();
-		var nullableClassValue = default(IFeed<MyClass?>)!.Messages();
+			var classValue = default(IFeed<MyClass>)!.Messages();
+			var nullableClassValue = default(IFeed<MyClass?>)!.Messages();
+		});
 	}
 	#endregion
 
