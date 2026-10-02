@@ -38,10 +38,12 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 
 	internal Message<T> Current => _subscription?.Current ?? Message<T>.Initial;
 
+	private StateImpl<T> UpdatesTarget => _updatesTarget?.UpdatesTarget ?? this;
+
 	/// <summary>
 	/// Gets direct access to the underlying UpdateFeed so we can have full control of update operation made on it.
 	/// </summary>
-	internal UpdateFeed<T> Inner => _updatesTarget?.Inner ?? _inner;
+	internal UpdateFeed<T> Inner => UpdatesTarget._inner;
 
 	/// <summary>
 	/// Legacy - Used only be legacy IInput syntax
@@ -102,11 +104,13 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	/// <inheritdoc />
 	public async ValueTask UpdateMessageAsync(Action<MessageBuilder<T>> updater, CancellationToken ct)
 	{
-		// First we make sure that the UpdateFeed is active, so the update will be applied ^^
-		Enable();
+		// First we make sure that the target UpdateFeed is active, so the update will be applied.
+		var target = UpdatesTarget;
+		target.Enable();
+		target._subscription.Enable();
 
 		var update = new Update(updater, _updatesKind);
-		Inner.Add(update);
+		target._inner.Add(update);
 		await update.HasBeenApplied.ConfigureAwait(false); // Makes sure to forward (the first) error to the caller if any.
 	}
 

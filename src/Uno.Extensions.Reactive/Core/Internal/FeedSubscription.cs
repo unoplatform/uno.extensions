@@ -34,10 +34,8 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 		_context = rootContext.CreateChild(this, _requests);
 
 		// Hot reload and mocking replace sources at the subscription shared by all consumers.
-		// UpdateFeed must be activated when its subscription is created, before there is a subscriber.
 		var source = feed;
-		if ((FeedConfiguration.EffectiveHotReload.HasFlag(HotReloadSupport.State) || rootContext.IsMockingActive)
-			&& feed is not UpdateFeed<T>)
+		if (FeedConfiguration.EffectiveHotReload.HasFlag(HotReloadSupport.State) || rootContext.IsMockingActive)
 		{
 			source = _hotSwap = new HotSwapFeed<T>(feed);
 		}
@@ -69,10 +67,17 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 
 	public IDisposable UpdateMode(SubscriptionMode mode)
 	{
-		// Not supported yet.
-		// Here we should compute the stricter mode
+		if (mode.HasFlag(SubscriptionMode.Eager))
+		{
+			Enable();
+		}
+
+		// Dynamic mode updates and ref-counting are not supported yet.
 		return Disposable.Empty;
 	}
+
+	internal void Enable()
+		=> _messages.Enable();
 
 	public async IAsyncEnumerable<Message<T>> GetMessages(SourceContext subscriberContext, [EnumeratorCancellation] CancellationToken ct)
 	{

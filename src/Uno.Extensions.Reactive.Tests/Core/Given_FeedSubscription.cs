@@ -18,13 +18,32 @@ namespace Uno.Extensions.Reactive.Tests.Core;
 public class Given_FeedSubscription : FeedTests
 {
 	[TestMethod]
-	public void When_SourceIsUpdateFeed_Then_HotSwapIsNotAvailable()
+	public void When_SourceIsUpdateFeed_Then_HotSwapIsAvailable()
 	{
 		using var context = CreateMockingContext();
 		var source = new UpdateFeed<string>(Feed.Async(async ct => "original"));
 
-		context.SourceContext.States.GetOrCreateSubscription(source).CanHotSwap.Should().BeFalse(
-			"UpdateFeed must start listening for updates when its subscription is created, before there is a subscriber");
+		context.SourceContext.States.GetOrCreateSubscription(source).CanHotSwap.Should().BeTrue();
+	}
+
+	[TestMethod]
+	public async Task When_ModeIsEager_Then_SourceIsEnumeratedWithoutSubscriber()
+	{
+		using var context = CreateMockingContext();
+		var messageConsumed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+		var source = Feed<int>.Create(Source);
+		var subscription = context.SourceContext.States.GetOrCreateSubscription(source);
+
+		subscription.UpdateMode(SubscriptionMode.Eager);
+
+		await messageConsumed.Task.WaitAsync(CT);
+		subscription.Current.Current.Data.SomeOrDefault().Should().Be(42);
+
+		async IAsyncEnumerable<Message<int>> Source([EnumeratorCancellation] CancellationToken ct)
+		{
+			yield return Message<int>.Initial.With().Data(42);
+			messageConsumed.SetResult();
+		}
 	}
 
 	[TestMethod]
