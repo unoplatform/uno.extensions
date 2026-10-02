@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Core;
+using Uno.Extensions.Reactive.Operators;
 using Uno.Extensions.Reactive.Testing;
 using Uno.HotTesting.Reactive;
 
@@ -16,6 +17,16 @@ namespace Uno.Extensions.Reactive.Tests.Core;
 [TestClass]
 public class Given_FeedSubscription : FeedTests
 {
+	[TestMethod]
+	public void When_SourceIsUpdateFeed_Then_HotSwapIsNotAvailable()
+	{
+		using var context = CreateMockingContext();
+		var source = new UpdateFeed<string>(Feed.Async(async ct => "original"));
+
+		context.SourceContext.States.GetOrCreateSubscription(source).CanHotSwap.Should().BeFalse(
+			"UpdateFeed must start listening for updates when its subscription is created, before there is a subscriber");
+	}
+
 	[TestMethod]
 	public async Task When_HotSwapEnabled_Then_SourceIsEnumeratedDirectly()
 	{

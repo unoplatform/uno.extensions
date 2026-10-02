@@ -159,8 +159,8 @@ public class Given_MockingActivation : FeedTests
 		await using var latestReader = latest.GetSource(context.SourceContext, CT).GetAsyncEnumerator(CT);
 
 		(await latestReader.MoveNextAsync()).Should().BeTrue();
-		first.TransferUpdatesTo(second);
-		second.TransferUpdatesTo(latest);
+		first.HotSwap(second);
+		second.HotSwap(latest);
 
 		await first.UpdateMessageAsync(message => message.Data("edited"), CT);
 		(await latestReader.MoveNextAsync()).Should().BeTrue();

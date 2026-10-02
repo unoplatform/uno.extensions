@@ -467,7 +467,7 @@ partial class BindableViewModelBase
 
 		if (previous is StateImpl<T> previousState && updated is StateImpl<T> updatedState)
 		{
-			previousState.TransferUpdatesTo(updatedState);
+			previousState.HotSwap(updatedState);
 		}
 
 		// Keep both identities on the same state and subscription for later incremental updates.

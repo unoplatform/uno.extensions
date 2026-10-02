@@ -33,8 +33,8 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 		_rootContext = rootContext;
 		_context = rootContext.CreateChild(this, _requests);
 
-		// Hot reload and mocking replace the source at the subscription shared by the state and all operators.
-		// An UpdateFeed is the mutable overlay owned by a state, not a model source that can be replaced.
+		// Hot reload and mocking replace sources at the subscription shared by all consumers.
+		// UpdateFeed must be activated when its subscription is created, before there is a subscriber.
 		var source = feed;
 		if ((FeedConfiguration.EffectiveHotReload.HasFlag(HotReloadSupport.State) || rootContext.IsMockingActive)
 			&& feed is not UpdateFeed<T>)
