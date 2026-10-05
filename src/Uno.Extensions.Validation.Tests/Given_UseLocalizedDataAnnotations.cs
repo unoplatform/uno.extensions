@@ -72,6 +72,22 @@ public class Given_UseLocalizedDataAnnotations
 			.Value.DefaultMessageKeyFormat.Should().Be("Key_{0}");
 	}
 
+	[TestMethod]
+	public async Task When_ChainedWithFluentValidator_Then_BothApplied()
+	{
+		using var host = TestHost.Create(
+			b => b.UseLocalizedDataAnnotations().Validator<Given_FluentValidator.Person, Given_FluentValidator.PersonValidator>(),
+			s => s.AddSingleton<IStringLocalizer>(new FakeStringLocalizer(new()
+			{
+				["Validation_Required"] = "localized",
+				["Validation_FirstNameRequired"] = "fluent",
+			})));
+		var validator = host.GetValidator();
+
+		(await validator.ValidateAsync(new Model())).Should().ContainSingle().Which.ErrorMessage.Should().Be("localized");
+		(await validator.ValidateAsync(new Given_FluentValidator.Person(""))).Should().ContainSingle().Which.ErrorMessage.Should().Be("fluent");
+	}
+
 	public sealed class Model
 	{
 		[Required(ErrorMessage = "Validation_Required")]
