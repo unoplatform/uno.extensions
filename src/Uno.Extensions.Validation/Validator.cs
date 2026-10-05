@@ -26,7 +26,8 @@ internal class Validator : IValidator
 			ICollection<ValidationResult> results = new List<ValidationResult>();
 			try
 			{
-				context ??= new ValidationContext(instance);
+				// The app services are given to the context so custom attributes and IValidatableObject can resolve services (e.g. an IStringLocalizer).
+				context ??= new ValidationContext(instance, _services, items: null);
 				bool validates = System.ComponentModel.DataAnnotations.Validator.TryValidateObject(instance, context, results, true);
 
 				if (!results.Any() && !validates && instance is INotifyDataErrorInfo _instance)
