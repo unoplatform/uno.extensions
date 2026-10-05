@@ -147,6 +147,10 @@ public class MainViewModel
 }
 ```
 
+## Localizing validation messages
+
+Validation messages can be resolved from the same resources: see [localizing validation messages](xref:Uno.Extensions.Validation.Overview#localizing-validation-messages) for `IValidator` (DataAnnotations and FluentValidation), and [MVUX validation](xref:Uno.Extensions.Mvux.Advanced.Validation#localizing-messages) for states.
+
 ## See also
 
 - [Software Localization](https://learn.microsoft.com/globalization/localization/localization)

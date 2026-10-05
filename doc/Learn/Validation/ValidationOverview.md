@@ -156,6 +156,89 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 
 ---
 
+## Localizing validation messages
+
+When the app uses [localization](xref:Uno.Extensions.Localization.Overview), validation messages can be resolved from its resources (`.resw` files) through the `IStringLocalizer`. Messages are localized when the validation runs, using the current culture. As changing the culture requires an app restart, messages already produced are not updated.
+
+### DataAnnotations
+
+Call `UseLocalizedDataAnnotations` to use the `ErrorMessage` of attributes and the `Name` of `[Display]` as resource keys:
+
+```csharp
+host
+    .UseLocalization()
+    .UseValidation(configure: builder => builder.UseLocalizedDataAnnotations());
+```
+
+```csharp
+public class Person
+{
+    [Display(Name = "Person_FirstName")]
+    [Required(ErrorMessage = "Validation_FirstNameRequired")]
+    [StringLength(20, MinimumLength = 2, ErrorMessage = "Validation_FirstNameLength")]
+    public string FirstName { get; set; }
+}
+```
+
+```xml
+<data name="Person_FirstName" xml:space="preserve">
+  <value>Prénom</value>
+</data>
+<data name="Validation_FirstNameRequired" xml:space="preserve">
+  <value>{0} est requis</value>
+</data>
+<data name="Validation_FirstNameLength" xml:space="preserve">
+  <value>{0} doit contenir entre {2} et {1} caractères</value>
+</data>
+```
+
+- `{0}` is the (localized) display name. Other arguments are the same as the attribute's own message:
+
+  | Attribute | Arguments |
+  | --- | --- |
+  | `StringLength` | `{1}` maximum length, `{2}` minimum length |
+  | `Range` | `{1}` minimum, `{2}` maximum |
+  | `MinLength`, `MaxLength` | `{1}` length |
+  | `Length` | `{1}` minimum length, `{2}` maximum length |
+  | `Compare` | `{1}` display name of the other property |
+  | `RegularExpression` | `{1}` pattern |
+
+- A key which is not found in the resources keeps the message (or name) as written in the attribute, so you can localize progressively. An invalid translation (e.g. `{3}` for a `Required`) also falls back to the attribute's message.
+- Attributes using `ErrorMessageResourceType` / `ErrorMessageResourceName` are not affected.
+- To also localize the default messages of attributes that don't set `ErrorMessage`, set a key format: `UseLocalizedDataAnnotations(o => o.DefaultMessageKeyFormat = "Validation_{0}")` resolves `Validation_Required`, `Validation_StringLength`, etc. (the attribute name without the `Attribute` suffix).
+- By default the `IStringLocalizer` registered by `UseLocalization` is used. Set `LocalizerProvider` to use another localizer, for instance per validated type. When no localizer is available, messages are not localized.
+
+> [!TIP]
+> Prefer `_` over `.` as separator in keys: in `.resw` files, a `.` is used to target a property of an `x:Uid` element.
+
+The `ValidationContext` created by the validator gives access to the app services, so custom attributes and `IValidatableObject` implementations can localize their own messages:
+
+```csharp
+protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+{
+    var localizer = validationContext.GetService<IStringLocalizer>();
+    ...
+}
+```
+
+### FluentValidation
+
+FluentValidation localizes its default messages using the current UI culture. For your own messages, inject the `IStringLocalizer` in the validator:
+
+```csharp
+public class PersonValidator : AbstractValidator<Person>
+{
+    public PersonValidator(IStringLocalizer localizer)
+    {
+        RuleFor(person => person.FirstName)
+            .NotEmpty()
+            .WithMessage(_ => localizer["Validation_FirstNameRequired"]);
+    }
+}
+```
+
+The name of the property is reported in the `MemberNames` of the results, so errors are attached to the right field.
+
 ## Using validation with MVUX
 
 In an MVUX model, pass the `IValidator` to `Validate` to validate a state each time it changes. The generated view model then exposes the results through `INotifyDataErrorInfo`. See [MVUX validation](xref:Uno.Extensions.Mvux.Advanced.Validation).
