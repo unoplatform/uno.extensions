@@ -7,5 +7,6 @@ global using System.Threading.Tasks;
 global using FluentAssertions;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
+global using Microsoft.Extensions.Localization;
 global using Microsoft.VisualStudio.TestTools.UnitTesting;
 global using Uno.Extensions.Validation;

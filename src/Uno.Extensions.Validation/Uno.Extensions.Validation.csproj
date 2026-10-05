@@ -10,6 +10,7 @@
 
 	<ItemGroup>
 	  <PackageReference Include="Microsoft.Extensions.Hosting" />
+	  <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" />
 	  <PackageReference Include="System.ComponentModel.Annotations" />
 	</ItemGroup>
 

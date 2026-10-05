@@ -24,6 +24,26 @@ public class Given_Validator
 	}
 
 	[TestMethod]
+	public async Task When_LocalizedAndPropertyAttributeUsesServices_Then_AppServicesAvailable()
+	{
+		using var host = CreateLocalizedHost();
+
+		var results = await host.GetValidator().ValidateAsync(new WithServiceAwareProperty());
+
+		results.Should().ContainSingle().Which.ErrorMessage.Should().Be("app");
+	}
+
+	[TestMethod]
+	public async Task When_LocalizedAndValidatableObjectUsesServices_Then_AppServicesAvailable()
+	{
+		using var host = CreateLocalizedHost();
+
+		var results = await host.GetValidator().ValidateAsync(new ServiceAwareValidatable());
+
+		results.Should().ContainSingle().Which.ErrorMessage.Should().Be("app");
+	}
+
+	[TestMethod]
 	public async Task When_ContextProvided_Then_ContextUsed()
 	{
 		using var host = TestHost.Create(services: s => s.AddSingleton(new Marker("app")));
@@ -45,6 +65,13 @@ public class Given_Validator
 
 		results.Should().BeEquivalentTo(BclValidation.Validate(instance), opts => opts.WithStrictOrdering());
 	}
+
+	private static IHost CreateLocalizedHost()
+		=> TestHost.Create(
+			b => b.UseLocalizedDataAnnotations(),
+			s => s
+				.AddSingleton(new Marker("app"))
+				.AddSingleton<IStringLocalizer>(new FakeStringLocalizer(new())));
 
 	internal sealed record Marker(string Name);
 

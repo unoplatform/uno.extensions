@@ -3,11 +3,13 @@
 internal class Validator : IValidator
 {
 	private readonly IServiceProvider _services;
+	private readonly LocalizedDataAnnotationsValidator? _localizedValidator;
 	private IValidator? TypedValidator(Type instanceType) => _services.GetServices<IValidatorTypedInstance>().FirstOrDefault(x => x.InstanceType == instanceType);
 
-	public Validator(IServiceProvider services)
+	public Validator(IServiceProvider services, LocalizedDataAnnotationsValidator? localizedValidator = null)
 	{
 		_services = services;
+		_localizedValidator = localizedValidator;
 	}
 
 	public async ValueTask<IEnumerable<ValidationResult>> ValidateAsync(
@@ -28,7 +30,8 @@ internal class Validator : IValidator
 			{
 				// The app services are given to the context so custom attributes and IValidatableObject can resolve services (e.g. an IStringLocalizer).
 				context ??= new ValidationContext(instance, _services, items: null);
-				bool validates = System.ComponentModel.DataAnnotations.Validator.TryValidateObject(instance, context, results, true);
+				bool validates = _localizedValidator?.TryValidateObject(instance, context, results)
+					?? System.ComponentModel.DataAnnotations.Validator.TryValidateObject(instance, context, results, true);
 
 				if (!results.Any() && !validates && instance is INotifyDataErrorInfo _instance)
 				{
