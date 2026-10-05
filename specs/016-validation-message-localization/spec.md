@@ -1,6 +1,6 @@
 # 016 — Localized validation messages
 
-**Status:** Draft — proposal, pending review
+**Status:** Implemented (v1) with the proposed defaults for §7, pending review — see [progress.md](progress.md)
 **Area:** `Uno.Extensions.Validation` (DataAnnotations `Validator`), `Uno.Extensions.Validation.Fluent` (member names), `Uno.Extensions.Reactive` (MVUX `Validate` overloads), docs for MVUX and Localization
 **Related:** [spec 015](../015-mvux-validation-indei/spec.md) (MVUX validation / INDEI) — consumer of the messages; `Uno.Extensions.Localization.WinUI` (`IStringLocalizer` → `ResourceLoaderStringLocalizer`, `.resw`)
 
@@ -52,10 +52,14 @@ Prior art: ASP.NET Core `MvcDataAnnotationsLocalizationOptions.DataAnnotationLoc
   ```
   `DataAnnotationsLocalizationOptions` (public record/class): `Func<Type, IServiceProvider, IStringLocalizer?> LocalizerProvider` (default: resolve non-generic `IStringLocalizer` from DI, null if absent), `string? DefaultMessageKeyFormat` (§4.3). Bound via `IOptions<>`.
 - **Dependency:** `Uno.Extensions.Validation` references `Microsoft.Extensions.Localization.Abstractions` (already in `src/Directory.Packages.props`, net10.0, non-UI). **No** reference to `Uno.Extensions.Localization.WinUI`; the localizer is optional.
-- **Mechanism:** when a localizer is available, `Validator` stops calling `TryValidateObject` and validates **attribute by attribute** (same semantics: property attributes incl. `validateAllProperties: true`, then class-level attributes, then `IValidatableObject` only if no prior errors — mirror `System.ComponentModel.DataAnnotations.Validator` order):
-  - For each failing attribute: if `ErrorMessage` is set and `ErrorMessageResourceType`/`ResourceName` are **not**, message = `localizer[attribute.ErrorMessage, args]`; if the key is not found (`ResourceNotFound`), fall back to the attribute's own `FormatErrorMessage(displayName)` (today's text).
+- **Mechanism:** when a localizer is available, `Validator` stops calling `TryValidateObject` and validates **attribute by attribute**, mirroring `System.ComponentModel.DataAnnotations.Validator` with `validateAllProperties: true`:
+  1. Property attributes (enumerated through `TypeDescriptor`, excluding the attributes it merges from the property's type, like the BCL `ValidationAttributeStore`), each property in a child `ValidationContext(instance, parentContext, parentContext.Items)` so services flow (§4.1). `Required` runs first and short-circuits the other attributes of that property.
+  2. Class-level attributes, **only if** step 1 produced no error.
+  3. `IValidatableObject.Validate`, **only if** steps 1–2 produced no error.
+  - Each attribute runs through its own `GetValidationResult(value, context)`. For a failing attribute whose `ErrorMessage` is set and `ErrorMessageResourceType`/`ResourceName` are **not**, and whose result message is the attribute's own `FormatErrorMessage(displayName)` (i.e. not a custom message built by an overridden `IsValid`): message = `string.Format(CurrentCulture, localizer[ErrorMessage].Value, args)`. Key not found (`ResourceNotFound`) or `FormatException` (bad translation) → the attribute's own message (today's text).
+  - Formatting is done by the validator, not through `localizer[key, args]`: `ResourceLoaderStringLocalizer` drops the arguments on its `.` → `/` key retry.
   - Attributes using `ErrorMessageResourceType` keep their existing behaviour (explicit wins).
-  - `MemberNames` = the property name, as today.
+  - `MemberNames` = the result's own (the property name, as today).
   - **Never mutate attribute instances** (they are cached/shared by `TypeDescriptor`; not thread-safe).
 - **Why `ErrorMessage` is the key, not `ErrorMessageResourceName`:**
   | Reason | Detail |
@@ -65,11 +69,11 @@ Prior art: ASP.NET Core `MvcDataAnnotationsLocalizationOptions.DataAnnotationLoc
   | Hand-written wrapper is a poor fit | One static property per key; a static service locator (`ResourceLoader.GetForViewIndependentUse()`) bypassing the DI localizer; property-name reflection (trimming/AOT). Still supported as-is ("explicit wins" above), not the recommended path. |
   | Opt-out must stay safe | Name-only attributes would throw on the BCL path (`TryValidateObject` without opt-in, or any other consumer validating the same model). With `ErrorMessage` as key, the worst case without opt-in is the key text shown as the message. |
   | Prior art | ASP.NET Core's `DataAnnotationLocalizerProvider` uses `ErrorMessage` as the localizer key for the same reasons. |
-- **Format arguments** (internal table, mirroring the attributes' own `FormatErrorMessage`): `{0}` display name for all; `StringLength` → `{1}` max, `{2}` min; `Range` → `{1}` min, `{2}` max; `MinLength`/`MaxLength`/`Length` → `{1}` length(s); `Compare` → `{1}` other property display name; `RegularExpression` → `{1}` pattern. Unknown/custom attributes → `{0}` only (they can localize themselves via §4.1).
+- **Format arguments** (internal table, mirroring the attributes' own `FormatErrorMessage`): `{0}` display name for all; `StringLength` → `{1}` max, `{2}` min; `Range` → `{1}` min, `{2}` max; `MinLength`/`MaxLength` → `{1}` length; `Length` → `{1}` min, `{2}` max; `Compare` → `{1}` other property display name (localized like §4.3); `RegularExpression` → `{1}` pattern. Unknown/custom attributes → `{0}` only (they can localize themselves via §4.1).
 - Metadata reflection cached per type (`ConcurrentDictionary<Type, …>`); no per-call LINQ allocations beyond results. AOT: same trimming annotations as the current `TryValidateObject` path.
 
 ### 4.3 Display names and default messages
-- `[Display(Name = "Person_FirstName")]` without `ResourceType` → `localizer["Person_FirstName"]` if found, else the literal (then `[DisplayName]`, then property name). `Display.ResourceType` has the same static-property requirement as `ErrorMessageResourceType` (§4.2), so `Name` is used as the key.
+- `[Display(Name = "Person_FirstName")]` without `ResourceType` → `localizer["Person_FirstName"]` if found, else today's BCL name (`Display.GetName()`, then property name — the BCL `ValidationContext` ignores `[DisplayName]`, so it is not consulted either). `Display.ResourceType` has the same static-property requirement as `ErrorMessageResourceType` (§4.2), so `Name` is used as the key.
 - `ErrorMessage` not set → optional convention key via `DefaultMessageKeyFormat`, e.g. `"Validation_{0}"` → `Validation_Required`, `Validation_StringLength` (attribute type name minus `Attribute`). Null by default = today's English default (§7 Q3).
 - Keys go through `ResourceLoaderStringLocalizer` unchanged, so its existing `.` → `/` fallback applies; docs recommend `_`-separated keys to avoid clashing with `x:Uid` property syntax.
 
@@ -101,18 +105,19 @@ public partial record PersonModel(IStringLocalizer Localizer)
 - **Polarity:** `isValid` returns `true` when the value is valid (same as FluentValidation `Must`).
 - **Localization (3, 4):** `localizer[key]` is resolved each time a failure is produced, on the validator thread, so the culture rules of §3 apply. Not resolved at registration: model property getters can run before the culture is applied, and a cached string would never follow it. Key not found → the key text (`IStringLocalizer` contract; `ResourceLoaderStringLocalizer` returns `name`). No format arguments in v1 (§7 Q7).
 - **Guards:** null delegate/localizer → `ArgumentNullException`; null/empty `errorMessage`/`errorMessageKey` → `ArgumentException`, thrown at registration.
+- **Overload resolution caveat:** a lambda whose body only throws converts to both the base delegate and overload 1 (`CS0121`). Lambdas that return a value are unambiguous (a `string?` is not an `IEnumerable<ValidationResult>`). Documented: give a throw-only lambda an explicit return type. Not a break: the base overload has not shipped (spec 015 is unreleased). Also, `cref="State.Validate{T}"` is now ambiguous (`CS0419`) — crefs name the full signature.
 - **Dependency:** `Uno.Extensions.Reactive` references `Microsoft.Extensions.Localization.Abstractions` (abstractions only; precedent: `Uno.Extensions.Navigation`). No reference to `Uno.Extensions.Localization.WinUI` or `Uno.Extensions.Validation`. The localizer is passed explicitly (model ctor injection), as Reactive has no DI access (§3).
 - **Docs:** "Localizing messages" in `doc/Learn/Mvux/Advanced/Validation.md` covers these overloads, the base overload with an injected localizer for multi-result/member-scoped/formatted cases, and the `IValidator` + `UseLocalizedDataAnnotations` path. State the restart caveat (link Localization overview).
 
 ## 5. Public API delta (additive)
-- `Uno.Extensions.Validation`: `DataAnnotationsLocalizationOptions`; `IValidationBuilder UseLocalizedDataAnnotations(this IValidationBuilder, Action<DataAnnotationsLocalizationOptions>? configure = null)`.
+- `Uno.Extensions.Validation`: `DataAnnotationsLocalizationOptions`; `DataAnnotationsValidationBuilderExtensions.UseLocalizedDataAnnotations(this IValidationBuilder, Action<DataAnnotationsLocalizationOptions>? configure = null)` → `IValidationBuilder` (chains with Fluent's `Validator<,>`). The class is not named `ValidationBuilderExtensions`: that name already exists in `Uno.Extensions` namespace in the Fluent assembly.
 - Behaviour: `Validator` passes `IServiceProvider` into the `ValidationContext` it creates; Fluent results carry `MemberNames`.
 - `Uno.Extensions.Reactive`: four `State.Validate<T>` overloads (§4.5).
 - New package reference: `Microsoft.Extensions.Localization.Abstractions` on `Uno.Extensions.Validation` and `Uno.Extensions.Reactive`.
 
 ## 6. Performance / platform
 - Off by default: zero change for apps not opting in.
-- Per-type attribute/metadata cache; localizer lookups only for failing attributes.
+- Per-type attribute/metadata cache. Message lookups only for failing attributes; display-name lookups for every validated property with `[Display(Name)]` (and the type's, when class-level attributes run), as the attribute reads `ValidationContext.DisplayName` inside `IsValid` — one dictionary-backed lookup each, per validation (i.e. per keystroke under MVUX `Validate`).
 - Runs on the validator's thread (thread pool under MVUX `Validate`); no UI-thread dependency, no locks beyond the concurrent cache (WASM-safe).
 
 ## 7. Open questions (proposed defaults)
