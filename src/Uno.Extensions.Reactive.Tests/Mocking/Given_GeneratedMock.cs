@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,18 +22,18 @@ namespace Uno.Extensions.Reactive.Tests.Mocking;
 [TestClass]
 public class Given_GeneratedMock : FeedUITests
 {
-	private static async Task<IImmutableList<int>?> CurrentItems(SourceContext ctx, IListFeed<int> feed)
+	private static async Task<IImmutableList<T>?> CurrentItems<T>(SourceContext ctx, IListFeed<T> feed)
 	{
 		var (result, _) = ctx.GetOrCreateListState(feed).Record();
 		for (var i = 0; i < 50; i++)
 		{
 			if (result.Count > 0 && result.Last().Current.Data.IsSome(out var v))
 			{
-				return (IImmutableList<int>)v!;
+				return (IImmutableList<T>)v!;
 			}
 			await Task.Delay(20);
 		}
-		return result.Count > 0 && result.Last().Current.Data.IsSome(out var last) ? (IImmutableList<int>)last! : null;
+		return result.Count > 0 && result.Last().Current.Data.IsSome(out var last) ? (IImmutableList<T>)last! : null;
 	}
 
 	[TestMethod]
@@ -80,5 +82,36 @@ public class Given_GeneratedMock : FeedUITests
 
 		var items = await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Steps);
 		items.Should().BeEquivalentTo(new[] { 1, 2, 3 });
+	}
+
+	[TestMethod]
+	public async Task When_ModelHasSeveralCtorParametersAndOverloads_Then_CreateCompilesAndInputFlows()
+	{
+		// MenuModel takes a service and a navigator, and offers a second constructor of the same arity. This file
+		// compiling is the proof that Create passes a typed default for each parameter (a bare `default!` leaves
+		// the call ambiguous, CS0121); the assertion checks that the mocked input flows without any dependency.
+		var vm = MenuViewModelMock.Create(new MenuModelMock { Items = ListFeedMock.Value("a", "b") });
+		using var _ = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+
+		var items = await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Items);
+		items.Should().BeEquivalentTo(new[] { "a", "b" });
+	}
+
+	[TestMethod]
+	public void When_ModelHasDerivedAndIndependentMembers_Then_MockExposesOnlyTheDerivedOneAsOptional()
+	{
+		// MenuModel also declares a derived feed (ItemsCount) and an independent state (Filter): the record requires
+		// the input, offers the derived feed as an optional override and leaves the independent state out.
+		var mock = typeof(MenuModelMock);
+
+		IsRequired(mock.GetProperty(nameof(MenuModel.Items))).Should().BeTrue();
+		IsRequired(mock.GetProperty(nameof(MenuModel.ItemsCount))).Should().BeFalse();
+		mock.GetProperty(nameof(MenuModel.Filter)).Should().BeNull();
+	}
+
+	private static bool IsRequired(PropertyInfo? property)
+	{
+		property.Should().NotBeNull();
+		return property!.IsDefined(typeof(RequiredMemberAttribute), inherit: false);
 	}
 }

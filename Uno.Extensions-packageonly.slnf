@@ -50,6 +50,7 @@
       "src\\Uno.Extensions.Toolkit\\Uno.Extensions.Toolkit.csproj",
       "src\\Uno.Extensions.Validation.Fluent\\Uno.Extensions.Validation.Fluent.csproj",
       "src\\Uno.Extensions.Validation\\Uno.Extensions.Validation.csproj",
+      "src\\Uno.HotTesting.Reactive.Generator\\Uno.HotTesting.Reactive.Generator.csproj",
       "src\\Uno.HotTesting.Reactive.Tests\\Uno.HotTesting.Reactive.Tests.csproj",
       "src\\Uno.HotTesting.Reactive\\Uno.HotTesting.Reactive.csproj"
     ]

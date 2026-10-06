@@ -128,7 +128,9 @@ Rules:
 - **Command mocking is deferred to vNext**: the record carries no command member and `SetMock` wires none (the MVUX `__Mock_SetCommand` seam stays available for that future work).
 - `Create` opens the `MockingService.Enable()` scope around construction, so user code never opens it. `SetMock` callable repeatedly → live transitions (`vm.SetMock(RecipeModelMock.Empty with { Steps = ... })`).
 - Concrete generic types preserved throughout; **no tier-1 type or conversion path is emitted**.
-- Diagnostic `MOCK0001` when a VM is reachable but its assembly lacks hooks (opt-in missing).
+- Diagnostic `MOCK0001` (warning) when a model is reachable but its mock cannot be generated: its view-model
+  exposes no public constructor for `Create` to null-inject. (A model whose assembly lacks the hooks is not
+  enumerated at all, so that case cannot be reported.)
 
 ## 5. UI (`Uno.Extensions.Reactive.UI`) — tier 1
 
