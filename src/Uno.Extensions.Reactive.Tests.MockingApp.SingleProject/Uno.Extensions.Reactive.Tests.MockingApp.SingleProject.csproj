@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+	<Import Project="..\tfms-non-ui.props" />
+
+	<!--
+		Fixture for the single-project shape (spec 013): the models and the mocking generator live in the
+		SAME compilation, as they do in an app that references Uno.HotTesting.Reactive directly instead of
+		from a test/preview project. There the MVUX metadata attributes are emitted by a sibling generator
+		and cannot be observed, so the mocking generator must analyse the source instead.
+	-->
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj" />
+		<ProjectReference Include="..\Uno.HotTesting.Reactive\Uno.HotTesting.Reactive.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Reactive.Generator\Uno.Extensions.Reactive.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\Uno.HotTesting.Reactive.Generator\Uno.HotTesting.Reactive.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+	</ItemGroup>
+</Project>

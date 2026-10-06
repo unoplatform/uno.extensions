@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -16,7 +16,6 @@ namespace Uno.Extensions.Reactive.Generator;
 
 internal partial class ViewModelGenTool_3 : ICodeGenTool
 {
-	private const string ViewModelSufix = "ViewModel";
 
 	private readonly BindableGenerationContext _ctx;
 	private readonly ViewModelGenerator_2 _bindables;
@@ -59,37 +58,21 @@ internal partial class ViewModelGenTool_3 : ICodeGenTool
 		yield return _viewModelsMapping.Generate();
 	}
 
+	// Shared with the mocking generator, which has to recognize and name the very same view-model.
 	private bool IsSupported([NotNullWhen(true)] INamedTypeSymbol? type)
-	{
-		if (type is null)
-		{
-			return false;
-		}
-
-		if (_ctx.IsGenerationEnabled(type) is { } isEnabled)
-		{
-			// If the attribute is set, we don't check for the `partial`: the build as to fail if not
-			return isEnabled;
-		}
-
-		if (type.IsPartial()
-			&& (type.ContainingAssembly.FindAttribute<ImplicitBindablesAttribute>() ?? new()) is { IsEnabled: true } @implicit // Note: the type might be from another assembly than current
-			&& @implicit.Patterns.Any(pattern => Regex.IsMatch(type.ToString(), pattern)))
-		{
-			return true;
-		}
-
-		return false;
-	}
+		=> FeedModelDiscovery.IsModel(
+			type,
+			_ctx.BindableAttribute,
+			_ctx.Context.Compilation.GetTypeByMetadataName(FeedModelDiscovery.ImplicitBindablesAttributeName));
 
 	private static string GetModelName(INamedTypeSymbol type)
-		=> type.Name.TrimEnd("Model", StringComparison.Ordinal);
+		=> FeedModelDiscovery.GetModelName(type);
 
 	private static string GetViewModelName(INamedTypeSymbol model)
-		=> $"{GetModelName(model)}{ViewModelSufix}";
+		=> FeedModelDiscovery.GetViewModelName(model);
 
 	private static string GetViewModelFullName(INamedTypeSymbol model)
-		=> $"{model.ToFullString().TrimEnd(model.Name, StringComparison.Ordinal)}{GetModelName(model)}{ViewModelSufix}";
+		=> FeedModelDiscovery.GetViewModelFullName(model);
 
 	private string GenerateViewModel(INamedTypeSymbol model)
 	{
