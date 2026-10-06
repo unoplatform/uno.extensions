@@ -310,3 +310,16 @@ and logout does nothing."* Both symptoms, both platforms, one root cause.
 - Keychain service name defaults to `"uno.extensions.msal.{ClientId}"` — app-registration-unique,
   intentional cache sharing across apps of the same registration (SSO), no collision between
   different registrations.
+
+## Addendum (2026-09-23): B2C authority from configuration
+
+- [x] `MsalConfiguration.B2CAuthority` → `WithB2CAuthority` in `Build`, before the platform redirect
+  URI and the app's `Builder(...)` callback (which still wins). Motivation: unoplatform/paragon-private#8 —
+  the authority was the one MSAL setting an app could not keep in appsettings, because MSAL's
+  `ResolveAuthority` always types an `Instance` + `TenantId` pair as `AuthorityType.Aad`.
+- [x] Provider logs `Using Authority '...'` at Information next to the redirect URI, so the effective
+  authority is visible without Trace.
+- [x] `Given_MsalAuthentication.When_B2CAuthorityConfigured_Then_ClientUsesIt` (UI.Tests): configured
+  `TenantId` kept alongside, as apps do; MSAL's `B2CAuthority.GetTenantedAuthority` returns the B2C
+  authority unchanged.
+- [x] Docs: B2C section shows the JSON setting; `RedirectUri` noted as configurable for the WinAppSDK note.

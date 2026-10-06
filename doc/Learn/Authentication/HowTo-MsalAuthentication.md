@@ -158,16 +158,20 @@ The set of identity scenarios (Microsoft accounts, work/school accounts, B2C, so
 
 #### Azure AD B2C
 
-`MsalConfiguration` composes a Microsoft Entra authority from `Instance` and `TenantId`, so a B2C
-authority (which carries the user flow, or policy, in its path) cannot be expressed in
-configuration. Set it from `Builder(...)`:
+MSAL composes a Microsoft Entra authority from `Instance` and `TenantId`, so a B2C authority
+(which carries the user flow, or policy, in its path) needs its own setting. Put it in the
+provider's configuration section as `B2CAuthority`:
 
-```csharp
-builder.AddMsal(window, msal => msal
-    .Builder(msalBuilder => msalBuilder
-        .WithB2CAuthority("https://contoso.b2clogin.com/tfp/contoso.onmicrosoft.com/B2C_1_signupsignin"))
-    .Scopes(new[] { "https://contoso.onmicrosoft.com/api/tasks.read" }));
+```json
+"MsalAuthentication": {
+  "ClientId": "<your-client-id>",
+  "B2CAuthority": "https://contoso.b2clogin.com/tfp/contoso.onmicrosoft.com/B2C_1_signupsignin",
+  "Scopes": [ "https://contoso.onmicrosoft.com/api/tasks.read" ]
+}
 ```
+
+The `Builder(...)` callback runs after configuration is applied, so `WithB2CAuthority(...)` there
+still works and wins over the configured value.
 
 Things to know when the tenant is B2C:
 
@@ -178,9 +182,10 @@ Things to know when the tenant is B2C:
   scope, so an access token comes back.
 - **Windows (WinAppSDK).** The Windows broker (WAM) does not support B2C authorities and MSAL
   falls back to the system browser. The provider leaves the redirect URI to the broker on
-  WinAppSDK, and the browser flow needs a loopback one, so add `.WithRedirectUri("http://localhost")`
-  to the `Builder(...)` callback and register `http://localhost` under **Mobile and desktop
-  applications** on the app registration. `AddMsal(window, ...)` is still the overload to use.
+  WinAppSDK, and the browser flow needs a loopback one, so set `"RedirectUri": "http://localhost"`
+  in the configuration section (or `.WithRedirectUri("http://localhost")` in `Builder(...)`) and
+  register `http://localhost` under **Mobile and desktop applications** on the app registration.
+  `AddMsal(window, ...)` is still the overload to use.
 - **One user flow per provider.** The authority, and therefore the user flow, is fixed for the
   provider's lifetime. A second, named provider with its own `Builder(...)` and authority can run
   another flow (password reset, profile edit), but there is one token cache: completing a sign-in

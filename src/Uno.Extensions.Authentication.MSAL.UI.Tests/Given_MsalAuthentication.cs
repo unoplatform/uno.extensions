@@ -83,7 +83,7 @@ public class Given_MsalAuthentication
 	/// secondary windows outright (<c>InvalidOperationException</c>), which failed all 10 tests on
 	/// the iOS simulator lane. Content is never assigned, so no save/restore is needed.
 	/// </remarks>
-	private static Harness CreateHarness(TimeSpan? webUiDelay = null, TimeSpan? interactiveTimeout = null)
+	private static Harness CreateHarness(TimeSpan? webUiDelay = null, TimeSpan? interactiveTimeout = null, string? b2cAuthority = null)
 	{
 		var window = UnitTestsUIContentHelper.CurrentTestWindow!;
 		var tenant = new StubEntra();
@@ -100,6 +100,10 @@ public class Given_MsalAuthentication
 		{
 			configurationValues["Msal:InteractiveTimeout"] = timeout.ToString();
 		}
+		if (b2cAuthority is { })
+		{
+			configurationValues["Msal:B2CAuthority"] = b2cAuthority;
+		}
 
 		var host = UnoHost
 			.CreateDefaultBuilder(typeof(Given_MsalAuthentication).Assembly)
@@ -109,12 +113,20 @@ public class Given_MsalAuthentication
 				.AddInMemoryCollection(configurationValues))
 			.UseAuthentication(auth => auth
 				.AddMsal(window, msal => msal
-					.Builder(pca => pca
-						.WithAuthority(StubEntra.Authority, validateAuthority: false)
+					.Builder(pca =>
+					{
+						// The callback runs last and would override a configured B2C authority, which
+						// is what When_B2CAuthorityConfigured_Then_ClientUsesIt needs to observe.
+						if (b2cAuthority is null)
+						{
+							pca.WithAuthority(StubEntra.Authority, validateAuthority: false);
+						}
+
 						// No instance-discovery round trip: keeps the stub to two endpoints and
 						// removes a network-shaped failure mode from mobile CI.
-						.WithInstanceDiscovery(false)
-						.WithHttpClientFactory(tenant.HttpClientFactory))
+						pca.WithInstanceDiscovery(false)
+							.WithHttpClientFactory(tenant.HttpClientFactory);
+					})
 					// Deliberately no WithRedirectUri: the provider's platform default applies, which
 					// is the behaviour under test. Hard-coding http://localhost was desktop-shaped and
 					// is not a valid redirect on iOS, where MSAL expects the msauth scheme - a likely
@@ -405,6 +417,25 @@ public class Given_MsalAuthentication
 		// The flow completing at all proves the redirect URI MSAL used matched what the stub
 		// browser echoed back; a mismatch fails redemption inside MSAL.
 		(await harness.Authentication.IsAuthenticated(cts.Token)).Should().BeTrue();
+	}
+
+	[TestMethod]
+	public async Task When_B2CAuthorityConfigured_Then_ClientUsesIt()
+	{
+		// PublicClientApplicationOptions cannot express a B2C authority (MSAL composes an Entra one
+		// from Instance and TenantId), so B2CAuthority in configuration has to reach
+		// WithB2CAuthority. The configured TenantId stays set, as it does in real apps: MSAL keeps
+		// the B2C authority as-is when both are present. Asserted via the provider's log of the
+		// built client's authority, which MSAL canonicalises to lower case with a trailing slash.
+		const string authority = "https://contoso.b2clogin.com/tfp/contoso.onmicrosoft.com/B2C_1_signupsignin";
+		using var harness = CreateHarness(b2cAuthority: authority);
+		using var cts = Cts();
+
+		// Builds the provider without touching the tenant: no account, so no token request.
+		await harness.Authentication.RefreshAsync(cts.Token);
+
+		harness.Logs.Text.Should().ContainEquivalentOf($"Using Authority '{authority}/'");
+		harness.Tenant.TokenRequestCount.Should().Be(0);
 	}
 
 	[TestMethod]
