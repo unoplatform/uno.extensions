@@ -398,6 +398,33 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 			Constructor = PickConstructor(vm.Constructors, reactiveBindable),
 		};
 
+		foreach (var (memberName, isDerived) in ReadFeedDependencies(model, feedDep))
+		{
+			if (model.GetMembers(memberName).FirstOrDefault() is not { } memberSymbol)
+			{
+				continue;
+			}
+
+			if (ToFeedMember(memberSymbol) is not { } fm)
+			{
+				continue;
+			}
+
+			(isDerived ? described.Derived : described.Inputs).Add(fm);
+		}
+
+		return described;
+	}
+
+	/// <summary>
+	/// Classifies each member named by the model's <c>[FeedDependency]</c> attributes once, in declaration order.
+	/// A member carries one attribute per dependency; like the source-path analysis, any feed dependency makes it derived.
+	/// </summary>
+	private static List<(string MemberName, bool IsDerived)> ReadFeedDependencies(INamedTypeSymbol model, INamedTypeSymbol feedDep)
+	{
+		var members = new List<(string MemberName, bool IsDerived)>();
+		var indexes = new Dictionary<string, int>(StringComparer.Ordinal);
+
 		foreach (var attr in model.GetAttributes().Where(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, feedDep)))
 		{
 			if (attr.ConstructorArguments is not { Length: 1 } ca || ca[0].Value is not string memberName)
@@ -412,20 +439,18 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 				continue; // independent → not part of the mock
 			}
 
-			if (model.GetMembers(memberName).FirstOrDefault() is not { } memberSymbol)
+			if (indexes.TryGetValue(memberName, out var index))
 			{
-				continue;
+				members[index] = (memberName, members[index].IsDerived || onFeed is not null);
 			}
-
-			if (ToFeedMember(memberSymbol) is not { } fm)
+			else
 			{
-				continue;
+				indexes[memberName] = members.Count;
+				members.Add((memberName, onFeed is not null));
 			}
-
-			(onFeed is not null ? described.Derived : described.Inputs).Add(fm);
 		}
 
-		return described;
+		return members;
 	}
 
 	private static ModelMock? DescribeFromSource(INamedTypeSymbol model, FeedDependencyAnalysis analysis, INamedTypeSymbol? reactiveBindable)
