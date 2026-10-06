@@ -79,7 +79,7 @@ internal sealed class HotSwapFeed<T> : IFeed<T>
 		private readonly CancellationToken _ct;
 
 		private TaskCompletionSource<SessionCurrentEnumerator>? _next = new();
-		private SessionCurrentEnumerator _currentEnumerator;
+		private SessionCurrentEnumerator? _currentEnumerator;
 		private bool _isFirstMessage = true; // Distinct from _isFirstMessageOfCurrentEnumerator by the fact that will forward it, no matter if it's an Initial or not.
 		private bool _isFirstMessageOfCurrentEnumerator = true;
 
@@ -89,7 +89,6 @@ internal sealed class HotSwapFeed<T> : IFeed<T>
 			_context = context;
 			_ct = ct;
 
-			_currentEnumerator = new SessionCurrentEnumerator(this, owner._current);
 			_owner._currentChanged += OnFeedChanged;
 		}
 
@@ -107,7 +106,8 @@ internal sealed class HotSwapFeed<T> : IFeed<T>
 				return false;
 			}
 
-			if (_currentEnumerator.GetEnumerator(_context) is { } enumerator)
+			var currentEnumerator = await GetCurrentFeedEnumeratorAsync().ConfigureAwait(false);
+			if (currentEnumerator.GetEnumerator(_context) is { } enumerator)
 			{
 				var moveNext = enumerator.MoveNextAsync().AsTask();
 				if (await Task.WhenAny(moveNext, next.Task).ConfigureAwait(false) == moveNext
@@ -139,12 +139,30 @@ internal sealed class HotSwapFeed<T> : IFeed<T>
 			}
 
 			// Move to the next enumerator
-			await _currentEnumerator.DisposeAsync().ConfigureAwait(false);
+			await currentEnumerator.DisposeAsync().ConfigureAwait(false);
 			_currentEnumerator = await next.Task.ConfigureAwait(false);
 			_isFirstMessageOfCurrentEnumerator = true;
 
 			// Then try again to move to the next message (using the new enumerator)
 			return await MoveNextAsync().ConfigureAwait(false);
+		}
+
+		// Created on the first read, and replaced when a swap was made while no read was pending: that swap completed a TCS nobody awaits.
+		private async ValueTask<SessionCurrentEnumerator> GetCurrentFeedEnumeratorAsync()
+		{
+			var feed = Volatile.Read(ref _owner._current);
+			if (_currentEnumerator is { } current)
+			{
+				if (ReferenceEquals(current.Feed, feed))
+				{
+					return current;
+				}
+
+				await current.DisposeAsync().ConfigureAwait(false);
+			}
+
+			_isFirstMessageOfCurrentEnumerator = true;
+			return _currentEnumerator = new SessionCurrentEnumerator(this, feed);
 		}
 
 		private void OnFeedChanged(object? sender, ISignal<Message<T>>? parent)
@@ -162,7 +180,10 @@ internal sealed class HotSwapFeed<T> : IFeed<T>
 		{
 			_owner._currentChanged -= OnFeedChanged;
 			Interlocked.Exchange(ref _next, null)?.TrySetCanceled();
-			await _currentEnumerator.DisposeAsync().ConfigureAwait(false);
+			if (_currentEnumerator is { } current)
+			{
+				await current.DisposeAsync().ConfigureAwait(false);
+			}
 		}
 	}
 
