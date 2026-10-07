@@ -147,6 +147,10 @@ public class MainViewModel
 }
 ```
 
+## Localizing validation messages
+
+Validation messages can be resolved from the same resources by giving the `IStringLocalizer` to the MVUX `Validate`, using resource keys as messages (including with `IValidator`, for DataAnnotations and FluentValidation): see [MVUX validation](xref:Uno.Extensions.Mvux.Advanced.Validation#localizing-messages).
+
 ## See also
 
 - [Software Localization](https://learn.microsoft.com/globalization/localization/localization)
