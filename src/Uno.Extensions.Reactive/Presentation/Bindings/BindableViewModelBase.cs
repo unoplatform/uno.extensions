@@ -44,7 +44,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 
 	/// <inheritdoc />
 	/// <remarks>
-	/// Validation errors are the validation results published on the <see cref="MessageAxis.Validation"/> of the backing states (e.g. using <see cref="State.Validate{T}"/>).
+	/// Validation errors are the validation results published on the <see cref="MessageAxis.Validation"/> of the backing states (e.g. using <see cref="State.Validate{T}(IState{T}, AsyncFunc{T, IEnumerable{ValidationResult}}, Microsoft.Extensions.Localization.IStringLocalizer)"/>).
 	/// This is implemented explicitly so it does not conflict with a HasErrors declared in a partial of the view model:
 	/// the generator adds a public HasErrors to the view model (for bindings) only if that name is not already used.
 	/// </remarks>
