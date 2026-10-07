@@ -285,3 +285,19 @@ for client-side negative caching before looking at the fake server.
 **Apply to:** `StubEntra` and any future fake IdP or token endpoint used across tests; also any
 test that deliberately drives an `invalid_grant`/`interaction_required` response — follow it by
 checking the next silent call still reaches the server.
+
+## Localize at one consumer entry point, not in each producer (spec 016)
+
+**Problem:** spec 016 v1 localized validation messages in the producer layer: `Uno.Extensions.Validation` got `UseLocalizedDataAnnotations` (an attribute-by-attribute re-implementation of `TryValidateObject` with localized messages, display names and format arguments) and a `Microsoft.Extensions.Localization.Abstractions` dependency, while MVUX `Validate` grew its own localized overloads. Two localization paths for the same messages, a localization dependency in a layer that has nothing to do with UI text, and a BCL re-implementation to keep in parity. It was walked back (v1 kept on branch `dev/xygu/20261005/spec-016-validation-localization-v1`).
+
+**Correct pattern:** producers (`IValidator`, DataAnnotations, FluentValidation) report messages as written, so a resource key comes out as-is. The consumer that turns results into UI state, the MVUX `State.Validate`, is the single place where keys are resolved, through an optional trailing `IStringLocalizer? localizer = null` handled only in the base overload. Accept the trade-off explicitly (no format arguments / display names) rather than duplicating the path.
+
+**Apply to:** any cross-cutting presentation concern (localization, formatting, display names) that several producers feed into one consumer. Put it at the consumer entry point, and keep the producer packages free of it unless the producer is used without that consumer.
+
+## Local vs remote divergence: check the reflog before calling either side stale
+
+**Problem:** while rewriting the spec 016 branch, the local branch and its base (`Validate`) differed from origin (`WithValidation`). The local side was taken for an out-of-date checkout, and the work was rebuilt on origin's base with the old name and force-pushed. In fact the local branches carried a newer, unpushed rewrite (`rename WithValidation to Validate`, visible in `git reflog`), so the "fix" reverted the user's latest decision on the PR.
+
+**Correct pattern:** when local and `origin/<branch>` have diverged (`ahead N, behind N`), find out which side is newer before choosing one: `git reflog <branch>` (look for rebase/amend/rename entries), and compare the **committer** dates of both tips (author dates survive a rebase, committer dates don't). If the local side is newer, it is unpushed work: build on it and ask before force-pushing it (and its base branch, if stacked). Never resolve the divergence silently in either direction.
+
+**Apply to:** any rebase, history rewrite or force-push on a branch whose local and remote tips differ, especially stacked PRs where the base branch may have been rewritten locally too.
