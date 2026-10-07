@@ -57,7 +57,7 @@ public class Bindable<
 	/// Indicates if the value, or any of its members, has validation errors (cf. <see cref="INotifyDataErrorInfo"/>).
 	/// </summary>
 	/// <remarks>
-	/// Validation errors are the validation results published on the <see cref="MessageAxis.Validation"/> of the backing state (e.g. using <see cref="State.Validate{T}"/>).
+	/// Validation errors are the validation results published on the <see cref="MessageAxis.Validation"/> of the backing state (e.g. using <see cref="State.Validate{T}(IState{T}, Func{T, CancellationToken, ValueTask{IEnumerable{ValidationResult}}}, Microsoft.Extensions.Localization.IStringLocalizer)"/>).
 	/// If the value type already declares a member named HasErrors, it will hide this property, but the <see cref="INotifyDataErrorInfo"/> implementation remains valid.
 	/// </remarks>
 	public bool HasErrors => _validation?.HasErrors ?? false;
