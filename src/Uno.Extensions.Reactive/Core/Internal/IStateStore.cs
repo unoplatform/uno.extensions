@@ -30,6 +30,12 @@ internal interface IStateStore : IAsyncDisposable
 	FeedSubscription<TValue> GetOrCreateSubscription<TValue>(ISignal<Message<TValue>> source);
 
 	/// <summary>
+	/// Registers an additional feed identity for an existing subscription.
+	/// </summary>
+	/// <remarks>Hot reload uses this so the replacement feed and the previous feed keep one subscription.</remarks>
+	void SetSubscription<TValue>(ISignal<Message<TValue>> source, FeedSubscription<TValue> subscription);
+
+	/// <summary>
 	/// Get or create a <see cref="IState{T}"/> for a given feed.
 	/// </summary>
 	/// <typeparam name="TSource">Type of the source feed.</typeparam>
