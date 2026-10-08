@@ -287,8 +287,9 @@ The MVUX messaging pattern calls `messenger.Observe(...)` in the model's constru
 `Create` passed, so such a model got no mock at all. `Create` now passes a fresh `WeakReferenceMessenger` for a
 parameter typed `CommunityToolkit.Mvvm.Messaging.IMessenger` (matched by symbol), and a typed default for every
 other one. A messenger of its own keeps an app's messages out of a preview; the weak one is what the messaging
-documentation registers, and it never extends a recipient's lifetime. Fixture: `NoteModel`. Tests:
-`Given_GeneratedMock` and `Given_FeedsMockGenerator`.
+documentation registers, and it never extends a recipient's lifetime. The R1 guard on `CtorDependency(Eager=true)` is
+still not built, so `Create` still throws for a constructor that dereferences any other parameter. Fixture:
+`NoteModel`. Tests: `Given_GeneratedMock` and `Given_FeedsMockGenerator`.
 
 ---
 

@@ -101,7 +101,7 @@ public static partial class RecipeViewModelMock
 }
 ```
 
-- `Create()` constructs the **real VM** via `new {Vm}(default!, …)`, passing a fresh `WeakReferenceMessenger` for an `IMessenger` parameter instead (v18); **compile-time guard**: if `[CtorDependency(Eager=true)]` names parameter `p`, `Create` **requires** a real/fake `p` argument (or the generator emits an error diagnostic if no safe overload is possible).
+- `Create()` constructs the **real VM** via `new {Vm}(default(T)!, …)`, with a fresh `WeakReferenceMessenger` instead for a parameter typed `IMessenger` (v18); **compile-time guard (R1, not built yet)**: if `[CtorDependency(Eager=true)]` names parameter `p`, `Create` **requires** a real/fake `p` argument (or the generator emits an error diagnostic if no safe overload is possible). Until it is built, `Create` throws for a constructor that dereferences any other parameter.
 - `SetMock` may be called repeatedly (live transitions, G6); `with`-expressions on the record make variants cheap (`Empty with { Steps = … }`).
 - `required init` on service-dependent inputs = compile-time completeness. **Derived members are optional overrides**: `null` (default) → the real derivation recomputes over the swapped inputs; non-null → that member's own subscription is swapped too, like an input's — lets a test pin a derived value without caring about its inputs.
 - **Tier 2 and tier 3 never accept `MessageEntry`, an untyped feed envelope, or any other tier-1 authoring abstraction. Their contracts remain `IFeed<T>`, `IListFeed<T>`, typed states and typed commands end to end.**

@@ -31,7 +31,7 @@ but the property _property_name_ is not of type `IFeed<T>` (nor `IState<T>`).
 
 **No mock is generated for a model whose view-model has no public constructor.**
 
-`Uno.HotTesting.Reactive` builds the real view-model with every constructor parameter null-injected, except an
+`Uno.HotTesting.Reactive` builds the real view-model with every constructor parameter null-injected, except one typed
 `IMessenger`, which gets a fresh messenger of its own (`{Vm}Mock.Create`). The generated view-model mirrors the
 model's constructors, so a model whose constructors are all `internal` or `private` leaves nothing for `Create`
 to call: the generator reports this warning and emits no `{Model}Mock` / `{Vm}Mock` for that model.
