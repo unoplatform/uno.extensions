@@ -62,48 +62,61 @@ public static class MockingService
 	}
 
 	/// <summary>
-	/// Swaps the source of a scalar feed member (called by generated <c>SetModel</c>).
+	/// Swaps the source of a scalar feed or state member (called by generated <c>SetModel</c>).
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public static void SwapFeed<T>(object owner, IFeed<T> current, IFeed<T> replacement)
 		where T : notnull
 	{
 		var ctx = SourceContext.GetOrCreate(owner);
-		if (current is StateImpl<T> currentState && replacement is StateImpl<T> replacementState)
+		var typeInfo = $"Value type: {typeof(T)}.";
+		if (current is StateImpl<T> state)
 		{
-			currentState.HotSwap(replacementState);
+			SwapState(ctx, state, replacement, typeInfo);
 		}
-
-		SwapSubscription(ctx, current, replacement, $"Value type: {typeof(T)}.");
+		else
+		{
+			// The member's state and the feeds derived from it all read the feed through this one subscription.
+			Swappable(ctx.States.GetOrCreateSubscription(current), typeInfo).HotSwap(replacement);
+		}
 	}
 
 	/// <summary>
-	/// Swaps the source of a list-feed member (called by generated <c>SetModel</c>).
+	/// Swaps the source of a list-feed or list-state member (called by generated <c>SetModel</c>).
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public static void SwapListFeed<T>(object owner, IListFeed<T> current, IListFeed<T> replacement)
 		where T : notnull
 	{
 		var ctx = SourceContext.GetOrCreate(owner);
-		if (current is ListStateImpl<T> currentState && replacement is ListStateImpl<T> replacementState)
+		var typeInfo = $"Item type: {typeof(T)}.";
+		if (current is ListStateImpl<T> state)
 		{
-			currentState.HotSwap(replacementState);
+			var source = replacement is ListStateImpl<T> replacementState ? replacementState.Implementation : ListFeed.AsFeed(replacement);
+			SwapState(ctx, state.Implementation, source, typeInfo);
 		}
-
-		SwapSubscription<IImmutableList<T>>(ctx, current, replacement, $"Item type: {typeof(T)}.");
+		else
+		{
+			Swappable(ctx.States.GetOrCreateSubscription<IImmutableList<T>>(current), typeInfo).HotSwap(replacement);
+		}
 	}
 
-	// The member's state and the feeds derived from it all read the feed through this one subscription.
-	private static void SwapSubscription<T>(SourceContext ctx, ISignal<Message<T>> current, ISignal<Message<T>> replacement, string typeInfo)
+	// Every reader of a state reads its own subscription: it now reads a state over the mock, which also takes the member's writes.
+	private static void SwapState<T>(SourceContext ctx, StateImpl<T> current, IFeed<T> replacement, string typeInfo)
 	{
-		var subscription = ctx.States.GetOrCreateSubscription(current);
-		if (!subscription.CanHotSwap)
-		{
-			throw new InvalidOperationException(
+		var subscription = Swappable(current.Subscription, typeInfo);
+		var target = replacement as StateImpl<T> ?? (StateImpl<T>)ctx.GetOrCreateState(replacement);
+		current.HotSwap(target);
+
+		// Restored, the state reads its own updates again rather than itself.
+		ISignal<Message<T>> source = ReferenceEquals(target, current) ? current.Inner : target;
+		subscription.HotSwap(source);
+	}
+
+	private static FeedSubscription<T> Swappable<T>(FeedSubscription<T> subscription, string typeInfo)
+		=> subscription.CanHotSwap
+			? subscription
+			: throw new InvalidOperationException(
 				$"The feed for the mocked member is not swappable. "
 				+ $"Ensure the model was constructed inside a MockingService.Enable() scope. {typeInfo}");
-		}
-
-		subscription.HotSwap(replacement);
-	}
 }

@@ -93,6 +93,18 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	internal void HotSwap(StateImpl<T> replacement)
 		=> _updatesTarget = ReferenceEquals(this, replacement) ? null : replacement;
 
+	/// <summary>
+	/// Gets the subscription every reader of this state reads, directly or through the context's subscription to this state.
+	/// </summary>
+	internal FeedSubscription<T> Subscription
+	{
+		get
+		{
+			Enable();
+			return _subscription;
+		}
+	}
+
 	public IAsyncEnumerable<Message<T>> GetSource(SourceContext context, CancellationToken ct = default)
 	{
 		Enable();
