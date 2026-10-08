@@ -414,6 +414,47 @@ public class Given_StateWithValidation : FeedTests
 		state.Current.Current.Validation.Should().ContainSingle().Which.MemberNames.Should().Equal(nameof(Person.Name));
 	}
 
+	[TestMethod]
+	public async Task When_IValidator_Then_ResultsPublished()
+	{
+		using var host = new HostBuilder()
+			.UseValidation()
+			.Build();
+		var validator = host.Services.GetRequiredService<IValidator>();
+		var state = new StateImpl<Person>(Context, Option.Some(new Person()));
+
+		_ = state.Validate(validator).Should().BeSameAs(state);
+
+		await WaitFor(() => state.Current.Current.Validation.Any(result => result.ErrorMessage == "Validation_NameRequired"));
+		state.Current.Current.Validation.Should().ContainSingle().Which.MemberNames.Should().Equal(nameof(Person.Name));
+
+		await state.UpdateAsync(_ => new Person { Name = "John" }, CT);
+		await WaitFor(() => state.Current.Current.Validation.Count == 0);
+	}
+
+	[TestMethod]
+	public async Task When_LocalizedIValidatorOverload_Then_KeysLocalized()
+	{
+		using var host = new HostBuilder()
+			.UseValidation()
+			.Build();
+		var validator = host.Services.GetRequiredService<IValidator>();
+		var localizer = new TestLocalizer { { "Validation_NameRequired", "Le nom est requis" } };
+		var state = new StateImpl<Person>(Context, Option.Some(new Person()));
+
+		_ = state.Validate(validator, localizer);
+
+		await WaitFor(() => state.Current.Current.Validation.Any(result => result.ErrorMessage == "Le nom est requis"));
+	}
+
+	[TestMethod]
+	public void When_NullIValidator_Then_Throws()
+	{
+		var state = new StateImpl<Person>(Context, Option.Some(new Person()));
+
+		state.Invoking(s => s.Validate(default(IValidator)!)).Should().Throw<ArgumentNullException>();
+	}
+
 	public sealed class Person
 	{
 		[Required(ErrorMessage = "Validation_NameRequired")]
