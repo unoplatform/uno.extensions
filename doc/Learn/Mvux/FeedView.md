@@ -211,6 +211,8 @@ But you can customize that by overriding the `ProgressTemplate`:
 </FeedView>
 ```
 
+To show a skeleton of the content instead of a progress indicator, see [Skeleton loading](#skeleton-loading).
+
 ### NoneTemplate
 
 Setting a template to this property will show when the data returned from the service contains no entries. For instance, if an `IFeed<T>` completed its request successfully with the server returning a `null` result, it's important to note that this is not considered an error. Instead, it's still considered a successful result with no data. Similarly, when using `IListFeed<T>`, the `NoneTemplate` will also display if the collection is empty, or if the result is `null`.
@@ -271,3 +273,71 @@ Typically, this template will only show for a very short period - a split second
     </UndefinedTemplate>
 </FeedView>
 ```
+
+## Skeleton loading
+
+Instead of a progress ring, the `FeedView` can display a *skeleton* of its content while loading: placeholder shapes mimicking the layout that is about to appear. The placeholders are generated automatically from your `ValueTemplate` by the Uno Toolkit's [SkeletonView](https://platform.uno/docs/articles/external/uno.toolkit.ui/doc/controls/SkeletonView.html), so there is no skeleton markup to write or maintain.
+
+### Applying the style
+
+The skeleton is provided by the `SkeletonFeedViewStyle` style. It requires the Uno Toolkit (the `Toolkit` [UnoFeature](xref:Uno.Features.Uno.Sdk)). Merge the `FeedView` resources where you use the style (or once in your `App.xaml`), then apply it:
+
+```xml
+<Page xmlns:mvux="using:Uno.Extensions.Reactive.UI">
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///Uno.Extensions.Reactive.UI/View/FeedView.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <mvux:FeedView Source="{Binding People}"
+                   Style="{StaticResource SkeletonFeedViewStyle}">
+        <DataTemplate>
+            <ListView ItemsSource="{Binding Data}"
+                      ItemTemplate="{StaticResource PersonTemplate}" />
+        </DataTemplate>
+    </mvux:FeedView>
+</Page>
+```
+
+### What is displayed
+
+| Feed state | Display |
+|------------|---------|
+| Initial load (no data yet) | A skeleton derived from the `ValueTemplate`. Empty lists in the template are filled with placeholder rows built from their own `ItemTemplate`. |
+| Refresh (data already shown) | The current content is covered by placeholders matching its actual layout: the same number of items and text lines matching the current text. |
+| Loaded | The `ValueTemplate`, as usual. |
+| No data | The `NoneTemplate`, as usual. |
+| Error | The `ErrorTemplate`, shown over the content, as usual. |
+
+The style does not use the `ProgressTemplate`: setting one has no effect with this style. Likewise, `utu:Skeleton.IsEnabled` and `utu:Skeleton.PlaceholderTemplate` are not needed and have no effect: the skeleton is always derived from the `ValueTemplate`.
+
+### Properties
+
+The skeleton is configured with Uno Toolkit attached properties set on the `FeedView` (`xmlns:utu="using:Uno.Toolkit.UI"`):
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `utu:Skeleton.PlaceholderCount` | `int` | `4` | Number of placeholder rows generated for each empty list during the initial load. |
+
+Elements in your `ValueTemplate` can use `utu:Skeleton.Ignore` and `utu:Skeleton.Shape` to tune the generated placeholders, and the placeholder colors and animation follow the Toolkit's `SkeletonView` lightweight styling resources. See [SkeletonView](https://platform.uno/docs/articles/external/uno.toolkit.ui/doc/controls/SkeletonView.html) for the details of both.
+
+```xml
+<mvux:FeedView Source="{Binding People}"
+               Style="{StaticResource SkeletonFeedViewStyle}"
+               utu:Skeleton.PlaceholderCount="6">
+    <DataTemplate>
+        <ListView ItemsSource="{Binding Data}"
+                  ItemTemplate="{StaticResource PersonTemplate}" />
+    </DataTemplate>
+</mvux:FeedView>
+```
+
+### Notes
+
+- **Write the `ValueTemplate` so it lays out without data.** During the initial load, its bindings resolve to empty values. Fixed-size elements (images, avatars) keep their size, empty text produces one line of the space the layout grants it, and lists get placeholder rows. Layouts whose shape depends entirely on data (e.g. visibility bound to a value) differ from the loaded result.
+- **Refreshing an empty result** (`NoneTemplate` shown) displays no loading indicator, as there is no content to cover.
+- **Changing the `Source`** of a `FeedView` that already displays data shows empty content, rather than the initial-load skeleton, until the new feed produces its first value.
+- **An `UndefinedTemplate`** is still displayed before the first load, underneath the skeleton.
