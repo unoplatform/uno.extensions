@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Immutable;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using Uno.Extensions.Reactive;
 using Uno.Extensions.Reactive.Core;
+using Uno.Extensions.Reactive.Logging;
 
 namespace Uno.HotTesting.Reactive;
 
@@ -24,6 +27,9 @@ namespace Uno.HotTesting.Reactive;
 public static class MockingService
 {
 	private static readonly AsyncLocal<bool> _ambient = new();
+
+	// The state each mocked state member reads, when its last swap built one (keyed by the member's state).
+	private static readonly ConditionalWeakTable<object, IAsyncDisposable> _builtStates = new();
 
 	static MockingService()
 	{
@@ -105,12 +111,53 @@ public static class MockingService
 	private static void SwapState<T>(SourceContext ctx, StateImpl<T> current, IFeed<T> replacement, string typeInfo)
 	{
 		var subscription = Swappable(current.Subscription, typeInfo);
-		var target = replacement as StateImpl<T> ?? (StateImpl<T>)ctx.GetOrCreateState(replacement);
+
+		// A state mock takes the writes itself. Any other mock is read through a state built for this swap only, so each
+		// swap starts over from the mock, even one reused like {Model}Mock.Empty or given to two members.
+		StateImpl<T>? built = null;
+		if (replacement is not StateImpl<T> target)
+		{
+			target = built = new StateImpl<T>(ctx, replacement);
+		}
+
 		current.HotSwap(target);
 
 		// Restored, the state reads its own updates again rather than itself.
 		ISignal<Message<T>> source = ReferenceEquals(target, current) ? current.Inner : target;
 		subscription.HotSwap(source);
+
+		ReleasePreviousSwap(current, built);
+	}
+
+	// Remembers the state a swap built for the member, and disposes the one its previous swap built, which nothing reads anymore.
+	private static void ReleasePreviousSwap(object member, IAsyncDisposable? built)
+	{
+		_builtStates.TryGetValue(member, out var previous);
+		if (built is null)
+		{
+			_builtStates.Remove(member);
+		}
+		else
+		{
+			_builtStates.AddOrUpdate(member, built);
+		}
+
+		if (previous is not null)
+		{
+			_ = DisposeBuiltState(previous);
+		}
+	}
+
+	private static async Task DisposeBuiltState(IAsyncDisposable state)
+	{
+		try
+		{
+			await state.DisposeAsync().ConfigureAwait(false);
+		}
+		catch (Exception error)
+		{
+			typeof(MockingService).CreateLog().Warn(error, "Failed to dispose the state built for a previous mock.");
+		}
 	}
 
 	private static FeedSubscription<T> Swappable<T>(FeedSubscription<T> subscription, string typeInfo)
