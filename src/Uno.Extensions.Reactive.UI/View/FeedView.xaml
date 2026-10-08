@@ -365,7 +365,7 @@
 
 	<!--
 		Skeleton loading: the loading UI is derived from the ValueTemplate itself instead of a ProgressTemplate.
-		- Initial load (Undefined): InitialSkeleton renders a private instance of the ValueTemplate with no data,
+		- Initial load, and Source changes (the FeedView's ILoadable state): InitialSkeleton renders a private instance of the ValueTemplate with no data,
 		  stamping utu:Skeleton.PlaceholderCount placeholder rows into its empty list controls.
 		- Refresh (Some + Indeterminate): SomePresenter overlays placeholders on the live content's actual layout.
 	-->
@@ -404,8 +404,6 @@
 								<VisualState x:Name="None">
 									<VisualState.Setters>
 										<Setter Target="UndefinedPresenter.Visibility" Value="Collapsed" />
-										<Setter Target="InitialSkeleton.Visibility" Value="Collapsed" />
-										<Setter Target="InitialSkeleton.IsLoading" Value="False" />
 										<Setter Target="NonePresenter.Visibility" Value="Visible" />
 										<Setter Target="SomePresenter.Visibility" Value="Collapsed" />
 									</VisualState.Setters>
@@ -413,8 +411,6 @@
 								<VisualState x:Name="Some">
 									<VisualState.Setters>
 										<Setter Target="UndefinedPresenter.Visibility" Value="Collapsed" />
-										<Setter Target="InitialSkeleton.Visibility" Value="Collapsed" />
-										<Setter Target="InitialSkeleton.IsLoading" Value="False" />
 										<Setter Target="NonePresenter.Visibility" Value="Collapsed" />
 										<Setter Target="SomePresenter.Visibility" Value="Visible" />
 									</VisualState.Setters>
@@ -476,17 +472,6 @@
 							VerticalContentAlignment="Stretch"
 							HorizontalContentAlignment="Stretch"
 							Visibility="Visible" />
-						<!-- State carries no Data yet, so the ValueTemplate's bindings resolve empty and lists get placeholder rows.
-							 utu:Skeleton.PlaceholderCount set on the FeedView is picked up from this presenter's ancestors. -->
-						<utu:SkeletonPresenter
-							x:Name="InitialSkeleton"
-							Content="{TemplateBinding State}"
-							ContentTemplate="{TemplateBinding ValueTemplate}"
-							VerticalAlignment="Stretch"
-							HorizontalAlignment="Stretch"
-							VerticalContentAlignment="Stretch"
-							HorizontalContentAlignment="Stretch"
-							Visibility="Visible" />
 						<ContentPresenter
 							x:Name="NonePresenter"
 							Content="{TemplateBinding None}"
@@ -507,6 +492,23 @@
 							VerticalContentAlignment="Stretch"
 							HorizontalContentAlignment="Stretch"
 							Visibility="Collapsed" />
+
+						<!--
+							Shown while the FeedView itself is loading (its ILoadable state: the initial load, and again when
+							Source changes), drawn over the other presenters. State carries no Data yet, so the ValueTemplate's
+							bindings resolve empty and lists get placeholder rows; utu:Skeleton.PlaceholderCount set on the
+							FeedView is picked up from this presenter's ancestors.
+						-->
+						<utu:SkeletonPresenter
+							x:Name="InitialSkeleton"
+							Source="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+							Visibility="{Binding IsLoading, RelativeSource={RelativeSource Self}}"
+							Content="{TemplateBinding State}"
+							ContentTemplate="{TemplateBinding ValueTemplate}"
+							VerticalAlignment="Stretch"
+							HorizontalAlignment="Stretch"
+							VerticalContentAlignment="Stretch"
+							HorizontalContentAlignment="Stretch" />
 
 						<Border
 							x:Name="ErrorRoot"
