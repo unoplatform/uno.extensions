@@ -84,6 +84,7 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
     {
         "Web": {
             "LoginStartUri": "URI_TO_LOGIN",
+            "LoginCallbackUri": "URI_TO_RETURN_TO_APP",
             "LogoutStartUri": "URI_TO_LOGOUT"
         }
     }
@@ -91,9 +92,11 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
 
 - `LoginStartUri`: The URI that will be used to start the login process. This is the URI that will be opened in the web view.
 
-- `LogoutStartUri`: The URI that will be used to start the logout process.
+- `LoginCallbackUri`: The URI the identity provider redirects to when the login completes. The web view closes when it navigates to this URI, and the tokens are read from it. It can be omitted only when `LoginStartUri` includes a `redirect_uri` query parameter, which is then used instead. Without either, the login fails.
 
-- `WebAuthenticationProvider` will automatically redirect the user to the `LoginStartUri` when they are not authenticated. The `LoginStartUri` will then redirect the user to the identity provider's login page. After the user successfully logs in, the identity provider will redirect the user back to the application. The `WebAuthenticationProvider` will then store the user's access token in credential storage.
+- `LogoutStartUri`: The URI that will be used to start the logout process. Without it, `LogoutAsync` returns `false` and the stored tokens are kept.
+
+- Calling `LoginAsync` opens the `LoginStartUri` in the web view. The `LoginStartUri` will then redirect the user to the identity provider's login page. After the user successfully logs in, the identity provider will redirect the user back to the application. The `WebAuthenticationProvider` will then store the user's access token in credential storage.
 
 ### 4. Process post-login tokens
 
@@ -112,7 +115,7 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
                 {
                     builder.AddWeb(options =>
                     {
-                        options.PostLogin(async (authService, tokens, ct) =>
+                        options.PostLogin(async (tokens, ct) =>
                         {
                             // Process the response here
                             return tokens;
@@ -124,7 +127,7 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
     }
     ```
 
-- The `PostLogin` delegate will be invoked after the user has successfully logged in. The delegate will be passed the `WebAuthenticationProvider` instance, the user's tokens, and a cancellation token.
+- The `PostLogin` delegate will be invoked after the user has successfully logged in. The delegate will be passed the user's tokens and a cancellation token. Other overloads also receive the `IServiceProvider`, the `ITokenCache` and the credentials, and `AddWeb<TService>` passes an instance of `TService` as well.
 
 - The delegate should return the user's tokens.
 
@@ -169,4 +172,4 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
 
 - Finally, we can pass the login credentials to the `LoginAsync()` method and authenticate with the identity provider. The user will be prompted to sign in to their account when they tap the button in the application.
 
-- `WebAuthenticationProvider` will then store the user's access token in credential storage. The token will be automatically refreshed when it expires.
+- `WebAuthenticationProvider` will then store the user's access token in credential storage. To refresh the token when it expires, register a `Refresh` callback with `options.Refresh(...)`.
