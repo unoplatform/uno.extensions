@@ -19,7 +19,7 @@ internal class CoercingRequestManager<TRequest, TToken> : IAsyncEnumerable<Token
 	where TRequest : IContextRequest<TToken>
 	where TToken : class, IToken<TToken>
 {
-	private readonly AsyncEnumerableSubject<TokenSet<TToken>> _tokens = new(ReplayMode.Disabled);
+	private readonly AsyncEnumerableSubject<TokenSet<TToken>> _tokens = new(AsyncEnumerableReplayMode.Disabled);
 	private readonly CancellationToken _ct;
 	private readonly bool _autoPublishInitial;
 
