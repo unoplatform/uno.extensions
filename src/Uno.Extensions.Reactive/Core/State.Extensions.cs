@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Localization;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Utils;
+using Uno.Extensions.Validation;
 
 namespace Uno.Extensions.Reactive;
 
@@ -400,11 +401,7 @@ partial class State
 			throw new NotSupportedException($"Validation is supported only on states created using the State factories (got '{state.GetType().Name}').");
 		}
 
-		impl.SetValidator(
-			localizer is null
-				? validator
-				: Localized(validator, new ValidationLocalizer(localizer)),
-			source);
+		impl.SetValidator(validator.Localized(localizer), source);
 
 		return state;
 	}
@@ -456,7 +453,7 @@ partial class State
 	{
 		ArgumentNullException.ThrowIfNull(validator);
 
-		return Validate(state, ToValidator(validator), localizer, source: validator);
+		return Validate(state, ValidationHelper.FromErrorMessage(validator), localizer, source: validator);
 	}
 
 	/// <summary>
@@ -480,14 +477,27 @@ partial class State
 		ArgumentNullException.ThrowIfNull(isValid);
 		ArgumentException.ThrowIfNullOrEmpty(error);
 
-		return Validate(state, ToValidator<T>(async (value, ct) => await isValid(value, ct).ConfigureAwait(false) ? null : error), localizer, source: isValid);
+		return Validate(state, ValidationHelper.FromPredicate(isValid, error), localizer, source: isValid);
 	}
 
-	private static AsyncFunc<T, IEnumerable<ValidationResult>> ToValidator<T>(AsyncFunc<T, string?> getErrorMessage)
-		=> async (value, ct) => await getErrorMessage(value, ct).ConfigureAwait(false) is { Length: > 0 } message
-			? [new ValidationResult(message)]
-			: Array.Empty<ValidationResult>();
+	/// <summary>
+	/// Validates the value of a state each time it changes, using an <see cref="IValidator"/>.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to validate.</param>
+	/// <param name="validator">The validator to use (e.g. the one registered by <c>UseValidation</c>).</param>
+	/// <param name="localizer">An optional localizer: when provided, the <see cref="ValidationResult.ErrorMessage"/> of the results are resource keys resolved through it.</param>
+	/// <returns>The given <paramref name="state"/>, so it can be used to chain other operations.</returns>
+	/// <remarks>
+	/// This has the same behavior as <see cref="Validate{T}(IState{T}, AsyncFunc{T, IEnumerable{ValidationResult}}, IStringLocalizer)"/>.
+	/// </remarks>
+	/// <exception cref="ArgumentNullException">If the <paramref name="state"/> or the <paramref name="validator"/> is null.</exception>
+	/// <exception cref="NotSupportedException">If the <paramref name="state"/> has not been created using the MVUX State factories.</exception>
+	public static IState<T> Validate<T>(this IState<T> state, IValidator validator, IStringLocalizer? localizer = null)
+		where T : notnull
+	{
+		ArgumentNullException.ThrowIfNull(validator);
 
-	private static AsyncFunc<T, IEnumerable<ValidationResult>> Localized<T>(AsyncFunc<T, IEnumerable<ValidationResult>> validator, ValidationLocalizer localizer)
-		=> async (value, ct) => localizer.Localize<T>(await validator(value, ct).ConfigureAwait(false));
+		return Validate(state, ValidationHelper.FromValidator<T>(validator), localizer, source: validator);
+	}
 }
