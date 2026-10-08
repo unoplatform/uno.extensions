@@ -33,6 +33,8 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 	private const string ModelAttribute = "Uno.Extensions.Reactive.Bindings.ModelAttribute";
 	private const string EnableFeedMockingAttribute = "Uno.Extensions.Reactive.Config.EnableFeedMockingAttribute";
 	private const string ReactiveAssemblyName = "Uno.Extensions.Reactive";
+	private const string MessengerInterface = "CommunityToolkit.Mvvm.Messaging.IMessenger";
+	private const string MessengerImplementation = "global::CommunityToolkit.Mvvm.Messaging.WeakReferenceMessenger";
 	private const string HotTesting = "global::Uno.HotTesting.Reactive";
 
 	private static readonly Regex UnsafeHintNameCharacters = new Regex("[^A-Za-z0-9_.]", RegexOptions.CultureInvariant);
@@ -86,6 +88,7 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 		var reactiveBindable = compilation.GetTypeByMetadataName(FeedModelDiscovery.ReactiveBindableAttributeName);
 		var implicitBindables = compilation.GetTypeByMetadataName(FeedModelDiscovery.ImplicitBindablesAttributeName);
 		var enableFeedMocking = compilation.GetTypeByMetadataName(EnableFeedMockingAttribute);
+		var messenger = compilation.GetTypeByMetadataName(MessengerInterface);
 
 		if (IsMockingDisabled(compilation, enableFeedMocking))
 		{
@@ -111,7 +114,7 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 
 			if (DescribeFromMetadata(model, feedDep, modelAttr, reactiveBindable) is { } described)
 			{
-				AddSource(context, described, emitted, diagnosed, hintNames);
+				AddSource(context, described, messenger, emitted, diagnosed, hintNames);
 			}
 		}
 
@@ -125,7 +128,7 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 
 			if (DescribeFromSource(model, analysis, reactiveBindable) is { } described)
 			{
-				AddSource(context, described, emitted, diagnosed, hintNames);
+				AddSource(context, described, messenger, emitted, diagnosed, hintNames);
 			}
 		}
 	}
@@ -187,6 +190,7 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 	private static void AddSource(
 		GeneratorExecutionContext context,
 		ModelMock described,
+		INamedTypeSymbol? messenger,
 		HashSet<string> emitted,
 		HashSet<string> diagnosed,
 		HashSet<string> hintNames)
@@ -199,7 +203,7 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 			return;
 		}
 
-		if (Generate(context, described, diagnosed) is not { } generated)
+		if (Generate(context, described, messenger, diagnosed) is not { } generated)
 		{
 			return;
 		}
@@ -556,11 +560,12 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 
 	/// <param name="context">The generation context the sources and diagnostics are reported to.</param>
 	/// <param name="described">The model to emit.</param>
+	/// <param name="messenger">The resolved <c>IMessenger</c>, or null when the compilation does not reference it.</param>
 	/// <param name="diagnosed">
 	/// The models already reported on. A model reached by both intake paths and rejected by both would
 	/// otherwise be diagnosed twice for one build.
 	/// </param>
-	private static string? Generate(GeneratorExecutionContext context, ModelMock described, HashSet<string> diagnosed)
+	private static string? Generate(GeneratorExecutionContext context, ModelMock described, INamedTypeSymbol? messenger, HashSet<string> diagnosed)
 	{
 		var model = described.Model;
 
@@ -597,8 +602,7 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 			return null;
 		}
 
-		// Typed defaults: a bare `default!` cannot pick between constructors of equal arity (CS0121).
-		var ctorArguments = string.Join(", ", ctor.Parameters.Select(p => $"default({FullName(p.Type)})! /* {p.Name} */"));
+		var ctorArguments = string.Join(", ", ctor.Parameters.Select(p => $"{CtorArgument(p.Type, messenger)} /* {p.Name} */"));
 		var vmFull = described.ViewModelFullName;
 		var mockName = described.MockName;
 		var vmMockName = described.VmMockName;
@@ -674,6 +678,16 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 
 			""";
 	}
+
+	/// <summary>
+	/// What <c>Create</c> passes for a constructor parameter: a typed default, except for a messenger, which the
+	/// MVUX messaging pattern observes in the model's constructor. A fresh one keeps the app's messages out.
+	/// Both are typed: a bare <c>default!</c> cannot pick between constructors of equal arity (CS0121).
+	/// </summary>
+	private static string CtorArgument(ITypeSymbol type, INamedTypeSymbol? messenger)
+		=> SymbolEqualityComparer.Default.Equals(type, messenger)
+			? $"({FullName(type)})new {MessengerImplementation}()"
+			: $"default({FullName(type)})!";
 
 	/// <summary>
 	/// Resolves the feed interface a member is mocked through. It is the interface, not the member's own
