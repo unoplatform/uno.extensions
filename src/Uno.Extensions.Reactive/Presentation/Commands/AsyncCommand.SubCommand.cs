@@ -117,6 +117,13 @@ partial class AsyncCommand
 				async () =>
 				{
 					using var _ = context.AsCurrent();
+
+					if (_config.Validate is { } validate
+						&& !await validate(coercedParameter, ct).ConfigureAwait(false))
+					{
+						return; // The parameter is not valid (results have been published by the validate delegate), abort the execution.
+					}
+
 					await _config.Execute(coercedParameter, ct).ConfigureAwait(false);
 				},
 				ct);
