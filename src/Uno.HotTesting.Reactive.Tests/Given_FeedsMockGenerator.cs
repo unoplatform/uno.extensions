@@ -111,6 +111,31 @@ public class Given_FeedsMockGenerator
 	}
 
 	[TestMethod]
+	public void When_CtorTakesANullableMessenger_Then_CreatePassesAFreshOne()
+	{
+		var (sources, diagnostics) = Run(Preamble + """
+			[Model(typeof(ItemsViewModel))]
+			[FeedDependency("Items", OnParameter = "service")]
+			public class ItemsModel
+			{
+				public ItemsModel(IService service, CommunityToolkit.Mvvm.Messaging.IMessenger? messenger) { }
+				public IListFeed<string> Items => null!;
+			}
+
+			public class ItemsViewModel
+			{
+				public ItemsViewModel(IService service, CommunityToolkit.Mvvm.Messaging.IMessenger? messenger) { }
+				protected ItemsViewModel(ItemsModel model) { }
+				public ItemsModel Model => null!;
+			}
+			""");
+
+		diagnostics.Should().BeEmpty();
+		sources.Should().ContainSingle()
+			.Which.Should().Contain("(global::CommunityToolkit.Mvvm.Messaging.IMessenger)new global::CommunityToolkit.Mvvm.Messaging.WeakReferenceMessenger() /* messenger */)");
+	}
+
+	[TestMethod]
 	public void When_CtorTakesAnotherTypeNamedIMessenger_Then_CreateNullInjectsIt()
 	{
 		var (sources, diagnostics) = Run(Preamble + """
