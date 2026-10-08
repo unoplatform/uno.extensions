@@ -176,7 +176,21 @@ public class Person
 
 ## Using validation with MVUX
 
-In an MVUX model, pass the `IValidator` to `Validate` to validate a state each time it changes. The generated view model then exposes the results through `INotifyDataErrorInfo`. See [MVUX validation](xref:Uno.Extensions.Mvux.Advanced.Validation).
+In an MVUX model, pass the `IValidator` to `Validate` to validate a state each time it changes, or to the `Validation` of a command to validate its parameter each time the command is executed. The generated view model then exposes the results through `INotifyDataErrorInfo`. See [MVUX validation](xref:Uno.Extensions.Mvux.Advanced.Validation).
+
+```csharp
+public partial record PersonModel(IValidator Validator)
+{
+    public IState<Person> Person => State.Value(this, () => new Person());
+
+    public IAsyncCommand Submit => Command.Create(b => b
+        .Given(Person)
+        .Validation(Validator)
+        .Then(async (person, ct) => { /* save */ }));
+}
+```
+
+The `IValidator` interface is declared in `Uno.Extensions.Core` (in the `Uno.Extensions.Validation` namespace, and forwarded from this package), so MVUX can accept it without depending on this package. Keep the versions of the `Uno.Extensions.*` packages aligned (as done by the Uno.Sdk): an older `Uno.Extensions.Validation` with a newer `Uno.Extensions.Core` declares `IValidator` twice (`CS0433`).
 
 ## See also
 
