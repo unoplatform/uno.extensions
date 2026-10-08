@@ -39,6 +39,17 @@ but the property _property_name_ is not of type `IFeed<T>` (nor `IState<T>`).
 > If your property is synchronous (i.e. not a `Feed` nor a `State`), you don't need to use the `[FeedParameter]` attribute.
 > Remove the parameter from the method and get your value from the property directly.
 
+## Feed2003
+
+**The parameter of a command validated on execution is not a State.**
+
+You configured a command with `Validation` (see [validating when a command is executed](xref:Uno.Extensions.Mvux.Advanced.Validation#validating-when-a-command-is-executed)),
+but its parameter is not a `State`: it's a feed given to `Given` (e.g. `Feed.Async` or `Feed.Combine`), or the parameter is provided by the view (no `Given`).
+The validation results are published on the state given as parameter, so they cannot be displayed:
+the execution of the command is still aborted when the parameter is not valid, but the errors are only logged.
+
+Use an `IState<T>` as parameter of the command (`.Given(MyState)`).
+
 ## Mock0001
 
 **No mock is generated for a model whose view-model has no public constructor.**
