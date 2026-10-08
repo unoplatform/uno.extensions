@@ -121,6 +121,46 @@ public class Given_SingleProjectMock : FeedUITests
 		await filter.WaitForData("fresh");
 	}
 
+	[TestMethod]
+	public async Task When_StateInputReSwapped_Then_TheStateCarriesTheNewValue()
+	{
+		var vm = PantryViewModelMock.Create(new PantryModelMock
+		{
+			Items = global::Uno.HotTesting.Reactive.ListFeedMock.Value("flour"),
+			Filter = global::Uno.HotTesting.Reactive.FeedMock.Value("dry"),
+		});
+		using var scope = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+
+		var (filter, _) = vm.Model.Filter.Record();
+		await filter.WaitForData("dry");
+
+		vm.SetMock(PantryModelMock.Empty with { Filter = global::Uno.HotTesting.Reactive.FeedMock.Value("wet") });
+
+		await filter.WaitForData("wet");
+	}
+
+	[TestMethod]
+	public async Task When_SetMockReappliesTheSameFeedMock_Then_AnEarlierEditIsDropped()
+	{
+		// {Model}Mock.Empty is one shared instance, so re-applying a mock is how a preview resets to it.
+		var mock = new PantryModelMock
+		{
+			Items = global::Uno.HotTesting.Reactive.ListFeedMock.Value("flour"),
+			Filter = global::Uno.HotTesting.Reactive.FeedMock.Value("dry"),
+		};
+		var vm = PantryViewModelMock.Create(mock);
+		using var scope = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+
+		var (filter, _) = vm.Model.Filter.Record();
+		await filter.WaitForData("dry");
+		await vm.Model.Filter.UpdateAsync(current => "fresh", CT);
+		await filter.WaitForData("fresh");
+
+		vm.SetMock(mock);
+
+		await filter.WaitForData("dry");
+	}
+
 	private static bool IsRequired(PropertyInfo? property)
 	{
 		property.Should().NotBeNull();
