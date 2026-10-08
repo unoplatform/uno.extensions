@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -149,6 +150,55 @@ public class Given_DispatcherLocal
 		getValue.IsCompleted.Should().BeTrue();
 
 		enumeration.Result.Should().Be(1, because: "we should have got the value created for UI thread (on which we have waited on)");
+	}
+
+	[TestMethod]
+	public void When_ProviderDisposed_Then_ValueFallsBackToBackground()
+	{
+		// A provider whose backing state has been disposed. This is what
+		// DispatcherQueueProvider's static ThreadLocal<IDispatcher> does once the assembly owning it
+		// is unloaded with its collectible AssemblyLoadContext: ThreadLocal disposes itself from its
+		// own finalizer, and every later read throws.
+		var sut = new DispatcherLocal<string>(
+			factory: d => d is TestDispatcher ui ? ui.Name : "background",
+			schedulersProvider: () => throw new ObjectDisposedException(nameof(ThreadLocal<IDispatcher>)));
+
+		// Must NOT throw: callers reach this from their own finalizers (removing an event handler
+		// from a bindable collection resolves the current dispatcher), and an exception escaping a
+		// finalizer is unrecoverable -- it terminates the process rather than failing one operation.
+		sut.Value.Should().Be(
+			"background",
+			because: "a disposed provider means no dispatcher, which is also the truthful answer on a finalizer thread");
+	}
+
+	[TestMethod]
+	public void When_ProviderDisposed_Then_TryGetValueDoesNotThrow()
+	{
+		using var ui = new TestDispatcher("ui");
+		var sut = new DispatcherLocal<string>(
+			factory: d => d is TestDispatcher named ? named.Name : "background",
+			schedulersProvider: () => throw new ObjectDisposedException(nameof(ThreadLocal<IDispatcher>)),
+			allowCreationFromAnotherThread: true);
+
+		// TryGetValue resolves the CURRENT dispatcher to decide whether creation is permitted, so it
+		// reads the provider even though the owner is passed explicitly.
+		sut.TryGetValue(ui, out var value).Should().BeTrue();
+		value.Should().Be("ui");
+	}
+
+	[TestMethod]
+	public void When_ProviderThrowsOtherError_Then_ItPropagates()
+	{
+		// Only ObjectDisposedException is treated as "no dispatcher". Any other failure to resolve a
+		// dispatcher is a real fault and must not be swallowed, or a misconfigured provider would
+		// silently degrade every consumer to background values.
+		var sut = new DispatcherLocal<string>(
+			factory: _ => "background",
+			schedulersProvider: () => throw new InvalidOperationException("provider is misconfigured"));
+
+		var resolve = () => sut.Value;
+
+		resolve.Should().Throw<InvalidOperationException>().WithMessage("provider is misconfigured");
 	}
 
 	private int CountValues<T>(DispatcherLocal<T> sut, bool includeBackground = true)
