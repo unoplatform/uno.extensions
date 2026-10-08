@@ -48,11 +48,17 @@ public static class HostBuilderExtensions
 		this IHostBuilder hostBuilder,
 		Action<HostBuilderContext, ILoggingBuilder>? configure = default, bool enableUnoLogging = false)
 	{
+		bool ambientLoggerExists = Uno.Extensions.LogExtensionPoint.AmbientLoggerFactory != null;
 		return hostBuilder
 				.ConfigureLogging((context, builder) =>
 				{
 					if (!context.IsRegistered(nameof(UseLogging)))
 					{
+						if (ambientLoggerExists)
+						{
+							typeof(HostBuilderExtensions).Log().LogWarning($"Uno.Extensions.LogExtensionPoint.AmbientLoggerFactory already configured; ignoring this .UseLogging() invocation.");
+							return;
+						}
 #if __IOS__
 #pragma warning disable CA1416 // Validate platform compatibility: The net8.0 version is not used on older versions of OS
 						builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
