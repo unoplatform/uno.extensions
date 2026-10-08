@@ -90,11 +90,11 @@ internal class SelectionFacet : IDisposable, ISelectionInfo
 			var index = ranges.FirstOrDefault()?.FirstIndex ?? -1;
 			if (_dispatcher is null or { HasThreadAccess: true })
 			{
-				MoveCurrentToPosition(index);
+				MoveCurrentToPosition(index, isCancelable: false, isSelectionRangeUpdate: true);
 			}
 			else
 			{
-				_dispatcher.TryEnqueue(() => MoveCurrentToPosition(index));
+				_dispatcher.TryEnqueue(() => MoveCurrentToPosition(index, isCancelable: false, isSelectionRangeUpdate: true));
 			}
 		}
 	}

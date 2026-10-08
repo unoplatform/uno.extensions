@@ -62,6 +62,28 @@ public partial class Given_BindableCollection_Selection : FeedTests
 	}
 
 	[TestMethod]
+	[InjectedPointer(PointerDeviceType.Mouse)]
+#if !__SKIA__
+	[Ignore("Pointer injection not supported yet on this platform")]
+#endif
+	public async Task When_SelectMultipleFromViewBottomToTop_ListView()
+	{
+		var (vm, lv, items) = await SetupListView(ListViewSelectionMode.Multiple);
+
+		// Select from bottom to top
+		InputInjectorHelper.Current.Tap(items[2]);
+		InputInjectorHelper.Current.Tap(items[1]);
+
+		await TestHelper.WaitFor(async ct =>
+		{
+			var selectedItems = await vm.Items.GetSelectedItems(ct);
+			// Both items should remain selected
+			return selectedItems.SequenceEqual(new MyItem[] { new(42), new(43) }) 
+				|| selectedItems.SequenceEqual(new MyItem[] { new(43), new(42) });
+		}, CT);
+	}
+
+	[TestMethod]
 	public async Task When_PreselectedItem_SelectedItems_ListView()
 	{
 		var (vm, lv, items) = await SetupListView(ListViewSelectionMode.Multiple);
