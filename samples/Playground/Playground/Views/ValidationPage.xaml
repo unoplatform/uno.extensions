@@ -57,6 +57,29 @@
 											   Source="{Binding}"
 											   PropertyName="Reason" />
 
+				<!-- Contact: record state validated only when the Submit command is executed -->
+				<TextBlock Text="Contact (IState&lt;PersonModel&gt;, validated on Submit by IValidator)"
+						   Style="{StaticResource TitleMedium}" />
+				<TextBlock TextWrapping="Wrap"
+						   Text="Errors are published when Submit is executed, and remain until the next Submit (even if the values are fixed meanwhile). Submit is aborted while the contact is not valid." />
+				<TextBox Header="First name"
+						 Text="{Binding Contact.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				<controls:ValidationErrorsView Header="Contact.GetErrors(&quot;FirstName&quot;)"
+											   Source="{Binding Contact}"
+											   PropertyName="FirstName" />
+				<TextBox Header="Last name"
+						 Text="{Binding Contact.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				<controls:ValidationErrorsView Header="Contact.GetErrors(&quot;LastName&quot;)"
+											   Source="{Binding Contact}"
+											   PropertyName="LastName" />
+				<StackPanel Orientation="Horizontal"
+							Spacing="8">
+					<Button Content="Submit"
+							Command="{Binding Submit}" />
+					<TextBlock VerticalAlignment="Center"
+							   Text="{Binding Submitted}" />
+				</StackPanel>
+
 				<!-- Aggregated state -->
 				<TextBlock Text="HasErrors"
 						   Style="{StaticResource TitleMedium}" />
