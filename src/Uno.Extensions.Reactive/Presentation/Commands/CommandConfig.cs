@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive.Commands;
@@ -46,4 +48,10 @@ public record struct CommandConfig
 	/// The action to execute.
 	/// </summary>
 	public AsyncAction<object?> Execute { get; set; }
+
+	/// <summary>
+	/// Validates the (coerced) parameter right before the <see cref="Execute"/>, returning false to abort the execution.
+	/// </summary>
+	/// <remarks>This is responsible to publish the validation results (cf. ICommandBuilder Validation extensions).</remarks>
+	internal Func<object?, CancellationToken, ValueTask<bool>>? Validate { get; set; }
 }

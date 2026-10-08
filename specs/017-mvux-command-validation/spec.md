@@ -41,7 +41,7 @@ Spec 015 validates a state **on every data change**. Forms commonly need the opp
 Extension methods (not new interface members, so implementers of the public builder interfaces are not broken) on both `ICommandBuilder<T>` (after `Given`, or `Command.Create<T>`) and `IConditionalCommandBuilder<T>` (after `When`). They return `IConditionalCommandBuilder<T>`: only `Then` can follow. Overloads mirror `State.Validate` (spec 016), each with a trailing optional localizer:
 
 ```csharp
-IConditionalCommandBuilder<T> Validation<T>(this ICommandBuilder<T> builder, Func<T, CancellationToken, ValueTask<IEnumerable<ValidationResult>>> validator, IStringLocalizer? localizer = null);
+IConditionalCommandBuilder<T> Validation<T>(this ICommandBuilder<T> builder, AsyncFunc<T, IEnumerable<ValidationResult>> validator, IStringLocalizer? localizer = null);
 IConditionalCommandBuilder<T> Validation<T>(this ICommandBuilder<T> builder, AsyncFunc<T, string?> validator, IStringLocalizer? localizer = null);  // single rule
 IConditionalCommandBuilder<T> Validation<T>(this ICommandBuilder<T> builder, AsyncFunc<T, bool> isValid, string error, IStringLocalizer? localizer = null); // predicate
 IConditionalCommandBuilder<T> Validation<T>(this ICommandBuilder<T> builder, IValidator validator, IStringLocalizer? localizer = null) where T : notnull;
