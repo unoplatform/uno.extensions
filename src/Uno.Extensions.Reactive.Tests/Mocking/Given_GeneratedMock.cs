@@ -247,7 +247,7 @@ public class Given_GeneratedMock : FeedUITests
 
 		var (tasks, _) = vm.Tasks.Record();
 
-		await WaitForLastMessage(tasks, message => message.Current.IsTransient);
+		await tasks.WaitForMessage(message => message.Current.IsTransient);
 		tasks.Should().NotContain(message => message.Current.Error != null, "the real, null-injected loader never runs");
 	}
 
@@ -259,7 +259,7 @@ public class Given_GeneratedMock : FeedUITests
 
 		var (tasks, _) = vm.Tasks.Record();
 
-		await WaitForLastMessage(tasks, message => message.Current.Error is TestException);
+		await tasks.WaitForMessage(message => message.Current.Error is TestException);
 	}
 
 	[TestMethod]
@@ -273,7 +273,7 @@ public class Given_GeneratedMock : FeedUITests
 
 		vm.SetMock(TasksModelMock.Empty with { Tasks = vm.Model.Tasks });
 
-		await WaitForLastMessage(tasks, message => message.Current.Error is NullReferenceException);
+		await tasks.WaitForMessage(message => message.Current.Error is NullReferenceException);
 	}
 
 	[TestMethod]
@@ -320,6 +320,38 @@ public class Given_GeneratedMock : FeedUITests
 	}
 
 	[TestMethod]
+	public async Task When_MockedListStateInputIsEdited_Then_DerivedFeedSeesTheEdit()
+	{
+		var vm = TasksViewModelMock.Create(new TasksModelMock { Tasks = ListFeedMock.Value(new TaskItem("1", "a")) });
+		var ctx = SourceContext.GetOrCreate(vm.Model);
+		using var scope = ctx.AsCurrent();
+
+		var (count, _) = ctx.GetOrCreateState(vm.Model.TasksCount).Record();
+		await count.WaitForData(1);
+
+		await vm.Model.Tasks.AddAsync(new TaskItem("2", "b"), CT);
+
+		await count.WaitForData(2);
+	}
+
+	[TestMethod]
+	public async Task When_SetMockReappliesTheSameListFeedMock_Then_AnEarlierEditIsDropped()
+	{
+		var mock = ListFeedMock.Value(new TaskItem("1", "a"));
+		var vm = TasksViewModelMock.Create(new TasksModelMock { Tasks = mock });
+		using var scope = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+
+		var (tasks, _) = vm.Tasks.Record();
+		await tasks.WaitForData(items => items.Count == 1);
+		await vm.Model.Tasks.AddAsync(new TaskItem("2", "b"), CT);
+		await tasks.WaitForData(items => items.Count == 2);
+
+		vm.SetMock(new TasksModelMock { Tasks = mock });
+
+		await tasks.WaitForData(items => items.SequenceEqual(new[] { new TaskItem("1", "a") }));
+	}
+
+	[TestMethod]
 	public void When_ModelHasDerivedAndIndependentMembers_Then_MockExposesOnlyTheDerivedOneAsOptional()
 	{
 		// MenuModel also declares a derived feed (ItemsCount) and an independent state (Filter): the record requires
@@ -355,13 +387,5 @@ public class Given_GeneratedMock : FeedUITests
 	{
 		property.Should().NotBeNull();
 		return property!.IsDefined(typeof(RequiredMemberAttribute), inherit: false);
-	}
-
-	private static async Task WaitForLastMessage<T>(IFeedRecorder<T> recorder, Func<Message<T>, bool> predicate)
-	{
-		while (recorder.Count == 0 || !predicate(recorder[recorder.Count - 1]))
-		{
-			await recorder.WaitForMessages(recorder.Count + 1);
-		}
 	}
 }
