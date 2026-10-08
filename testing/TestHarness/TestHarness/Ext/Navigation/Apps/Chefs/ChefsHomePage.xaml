@@ -10,13 +10,29 @@
 	  mc:Ignorable="d">
 
 	<Grid RowDefinitions="Auto,*">
-		<utu:NavigationBar Content="Home" AutomationProperties.AutomationId="HomeNavigationBar"/>
-		<StackPanel Grid.Row="1">
-			<TextBlock Text="ChefsHome" AutomationProperties.AutomationId="Chefs_Home_TextBlock"/>
-			<Button uen:Navigation.Request="!ChefsProfile" Content="Profile" />
-			<Button uen:Navigation.Request="ChefsNotifications" Content="Notifications" AutomationProperties.AutomationId="HomeNotificationsBtn"/>
-			<Button Command="{Binding NavigateToRecipeDetail}" Content="Recipe Details" AutomationProperties.AutomationId="HomeRecipeDetails"/>
-			<Button Command="{Binding NavigateToSearch}" Content="Search" />
+		<utu:NavigationBar Content="Home"
+						   AutomationProperties.AutomationId="HomeNavigationBar" />
+		<StackPanel Grid.Row="1"
+					Spacing="16">
+			<TextBlock Text="ChefsHome"
+					   AutomationProperties.AutomationId="Chefs_Home_TextBlock" />
+			<Button uen:Navigation.Request="!ChefsProfile"
+					Content="Profile" />
+			<Button uen:Navigation.Request="ChefsNotifications"
+					Content="Notifications"
+					AutomationProperties.AutomationId="HomeNotificationsBtn" />
+			<Button Command="{Binding NavigateToRecipeDetail}"
+					Content="Recipe Details"
+					AutomationProperties.AutomationId="HomeRecipeDetails" />
+			<Button Command="{Binding NavigateToSearch}"
+					Content="Search" />
+
+			<TextBlock x:Name="TxtUrl"
+					   AutomationProperties.AutomationId="ChefsHomePageTxtUrlFromBrowser" />
+
+			<Button AutomationProperties.AutomationId="ChefsHomePageGetUrlFromBrowser"
+					Click="GetUrlFromBrowser"
+					Content="Get URL" />
 		</StackPanel>
 	</Grid>
 </Page>
