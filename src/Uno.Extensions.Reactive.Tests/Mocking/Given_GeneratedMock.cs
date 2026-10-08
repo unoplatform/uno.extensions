@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -71,6 +72,25 @@ public class Given_GeneratedMock : FeedUITests
 
 		var items = await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Steps);
 		items.Should().BeNull("Empty pins the input to None");
+	}
+
+	[TestMethod]
+	public async Task When_CreateDefault_Then_DerivedFeedHasNoData_LikeAServiceReturningNoItems()
+	{
+		var real = new MenuModel(new NoItemsMenuService(), navigator: null!);
+		var realCtx = SourceContext.GetOrCreate(real);
+		var (realCount, _) = realCtx.GetOrCreateState(real.ItemsCount).Record(realCtx);
+
+		var vm = MenuViewModelMock.Create(); // = MenuModelMock.Empty
+		var ctx = SourceContext.GetOrCreate(vm.Model);
+		using var scope = ctx.AsCurrent();
+		var (count, _) = ctx.GetOrCreateState(vm.Model.ItemsCount).Record();
+
+		await WaitForDefinedData(realCount);
+		await WaitForDefinedData(count);
+
+		realCount.Last().Current.Data.Type.Should().Be(OptionType.None);
+		count.Last().Current.Data.Type.Should().Be(OptionType.None, "an empty list input reaches derived feeds as no data, as in the app");
 	}
 
 	[TestMethod]
@@ -249,5 +269,19 @@ public class Given_GeneratedMock : FeedUITests
 	{
 		property.Should().NotBeNull();
 		return property!.IsDefined(typeof(RequiredMemberAttribute), inherit: false);
+	}
+
+	private static async Task WaitForDefinedData<T>(IFeedRecorder<T> recorder)
+	{
+		while (recorder.Count == 0 || recorder[recorder.Count - 1].Current.Data.IsUndefined())
+		{
+			await recorder.WaitForMessages(recorder.Count + 1);
+		}
+	}
+
+	private sealed class NoItemsMenuService : IMenuService
+	{
+		public Task<IImmutableList<string>> GetItems(CancellationToken ct)
+			=> Task.FromResult<IImmutableList<string>>(ImmutableList<string>.Empty);
 	}
 }

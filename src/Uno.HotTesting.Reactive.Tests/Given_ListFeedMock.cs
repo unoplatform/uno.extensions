@@ -36,15 +36,17 @@ public class Given_ListFeedMock : FeedTests
 	}
 
 	[TestMethod]
-	public async Task When_Empty_Then_DataIsSomeEmptyList()
+	public async Task When_Empty_Then_DataIsNone_LikeAListFeedWithNoItems()
 	{
-		var result = ListFeedMock.Empty<int>().Record();
+		var real = ListFeed.Async(async ct => (IImmutableList<int>)ImmutableList<int>.Empty).Record();
+		var mock = ListFeedMock.Empty<int>().Record();
 
-		await result.WaitForEnd(CT);
+		await mock.WaitForEnd(CT);
 
-		result.Should().Be(r => r
-			.Message(Changed.Data, Data.Some, Error.No, Progress.Final));
-		result.Single().Current.Data.SomeOrDefault().Should().BeEmpty();
+		await real.Should().BeAsync(r => r
+			.Message(Changed.Data, Data.None, Error.No, Progress.Final));
+		mock.Should().Be(r => r
+			.Message(Changed.Data, Data.None, Error.No, Progress.Final));
 	}
 
 	[TestMethod]
@@ -59,15 +61,14 @@ public class Given_ListFeedMock : FeedTests
 	}
 
 	[TestMethod]
-	public async Task When_ValueHasNoItems_Then_DataRemainsSomeEmptyList()
+	public async Task When_ValueHasNoItems_Then_DataIsNone()
 	{
 		var result = ListFeedMock.Value<int>().Record();
 
 		await result.WaitForEnd(CT);
 
 		result.Should().Be(r => r
-			.Message(Changed.Data, Data.Some, Error.No, Progress.Final));
-		result.Single().Current.Data.SomeOrDefault().Should().BeEmpty();
+			.Message(Changed.Data, Data.None, Error.No, Progress.Final));
 	}
 
 	[TestMethod]
@@ -98,7 +99,7 @@ public class Given_ListFeedMock : FeedTests
 	}
 
 	[TestMethod]
-	public async Task When_RefreshingWithoutItems_Then_DataRemainsSomeEmptyList()
+	public async Task When_RefreshingWithoutItems_Then_DataIsNone()
 	{
 		var result = ListFeedMock.Refreshing<int>().Record();
 
@@ -107,10 +108,9 @@ public class Given_ListFeedMock : FeedTests
 		result.Should().Be(r => r
 			.Message(
 				Changed.Data & Changed.Progress,
-				Data.Some,
+				Data.None,
 				Error.No,
 				Progress.Transient));
-		result.Single().Current.Data.SomeOrDefault().Should().BeEmpty();
 	}
 
 	[TestMethod]
@@ -124,5 +124,19 @@ public class Given_ListFeedMock : FeedTests
 
 		result.Should().Be(r => r
 			.Message(Changed.Data, Data.None, Error.No, Progress.Final));
+	}
+
+	[TestMethod]
+	public async Task When_MessageSetsAnEmptyList_Then_ExplicitAxisIsPreserved()
+	{
+		var result = ListFeedMock.Message<int>(message =>
+			message.Data(Option<IImmutableList<int>>.Some(ImmutableList<int>.Empty)))
+			.Record();
+
+		await result.WaitForEnd(CT);
+
+		result.Should().Be(r => r
+			.Message(Changed.Data, Data.Some, Error.No, Progress.Final));
+		result.Single().Current.Data.SomeOrDefault().Should().BeEmpty();
 	}
 }

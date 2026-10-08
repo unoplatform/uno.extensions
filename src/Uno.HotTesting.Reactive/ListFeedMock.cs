@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
+using Uno.Extensions;
 using Uno.Extensions.Reactive;
 using Uno.Extensions.Reactive.Core;
 
@@ -25,22 +26,21 @@ public static class ListFeedMock
 	public static IListFeed<T> Loading<T>()
 		=> Wrap(FeedMock.Loading<IImmutableList<T>>());
 
-	/// <summary>Creates a list feed with a present, empty list.</summary>
+	/// <summary>Creates a list feed with no items, as when its service returns an empty list.</summary>
 	/// <typeparam name="T">The list item type.</typeparam>
-	/// <returns>A list feed whose data axis is <c>Some(empty)</c>.</returns>
+	/// <returns>A list feed whose data axis is <see cref="Option{T}.None"/>.</returns>
 	/// <remarks>
-	/// This intentionally differs from a scalar feed's <see cref="FeedMock.Empty{T}"/>.
-	/// List views need an empty collection value to render their empty state. The mock adapter
-	/// preserves that value instead of applying the normal Some(empty)-to-None coercion.
+	/// A list feed reports an empty list as no data, so a <c>FeedView</c> shows its
+	/// <c>NoneTemplate</c> and feeds derived from this one get no value.
 	/// </remarks>
 	public static IListFeed<T> Empty<T>()
-		=> Wrap(FeedMock.Value<IImmutableList<T>>(ImmutableList<T>.Empty));
+		=> Wrap(FeedMock.Empty<IImmutableList<T>>());
 
 	/// <summary>Creates a list feed pinned to the supplied items.</summary>
 	/// <typeparam name="T">The list item type.</typeparam>
 	/// <param name="items">The items to expose.</param>
 	/// <returns>A list feed whose data axis contains the supplied items.</returns>
-	/// <remarks>An empty array has the same <c>Some(empty)</c> semantics as <see cref="Empty{T}"/>.</remarks>
+	/// <remarks>With no items, the data axis is <see cref="Option{T}.None"/>, as for <see cref="Empty{T}"/>.</remarks>
 	public static IListFeed<T> Value<T>(params T[] items)
 	{
 		if (items is null)
@@ -48,7 +48,7 @@ public static class ListFeedMock
 			throw new ArgumentNullException(nameof(items));
 		}
 
-		return Wrap(FeedMock.Value<IImmutableList<T>>(items.ToImmutableList()));
+		return Wrap(FeedMock.Message<IImmutableList<T>>(message => message.Data(ToData(items))));
 	}
 
 	/// <summary>Creates a list feed pinned to an error.</summary>
@@ -63,8 +63,8 @@ public static class ListFeedMock
 	/// <param name="staleItems">The stale items to expose.</param>
 	/// <returns>A transient list feed with data.</returns>
 	/// <remarks>
-	/// An empty array remains <c>Some(empty)</c>. The internal refresh axis can only be
-	/// raised by a refreshable source feed.
+	/// With no items, the data axis is <see cref="Option{T}.None"/>. The internal refresh axis
+	/// can only be raised by a refreshable source feed.
 	/// </remarks>
 	public static IListFeed<T> Refreshing<T>(params T[] staleItems)
 	{
@@ -73,21 +73,33 @@ public static class ListFeedMock
 			throw new ArgumentNullException(nameof(staleItems));
 		}
 
-		return Wrap(FeedMock.Refreshing<IImmutableList<T>>(staleItems.ToImmutableList()));
+		return Wrap(FeedMock.Message<IImmutableList<T>>(message => message
+			.Data(ToData(staleItems))
+			.IsTransient(true)));
 	}
 
 	/// <summary>Creates a list feed pinned to an arbitrary message.</summary>
 	/// <typeparam name="T">The list item type.</typeparam>
 	/// <param name="configure">Configures the message axes.</param>
 	/// <returns>A list feed which emits the configured message and completes.</returns>
+	/// <remarks>
+	/// The message is forwarded as configured: unlike the other factories, an explicit empty list
+	/// stays <c>Some(empty)</c>, a state no list feed of a running app produces.
+	/// </remarks>
 	public static IListFeed<T> Message<T>(Action<MessageBuilder<IImmutableList<T>>> configure)
 		=> Wrap(FeedMock.Message(configure));
+
+	// Same rule as a real list feed (FeedToListFeedAdapter): an empty list is no data.
+	private static Option<IImmutableList<T>> ToData<T>(T[] items)
+		=> items.Length == 0
+			? Option<IImmutableList<T>>.None()
+			: Option<IImmutableList<T>>.Some(items.ToImmutableList());
 
 	private static IListFeed<T> Wrap<T>(IFeed<IImmutableList<T>> source)
 		=> new Adapter<T>(source);
 
-	// AsListFeed normalizes Some(empty) to None. A mock must preserve the caller's
-	// explicit message so a list-empty visual state remains expressible.
+	// Forwards messages as built. AsListFeed would subscribe through the context, which
+	// replays only the last of Undefined's two messages, and would rewrite Message's data.
 	private sealed class Adapter<T> : IListFeed<T>
 	{
 		private readonly IFeed<IImmutableList<T>> _source;
