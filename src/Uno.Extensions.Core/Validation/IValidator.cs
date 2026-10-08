@@ -1,14 +1,14 @@
-﻿namespace Uno.Extensions.Validation;
+﻿using System.ComponentModel.DataAnnotations;
 
-/// <summary>
-/// Defines an interface for a data validator.
-/// </summary>
-/// <typeparam name="T">Instance to validate</typeparam>
-internal interface IValidator<in T> : IValidator { }
+namespace Uno.Extensions.Validation;
 
 /// <summary>
 /// Defines an interface for data validator
 /// </summary>
+/// <remarks>
+/// This is declared in Uno.Extensions.Core (and forwarded from Uno.Extensions.Validation) so other packages
+/// (e.g. MVUX states and commands) can use a validator without depending on Uno.Extensions.Validation.
+/// </remarks>
 public interface IValidator
 {
 	/// <summary>
