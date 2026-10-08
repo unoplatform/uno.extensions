@@ -65,6 +65,7 @@ Requires the `Authentication` UnoFeature.
    {
      "Web": {
        "LoginStartUri": "https://your-idp.example.com/login",
+       "LoginCallbackUri": "myapp://callback",
        "LogoutStartUri": "https://your-idp.example.com/logout"
      }
    }
@@ -132,6 +133,7 @@ Requires the `Authentication` UnoFeature.
    {
      "Web": {
        "LoginStartUri": "https://your-idp.example.com/oauth2/v2.0/authorize",
+       "LoginCallbackUri": "myapp://callback",
        "LogoutStartUri": "https://your-idp.example.com/oauth2/v2.0/logout"
      }
    }
@@ -143,7 +145,7 @@ Requires the `Authentication` UnoFeature.
 3. **Ensure your identity provider redirects back to your app**
 
    * Set redirect URI in the IDP
-   * Use the same URI the Uno app expects
+   * Use the same URI as `LoginCallbackUri` (or the `redirect_uri` parameter of `LoginStartUri`)
 
 **Why separate file**
 This lets RAG answer “how do I set the login url?” without reading a full tutorial.
@@ -172,7 +174,7 @@ Requires the `Authentication` UnoFeature.
                    {
                        auth.AddWeb(options =>
                        {
-                           options.PostLogin(async (authService, tokens, ct) =>
+                           options.PostLogin(async (tokens, ct) =>
                            {
                                // tokens.AccessToken
                                // tokens.RefreshToken
