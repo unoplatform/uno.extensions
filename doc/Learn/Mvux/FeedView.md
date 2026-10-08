@@ -306,7 +306,7 @@ The skeleton is provided by the `SkeletonFeedViewStyle` style. It requires the U
 
 | Feed state | Display |
 |------------|---------|
-| Initial load (no data yet) | A skeleton derived from the `ValueTemplate`. Empty lists in the template are filled with placeholder rows built from their own `ItemTemplate`. |
+| Initial load, or a new `Source` (no data yet) | A skeleton derived from the `ValueTemplate`. Empty lists in the template are filled with placeholder rows built from their own `ItemTemplate`. |
 | Refresh (data already shown) | The current content is covered by placeholders matching its actual layout: the same number of items and text lines matching the current text. |
 | Loaded | The `ValueTemplate`, as usual. |
 | No data | The `NoneTemplate`, as usual. |
@@ -339,5 +339,4 @@ Elements in your `ValueTemplate` can use `utu:Skeleton.Ignore` and `utu:Skeleton
 
 - **Write the `ValueTemplate` so it lays out without data.** During the initial load, its bindings resolve to empty values. Fixed-size elements (images, avatars) keep their size, empty text produces one line of the space the layout grants it, and lists get placeholder rows. Layouts whose shape depends entirely on data (e.g. visibility bound to a value) differ from the loaded result.
 - **Refreshing an empty result** (`NoneTemplate` shown) displays no loading indicator, as there is no content to cover.
-- **Changing the `Source`** of a `FeedView` that already displays data shows empty content, rather than the initial-load skeleton, until the new feed produces its first value.
 - **An `UndefinedTemplate`** is still displayed before the first load, underneath the skeleton.
