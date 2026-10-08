@@ -87,6 +87,40 @@ public class Given_SingleProjectMock : FeedUITests
 		items.Should().BeEquivalentTo(new[] { "flour", "sugar" });
 	}
 
+	[TestMethod]
+	public async Task When_StateInputMocked_Then_TheStateItselfCarriesTheMockedValue()
+	{
+		var vm = PantryViewModelMock.Create(new PantryModelMock
+		{
+			Items = global::Uno.HotTesting.Reactive.ListFeedMock.Value("flour"),
+			Filter = global::Uno.HotTesting.Reactive.FeedMock.Value("dry"),
+		});
+		using var scope = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+
+		var (filter, _) = vm.Model.Filter.Record();
+
+		await filter.WaitForData("dry");
+		filter.Should().NotContain(message => message.Current.Error != null, "the real, null-injected loader never runs");
+	}
+
+	[TestMethod]
+	public async Task When_MockedStateInputIsEdited_Then_TheEditIsApplied()
+	{
+		var vm = PantryViewModelMock.Create(new PantryModelMock
+		{
+			Items = global::Uno.HotTesting.Reactive.ListFeedMock.Value("flour"),
+			Filter = global::Uno.HotTesting.Reactive.FeedMock.Value("dry"),
+		});
+		using var scope = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+
+		var (filter, _) = vm.Model.Filter.Record();
+		await filter.WaitForData("dry");
+
+		await vm.Model.Filter.UpdateAsync(current => "fresh", CT);
+
+		await filter.WaitForData("fresh");
+	}
+
 	private static bool IsRequired(PropertyInfo? property)
 	{
 		property.Should().NotBeNull();
