@@ -5,7 +5,8 @@ using Uno.Extensions.Validation;
 namespace Playground.ViewModels;
 
 /// <summary>
-/// MVUX model of the <see cref="Views.ValidationPage"/> which demonstrates the validation of states (cf. State.Validate).
+/// MVUX model of the <see cref="Views.ValidationPage"/> which demonstrates the validation of states (cf. State.Validate)
+/// and of the parameter of a command when it is executed (cf. the Validation of the command builder).
 /// </summary>
 public partial record ValidationPageModel(IValidator Validator)
 {
@@ -16,13 +17,33 @@ public partial record ValidationPageModel(IValidator Validator)
 	/// Errors targeting FirstName / LastName are routed to the generated person bindable.
 	/// </summary>
 	public IState<PersonModel> Person => State.Value(this, () => new PersonModel(string.Empty, string.Empty))
-		.Validate((person, ct) => Validator.ValidateAsync(person, null, ct));
+		.Validate(Validator);
 
 	/// <summary>
 	/// A primitive state, validated inline. Errors are exposed by the page view model itself (GetErrors("Reason")).
 	/// </summary>
 	public IState<string> Reason => State.Value(this, () => string.Empty)
 		.Validate(ValidateReason);
+
+	/// <summary>
+	/// A record state which is not validated on change: it is validated only when the <see cref="Submit"/> command is executed,
+	/// and its errors remain until the next submit (even if the values are fixed meanwhile).
+	/// </summary>
+	public IState<PersonModel> Contact => State.Value(this, () => new PersonModel(string.Empty, string.Empty));
+
+	/// <summary>
+	/// The result of the last successful submit.
+	/// </summary>
+	public IState<string> Submitted => State<string>.Empty(this);
+
+	/// <summary>
+	/// Validates the <see cref="Contact"/> (using the <see cref="IValidator"/> service) each time it is executed,
+	/// and only invokes the action if it is valid.
+	/// </summary>
+	public IAsyncCommand Submit => Command.Create(b => b
+		.Given(Contact)
+		.Validation(Validator)
+		.Then(async (contact, ct) => await Submitted.SetAsync($"Submitted {contact.FirstName} {contact.LastName} at {DateTimeOffset.Now:T}", ct)));
 
 	public async ValueTask Fill(CancellationToken ct)
 	{
