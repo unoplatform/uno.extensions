@@ -294,6 +294,21 @@ stopgap until R1, recorded so it does not grow into a list of known types: the m
 cannot reach the messenger. R1 replaces it, where a fresh messenger can become the default value of an `IMessenger`
 argument. Fixture: `NoteModel`. Tests: `Given_GeneratedMock` and `Given_FeedsMockGenerator`.
 
+## v19 — a state input is swapped where the state is read
+
+`SetMock` swapped the context's subscription to a state input, but every reader of a state ends at the state's own
+subscription. A list state's bindable never went through the swap and showed the error of the real, null-injected
+loader; a scalar state read directly did the same. The swap of a state input now sits at the state's own
+subscription. It reads a state built over the mock, and the member's `HotSwap` sends its writes to that state, so an
+edit applies over the mock and the feeds derived from the state see it, as in a live app; the v17 isolation still
+holds for a state built over a feed input. A list state is swapped through the state it wraps. The state over the
+mock is built for one swap and disposed by the next, so re-applying a mock, `{Model}Mock.Empty` included, starts over
+from it; a mock that is itself a state takes the writes directly, and the member's own state restores its loader.
+v16's objection to routing through the state no longer applies: since v17 the state holds no lock, and the swap only
+sets its update target and its subscription's source. Limits: the context keeps its subscription to a state input's
+mock until it is disposed, and hot reload still swaps a state at the context's subscription. Fixture: `TasksModel`.
+Tests: `Given_GeneratedMock` and `Given_SingleProjectMock`.
+
 ---
 
 ## Final decision register
@@ -305,7 +320,7 @@ argument. Fixture: `NoteModel`. Tests: `Given_GeneratedMock` and `Given_FeedsMoc
 | D3 | A facade (`SetModel` and generated setters) sits in front of the hooks; `HotSwapFeed` and the handles stay non-public | v1 |
 | D4 | ~~Dedicated mockable flag in `FeedConfiguration`~~ **replaced in v7** by the per-context gate `SourceContext.IsMockingActive` (D12) | v1 to v7 |
 | D5 | Mocking code generation is **external** (consumer project); the MVUX generator only does analysis, attributes and hidden hooks | v1 |
-| D6 | The swap is anchored so derived feeds survive (non-negotiable): at the context's subscription to each feed, shared by hot reload and mocking and read by the state and every derivation; derived members remain individually overridable | v1, v2, v16 and v17 |
+| D6 | The swap is anchored so derived feeds survive (non-negotiable): at the context's subscription to each feed, shared by hot reload and mocking and read by the state and every derivation; a state input at the state's own subscription, which every reader of the state reads; derived members remain individually overridable | v1, v2, v16, v17 and v19 |
 | D7 | The non-AOT nature of the mocking path is accepted (development and test only) | v1 |
 | D8 | Converters are application-owned illustrations at `FeedView.Source` (returning `IMessageEntry`); the feature implements none | v4 |
 | D9 | Tiers 2 and 3 are strictly typed; the tier 1 object is confined to tier 1 | v4 |

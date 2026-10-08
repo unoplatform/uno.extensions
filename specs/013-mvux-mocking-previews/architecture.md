@@ -24,14 +24,14 @@ Every feed factory caches its instance via `AttachedProperty.GetOrCreate` keyed 
 **Anchor:** the context keeps one subscription per feed, and every reader of a feed goes through it: the feed's state and `SelectFeed`, `WhereFeed`, `WhereListFeed`, `CombineFeed`, the list adapters, `Messages()` and dynamic feeds (through `FeedDependency`). In a context where `SourceContext.IsMockingActive` is set (§6), that subscription reads its feed through a `HotSwapFeed<T>`, so `SetMock` swaps the member's subscription and every reader sees the mock. A list feed's `AsFeed()` adapter reads the list feed's subscription, so one swap reaches the list state and every derivation. Consequences:
 
 - a swap reaches the VM member and the business logic through the same subscription, in whichever order they subscribed;
-- derivations read the subscription, below the state's own updates: an edit of the state stays local to it, as in a live app;
+- derivations of a feed input read the feed's subscription, below the updates of the state built over it: an edit of that state stays local to it, as in a live app;
 - `HotSwapFeed` reads its feed directly, not through the context, which would route it back to the subscription itself; a mock that is the member's own feed restores the real feed;
-- a state input is swapped at the state's own subscription, which every reader of the state reads, directly or through the context's subscription to the state: it reads a state built over the mock, and `HotSwap` redirects the member's writes to that state, so an edit applies over the mock; a list state is swapped through the state it wraps;
+- a state input is swapped at the state's own subscription, which every reader of the state reads, directly or through the context's subscription to the state: it reads a state built over the mock, and `HotSwap` redirects the member's writes to that state, so an edit applies over the mock and reaches the feeds derived from the state, as in a live app; that state is built for one swap and disposed by the next, so each swap starts over from its mock, and a mock that is itself a state takes the writes directly (v19); a list state is swapped through the state it wraps;
 - a state's internal `UpdateFeed` uses the same subscription wrapper; eager states and updates without a subscriber explicitly activate that subscription;
 - no `dynamic`, no duck-typed re-init needed for feeds: **`SetMock` = one typed swap per mocked member** (D11): a fail-hard check that the member's subscription is swappable, then the swap. No per-member generated handle. (The HR `dynamic` path stays untouched, HR-only.)
 - outside a mocking context nothing is wrapped: a subscription reads its feed as before.
 
-Costs and limits, accepted for a development-only path (D7): under mocking a subscription does not complete when its feed completes, and a mock derived from the member it replaces would observe itself.
+Costs and limits, accepted for a development-only path (D7): under mocking a subscription does not complete when its feed completes, a mock derived from the member it replaces would observe itself, and the context keeps its subscription to a state input's mock until the context is disposed.
 
 ```mermaid
 flowchart TB
