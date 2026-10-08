@@ -77,11 +77,11 @@ axis, which cannot be produced outside a refreshable source feed.
 
 Scalar FeedMock.Empty<T>() means Option<T>.None.
 
-ListFeedMock.Empty<T>() means a present empty immutable list (Some(empty)). The list
-adapter forwards the message rather than using the normal list-feed adapter, which
-would coerce Some(empty) to None. Empty Value and Refreshing inputs preserve the same
-Some(empty) behavior. Callers that need None for a list can express it explicitly
-through ListFeedMock.Message.
+ListFeedMock.Empty<T>() also means None: a real list feed reports an empty list as no
+data, so a FeedView shows its NoneTemplate and derived feeds get no value. Value and
+Refreshing with no items give None too. The list adapter forwards messages as built
+rather than using the normal list-feed adapter, so ListFeedMock.Message keeps an
+explicit Some(empty), a state no list feed of a running app produces.
 
 ## Reuse boundary
 
@@ -106,8 +106,8 @@ implementation of the full spec 013 system.
 ## Verification
 
 Focused tests cover scalar and list common states, all configured message axes, finite
-completion, repeated subscriptions, undefined replay through state, Some(empty) list
-behavior, assembly/namespace naming, and the public API shape.
+completion, repeated subscriptions, undefined replay through state, empty list as None,
+assembly/namespace naming, and the public API shape.
 
 Validation on the issue branch:
 
