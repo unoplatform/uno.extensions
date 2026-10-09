@@ -15,13 +15,27 @@ namespace Uno.Extensions.Reactive;
 /// Extensions to configure commands using the <see cref="ICommandBuilder{T}"/>.
 /// </summary>
 /// <remarks>
-/// The validation runs each time the command is executed, right before the action configured with Then.
+/// <para>
+/// The validation runs each time the command is executed, right before the action configured with Then, while the command is executing.
 /// The results are published on the <see cref="MessageAxis.Validation"/> of the state configured as parameter of the command (using Given),
-/// and if there is any error, the execution is aborted (the action is not invoked, and the execution completes without error).
-/// The results are not cleared when the state changes: they are replaced on the next execution of the command
+/// and if there is any error, the execution is aborted: the action is not invoked, and the execution completes without error
+/// (i.e. the ExecutionCompleted event is raised the same way as for a successful execution).
+/// </para>
+/// <para>
+/// The results are not cleared when the value of the state is changed: they are replaced on the next execution of the command
 /// (which also replaces the results of a validator configured on the state itself using State.Validate, and vice versa).
-/// If the parameter is not a state (or is provided by the view), the execution is still aborted, but the results are only logged.
+/// Like any update of a state, they are however cleared if the source of the state produces a new value (e.g. a refresh of a State.Async).
+/// </para>
+/// <para>
+/// If the parameter is not a state (e.g. a feed, or a parameter provided by the view), the execution is still aborted, but the results are only logged.
 /// The validation does not alter the CanExecute of the command, so the user can always retry.
+/// If the validator throws, the execution fails (the error is reported to the error handler of the command) and the previous results are kept.
+/// The validator should honor its cancellation token (cancelled when the command is disposed) and apply its own timeout if it might hang (e.g. a remote validation),
+/// as the command remains executing (and cannot be executed again with the same parameter) until the validator completes.
+/// </para>
+/// <para>
+/// Configuring the validation multiple times on the same command replaces the previous validation (the last one wins).
+/// </para>
 /// </remarks>
 public static class CommandBuilderExtensions
 {
@@ -89,7 +103,10 @@ public static class CommandBuilderExtensions
 	/// <param name="validator">The validator to use (e.g. the one registered by <c>UseValidation</c>).</param>
 	/// <param name="localizer">An optional localizer: when provided, the <see cref="ValidationResult.ErrorMessage"/> of the results are resource keys resolved through it.</param>
 	/// <returns>The command builder to complete fluent configuration.</returns>
-	/// <remarks>See the remarks of <see cref="CommandBuilderExtensions"/>.</remarks>
+	/// <remarks>
+	/// A null parameter has nothing to validate: it is considered as valid (i.e. the action is invoked with null).
+	/// See the remarks of <see cref="CommandBuilderExtensions"/>.
+	/// </remarks>
 	/// <exception cref="NotSupportedException">If the <paramref name="builder"/> has not been created using the <see cref="Command"/> factories.</exception>
 	public static IConditionalCommandBuilder<T> Validation<T>(this ICommandBuilder<T> builder, IValidator validator, IStringLocalizer? localizer = null)
 		where T : notnull

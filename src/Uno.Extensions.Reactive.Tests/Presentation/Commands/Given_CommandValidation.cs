@@ -15,6 +15,7 @@ using Uno.Extensions.Reactive.Commands;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Testing;
 using Uno.Extensions.Validation;
+using static Uno.Extensions.Reactive.Tests.ValidationTestHelper;
 
 namespace Uno.Extensions.Reactive.Tests.Commands;
 
@@ -113,8 +114,11 @@ public class Given_CommandValidation : FeedUITests
 		await sut.ExecuteAndWait();
 
 		sut.Executions.Should().BeEmpty();
-		sut.Errors.Should().ContainSingle().Which.InnerException.Should().BeOfType<TestException>();
-		sut.Completions.Last().Error.Should().BeOfType<TestException>();
+		sut.Errors.Should().ContainSingle()
+			.Which.InnerException.Should().BeOfType<InvalidOperationException>()
+			.Which.InnerException.Should().BeOfType<TestException>();
+		sut.Completions.Last().Error.Should().BeOfType<InvalidOperationException>()
+			.Which.Message.Should().Contain("validation").And.NotContain("updated"); // No user input in the error
 		Validation(state).Should().Equal("invalid");
 	}
 
@@ -141,7 +145,7 @@ public class Given_CommandValidation : FeedUITests
 	}
 
 	[TestMethod]
-	public async Task When_DisposedWhileValidating_Then_ValidationCancelled_And_NotExecuted()
+	public async Task When_DisposedWhileValidating_Then_ValidationCancelled()
 	{
 		var state = new StateImpl<string>(Context, Option.Some("value"));
 		var validationCt = new TaskCompletionSource<CancellationToken>();
@@ -158,11 +162,69 @@ public class Given_CommandValidation : FeedUITests
 		sut.Command.Execute(null);
 		var ct = await validationCt.Task;
 
-		((IDisposable)sut.Command).Dispose();
+		sut.Command.Dispose();
 
 		ct.IsCancellationRequested.Should().BeTrue();
-		await Task.Delay(50);
+	}
+
+	[TestMethod]
+	public async Task When_DisposedWhileValidatingAndValidatorIgnoresCancellation_Then_NothingPublished()
+	{
+		var state = new StateImpl<string>(Context, Option.Some("value"));
+		// Note: Continuations are run synchronously, so the end of the execution runs within the SetResult below.
+		var validation = new TaskCompletionSource<IEnumerable<ValidationResult>>();
+		var sut = Create(b => b
+			.Given(state)
+			.Validation((value, ct) => new ValueTask<IEnumerable<ValidationResult>>(validation.Task))
+			.Then(Execute));
+		await sut.WaitForCanExecute();
+		sut.Command.Execute(null);
+		await WaitFor(() => sut.Starts == 1);
+
+		sut.Command.Dispose();
+		validation.SetResult(Error("invalid"));
+
 		sut.Executions.Should().BeEmpty();
+		Validation(state).Should().BeEmpty();
+	}
+
+	[TestMethod]
+	public async Task When_DisposedWhileValidatingAndValidatorIgnoresCancellation_Then_ActionNotInvoked()
+	{
+#pragma warning disable FEED2003 // A feed parameter (nothing published) makes sure that only the check before the action can prevent the execution.
+		var feed = Feed.Async(async ct => "value");
+		// Note: Continuations are run synchronously, so the end of the execution runs within the SetResult below.
+		var validation = new TaskCompletionSource<IEnumerable<ValidationResult>>();
+		var sut = Create(b => b
+			.Given(feed)
+			.Validation((value, ct) => new ValueTask<IEnumerable<ValidationResult>>(validation.Task))
+			.Then(Execute));
+#pragma warning restore FEED2003
+		await sut.WaitForCanExecute();
+		sut.Command.Execute(null);
+		await WaitFor(() => sut.Starts == 1);
+
+		sut.Command.Dispose();
+		validation.SetResult(Valid());
+
+		sut.Executions.Should().BeEmpty();
+	}
+
+	[TestMethod]
+	public async Task When_GivenStateDisposed_Then_ExecutionCompletes()
+	{
+		var state = new StateImpl<string>(Context, Option.Some("value"));
+		var sut = Create(b => b
+			.Given(state)
+			.Validation(async (value, ct) => Error("invalid"))
+			.Then(Execute));
+		await sut.WaitForCanExecute();
+
+		await state.DisposeAsync();
+		await sut.ExecuteAndWait();
+
+		sut.Executions.Should().BeEmpty();
+		sut.Command.IsExecuting.Should().BeFalse();
 	}
 
 	[TestMethod]
@@ -188,10 +250,11 @@ public class Given_CommandValidation : FeedUITests
 		await WaitFor(() => canExecuteEvaluated);
 
 		sut.Command.Execute(null);
-		await Task.Delay(50);
 
+		// The command decides synchronously whether an execution starts, and the validation runs only in a started execution.
+		sut.Starts.Should().Be(0);
+		sut.Command.IsExecuting.Should().BeFalse();
 		validated.Should().BeFalse();
-		sut.Completions.Should().BeEmpty();
 		Validation(state).Should().BeEmpty();
 	}
 
@@ -251,7 +314,7 @@ public class Given_CommandValidation : FeedUITests
 	{
 		using var host = new HostBuilder().UseValidation().Build();
 		var validator = host.Services.GetRequiredService<IValidator>();
-		var state = new StateImpl<Person>(Context, Option.Some(new Person()));
+		var state = new StateImpl<ValidatedPerson>(Context, Option.Some(new ValidatedPerson()));
 		var executed = 0;
 		var sut = Create(b => b
 			.Given(state)
@@ -261,9 +324,9 @@ public class Given_CommandValidation : FeedUITests
 
 		var result = state.Current.Current.Validation.Should().ContainSingle().Subject;
 		result.ErrorMessage.Should().Be("Validation_NameRequired");
-		result.MemberNames.Should().Equal(nameof(Person.Name));
+		result.MemberNames.Should().Equal(nameof(ValidatedPerson.Name));
 
-		await state.UpdateAsync(_ => new Person { Name = "John" }, CT);
+		await state.UpdateAsync(_ => new ValidatedPerson { Name = "John" }, CT);
 		await sut.ExecuteAndWait();
 
 		executed.Should().Be(1);
@@ -276,7 +339,7 @@ public class Given_CommandValidation : FeedUITests
 		using var host = new HostBuilder().UseValidation().Build();
 		var validator = host.Services.GetRequiredService<IValidator>();
 		var localizer = new TestLocalizer { { "Validation_NameRequired", "Le nom est requis" }, { "Validation_TooShort", "Trop court" } };
-		var person = new StateImpl<Person>(Context, Option.Some(new Person()));
+		var person = new StateImpl<ValidatedPerson>(Context, Option.Some(new ValidatedPerson()));
 		var text = new StateImpl<string>(Context, Option.Some("value"));
 		var personSut = Create(b => b.Given(person).Validation(validator, localizer).Then(async (_, _) => { }));
 		var textSut = Create(b => b.Given(text).Validation(async (value, ct) => false, "Validation_TooShort", localizer).Then(Execute));
@@ -336,7 +399,118 @@ public class Given_CommandValidation : FeedUITests
 		Validation(state).Should().Equal("command initial");
 
 		await state.SetAsync("updated", CT);
-		await WaitFor(() => Validation(state).SequenceEqual(new[] { "on change updated" }));
+		await WaitFor(() => Validation(state) is [not "command initial"]);
+		Validation(state).Should().Equal("on change updated");
+	}
+
+	[TestMethod]
+	public async Task When_SourceOfStateProducesNewValue_Then_ResultsCleared()
+	{
+		var refresh = new Signal();
+		var state = new StateImpl<string>(Context, Feed<string>.Async(async ct => "value", refresh));
+		var sut = Create(b => b
+			.Given(state)
+			.Validation(async (value, ct) => Error("invalid"))
+			.Then(Execute));
+		await sut.ExecuteAndWait();
+		Validation(state).Should().Equal("invalid");
+
+		// Like any (volatile) update of a state, the results are dropped when its source produces a new value.
+		refresh.Raise();
+
+		await WaitFor(() => Validation(state).Length == 0);
+	}
+
+	[TestMethod]
+	public async Task When_ValidatorCancelledByItself_Then_ExecutionFails()
+	{
+		var state = new StateImpl<string>(Context, Option.Some("value"));
+		var sut = Create(b => b
+			.Given(state)
+			.Validation(ValueTask<IEnumerable<ValidationResult>> (string value, CancellationToken ct) => throw new TaskCanceledException("e.g. timeout of an HttpClient"))
+			.Then(Execute));
+
+		await sut.ExecuteAndWait();
+
+		sut.Executions.Should().BeEmpty();
+		sut.Errors.Should().ContainSingle()
+			.Which.InnerException.Should().BeOfType<InvalidOperationException>()
+			.Which.InnerException.Should().BeOfType<TaskCanceledException>();
+	}
+
+	[TestMethod]
+	public async Task When_ValidationConfiguredTwice_Then_LastWins()
+	{
+		var state = new StateImpl<string>(Context, Option.Some("value"));
+		var sut = Create(b => b
+			.Given(state)
+			.Validation(async (value, ct) => Error("first"))
+			.Validation(async (value, ct) => Error("second"))
+			.Then(Execute));
+
+		await sut.ExecuteAndWait();
+
+		Validation(state).Should().Equal("second");
+	}
+
+	[TestMethod]
+	public async Task When_BuilderOfDerivedType_Then_ResultsPublished()
+	{
+		var state = new StateImpl<string>(Context, Option.Some("value"));
+		var sut = Create(b =>
+		{
+			// The builder interfaces are covariant: the builder of the string state is used as a builder of object.
+			ICommandBuilder<object> builder = b.Given(state);
+			builder
+				.Validation(async (object value, CancellationToken ct) => Error($"invalid {value}"))
+				.Then(Execute);
+		});
+
+		await sut.ExecuteAndWait();
+
+		sut.Executions.Should().BeEmpty();
+		Validation(state).Should().Equal("invalid value");
+	}
+
+	[TestMethod]
+	public async Task When_ParameterFromView_Then_Validated_And_Aborted()
+	{
+		var validated = new List<string>();
+#pragma warning disable FEED2003 // Validation of a parameter provided by the view is the scenario under test.
+		var sut = CreateFromView<string>(b => b
+			.Validation(async (value, ct) =>
+			{
+				lock (validated)
+				{
+					validated.Add(value);
+				}
+				return value == "valid" ? Valid() : Error("invalid");
+			})
+			.Then(Execute));
+#pragma warning restore FEED2003
+
+		await sut.ExecuteAndWait("invalid");
+		await sut.ExecuteAndWait("valid");
+
+		validated.Should().Equal("invalid", "valid");
+		sut.Executions.Should().Equal("valid");
+		sut.Errors.Should().BeEmpty();
+	}
+
+	[TestMethod]
+	public async Task When_NullParameterFromViewWithIValidator_Then_ConsideredValid()
+	{
+		using var host = new HostBuilder().UseValidation().Build();
+		var validator = host.Services.GetRequiredService<IValidator>();
+#pragma warning disable FEED2003 // Validation of a parameter provided by the view is the scenario under test.
+		var sut = CreateFromView<ValidatedPerson>(b => b
+			.Validation(validator)
+			.Then(Execute));
+#pragma warning restore FEED2003
+
+		await sut.ExecuteAndWait(null);
+
+		sut.Executions.Should().Equal(new object?[] { null });
 	}
 
 	[TestMethod]
@@ -384,6 +558,22 @@ public class Given_CommandValidation : FeedUITests
 		return new SutCommand(command, errors, _executions);
 	}
 
+	private SutCommand CreateFromView<T>(Action<ICommandBuilder<T>> build)
+	{
+		var errors = new List<Exception>();
+		var builder = new CommandBuilder<T>("sut");
+		build(builder);
+		var command = builder.Build(Context, error =>
+		{
+			lock (errors)
+			{
+				errors.Add(error);
+			}
+		});
+
+		return new SutCommand(command, errors, _executions);
+	}
+
 	private readonly List<object?> _executions = new();
 
 	private async ValueTask Execute<T>(T parameter, CancellationToken ct)
@@ -403,26 +593,12 @@ public class Given_CommandValidation : FeedUITests
 	private static IEnumerable<ValidationResult> Valid()
 		=> Array.Empty<ValidationResult>();
 
-	private static async Task WaitFor(Func<bool> predicate)
-	{
-		for (var i = 0; i < 500; i++)
-		{
-			if (predicate())
-			{
-				return;
-			}
-
-			await Task.Delay(10);
-		}
-
-		throw new TimeoutException();
-	}
-
 	private sealed class SutCommand
 	{
 		private readonly List<Exception> _errors;
 		private readonly List<object?> _executions;
 		private readonly List<ExecutionCompletedEventArgs> _completions = new();
+		private int _starts;
 
 		public SutCommand(IAsyncCommand command, List<Exception> errors, List<object?> executions)
 		{
@@ -430,6 +606,7 @@ public class Given_CommandValidation : FeedUITests
 			_errors = errors;
 			_executions = executions;
 
+			Command.ExecutionStarted += (snd, args) => Interlocked.Increment(ref _starts);
 			Command.ExecutionCompleted += (snd, args) =>
 			{
 				lock (_completions)
@@ -440,6 +617,8 @@ public class Given_CommandValidation : FeedUITests
 		}
 
 		public AsyncCommand Command { get; }
+
+		public int Starts => _starts;
 
 		public IReadOnlyList<ExecutionCompletedEventArgs> Completions
 		{
@@ -474,23 +653,17 @@ public class Given_CommandValidation : FeedUITests
 			}
 		}
 
-		public async Task WaitForCanExecute()
-			=> await WaitFor(() => Command.CanExecute(null));
+		public async Task WaitForCanExecute(object? parameter = null)
+			=> await WaitFor(() => Command.CanExecute(parameter));
 
-		public async Task ExecuteAndWait()
+		public async Task ExecuteAndWait(object? parameter = null)
 		{
-			await WaitForCanExecute();
+			await WaitForCanExecute(parameter);
 
 			var count = Completions.Count;
-			Command.Execute(null);
+			Command.Execute(parameter);
 			await WaitFor(() => Completions.Count > count);
 		}
-	}
-
-	public sealed class Person
-	{
-		[Required(ErrorMessage = "Validation_NameRequired")]
-		public string? Name { get; init; }
 	}
 
 	private sealed class CustomBuilder : ICommandBuilder<string>
@@ -498,30 +671,5 @@ public class Given_CommandValidation : FeedUITests
 		public IConditionalCommandBuilder<string> When(Predicate<string> canExecute) => throw new NotSupportedException();
 		public void Then(AsyncAction<string> execute) => throw new NotSupportedException();
 		public void Execute(AsyncAction<string> execute) => throw new NotSupportedException();
-	}
-
-	private sealed class TestLocalizer : IStringLocalizer, IEnumerable<KeyValuePair<string, string>>
-	{
-		private readonly ConcurrentDictionary<string, string> _resources = new();
-
-		public void Add(string name, string value)
-			=> _resources[name] = value;
-
-		public LocalizedString this[string name]
-			=> _resources.TryGetValue(name, out var value)
-				? new LocalizedString(name, value)
-				: new LocalizedString(name, name, resourceNotFound: true);
-
-		public LocalizedString this[string name, params object[] arguments]
-			=> new(name, string.Format(CultureInfo.CurrentCulture, this[name].Value, arguments));
-
-		public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
-			=> _resources.Select(kvp => new LocalizedString(kvp.Key, kvp.Value));
-
-		IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator()
-			=> _resources.GetEnumerator();
-
-		global::System.Collections.IEnumerator global::System.Collections.IEnumerable.GetEnumerator()
-			=> _resources.GetEnumerator();
 	}
 }
