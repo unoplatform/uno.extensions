@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Sources;
 
 namespace Uno.Extensions.Reactive;
@@ -220,10 +221,11 @@ public static class MessageAxisExtensions
 	/// <remarks>
 	/// Validation results only annotate the data: they do not alter the data nor the error of the message.
 	/// They are local to the feed on which they are set, i.e. they are not forwarded to feeds derived from it (e.g. using Select or Combine).
+	/// Null results (i.e. <see cref="ValidationResult.Success"/>) are ignored.
 	/// </remarks>
 	public static TBuilder Validation<TBuilder>(this TBuilder builder, IEnumerable<ValidationResult>? results)
 		where TBuilder : IMessageBuilder
-		=> builder.Set(MessageAxis.Validation, results?.ToImmutableList());
+		=> builder.Set(MessageAxis.Validation, ValidationHelper.ToResults(results));
 
 	/// <summary>
 	/// Gets the progress of an <see cref="MessageEntry{T}"/>

@@ -415,6 +415,17 @@ public class Given_StateWithValidation : FeedTests
 	}
 
 	[TestMethod]
+	public async Task When_ValidatorReturnsSuccess_Then_Ignored()
+	{
+		var state = new StateImpl<string>(Context, Option.Some("initial"));
+
+		_ = state.Validate(async (value, ct) => new[] { ValidationResult.Success!, new ValidationResult("error") });
+
+		await WaitForValidation(state, "error");
+		state.Current.Current.Validation.Should().ContainSingle().Which.ErrorMessage.Should().Be("error");
+	}
+
+	[TestMethod]
 	public async Task When_IValidator_Then_ResultsPublished()
 	{
 		using var host = new HostBuilder()
