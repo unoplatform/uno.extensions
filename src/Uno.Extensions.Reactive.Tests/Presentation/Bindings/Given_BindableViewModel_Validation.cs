@@ -9,6 +9,7 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Bindings;
 using Uno.Extensions.Reactive.Testing;
+using static Uno.Extensions.Reactive.Tests.ValidationTestHelper;
 
 namespace Uno.Extensions.Reactive.Tests.Presentation.Bindings;
 
@@ -54,7 +55,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 		var result = new ValidationResult("Required");
 
 		await sut.Model.Name.UpdateMessageAsync(msg => msg.Validation(new[] { result }), CT);
-		await WaitFor(async () => (await GetErrors(sut, "Name")).Any());
+		await WaitForAsync(async () => (await GetErrors(sut, "Name")).Any());
 
 		(await GetErrors(sut, "Name")).Should().Equal(result);
 		(await GetErrors(sut, null)).Should().BeEmpty();
@@ -72,7 +73,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 		await WaitFor(() => errorsChanged is 1);
 		await sut.Model.Name.UpdateMessageAsync(msg => msg.Validation(new[] { new ValidationResult("Required") }), CT);
 		await sut.Model.Name.UpdateMessageAsync(msg => msg.Validation(new[] { new ValidationResult("Other") }), CT); // Marker
-		await WaitFor(async () => (await GetErrors(sut, "Name")).Any(r => r.ErrorMessage == "Other"));
+		await WaitForAsync(async () => (await GetErrors(sut, "Name")).Any(r => r.ErrorMessage == "Other"));
 
 		(await ExecuteOnDispatcher(() => errorsChanged)).Should().Be(2);
 	}
@@ -81,13 +82,13 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 	public async Task When_ValueSetFromView_Then_ValidationStillDelivered()
 	{
 		await using var sut = await ExecuteOnDispatcher(() => new When_Validated_ViewModel());
-		await WaitFor(async () => (await GetErrors(sut, "Name")).Any()); // Initial value is empty, so it's invalid
+		await WaitForAsync(async () => (await GetErrors(sut, "Name")).Any()); // Initial value is empty, so it's invalid
 
 		await ExecuteOnDispatcher(() => sut.Name = "valid");
-		await WaitFor(async () => !(await GetErrors(sut, "Name")).Any());
+		await WaitForAsync(async () => !(await GetErrors(sut, "Name")).Any());
 
 		await ExecuteOnDispatcher(() => sut.Name = "");
-		await WaitFor(async () => (await GetErrors(sut, "Name")).Any());
+		await WaitForAsync(async () => (await GetErrors(sut, "Name")).Any());
 
 		(await GetErrors(sut, "Name")).Single().ErrorMessage.Should().Be("Name is required");
 		(await ExecuteOnDispatcher(() => sut.Name)).Should().Be("", "validation must never block the value");
@@ -133,7 +134,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 		var result = new ValidationResult("First name is required", new[] { "FristName" }); // Typo: no binding would ever query it
 
 		await sut.Model.Person.UpdateMessageAsync(msg => msg.Validation(new[] { result }), CT);
-		await WaitFor(async () => (await GetErrors(sut.Person, null)).Any());
+		await WaitForAsync(async () => (await GetErrors(sut.Person, null)).Any());
 
 		(await GetErrors(sut.Person, null)).Should().Equal(result);
 		(await GetErrors(sut.Person, "FristName")).Should().BeEmpty();
@@ -159,7 +160,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 		var result = new ValidationResult("Street is required", new[] { "Address.Street" });
 
 		await sut.Model.Person.UpdateMessageAsync(msg => msg.Validation(new[] { result }), CT);
-		await WaitFor(async () => (await GetErrors(sut.Person.Address, "Street")).Any());
+		await WaitForAsync(async () => (await GetErrors(sut.Person.Address, "Street")).Any());
 
 		(await GetErrors(sut.Person.Address, "Street")).Should().Equal(result);
 		(await GetErrors(sut.Person, "Address")).Should().BeEmpty("the error is about the street, not the whole address");
@@ -175,7 +176,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 		var result = new ValidationResult("Address is invalid", new[] { "Address" });
 
 		await sut.Model.Person.UpdateMessageAsync(msg => msg.Validation(new[] { result }), CT);
-		await WaitFor(async () => (await GetErrors(sut.Person, "Address")).Any());
+		await WaitForAsync(async () => (await GetErrors(sut.Person, "Address")).Any());
 
 		(await GetErrors(sut.Person, "Address")).Should().Equal(result);
 		(await GetErrors(sut.Person.Address, null)).Should().Equal(result);
@@ -189,7 +190,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 		var result = new ValidationResult("Person is invalid");
 
 		await sut.Model.Person.UpdateMessageAsync(msg => msg.Validation(new[] { result }), CT);
-		await WaitFor(async () => (await GetErrors(sut, "Person")).Any());
+		await WaitForAsync(async () => (await GetErrors(sut, "Person")).Any());
 
 		(await GetErrors(sut, "Person")).Should().Equal(result);
 		(await GetErrors(sut.Person, null)).Should().Equal(result);
@@ -211,12 +212,12 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 		// a value set from the view before that would be overwritten by the initial value (while the state keeps the value set from the view).
 		await WaitFor(() => initialized);
 		await ExecuteOnDispatcher(() => sut.Person.FirstName = "");
-		await WaitFor(async () => (await GetErrors(sut.Person, "FirstName")).Any());
+		await WaitForAsync(async () => (await GetErrors(sut.Person, "FirstName")).Any());
 
 		(await ExecuteOnDispatcher(() => sut.Person.FirstName)).Should().Be("");
 
 		await ExecuteOnDispatcher(() => sut.Person.FirstName = "John");
-		await WaitFor(async () => !(await GetErrors(sut.Person, "FirstName")).Any());
+		await WaitForAsync(async () => !(await GetErrors(sut.Person, "FirstName")).Any());
 	}
 
 	[TestMethod]
@@ -226,7 +227,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 		var result = new ValidationResult("Name is required", new[] { "Name" });
 
 		await sut.Model.Form.UpdateMessageAsync(msg => msg.Validation(new[] { result }), CT);
-		await WaitFor(async () => (await GetErrors(sut.Form, "Name")).Any());
+		await WaitForAsync(async () => (await GetErrors(sut.Form, "Name")).Any());
 
 		(await ExecuteOnDispatcher(() => ((INotifyDataErrorInfo)sut.Form).HasErrors)).Should().BeTrue();
 		(await ExecuteOnDispatcher(() => sut.Form.HasErrors)).Should().BeFalse("the member of the record hides the one of the bindable");
@@ -240,7 +241,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 		await ExecuteOnDispatcher(() => ((INotifyDataErrorInfo)sut).ErrorsChanged += (snd, e) => errorsChanged++);
 
 		await sut.Model.Name.SetAsync("updated", CT);
-		await WaitFor(async () => await ExecuteOnDispatcher(() => sut.Name) == "updated");
+		await WaitForAsync(async () => await ExecuteOnDispatcher(() => sut.Name) == "updated");
 
 		(await ExecuteOnDispatcher(() => errorsChanged)).Should().Be(0);
 		(await ExecuteOnDispatcher(() => sut.HasErrors)).Should().BeFalse();
@@ -303,22 +304,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 
 	/// <remarks>The predicate is evaluated on the UI thread, where the events are raised.</remarks>
 	private async Task WaitFor(Func<bool> predicate)
-		=> await WaitFor(async () => await ExecuteOnDispatcher(predicate));
-
-	private static async Task WaitFor(Func<Task<bool>> predicate)
-	{
-		for (var i = 0; i < 500; i++)
-		{
-			if (await predicate())
-			{
-				return;
-			}
-
-			await Task.Delay(10);
-		}
-
-		throw new TimeoutException();
-	}
+		=> await WaitForAsync(async () => await ExecuteOnDispatcher(predicate));
 
 	public partial class When_Primitive_Model
 	{
