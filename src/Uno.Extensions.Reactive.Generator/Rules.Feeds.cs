@@ -99,7 +99,7 @@ internal static partial class Rules
 
 		public static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
 			nameof(FEED2003),
-			"The parameter of a validated command is not a State",
+			"The parameter of a command validated on execution is not a State",
 			message,
 			Category.Usage,
 			DiagnosticSeverity.Warning,
