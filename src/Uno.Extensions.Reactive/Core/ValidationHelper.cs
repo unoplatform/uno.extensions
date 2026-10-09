@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,6 +16,19 @@ namespace Uno.Extensions.Reactive.Core;
 /// </summary>
 internal static class ValidationHelper
 {
+	/// <summary>
+	/// Materializes validation results, ignoring null results (i.e. <see cref="ValidationResult.Success"/>).
+	/// </summary>
+	/// <returns>The results, or null if <paramref name="results"/> is null.</returns>
+	[return: NotNullIfNotNull(nameof(results))]
+	public static IImmutableList<ValidationResult>? ToResults(IEnumerable<ValidationResult?>? results)
+		=> results switch
+		{
+			null => null,
+			IImmutableList<ValidationResult> list when !list.Contains(null!) => list,
+			_ => results.OfType<ValidationResult>().ToImmutableList(),
+		};
+
 	/// <summary>
 	/// Adapts a validator which returns the error message of an invalid value (null or empty when valid).
 	/// </summary>
@@ -66,6 +81,11 @@ internal static class ValidationHelper
 		var localized = new List<ValidationResult>();
 		foreach (var result in results)
 		{
+			if (result is null)
+			{
+				continue; // ValidationResult.Success
+			}
+
 			localized.Add(result is { ErrorMessage: { Length: > 0 } key } && localizer[key] is { ResourceNotFound: false } message
 				? new ValidationResult(message.Value, result.MemberNames)
 				: result);
