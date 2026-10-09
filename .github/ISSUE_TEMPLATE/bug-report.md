@@ -31,28 +31,27 @@ Package Version(s):
 
 Affected platform(s):
 
-- [ ] iOS
-- [ ] macOS (AppKit)
-- [ ] Mac Catalyst
-- [ ] Android
+- [ ] All platforms
 - [ ] WebAssembly
-- [ ] Windows
-- [ ] Skia (WPF)
-- [ ] Skia (GTK on Linux/macOS/Windows)
-- [ ] Skia (Linux Framebuffer)
+- [ ] Android
+- [ ] iOS
+- [ ] tvOS
+- [ ] Desktop (Windows)
+- [ ] Desktop (macOS)
+- [ ] Desktop (X11)
+- [ ] Desktop (Linux Framebuffer)
+- [ ] Windows App SDK
 - [ ] Build tasks
 
-Visual Studio:
+IDE:
 
-- [ ] 2019 (version: )
-- [ ] 2022 (version: )
-- [ ] Visual Studio Code (version: )
-- [ ] Rider Windows (version: )
-- [ ] Rider macOS (version: )
+- [ ] Visual Studio 2022
+- [ ] Visual Studio Code
+- [ ] Rider Windows
+- [ ] Rider macOS
+- [ ] Rider Linux
 
-Relevant plugins:
-
-- [ ] Resharper (version: )
+IDE version:
 
 ## Anything else we need to know?
 
