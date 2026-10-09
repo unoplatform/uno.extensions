@@ -16,7 +16,7 @@ using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Core;
 
-internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, IStateImpl
+internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, IStateImpl, IValidationTarget
 {
 	private readonly SubscriptionMode _mode;
 	private readonly StateUpdateKind _updatesKind;
@@ -214,7 +214,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 			// Note: This also runs for None, so results are never published inline, from the thread which is emitting the message of the state (under the lock of its UpdateFeed).
 			results = await Task.Run(
 					async () => hasValue
-						? (await loop.Validator(value!, ct).ConfigureAwait(false))?.ToImmutableList() // Materialized here, so a lazy validator fails as a validator.
+						? ValidationHelper.ToResults(await loop.Validator(value!, ct).ConfigureAwait(false)) // Materialized here, so a lazy validator fails as a validator.
 						: null, // No value to validate (None), clear the results.
 					ct)
 				.ConfigureAwait(false);
@@ -302,8 +302,13 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		}
 	}
 
+	/// <inheritdoc />
+	ValueTask IValidationTarget.PublishValidationAsync(IImmutableList<ValidationResult> results, CancellationToken ct)
+		=> PublishValidationAsync(results, isCurrent: null, NextValidationVersion(), ct);
+
 	/// <summary>
 	/// Publishes validation results on the <see cref="MessageAxis.Validation"/> of this state, replacing the results previously published.
+	/// This is the single entry point used by all validation producers (validator of the state, <c>SetValidationAsync</c>, commands).
 	/// </summary>
 	/// <param name="results">The validation results, null or empty to clear them.</param>
 	/// <param name="isCurrent">
@@ -356,8 +361,10 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		}
 		else
 		{
+			// The update is applied asynchronously (the update pipeline is busy).
+			// We force the continuation to run asynchronously, so the caller (e.g. the action of a command) does not run under the lock of the update pipeline.
 			using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct, target.Context.Token);
-			await applied.WaitAsync(cts.Token).ConfigureAwait(false);
+			await applied.WaitAsync(cts.Token).ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
 		}
 	}
 
