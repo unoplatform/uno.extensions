@@ -26,26 +26,42 @@ internal sealed class ValidationLocalizer(IStringLocalizer localizer)
 	/// </summary>
 	/// <remarks>
 	/// This is materialized (not lazy) so the localizer is invoked once per result, on the validator thread, and not each time the results are enumerated.
+	/// Null results (i.e. <see cref="ValidationResult.Success"/>) are dropped.
 	/// The results are returned as is when no message is resolved, so a validator which reports no error (e.g. on each keystroke) does not allocate.
 	/// </remarks>
-	public IEnumerable<ValidationResult> Localize<T>(IEnumerable<ValidationResult>? results)
+	public IEnumerable<ValidationResult> Localize<T>(IEnumerable<ValidationResult?>? results)
 	{
 		if (results is null)
 		{
 			return Array.Empty<ValidationResult>();
 		}
 
-		var source = results as IReadOnlyList<ValidationResult> ?? results.ToList();
+		var source = results as IReadOnlyList<ValidationResult?> ?? results.ToList();
 		List<ValidationResult>? localized = null;
 		for (var i = 0; i < source.Count; i++)
 		{
-			if (source[i] is { ErrorMessage: { Length: > 0 } key } result && Resolve<T>(key) is { } message)
+			var result = source[i];
+			var resolved = result is { ErrorMessage: { Length: > 0 } key } && Resolve<T>(key) is { } message
+				? new ValidationResult(message, result.MemberNames)
+				: result;
+			if (localized is null)
 			{
-				(localized ??= [.. source])[i] = new ValidationResult(message, result.MemberNames);
+				if (resolved is not null && ReferenceEquals(resolved, result))
+				{
+					continue;
+				}
+
+				// Allocated only once a result has to be replaced or dropped, with the results kept so far.
+				localized = [.. source.Take(i).OfType<ValidationResult>()];
+			}
+
+			if (resolved is not null)
+			{
+				localized.Add(resolved);
 			}
 		}
 
-		return localized ?? source;
+		return localized ?? (IEnumerable<ValidationResult>)source;
 	}
 
 	private string? Resolve<T>(string key)

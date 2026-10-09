@@ -649,14 +649,14 @@ public class Given_StateWithValidation : FeedTests
 	}
 
 	[TestMethod]
-	public void When_ResultIsNull_Then_KeptAsIs()
+	public void When_ResultIsNull_Then_Dropped()
 	{
 		var localizer = new ValidationLocalizer(new TestLocalizer { { "Validation_Found", "localized" } });
 
-		localizer.Localize<string>([null!, new ValidationResult("Validation_Found")])
-			.Select(result => result?.ErrorMessage)
+		localizer.Localize<string>([new ValidationResult("Not a key."), null, new ValidationResult("Validation_Found")])
+			.Select(result => result.ErrorMessage)
 			.Should()
-			.Equal(null, "localized");
+			.Equal("Not a key.", "localized");
 	}
 
 	[TestMethod]
@@ -701,6 +701,17 @@ public class Given_StateWithValidation : FeedTests
 
 		await WaitFor(() => state.Current.Current.Validation.Any(result => result.ErrorMessage == "Le nom est requis"));
 		state.Current.Current.Validation.Should().ContainSingle().Which.MemberNames.Should().Equal(nameof(Person.Name));
+	}
+
+	[TestMethod]
+	public async Task When_ValidatorReturnsSuccess_Then_Ignored()
+	{
+		var state = new StateImpl<string>(Context, Option.Some("initial"));
+
+		_ = state.Validate(async (value, ct) => new[] { ValidationResult.Success!, new ValidationResult("error") });
+
+		await WaitForValidation(state, "error");
+		state.Current.Current.Validation.Should().ContainSingle().Which.ErrorMessage.Should().Be("error");
 	}
 
 	[TestMethod]
