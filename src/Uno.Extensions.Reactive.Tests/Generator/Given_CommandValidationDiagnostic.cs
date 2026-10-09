@@ -64,6 +64,19 @@ public class Given_CommandValidationDiagnostic
 	}
 
 	[TestMethod]
+	public async Task When_GivenStateCastToFeed_Then_NoDiagnostic()
+	{
+		var diagnostics = await Run("""
+			public IAsyncCommand Submit => Command.Create(b => b
+				.Given((IFeed<string>)Name)
+				.Validation(async (name, ct) => name.Length > 0, "required")
+				.Then(async (name, ct) => { }));
+			""");
+
+		diagnostics.Should().BeEmpty();
+	}
+
+	[TestMethod]
 	public async Task When_GivenFeed_Then_Diagnostic()
 	{
 		var diagnostics = await Run("""
@@ -136,22 +149,7 @@ public class Given_CommandValidationDiagnostic
 
 	private static async Task<ImmutableArray<Diagnostic>> Run(string members)
 	{
-		var references = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!)
-			.Split(Path.PathSeparator)
-			.Where(path => Path.GetFileName(path) is { } name
-				&& (name.StartsWith("System.", StringComparison.Ordinal)
-					|| name.StartsWith("netstandard", StringComparison.Ordinal)
-					|| name.StartsWith("Microsoft.Extensions.", StringComparison.Ordinal)
-					|| (name.StartsWith("Uno.Extensions.", StringComparison.Ordinal) && !name.Contains("Generator", StringComparison.Ordinal))))
-			.Select(path => MetadataReference.CreateFromFile(path));
-		var compilation = CSharpCompilation.Create(
-			"App",
-			new[] { CSharpSyntaxTree.ParseText(Header + members + Footer) },
-			references,
-			new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, nullableContextOptions: NullableContextOptions.Enable));
-		compilation.GetDiagnostics()
-			.Where(diagnostic => diagnostic.Severity == DiagnosticSeverity.Error)
-			.Should().BeEmpty("the fixture source must compile before the analyzer runs");
+		var compilation = GeneratorTestHelper.CreateCompilation(Header + members + Footer);
 
 		return await compilation
 			.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(new CommandValidationAnalyzer()))
