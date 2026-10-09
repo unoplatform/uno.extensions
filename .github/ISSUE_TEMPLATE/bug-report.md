@@ -25,9 +25,11 @@ If the matter is security related, please disclose it privately via https://gith
 
 <!-- For bug reports Check one or more of the following options with "x" -->
 
-Nuget Package (s):
+Uno.Sdk version (found in `global.json`):
 
-Package Version(s):
+`Uno{Component}Version` overrides, if any (e.g. `UnoExtensionsVersion` set in your `.csproj` or `Directory.Build.props`):
+
+NuGet package(s) and version(s), if referenced directly:
 
 Affected platform(s):
 
