@@ -22,6 +22,7 @@ public readonly struct CommandBuilder<T> : ICommandBuilder, ICommandBuilder<T>, 
 	private readonly IList<CommandConfig> _configs;
 	private readonly CommandConfig _current;
 	private readonly IFeed<T>? _parameter;
+	private readonly Func<object?, CancellationToken, ValueTask<bool>>? _validate;
 
 	/// <summary>
 	/// Creates a new builder.
@@ -34,12 +35,13 @@ public readonly struct CommandBuilder<T> : ICommandBuilder, ICommandBuilder<T>, 
 		_current = default;
 	}
 
-	private CommandBuilder(string name, IList<CommandConfig> configs, CommandConfig current, IFeed<T>? parameter)
+	private CommandBuilder(string name, IList<CommandConfig> configs, CommandConfig current, IFeed<T>? parameter, Func<object?, CancellationToken, ValueTask<bool>>? validate)
 	{
 		_name = name;
 		_configs = configs;
 		_current = current;
 		_parameter = parameter;
+		_validate = validate;
 	}
 
 	/// <summary>
@@ -52,67 +54,116 @@ public readonly struct CommandBuilder<T> : ICommandBuilder, ICommandBuilder<T>, 
 		=> new AsyncCommand(_name, _configs, errorHandler ?? Command.DefaultErrorHandler, context);
 
 	ICommandBuilder<TArg> ICommandBuilder.Given<TArg>(IFeed<TArg> parameter)
-		=> new CommandBuilder<TArg>(_name, _configs, _current with { Parameter = ctx => ctx.GetOrCreateSource(parameter) }, parameter);
+		=> new CommandBuilder<TArg>(_name, _configs, _current with { Parameter = ctx => ctx.GetOrCreateSource(parameter) }, parameter, validate: null);
 
 	IConditionalCommandBuilder<T> ICommandBuilder<T>.When(Predicate<T> canExecute)
-		=> new CommandBuilder<T>(_name, _configs, _current with { CanExecute = arg => canExecute((T)arg!)}, _parameter);
+		=> new CommandBuilder<T>(_name, _configs, _current with { CanExecute = arg => canExecute((T)arg!)}, _parameter, _validate);
 
 	object IValidatingCommandBuilder.Validation(Func<object?, CancellationToken, ValueTask<IEnumerable<ValidationResult>>> validator)
-		=> new CommandBuilder<T>(_name, _configs, _current with { Validate = CreateValidation(_name, _parameter as IState<T>, validator) }, _parameter);
+		=> new CommandBuilder<T>(_name, _configs, _current, _parameter, CreateValidation(_name, _parameter, validator));
 
 	void ICommandBuilder.Then(AsyncAction execute)
-		=> _configs.Add(_current with { Execute = (_, ct) => execute(ct) });
+		=> _configs.Add(_current with { Execute = WithValidation((_, ct) => execute(ct)) });
 
 	void ICommandBuilder.Execute(AsyncAction execute)
-		=> _configs.Add(_current with { Execute = (_, ct) => execute(ct) });
+		=> _configs.Add(_current with { Execute = WithValidation((_, ct) => execute(ct)) });
 
 	void ICommandBuilder<T>.Then(AsyncAction<T> execute)
-		=> _configs.Add(_current with { Execute = (arg, ct) => execute((T)arg!, ct) });
+		=> _configs.Add(_current with { Execute = WithValidation((arg, ct) => execute((T)arg!, ct)) });
 
 	void ICommandBuilder<T>.Execute(AsyncAction<T> execute)
-		=> _configs.Add(_current with { Execute = (arg, ct) => execute((T)arg!, ct) });
+		=> _configs.Add(_current with { Execute = WithValidation((arg, ct) => execute((T)arg!, ct)) });
 
 	void IConditionalCommandBuilder<T>.Then(AsyncAction<T> execute)
-		=> _configs.Add(_current with { Execute = (arg, ct) => execute((T)arg!, ct) });
+		=> _configs.Add(_current with { Execute = WithValidation((arg, ct) => execute((T)arg!, ct)) });
+
+	/// <summary>
+	/// Runs the validation (if any) of the parameter before the action, aborting the execution if the parameter is not valid.
+	/// </summary>
+	private AsyncAction<object?> WithValidation(AsyncAction<object?> execute)
+	{
+		if (_validate is not { } validate)
+		{
+			return execute;
+		}
+
+		return async (parameter, ct) =>
+		{
+			if (!await validate(parameter, ct).ConfigureAwait(false))
+			{
+				return; // The parameter is not valid, results have been published, abort the execution.
+			}
+
+			// The validator might have completed after the command has been disposed (if it does not honor the cancellation token).
+			ct.ThrowIfCancellationRequested();
+
+			await execute(parameter, ct).ConfigureAwait(false);
+		};
+	}
 
 	private static Func<object?, CancellationToken, ValueTask<bool>> CreateValidation(
 		string name,
-		IState<T>? state,
+		IFeed<T>? parameter,
 		Func<object?, CancellationToken, ValueTask<IEnumerable<ValidationResult>>> validator)
-		=> async (parameter, ct) =>
+	{
+		// Note: A state created by the State factories is an IValidationTarget no matter the type of the parameter,
+		//		 so results can be published even if the parameter is a state of a derived type (covariance).
+		Func<IImmutableList<ValidationResult>, CancellationToken, ValueTask>? publish = parameter switch
 		{
-			// Note: ValidationResult.Success is null, so we ignore null results.
-			var results = (await validator(parameter, ct).ConfigureAwait(false))?.OfType<ValidationResult>().ToImmutableList()
-				?? ImmutableList<ValidationResult>.Empty;
+			IValidationTarget target => target.PublishValidationAsync,
+			IState<T> state => (results, ct) => state.UpdateMessageAsync(msg => msg.Validation(results), ct),
+			_ => null,
+		};
 
-			if (state is not null)
+		return async (value, ct) =>
+		{
+			IImmutableList<ValidationResult> results;
+			try
+			{
+				results = ValidationHelper.ToResults(await validator(value, ct).ConfigureAwait(false)) ?? ImmutableList<ValidationResult>.Empty;
+			}
+			catch (OperationCanceledException) when (ct.IsCancellationRequested)
+			{
+				throw;
+			}
+			catch (Exception error)
+			{
+				// Wrapped to give context (without the value which might contain user input),
+				// but also to make sure that a cancellation which is not ours (e.g. the timeout of an HttpClient) faults the execution instead of silently cancelling it.
+				throw new InvalidOperationException($"The validation of the parameter of the command '{name}' failed.", error);
+			}
+
+			if (publish is not null)
 			{
 				// Results are published unconditionally (no matter if the state has changed since the execution started),
 				// as they describe the submitted value and are expected to remain until the next execution.
-				await state.UpdateMessageAsync(msg => msg.Validation(results), ct).ConfigureAwait(false);
+				await publish(results, ct).ConfigureAwait(false);
 			}
-			else if (results.Count > 0 && LogExtensions.Log<AsyncCommand>() is { } log && log.IsEnabled(LogLevel.Warning))
+
+			if (results.Count is 0)
 			{
-				// Note: We do not log the messages as they might contain user input.
-				log.LogWarning(
-					"The execution of the command '{Command}' has been aborted as its parameter is not valid ({Count} validation errors), "
-					+ "but the validation results cannot be published as the parameter of the command is not a state (cf. FEED2003).",
-					name,
-					results.Count);
+				return true;
 			}
 
-			return results.Count is 0;
-		};
-}
+			// Note: We do not log the messages as they might contain user input.
+			var log = LogExtensions.Log<AsyncCommand>();
+			if (publish is null)
+			{
+				if (log.IsEnabled(LogLevel.Warning))
+				{
+					log.LogWarning(
+						"The execution of the command '{Command}' has been aborted as its parameter is not valid ({Count} validation errors), "
+						+ "but the validation results cannot be published as the parameter of the command is not a state (cf. FEED2003).",
+						name,
+						results.Count);
+				}
+			}
+			else if (log.IsEnabled(LogLevel.Debug))
+			{
+				log.LogDebug("The execution of the command '{Command}' has been aborted as its parameter is not valid ({Count} validation errors).", name, results.Count);
+			}
 
-/// <summary>
-/// A command builder that supports a validation step (cf. CommandBuilderExtensions.Validation).
-/// </summary>
-internal interface IValidatingCommandBuilder
-{
-	/// <summary>
-	/// Adds a validation of the parameter, run on each execution of the command.
-	/// </summary>
-	/// <returns>The <see cref="IConditionalCommandBuilder{T}"/> to complete the configuration of the command.</returns>
-	object Validation(Func<object?, CancellationToken, ValueTask<IEnumerable<ValidationResult>>> validator);
+			return false;
+		};
+	}
 }
