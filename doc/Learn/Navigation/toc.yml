@@ -54,6 +54,8 @@
   href: xref:Uno.Extensions.Navigation.HowToShowDialog
 - name: "How-To: Display an item"
   href: xref:Uno.Extensions.Navigation.HowToDisplayItem
+- name: "Troubleshooting: ViewMap and DataContext"
+  href: xref:Uno.Extensions.Navigation.Troubleshooting.ViewMapDataContext
 - name: Advanced
   items:
     - name: "How-To: Modify the back-stack"
