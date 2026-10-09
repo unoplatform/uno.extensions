@@ -72,7 +72,8 @@ public sealed class CommandValidationAnalyzer : DiagnosticAnalyzer
 
 				case IInvocationOperation { TargetMethod.Name: "Given", Arguments.Length: 1 } given
 					when SymbolEqualityComparer.Default.Equals(given.TargetMethod.ContainingType, symbols.Builder):
-					var parameter = Unwrap(given.Arguments[0].Value);
+					// Note: We also unwrap explicit conversions (e.g. `Given((IFeed<T>)MyState)`), as only the runtime type matters to publish the results.
+					var parameter = Unwrap(given.Arguments[0].Value, includeExplicit: true);
 					if (parameter?.Type is { } type and not IErrorTypeSymbol && !IsState(type, symbols.State))
 					{
 						context.ReportDiagnostic(Rules.FEED2003.GetNotAStateDiagnostic(GetLocation(validation), parameter.Syntax.ToString(), type));
@@ -90,9 +91,9 @@ public sealed class CommandValidationAnalyzer : DiagnosticAnalyzer
 		}
 	}
 
-	private static IOperation? Unwrap(IOperation? operation)
+	private static IOperation? Unwrap(IOperation? operation, bool includeExplicit = false)
 	{
-		while (operation is IConversionOperation { IsImplicit: true } conversion)
+		while (operation is IConversionOperation conversion && (includeExplicit || conversion.IsImplicit))
 		{
 			operation = conversion.Operand;
 		}
