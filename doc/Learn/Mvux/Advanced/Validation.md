@@ -10,6 +10,7 @@ MVUX lets a state carry validation results alongside its value. The generated vi
 
 - Validation **never blocks a value**. An invalid value is still set on the state, and the validation results only annotate it.
 - Validation results are standard [`ValidationResult`](https://learn.microsoft.com/dotnet/api/system.componentmodel.dataannotations.validationresult) instances. MVUX does not depend on `Uno.Extensions.Validation`, but its `IValidator` plugs in directly (see [below](#using-the-ivalidator-service)).
+- A state can be validated each time it changes ([`Validate`](#validating-a-state)), or each time a command is executed ([`Validation`](#validating-when-a-command-is-executed)).
 - Validation is opt-in. When you don't use it, it costs nothing.
 
 ## Validating a state
@@ -55,19 +56,22 @@ public partial record PersonModel
 The error is reported for the state itself (empty `MemberNames`, cf. [Consuming errors in the view](#consuming-errors-in-the-view)). Use the overload returning a list of `ValidationResult` to report several errors, or errors targeting members of a record.
 
 > [!NOTE]
-> A validator lambda which only throws (no `return`) matches several overloads. Give it an explicit return type, for example `ValueTask<IEnumerable<ValidationResult>> (string name, CancellationToken ct) => throw ...`.
+> A validator lambda which only throws (no `return`), or which only returns `null`, matches several overloads (`CS0121`). Give it an explicit return type, for example `ValueTask<IEnumerable<ValidationResult>> (string name, CancellationToken ct) => throw ...`.
 
 ### Using the `IValidator` service
 
-The `IValidator` service of [Uno.Extensions.Validation](xref:Uno.Extensions.Validation.Overview) matches the shape of the validator delegate, so it can be used as is:
+The `IValidator` service of [Uno.Extensions.Validation](xref:Uno.Extensions.Validation.Overview) can be given directly to `Validate`:
 
 ```csharp
 public partial record PersonModel(IValidator Validator)
 {
     public IState<Person> Person => State.Value(this, () => new Person())
-        .Validate((person, ct) => Validator.ValidateAsync(person, null, ct));
+        .Validate(Validator);
 }
 ```
+
+> [!NOTE]
+> `IValidator` is declared in `Uno.Extensions.Core` (in the `Uno.Extensions.Validation` namespace), so MVUX can use it without a dependency on `Uno.Extensions.Validation`, which registers the implementation (`UseValidation`).
 
 ### Localizing messages
 
@@ -86,7 +90,7 @@ public partial record PersonModel(IStringLocalizer Localizer, IValidator Validat
 
     // The ErrorMessage of each result is a resource key, e.g. [Required(ErrorMessage = "Validation_EmailRequired")].
     public IState<Person> Person => State.Value(this, () => new Person())
-        .Validate((person, ct) => Validator.ValidateAsync(person, null, ct), Localizer);
+        .Validate(Validator, Localizer);
 }
 ```
 
@@ -104,7 +108,7 @@ public partial record PersonModel(IStringLocalizer Localizer, IValidator Validat
 
 ### Setting validation results manually
 
-Validation results are a metadata axis of the messages of the state, like the error or progress. You can set them yourself, for instance to validate the whole form when the user clicks Save:
+Validation results are a metadata axis of the messages of the state, like the error or progress. You can set them yourself, for instance to validate the whole form when the user clicks Save (the [validation of commands](#validating-when-a-command-is-executed) does this for you):
 
 ```csharp
 public async ValueTask Save(CancellationToken ct)
@@ -124,6 +128,41 @@ Passing `null` or an empty list clears the results. Setting results identical to
 
 > [!NOTE]
 > Validation results are local to the state that has them: they are **not** forwarded to feeds derived from it, such as `Select`, `Combine` or a `Feed.Async` that awaits the state. A derived `FullName` feed never shows the errors of the `Person` state.
+
+## Validating when a command is executed
+
+Instead of validating a state each time it changes, you can validate the parameter of a command each time the command is executed, i.e. when the user submits the form. Add `Validation` to the [command builder](xref:Uno.Extensions.Mvux.Advanced.Commands#create--createt), between `Given` (or `When`) and `Then`:
+
+```csharp
+public partial record PersonModel(IValidator Validator, IStringLocalizer Localizer, IPersonService Service)
+{
+    public IState<Person> Person => State.Value(this, () => new Person());
+
+    public IAsyncCommand Submit => Command.Create(b => b
+        .Given(Person)
+        .When(person => person is not null)             // CanExecute, optional
+        .Validation(Validator, Localizer)                // Validates the person on each execution
+        .Then(async (person, ct) => await Service.Save(person, ct)));
+}
+```
+
+On each execution, the command:
+
+1. validates its parameter (on a background thread, the command being `IsExecuting` meanwhile);
+2. publishes the results on the state given as parameter (`Given`), so they reach the view like the results of `Validate` (see [Consuming errors in the view](#consuming-errors-in-the-view));
+3. if there is any error, aborts the execution: the action given to `Then` is not invoked, and the execution completes without error.
+
+The results are **not** cleared when the value of the state is changed (e.g. by the user): they remain until the next execution of the command, which validates the value again (and clears them if it is valid). Like any change made on a state, they are however dropped if the source of the state produces a new value, for instance when a `State.Async` is refreshed.
+
+- `Validation` accepts the same validators as `Validate`: an `IValidator`, a delegate returning a list of `ValidationResult`, a delegate returning the error message, or a predicate and its error. Each takes an optional localizer as last argument (see [Localizing messages](#localizing-messages)).
+- Validation errors don't change `CanExecute`, so the user can always retry.
+- If the validator throws, the execution fails (the error goes to the error handler of the command, like an error of the action), and the previous results are kept.
+- The validator receives a `CancellationToken`, cancelled when the command is disposed. Honor it, and apply your own timeout to validators that might hang (e.g. a remote validation): the command remains executing until the validator completes.
+- An execution aborted by the validation completes like a successful one (`ExecutionCompleted` without error). If you react to the completion of the command (e.g. to close a dialog), do it in the action given to `Then` instead.
+- If the state is also validated by `Validate`, the last validation wins: executing the command replaces the results of `Validate`, and the next change of the state replaces the results of the command (as well as a validation of `Validate` which completes after the execution of the command).
+- Configuring `Validation` multiple times on the same command replaces the previous validation (the last one wins).
+- With an `IValidator`, a `null` parameter has nothing to validate and is considered as valid.
+- The parameter must be a state to publish the results. If it is a feed (e.g. `Feed.Async` or `Feed.Combine`), or if it is provided by the view (no `Given`), the execution is still aborted when the parameter is not valid, but the results are only logged. The analyzer reports the warning [`FEED2003`](xref:Uno.Extensions.Reactive.Rules) in that case.
 
 ## Consuming errors in the view
 
@@ -158,5 +197,6 @@ If you declare a `HasErrors` member yourself in a hand-written `partial` of a ge
 ## Current limitations
 
 - Only states (`IState<T>`) are validated. Read-only feeds and item-level errors of list states (`IListState<T>`) are not supported yet.
-- Validation runs on every data change, including the initial value. There is no built-in "touched" tracking yet: use the manual approach above to validate only when the user submits the form.
-- Commands are not disabled automatically when there are errors. Bind to `HasErrors` or check the validation results in the command.
+- `Validate` runs on every data change, including the initial value. There is no built-in "touched" tracking yet: use the [validation of commands](#validating-when-a-command-is-executed) to validate only when the user submits the form.
+- Commands are not disabled automatically when there are errors. Bind to `HasErrors`, or use the [validation of commands](#validating-when-a-command-is-executed) to abort their execution.
+- The validation of commands supports a single parameter (`Given`), and only commands created with `Command.Create` (not the commands generated from methods).

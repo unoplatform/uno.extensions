@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
@@ -15,7 +16,7 @@ using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Core;
 
-internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, IStateImpl, IHotSwapState<T>
+internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, IStateImpl, IHotSwapState<T>, IValidationTarget
 {
 	private readonly SubscriptionMode _mode;
 	private readonly StateUpdateKind _updatesKind;
@@ -199,19 +200,12 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 				return;
 			}
 
-			await UpdateMessageAsync(
-					msg =>
-					{
-						// Makes sure to not publish results for a stale version of the data.
-						// As this is invoked by the update pipeline of the state, this check is atomic with other updates of the state.
-						var isSameData = TryGetValue(msg.CurrentData, out var currentValue)
-							? hasValue && EqualityComparer<T>.Default.Equals(currentValue, value)
-							: !hasValue;
-						if (isSameData)
-						{
-							msg.Validation(results);
-						}
-					},
+			// Makes sure to not publish results for a stale version of the data.
+			await PublishValidationAsync(
+					ValidationHelper.ToResults(results),
+					currentData => TryGetValue(currentData, out var currentValue)
+						? hasValue && EqualityComparer<T>.Default.Equals(currentValue, value)
+						: !hasValue,
 					ct)
 				.ConfigureAwait(false);
 		}
@@ -231,6 +225,49 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 			{
 				log.LogDebug(error, "Validator failure details for the state '{State}'.", LogHelper.GetIdentifier(this));
 			}
+		}
+	}
+
+	/// <inheritdoc />
+	ValueTask IValidationTarget.PublishValidationAsync(IImmutableList<ValidationResult> results, CancellationToken ct)
+		=> PublishValidationAsync(results, isCurrent: null, ct);
+
+	/// <summary>
+	/// Publishes validation results on this state. This is the single entry point used by all validation producers (validator of the state, commands).
+	/// </summary>
+	/// <param name="results">The results to publish (null or empty to clear).</param>
+	/// <param name="isCurrent">
+	/// An optional predicate to determine if the results are still relevant for the current data of the state.
+	/// It is invoked by the update pipeline of the state, so this check is atomic with other updates of the state.
+	/// </param>
+	/// <param name="ct">A cancellation token: the results are not published if already cancelled, and the wait for the publication is aborted when cancelled.</param>
+	private async ValueTask PublishValidationAsync(IImmutableList<ValidationResult>? results, Func<Option<T>, bool>? isCurrent, CancellationToken ct)
+	{
+		ct.ThrowIfCancellationRequested();
+		Enable();
+
+		var update = new Update(
+			msg =>
+			{
+				if (isCurrent?.Invoke(msg.CurrentData) ?? true)
+				{
+					msg.Validation(results);
+				}
+			},
+			_updatesKind);
+		_inner.Add(update);
+
+		var applied = update.HasBeenApplied;
+		if (applied.IsCompleted)
+		{
+			await applied.ConfigureAwait(false); // Propagates the error (if any).
+		}
+		else
+		{
+			// The update is applied asynchronously (the update pipeline is busy).
+			// We force the continuation to run asynchronously, so the caller (e.g. the action of a command) does not run under the lock of the update pipeline.
+			using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct, Context.Token);
+			await applied.WaitAsync(cts.Token).ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
 		}
 	}
 

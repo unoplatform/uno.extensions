@@ -14,6 +14,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Testing;
 using Uno.Extensions.Validation;
+using static Uno.Extensions.Reactive.Tests.ValidationTestHelper;
 
 namespace Uno.Extensions.Reactive.Tests.Core;
 
@@ -406,52 +407,50 @@ public class Given_StateWithValidation : FeedTests
 			.Build();
 		var validator = host.Services.GetRequiredService<IValidator>();
 		var localizer = new TestLocalizer { { "Validation_NameRequired", "Le nom est requis" } };
-		var state = new StateImpl<Person>(Context, Option.Some(new Person()));
+		var state = new StateImpl<ValidatedPerson>(Context, Option.Some(new ValidatedPerson()));
 
-		_ = state.Validate((person, ct) => validator.ValidateAsync(person, null, ct), localizer);
+		_ = state.Validate(validator, localizer);
 
 		await WaitFor(() => state.Current.Current.Validation.Any(result => result.ErrorMessage == "Le nom est requis"));
-		state.Current.Current.Validation.Should().ContainSingle().Which.MemberNames.Should().Equal(nameof(Person.Name));
+		state.Current.Current.Validation.Should().ContainSingle().Which.MemberNames.Should().Equal(nameof(ValidatedPerson.Name));
 	}
 
-	public sealed class Person
+	[TestMethod]
+	public async Task When_ValidatorReturnsSuccess_Then_Ignored()
 	{
-		[Required(ErrorMessage = "Validation_NameRequired")]
-		public string? Name { get; set; }
+		var state = new StateImpl<string>(Context, Option.Some("initial"));
+
+		_ = state.Validate(async (value, ct) => new[] { ValidationResult.Success!, new ValidationResult("error") });
+
+		await WaitForValidation(state, "error");
+		state.Current.Current.Validation.Should().ContainSingle().Which.ErrorMessage.Should().Be("error");
 	}
 
-	private sealed class TestLocalizer : IStringLocalizer, IEnumerable<KeyValuePair<string, string>>
+	[TestMethod]
+	public async Task When_IValidator_Then_ResultsPublished()
 	{
-		private readonly ConcurrentDictionary<string, string> _resources = new();
-		private int _lookups;
+		using var host = new HostBuilder()
+			.UseValidation()
+			.Build();
+		var validator = host.Services.GetRequiredService<IValidator>();
+		var state = new StateImpl<ValidatedPerson>(Context, Option.Some(new ValidatedPerson()));
 
-		public int Lookups => _lookups;
+		_ = state.Validate(validator).Should().BeSameAs(state);
 
-		public void Add(string name, string value)
-			=> _resources[name] = value;
+		await WaitFor(() => state.Current.Current.Validation.Any(result => result.ErrorMessage == "Validation_NameRequired"));
+		state.Current.Current.Validation.Should().ContainSingle().Which.MemberNames.Should().Equal(nameof(ValidatedPerson.Name));
 
-		public LocalizedString this[string name]
-		{
-			get
-			{
-				Interlocked.Increment(ref _lookups);
-				return _resources.TryGetValue(name, out var value)
-					? new LocalizedString(name, value)
-					: new LocalizedString(name, name, resourceNotFound: true);
-			}
-		}
+		await state.UpdateAsync(_ => new ValidatedPerson { Name = "John" }, CT);
+		await WaitFor(() => state.Current.Current.Validation.Count == 0);
+	}
 
-		IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator()
-			=> _resources.GetEnumerator();
 
-		global::System.Collections.IEnumerator global::System.Collections.IEnumerable.GetEnumerator()
-			=> _resources.GetEnumerator();
+	[TestMethod]
+	public void When_NullIValidator_Then_Throws()
+	{
+		var state = new StateImpl<ValidatedPerson>(Context, Option.Some(new ValidatedPerson()));
 
-		public LocalizedString this[string name, params object[] arguments]
-			=> new(name, string.Format(CultureInfo.CurrentCulture, this[name].Value, arguments));
-
-		public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
-			=> _resources.Select(kvp => new LocalizedString(kvp.Key, kvp.Value));
+		state.Invoking(s => s.Validate(default(IValidator)!)).Should().Throw<ArgumentNullException>();
 	}
 
 	private static ValidationResult[] Error(string message)
@@ -459,21 +458,6 @@ public class Given_StateWithValidation : FeedTests
 
 	private async Task WaitForValidation(StateImpl<string> state, string errorMessage)
 		=> await WaitFor(() => state.Current.Current.Validation.Any(result => result.ErrorMessage == errorMessage));
-
-	private static async Task WaitFor(Func<bool> predicate)
-	{
-		for (var i = 0; i < 500; i++)
-		{
-			if (predicate())
-			{
-				return;
-			}
-
-			await Task.Delay(10);
-		}
-
-		throw new TimeoutException();
-	}
 
 	private sealed class TestValidator
 	{

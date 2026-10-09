@@ -78,22 +78,7 @@ public class Given_ValidationDiagnostic
 
 	private static (Diagnostic[] Diagnostics, Compilation Output) Run(string source)
 	{
-		var references = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!)
-			.Split(Path.PathSeparator)
-			.Where(path => Path.GetFileName(path) is { } name
-				&& (name.StartsWith("System.", StringComparison.Ordinal)
-					|| name.StartsWith("netstandard", StringComparison.Ordinal)
-					|| name.StartsWith("Microsoft.Extensions.", StringComparison.Ordinal)
-					|| (name.StartsWith("Uno.Extensions.", StringComparison.Ordinal) && !name.Contains("Generator", StringComparison.Ordinal))))
-			.Select(path => MetadataReference.CreateFromFile(path));
-		var compilation = CSharpCompilation.Create(
-			"App",
-			new[] { CSharpSyntaxTree.ParseText(source) },
-			references,
-			new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, nullableContextOptions: NullableContextOptions.Enable));
-		compilation.GetDiagnostics()
-			.Where(diagnostic => diagnostic.Severity == DiagnosticSeverity.Error)
-			.Should().BeEmpty("the fixture source must compile before the generator runs");
+		var compilation = GeneratorTestHelper.CreateCompilation(source);
 
 		CSharpGeneratorDriver
 			.Create(new FeedsGenerator())
