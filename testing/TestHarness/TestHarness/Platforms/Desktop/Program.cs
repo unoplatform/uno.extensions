@@ -1,5 +1,4 @@
 using Uno.UI.Hosting;
-using Uno.UI.Runtime.Skia;
 
 namespace TestHarness;
 public class Program

@@ -4,7 +4,7 @@
 	<PropertyGroup>
 		<AssemblyName>Uno.Extensions.Navigation.Toolkit.UI</AssemblyName>
 		<NoWarn>$(NoWarn);CA1416</NoWarn>
-		<WindowsSdkPackageVersion>10.0.19041.57</WindowsSdkPackageVersion>
+		<WindowsSdkPackageVersion>10.0.19041.87</WindowsSdkPackageVersion>
 		<!--Temporary disable missing XML doc until fixed in the whole package-->
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
 
