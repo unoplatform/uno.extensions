@@ -1,4 +1,4 @@
-<!-- TFMS for libraries that references Uno.WinUI (i.e. WinUI) -->
+﻿<!-- TFMS for libraries that references Uno.WinUI (i.e. WinUI) -->
 <Project>
 	<PropertyGroup Condition="'$(UnoTargetFrameworkOverride)'!=''">
 		<TargetFrameworks>$(UnoTargetFrameworkOverride)</TargetFrameworks>
@@ -10,6 +10,10 @@
 		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
 	</PropertyGroup>
 	<PropertyGroup>
-		<WindowsSdkPackageVersion>10.0.19041.57</WindowsSdkPackageVersion>
+		<WindowsSdkPackageVersion>10.0.19041.87</WindowsSdkPackageVersion>
+	</PropertyGroup>
+	<PropertyGroup>
+		<!-- The SDK supplies newer AndroidX than MAUI's Ktx packages allow; the newer ones are compatible. -->
+		<NoWarn>$(NoWarn);NU1608</NoWarn>
 	</PropertyGroup>
 </Project>

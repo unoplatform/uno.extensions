@@ -29,7 +29,7 @@
 		<OutputType>Library</OutputType>
 		<UnoExtensionsGeneration_DisableCreateNewOnMetadataUpdateAttribute>True</UnoExtensionsGeneration_DisableCreateNewOnMetadataUpdateAttribute>
 
-		<WindowsSdkPackageVersion>10.0.19041.57</WindowsSdkPackageVersion>
+		<WindowsSdkPackageVersion>10.0.19041.87</WindowsSdkPackageVersion>
 		<!-- Enables hard links for obj -> bin files (symlinks generally don't work there -->
 		<CreateHardLinksForCopyFilesToOutputDirectoryIfPossible>true</CreateHardLinksForCopyFilesToOutputDirectoryIfPossible>
 
