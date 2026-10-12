@@ -3,12 +3,12 @@
     <!--
       Uno 7.0 renders with Skia everywhere and drops the `Uno` assembly, so every Uno 6-era
       package fails CS0012 out of the BindableTypeProviders generator. These are the first
-      Toolkit/Themes builds against Uno.WinUI 7.0.0-dev.701 - the version Uno.Sdk.Private pins in
+      Toolkit/Themes builds against Uno.WinUI 7.0.0-dev.2162 - the version Uno.Sdk.Private pins in
       global.json. The SDK's own defaults (Toolkit 9.1.0-dev.2, Themes 7.1.0-dev.1) are still on
       the Uno 6 line, so both must stay pinned here until the SDK catches up.
     -->
-    <UnoToolkitVersion>11.0.0-dev.90</UnoToolkitVersion>
-    <UnoThemesVersion>9.0.0-dev.16</UnoThemesVersion>
+    <UnoToolkitVersion>11.0.0-dev.140</UnoToolkitVersion>
+    <UnoThemesVersion>9.0.0-dev.41</UnoThemesVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" />
