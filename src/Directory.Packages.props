@@ -69,9 +69,9 @@
     <PackageVersion Include="System.Net.Http.WinHttpHandler" Version="6.0.1" />
     <PackageVersion Include="Uno.Core" Version="4.1.1" />
     <PackageVersion Include="Uno.Core.Extensions" Version="4.1.1" />
-    <PackageVersion Include="Uno.Core.Extensions.Collections" Version="4.1.1" />
-    <PackageVersion Include="Uno.Core.Extensions.Logging" Version="5.0.0-dev.28" />
-    <PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="5.0.0-dev.28" />
+    <PackageVersion Include="Uno.Core.Extensions.Collections" Version="5.0.0-dev.34" />
+    <PackageVersion Include="Uno.Core.Extensions.Logging" Version="5.0.0-dev.34" />
+    <PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="5.0.0-dev.34" />
     <PackageVersion Include="Uno.Extensions.Logging.OSLog" Version="1.7.0" />
     <PackageVersion Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.7.0" />
     <PackageVersion Include="Uno.Extensions.Markup.Generators" Version="7.0.0-dev.33" />
