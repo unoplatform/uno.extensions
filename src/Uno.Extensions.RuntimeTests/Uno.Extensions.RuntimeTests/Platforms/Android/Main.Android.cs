@@ -12,7 +12,7 @@ namespace Uno.Extensions.RuntimeTests.Droid;
     HardwareAccelerated = true,
     Theme = "@style/AppTheme"
 )]
-public class Application : Microsoft.UI.Xaml.NativeApplication
+public class Application : Uno.UI.Runtime.Android.NativeApplication
 {
     public Application(IntPtr javaReference, JniHandleOwnership transfer)
         : base(javaReference, transfer)
