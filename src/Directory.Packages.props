@@ -84,7 +84,7 @@
       after *every* test, so on 2.0.0-dev.79 the desktop lane reported 136 failures over 105 cases.
       dev.81 reads the button states reflectively; dev.85 and later also require MSTest >= 4.3.3.
     -->
-    <PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="2.0.0-dev.89" />
+    <PackageVersion Include="Uno.UI.RuntimeTests.Engine" Version="2.0.0-dev.103" />
     <PackageVersion Include="Uno.WinUI" Version="$(UnoVersion)" />
     <PackageVersion Include="Uno.WinUI.DevServer" Version="$(UnoVersion)" />
     <PackageVersion Include="Uno.WinUI.Markup" Version="7.0.0-dev.33" />

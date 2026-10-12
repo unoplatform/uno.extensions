@@ -54,7 +54,7 @@
       Pinned in this head only, so the shipped packages' dependency floors are unaffected. Transitive
       pinning only applies it where the package is in the graph (the Android target).
     -->
-    <PackageVersion Include="Xamarin.AndroidX.Lifecycle.Process" Version="2.10.0.2" />
+    <PackageVersion Include="Xamarin.AndroidX.Lifecycle.Process" Version="2.11.0.1" />
   </ItemGroup>
 
 

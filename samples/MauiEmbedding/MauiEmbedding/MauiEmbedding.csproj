@@ -68,6 +68,9 @@
 		<PackageReference Include="Xamarin.AndroidX.Collection" />
 		<PackageReference Include="Xamarin.AndroidX.Collection.Jvm" />
 		<PackageReference Include="Xamarin.AndroidX.Collection.Ktx"  />
+		<PackageReference Include="Xamarin.AndroidX.Fragment.Ktx" />
+		<PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData" />
+		<PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData.Core.Ktx" />
 	</ItemGroup>
 
 	<ItemGroup>
