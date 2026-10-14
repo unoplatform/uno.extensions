@@ -470,10 +470,24 @@ partial class BindableViewModelBase
 			previousState.HotSwap(updatedState);
 		}
 
-		// Keep both identities on the same state and subscription for later incremental updates.
-		context.States.GetOrCreateState<IFeed<T>, IState<T>>(updated, (ctx, f) => state);
-		context.States.SetSubscription(updated, subscription);
+		// Swap first: the bindable must follow the updated model even if re-keying below fails (#3226).
 		subscription.HotSwap(updated);
 		(_propertyFeedsCache ??= new())[(property, typeof(T))] = updated;
+
+		// Keep both identities on the same state and subscription for later incremental updates.
+		context.States.GetOrCreateState<IFeed<T>, IState<T>>(updated, (ctx, f) => state);
+		try
+		{
+			context.States.SetSubscription(updated, subscription);
+		}
+		catch (InvalidOperationException error) when (error is not ObjectDisposedException)
+		{
+			// Something already subscribed to the updated feed (e.g. a derived feed added by the same delta).
+			// That subscription stays on the updated feed, so only the next delta's re-keying is affected.
+			if (model.Log().IsEnabled(LogLevel.Warning))
+			{
+				model.Log().Warn(error, $"The updated feed of '{property}' already has its own subscription; the shared one could not be re-keyed onto it.");
+			}
+		}
 	}
 }
