@@ -84,8 +84,12 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 		=> _updates.SetNext((null, new[] { update }, false));
 
 	/// <summary>
-	/// Drops every update, compacted ones included, so the feed shows its source again.
+	/// Drops the active updates, so the feed shows its source again.
 	/// </summary>
+	/// <remarks>
+	/// Once the source has completed, an applied update can be compacted into the current message: only one that can roll
+	/// itself back is then undone, any other stays applied. Clearing is meant for a source still running, like a mocked one.
+	/// </remarks>
 	internal void Clear()
 		=> _updates.SetNext((null, null, true));
 
