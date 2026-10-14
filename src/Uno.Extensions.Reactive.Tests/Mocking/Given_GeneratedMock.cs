@@ -98,6 +98,19 @@ public class Given_GeneratedMock : FeedUITests
 	}
 
 	[TestMethod]
+	public async Task When_ModelObservesAMessengerInItsCtor_Then_CreateSucceedsAndInputFlows()
+	{
+		// NoteModel calls messenger.Observe in its constructor, which throws on a null messenger.
+		var vm = NoteViewModelMock.Create(new NoteModelMock { Pinned = FeedMock.Value(new Note(1, "pinned")) });
+		var ctx = SourceContext.GetOrCreate(vm.Model);
+		using var scope = ctx.AsCurrent();
+
+		var (text, _) = ctx.GetOrCreateState(vm.Model.PinnedText).Record();
+
+		await text.WaitForData("pinned");
+	}
+
+	[TestMethod]
 	public async Task When_InputMocked_Then_DerivedFeedComputesOverTheMock()
 	{
 		var vm = MenuViewModelMock.Create(new MenuModelMock { Items = ListFeedMock.Value("a", "b") });

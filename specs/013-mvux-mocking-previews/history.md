@@ -281,6 +281,19 @@ same subscription and recurse.
 Tests cover the shared state/operator update, replacement-feed subscription alias, mock re-swap, derived scalar/list
 chains, local state-edit isolation, live-context fail-hard behavior, and state-to-state update handoff.
 
+## v18 — `Create` passes a messenger
+
+The MVUX messaging pattern calls `messenger.Observe(...)` in the model's constructor, which throws on the null
+`Create` passed, so such a model got no mock at all. `Create` now passes a fresh `WeakReferenceMessenger` for a
+parameter typed `CommunityToolkit.Mvvm.Messaging.IMessenger` (matched by symbol), and a typed default for every
+other one. A messenger of its own keeps an app's messages out of a preview; the weak one is what the messaging
+documentation registers, and it never extends a recipient's lifetime. The R1 guard on `CtorDependency(Eager=true)` is
+still not built, so `Create` still throws for a constructor that dereferences any other parameter. The messenger is a
+stopgap until R1, recorded so it does not grow into a list of known types: the match is exact (a parameter typed
+`WeakReferenceMessenger`, or an interface deriving from `IMessenger`, stays null-injected), and a test or preview
+cannot reach the messenger. R1 replaces it, where a fresh messenger can become the default value of an `IMessenger`
+argument. Fixture: `NoteModel`. Tests: `Given_GeneratedMock` and `Given_FeedsMockGenerator`.
+
 ---
 
 ## Final decision register
