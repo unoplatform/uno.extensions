@@ -427,10 +427,11 @@ partial class State
 		ct.ThrowIfCancellationRequested();
 
 		// Materialize the results here, so the update pipeline of the state does not enumerate the caller's sequence.
-		var validation = results?.ToImmutableList();
+		var validation = ValidationHelper.ToResults(results) ?? ImmutableList<ValidationResult>.Empty;
 
-		return state is StateImpl<T> impl
-			? impl.PublishValidationAsync(validation, isCurrent: null, StateImpl<T>.NextValidationVersion(), ct)
+		// A state created by the State factories publishes through its single entry point, like its validator and commands.
+		return state is IValidationTarget target
+			? target.PublishValidationAsync(validation, ct)
 			: state.UpdateMessageAsync(msg => msg.Validation(validation), ct);
 	}
 

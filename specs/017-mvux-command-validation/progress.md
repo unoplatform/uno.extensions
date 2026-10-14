@@ -40,7 +40,7 @@ Verdict: fix-first (security fix-before-merge, skeptic fix-first, others approve
 | Medium: an `OperationCanceledException` of the validator itself silently aborted | Validator errors wrapped (`InvalidOperationException`, no value) so the execution faults; test |
 | Medium: no trace of an aborted execution | Debug log (count only) |
 | Medium: `CommandConfig.Validate` hook not needed | Validation composed in the builder; `CommandConfig` / `AsyncCommand.SubCommand` unchanged vs base |
-| Medium: two writers of the axis through different doors | Single internal entry point `StateImpl.PublishValidationAsync` (`IValidationTarget`), used by the state validator and commands |
+| Medium: two writers of the axis through different doors | Single internal entry point `StateImpl.PublishValidationAsync` (`IValidationTarget`), used by the state validator, commands and the public `SetValidationAsync` (spec 015 review) |
 | Medium: results dropped when the source of the state emits | Documented (docs, XML docs, spec) and tested (`State.Async` refresh) |
 | Medium: lockstep upgrade (`CS0433`) | Spec §3 + Validation overview; to be called out in the PR |
 | Medium: `Task.Delay(50)` negative assertions | Replaced with synchronous checks (`ExecutionStarted` count, `IsExecuting`) or synchronous continuations |
