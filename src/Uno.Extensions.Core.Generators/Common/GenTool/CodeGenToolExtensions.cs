@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Uno.RoslynHelpers;
@@ -45,19 +46,19 @@ internal static class CodeGenToolExtensions
 			}}".Align(0);
 	}
 
-	public static string InSameNamespaceOf(this ICodeGenTool tool, INamedTypeSymbol type, string code)
+	public static string InSameNamespaceOf(this ICodeGenTool tool, INamedTypeSymbol type, string code, IEnumerable<string>? staticImports = null)
 	{
 		var types = type
 			.GetContainingTypes()
 			.Reverse()
 			.Select(t => $"partial {t.ToDisplayString(_symbolDeclaration)}")
 			.ToList();
+		var usings = new[] { "using global::System;", "using global::System.Linq;", "using global::System.Threading.Tasks;" }
+			.Concat(staticImports?.Select(import => $"using static {import};") ?? Enumerable.Empty<string>());
 
 		return $@"{tool.GetFileHeader(3)}
 
-			using global::System;
-			using global::System.Linq;
-			using global::System.Threading.Tasks;
+			{usings.Align(3)}
 
 			namespace {type.ContainingNamespace}
 			{{

@@ -14,7 +14,7 @@
 		<PackageReference Include="MSTest.TestAdapter" />
 		<PackageReference Include="MSTest.TestFramework" />
 		<PackageReference Include="coverlet.collector" />
-		<!-- Drives the consumer generator in-process (Given_FeedsMockGenerator) -->
+		<!-- Drives the generators in-process (Given_FeedsMockGenerator, Given_FeedsGenerator_Commands) -->
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
 		<!-- The messenger the generator recognizes on a constructor (Given_FeedsMockGenerator) -->
 		<PackageReference Include="CommunityToolkit.Mvvm" />
@@ -24,5 +24,6 @@
 		<ProjectReference Include="..\Uno.Extensions.Reactive.Testing\Uno.Extensions.Reactive.Testing.csproj" />
 		<ProjectReference Include="..\Uno.HotTesting.Reactive\Uno.HotTesting.Reactive.csproj" />
 		<ProjectReference Include="..\Uno.HotTesting.Reactive.Generator\Uno.HotTesting.Reactive.Generator.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Reactive.Generator\Uno.Extensions.Reactive.Generator.csproj" />
 	</ItemGroup>
 </Project>
