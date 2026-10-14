@@ -684,6 +684,10 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 	/// MVUX messaging pattern observes in the model's constructor. A fresh one keeps the app's messages out.
 	/// Both are typed: a bare <c>default!</c> cannot pick between constructors of equal arity (CS0121).
 	/// </summary>
+	/// <remarks>
+	/// The messenger is a stopgap until spec 013 R1, which has <c>Create</c> require every eagerly used parameter:
+	/// do not add other known types here.
+	/// </remarks>
 	private static string CtorArgument(ITypeSymbol type, INamedTypeSymbol? messenger)
 		=> SymbolEqualityComparer.Default.Equals(type, messenger)
 			? $"({FullName(type)})new {MessengerImplementation}()"

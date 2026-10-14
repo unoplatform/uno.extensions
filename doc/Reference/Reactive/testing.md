@@ -129,7 +129,8 @@ For every MVUX model it finds, the generator emits, next to the model:
   (a `{Model}Mock.Empty` pins every input to its empty state);
 - a `partial class {Vm}Mock` with `Create(...)` factories that build the **real
   view-model** with every constructor parameter null-injected (services,
-  navigator, ...) except one typed `IMessenger`, which gets a fresh messenger of
+  navigator, ...) except every parameter typed
+  `CommunityToolkit.Mvvm.Messaging.IMessenger`, which gets a fresh messenger of
   its own, then apply the mock;
 - a `SetMock(this {Vm}, {Model}Mock)` extension that swaps each mocked feed.
 
