@@ -99,7 +99,8 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		=> _updatesTarget = ReferenceEquals(this, replacement) ? null : replacement;
 
 	/// <summary>
-	/// Drops the updates made through this state, so it shows its source again.
+	/// Drops the updates made through this state, so it shows its source again (see <see cref="UpdateFeed{T}.Clear"/>
+	/// for an update made after the source completed).
 	/// </summary>
 	internal void ClearUpdates()
 		=> _inner.Clear();
