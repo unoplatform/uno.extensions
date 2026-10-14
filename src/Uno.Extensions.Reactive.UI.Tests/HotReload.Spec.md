@@ -60,6 +60,7 @@ Each scenario should:
 | **Feed.Async↔AsyncEnumerable syntax** | Switch between `Feed.Async` and `Feed.AsyncEnumerable` | Validates syntax change across different Feed factory methods. |
 | **Self-patch with ctor-deps** | New VM constructed AFTER HR on a model with required ctor params | Exercises `TryHotPatch` self-patch path: `__reactiveModelArgs` must be captured in the outermost public ctor before the call fires. |
 | **Inheritance parent-only HR** | Edit a parent model while a child VM is live; child has its own feed and inherits parent's | Exercises base-type shadow walk + base-only-patch detection. Inherited feed must hot-swap; child-only feed must stay intact. |
+| **Add derived feed next to a state + command** | A `Count.Select(...)` feed is added while `Count` (state) and `Increment` (command) are live and bound | #3226. The patcher must swap the subscription the bindable is attached to, and re-key it before the new feed subscribes to the updated state; otherwise the command updates a state the view no longer shows. Covers live and recreated VMs. |
 
 ## 4. Scenario catalog
 
@@ -220,6 +221,23 @@ Each scenario should:
 - **Status**: Failing on this branch — requires inheritance support
   from `dev/mara/fix-mvux-hr` (base-type walk + base-only-patch).
 
+### 4.13 Add derived feed next to a live state and command (implemented)
+
+- **ID**: `When_AddDerivedFeedToModelWithStateAndCommand_Then_CommandUpdatesBoundState`
+- **Goal**: Prove that adding a feed derived from an existing state keeps
+  the bound state and the commands on the same model (#3226), both for the
+  view model that is live during the delta and for one created after it
+  (a recreated page, the scenario reported in the issue).
+- **Model**: `MvuxHotReloadAddDerivedFeedModel` with `IState<int> Count`
+  (`State.Value`) and an `Increment` command (`Count.UpdateAsync`).
+- **HR change**: Single delta — add
+  `IFeed<bool> IsGoalReached => Count.Select(c => c >= 10);`.
+- **Assertion**: The live VM's bound `Count` follows the updated model's
+  state (resets to `0`) and reaches `2` after two `Increment` executions.
+  A VM created after the delta starts at `0` and also reaches `2`.
+- **Status**: Passing. Red on `main` (the recreated VM stays at `0`). Run
+  locally on Windows with the recipe in `specs/lessons.md`.
+
 ## 5. Organizational notes
 
 - One test method per scenario.
@@ -247,3 +265,4 @@ Each scenario should:
 | `MvuxHotReloadCtorDepsModel.cs` | Model for ctor-deps self-patch scenario |
 | `MvuxHotReloadParentModel.cs` | Base model for inheritance scenario |
 | `MvuxHotReloadInheritedChildModel.cs` | Derived model for inheritance scenario |
+| `MvuxHotReloadAddDerivedFeedModel.cs` | Model for the add-derived-feed scenario (#3226) |
