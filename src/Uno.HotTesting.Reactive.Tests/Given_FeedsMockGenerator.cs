@@ -357,7 +357,9 @@ public class Given_FeedsMockGenerator
 			.Where(path => Path.GetFileName(path) is { } name
 				&& (name.StartsWith("System.", StringComparison.Ordinal)
 					|| name.StartsWith("netstandard", StringComparison.Ordinal)
-					|| name.StartsWith("Uno.Extensions.", StringComparison.Ordinal)))
+					|| name.StartsWith("Uno.Extensions.", StringComparison.Ordinal))
+				// The MVUX generator assembly duplicates the public attributes of Uno.Extensions.Reactive.
+				&& !name.StartsWith("Uno.Extensions.Reactive.Generator", StringComparison.Ordinal))
 			.Select(path => MetadataReference.CreateFromFile(path));
 		var compilation = CSharpCompilation.Create(
 			"App",
