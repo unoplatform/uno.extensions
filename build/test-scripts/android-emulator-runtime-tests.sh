@@ -22,7 +22,8 @@ AVD_IMAGE="${AVD_IMAGE:-system-images;android-34;default;x86_64}"
 AVD_DEVICE="${AVD_DEVICE:-pixel_6}"
 EMULATOR_BOOT_TIMEOUT="${EMULATOR_BOOT_TIMEOUT:-600}"
 RUN_TIMEOUT_SECONDS="${RUN_TIMEOUT_SECONDS:-1800}"
-# Hot-reload tests need a build environment the emulator doesn't have; the desktop stage owns them.
+# Hot-reload tests need a DevServer next to the emulator; only the hot-reload lane (DEV_SERVER_PORT
+# set, see stage-runtime-tests-mobile-hotreload.yml) provides one.
 TEST_FILTER="${TEST_FILTER:-!_HotReload}"
 # PACKAGE_NAME is intentionally not defaulted - it is read from the APK below, so the script
 # survives an ApplicationId change in the csproj. Override only to launch a sibling package.
@@ -197,6 +198,17 @@ LOGCAT_PID=$!
 
 adb install -r "${apk_path}"
 
+# Hot-reload lane only (DEV_SERVER_PORT set): the app reaches the DevServer on its own 127.0.0.1,
+# which adb reverse maps onto the host's. The extra makes [RunsInSecondaryApp] classes run in-process
+# instead of being skipped.
+secondary_app_extras=()
+if [[ -n "${DEV_SERVER_PORT:-}" ]]; then
+  source "${BUILD_SOURCESDIRECTORY}/build/test-scripts/dev-server.sh"
+  start_dev_server "${logs_dir}/devserver.log"
+  adb reverse "tcp:${DEV_SERVER_PORT}" "tcp:${DEV_SERVER_PORT}"
+  secondary_app_extras=(-e UITEST_RUNTIME_IS_SECONDARY_APP true)
+fi
+
 # Needed on pre-scoped-storage API levels to write the result file; no-op on newer ones.
 adb shell pm grant "${PACKAGE_NAME}" android.permission.WRITE_EXTERNAL_STORAGE 2>/dev/null || true
 adb shell pm grant "${PACKAGE_NAME}" android.permission.READ_EXTERNAL_STORAGE 2>/dev/null || true
@@ -214,6 +226,7 @@ am_start_output="$(
     -c android.intent.category.LAUNCHER \
     -e UITEST_RUNTIME_AUTOSTART_RESULT_FILE "${device_result_file}" \
     -e UITEST_RUNTIME_TESTS_FILTER "${encoded_filter}" \
+    ${secondary_app_extras[@]+"${secondary_app_extras[@]}"} \
     -n "${PACKAGE_NAME}/${launcher_activity}" \
     2>&1
 )" || {

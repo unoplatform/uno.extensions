@@ -145,6 +145,16 @@ encoded_filter="$(printf '%s' "${TEST_FILTER}" | base64 -b 0 2>/dev/null || prin
 export SIMCTL_CHILD_UITEST_RUNTIME_AUTOSTART_RESULT_FILE="${result_file}"
 export SIMCTL_CHILD_UITEST_RUNTIME_TESTS_FILTER="${encoded_filter}"
 
+# Hot-reload lane only (DEV_SERVER_PORT set): the simulator shares the host's loopback, so the app
+# reaches the DevServer directly. DOTNET_MODIFIABLE_ASSEMBLIES has to be passed here: the DevServer
+# package only sets it for mlaunch, which `simctl launch` bypasses.
+if [[ -n "${DEV_SERVER_PORT:-}" ]]; then
+  source "${BUILD_SOURCESDIRECTORY}/build/test-scripts/dev-server.sh"
+  start_dev_server "${logs_dir}/devserver.log"
+  export SIMCTL_CHILD_DOTNET_MODIFIABLE_ASSEMBLIES=debug
+  export SIMCTL_CHILD_UITEST_RUNTIME_IS_SECONDARY_APP=true
+fi
+
 echo "Launching ${BUNDLE_ID} (result=${result_file}, filter='${TEST_FILTER}')..."
 xcrun simctl launch --terminate-running-process "${device_udid}" "${BUNDLE_ID}" >"${launch_log}" 2>&1 || {
   echo "ERROR: simctl launch failed." >&2

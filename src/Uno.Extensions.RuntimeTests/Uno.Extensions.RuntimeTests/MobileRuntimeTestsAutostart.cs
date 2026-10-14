@@ -34,6 +34,10 @@ internal static class MobileRuntimeTestsAutostart
 {
 	private const string ResultFileVariable = "UITEST_RUNTIME_AUTOSTART_RESULT_FILE";
 	private const string FilterVariable = "UITEST_RUNTIME_TESTS_FILTER";
+	// Set by the hot-reload lanes, which start a DevServer next to the device. [RunsInSecondaryApp]
+	// classes then run in this process instead of being skipped: the engine can't spawn a secondary
+	// app on mobile, but HotReloadHelper only needs this app's DevServer connection.
+	private const string IsSecondaryAppVariable = "UITEST_RUNTIME_IS_SECONDARY_APP";
 
 	/// <summary>
 	/// If <c>UITEST_RUNTIME_AUTOSTART_RESULT_FILE</c> is set, waits for the
@@ -122,6 +126,7 @@ internal static class MobileRuntimeTestsAutostart
 			dispatcher,
 			async () =>
 			{
+				unitTests.IsSecondaryApp = Environment.GetEnvironmentVariable(IsSecondaryAppVariable) == "true";
 				await unitTests.RunTests(CancellationToken.None, config).ConfigureAwait(true);
 				return unitTests.NUnitTestResultsDocument;
 			},

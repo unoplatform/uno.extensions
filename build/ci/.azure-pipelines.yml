@@ -111,6 +111,8 @@ stages:
   # engine against a scoped filter instead; widening that filter is blocked on fixing those 15.
   # - template: stage-build-runtimetests-skia.yml
   - template: stage-build-runtimetests-skia-hotreload.yml
+  # Self-contained (build + run on one agent), so they don't wait for Runtime_Tests_Devices.
+  - template: stage-runtime-tests-mobile-hotreload.yml
   # Builds the mobile / wasm runtime-test apps as artifacts; the jobs below consume them.
   - template: stage-build-runtimetests-mobile.yml
 
