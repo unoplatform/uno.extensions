@@ -102,7 +102,7 @@ public class Given_FeedsMockGenerator
 				protected ItemsViewModel(ItemsModel model) { }
 				public ItemsModel Model => null!;
 			}
-			""");
+			""", referenceToolkit: true);
 
 		diagnostics.Should().BeEmpty();
 		sources.Should().ContainSingle()
@@ -128,7 +128,7 @@ public class Given_FeedsMockGenerator
 				protected ItemsViewModel(ItemsModel model) { }
 				public ItemsModel Model => null!;
 			}
-			""");
+			""", referenceToolkit: true);
 
 		diagnostics.Should().BeEmpty();
 		sources.Should().ContainSingle()
@@ -138,6 +138,35 @@ public class Given_FeedsMockGenerator
 	[TestMethod]
 	public void When_CtorTakesAnotherTypeNamedIMessenger_Then_CreateNullInjectsIt()
 	{
+		// The toolkit is referenced, so its IMessenger resolves: only the symbol, not the name, may match.
+		var (sources, diagnostics) = Run(Preamble + """
+			public interface IMessenger { }
+
+			[Model(typeof(ItemsViewModel))]
+			[FeedDependency("Items", OnParameter = "service")]
+			public class ItemsModel
+			{
+				public ItemsModel(IService service, IMessenger messenger) { }
+				public IListFeed<string> Items => null!;
+			}
+
+			public class ItemsViewModel
+			{
+				public ItemsViewModel(IService service, IMessenger messenger) { }
+				protected ItemsViewModel(ItemsModel model) { }
+				public ItemsModel Model => null!;
+			}
+			""", referenceToolkit: true);
+
+		diagnostics.Should().BeEmpty();
+		sources.Should().ContainSingle()
+			.Which.Should().Contain("new global::App.ItemsViewModel(default(global::App.IService)! /* service */, default(global::App.IMessenger)! /* messenger */)");
+	}
+
+	[TestMethod]
+	public void When_CompilationDoesNotReferenceTheToolkit_Then_NothingNamesIt()
+	{
+		// A consumer without CommunityToolkit.Mvvm would not compile a mock naming it, even for a parameter called IMessenger.
 		var (sources, diagnostics) = Run(Preamble + """
 			public interface IMessenger { }
 
@@ -159,7 +188,7 @@ public class Given_FeedsMockGenerator
 
 		diagnostics.Should().BeEmpty();
 		sources.Should().ContainSingle()
-			.Which.Should().Contain("new global::App.ItemsViewModel(default(global::App.IService)! /* service */, default(global::App.IMessenger)! /* messenger */)");
+			.Which.Should().NotContain("CommunityToolkit");
 	}
 
 	[TestMethod]
@@ -427,17 +456,18 @@ public class Given_FeedsMockGenerator
 		return count;
 	}
 
-	private static (string[] Sources, Diagnostic[] Diagnostics) Run(string source)
+	private static (string[] Sources, Diagnostic[] Diagnostics) Run(string source, bool referenceToolkit = false)
 	{
-		// The framework, the Uno.Extensions assemblies and CommunityToolkit.Mvvm of the test host: enough for the
-		// fixture source to compile, small enough for the generator's walk over referenced assemblies to stay quick.
+		// The framework and the Uno.Extensions assemblies of the test host: enough for the fixture source to compile,
+		// small enough for the generator's walk over referenced assemblies to stay quick. CommunityToolkit.Mvvm only
+		// when a test opts in, since a consumer may not reference it.
 		var references = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!)
 			.Split(Path.PathSeparator)
 			.Where(path => Path.GetFileName(path) is { } name
 				&& (name.StartsWith("System.", StringComparison.Ordinal)
 					|| name.StartsWith("netstandard", StringComparison.Ordinal)
 					|| name.StartsWith("Uno.Extensions.", StringComparison.Ordinal)
-					|| name.StartsWith("CommunityToolkit.Mvvm", StringComparison.Ordinal)))
+					|| (referenceToolkit && name.StartsWith("CommunityToolkit.Mvvm", StringComparison.Ordinal))))
 			.Select(path => MetadataReference.CreateFromFile(path));
 		var compilation = CSharpCompilation.Create(
 			"App",
