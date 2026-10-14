@@ -197,6 +197,26 @@ public class Given_StateWithValidation : FeedTests
 	}
 
 	[TestMethod]
+	public async Task When_SomeNull_Then_ValidatorInvokedWithNull()
+	{
+		var calls = new List<string?>();
+		var state = new StateImpl<string?>(Context, Option.Some<string?>(null));
+		_ = state.Validate((value, _) =>
+		{
+			lock (calls)
+			{
+				calls.Add(value);
+			}
+
+			return new(Error("null"));
+		});
+
+		await WaitFor(() => state.Current.Current.Validation.Any(result => result.ErrorMessage == "null"));
+
+		calls.Should().Equal(new string?[] { null });
+	}
+
+	[TestMethod]
 	public async Task When_Undefined_Then_NotValidated()
 	{
 		var validator = new TestValidator();

@@ -367,7 +367,7 @@ partial class State
 	/// Validation never blocks a value: invalid values are still set on the state, validation results only annotate them.
 	/// The validator runs on a background thread each time the data changes (including the initial value) and the previous pending validation is cancelled.
 	/// Results produced for a value that is no longer the current value of the state are discarded.
-	/// When the state has no value, the validation results are cleared.
+	/// When the state has no value (None), the validation results are cleared. A null value is still a value: the validator is invoked with null.
 	/// If the validator throws, the error is logged and the previous results are kept (the state is not set in error).
 	/// This is idempotent: invoking this method multiple times on the same state replaces the validator (starting at the next data change).
 	/// </remarks>
