@@ -266,6 +266,27 @@ public class Given_StateWithValidation : FeedTests
 			.Throw<NotSupportedException>();
 	}
 
+	[TestMethod]
+	public void When_NullValidator_Then_ThrowsArgumentNull()
+	{
+		var state = new CustomState();
+
+		state.Invoking(s => s.Validate(null!))
+			.Should()
+			.Throw<ArgumentNullException>()
+			.WithParameterName("validator");
+	}
+
+	[TestMethod]
+	public void When_NullState_Then_ThrowsArgumentNull()
+	{
+		var act = () => State.Validate<string>(null!, (_, _) => new(Enumerable.Empty<ValidationResult>()));
+
+		act.Should()
+			.Throw<ArgumentNullException>()
+			.WithParameterName("state");
+	}
+
 	private static ValidationResult[] Error(string message)
 		=> new[] { new ValidationResult(message) };
 
