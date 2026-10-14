@@ -759,6 +759,10 @@ public class Given_StateWithValidation : FeedTests
 			.Should()
 			.Throw<ArgumentNullException>()
 			.WithParameterName("isValid");
+		state.Invoking(s => s.Validate(default(IValidator)!))
+			.Should()
+			.Throw<ArgumentNullException>()
+			.WithParameterName("validator");
 	}
 
 	[TestMethod]
