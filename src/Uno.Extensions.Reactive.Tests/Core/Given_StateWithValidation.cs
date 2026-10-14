@@ -555,6 +555,28 @@ public class Given_StateWithValidation : FeedTests
 	}
 
 	[TestMethod]
+	public async Task When_SetValidationWithNullResults_Then_Ignored()
+	{
+		var state = new StateImpl<string>(Context, Option.Some("initial"));
+
+		await state.SetValidationAsync([null!, new ValidationResult("manual"), null!], CT);
+
+		state.Current.Current.Validation.Should().ContainSingle().Which.ErrorMessage.Should().Be("manual");
+	}
+
+	[TestMethod]
+	public async Task When_SetValidationOnCustomState_Then_PublishedThroughUpdateMessage()
+	{
+		var state = new RecordingState();
+
+		await state.SetValidationAsync(Error("manual"), CT);
+
+		state.Updates.Should().ContainSingle()
+			.Which.Current.Validation.Should().ContainSingle()
+			.Which.ErrorMessage.Should().Be("manual");
+	}
+
+	[TestMethod]
 	public async Task When_SetValidation_And_Validator_Then_ReplacedOnNextDataChange()
 	{
 		var validator = new TestValidator();
@@ -621,6 +643,30 @@ public class Given_StateWithValidation : FeedTests
 
 		public void Fail(Exception error)
 			=> Result.SetException(error);
+	}
+
+	private sealed class RecordingState : IState<string>
+	{
+		public List<Message<string>> Updates { get; } = new();
+
+		public SourceContext Context => SourceContext.None;
+
+		IRequestSource IState.Requests => throw new NotSupportedException();
+
+		public IAsyncEnumerable<Message<string>> GetSource(SourceContext context, CancellationToken ct = default)
+			=> throw new NotSupportedException();
+
+		public ValueTask UpdateMessageAsync(Action<MessageBuilder<string>> updater, CancellationToken ct)
+		{
+			var builder = Message<string>.Initial.With();
+			updater(builder);
+			Updates.Add(builder.Build());
+
+			return default;
+		}
+
+		public ValueTask DisposeAsync()
+			=> default;
 	}
 
 	private sealed class CustomState : IState<string>
