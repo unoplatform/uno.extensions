@@ -446,6 +446,55 @@ public partial class Given_HotReload : FeedUITests
 	}
 	#endregion
 
+	#region When_ViewModelCreatedAfterDelta_Then_CommandsUpdateBoundState
+	// Repro for the scenario reported in https://github.com/unoplatform/uno.extensions/issues/3226:
+	// a page recreated after the delta builds its view model with the EnC-updated ctor, whose `model.Count`
+	// call does not run the same getter as reflection on the original model type. Each getter has its own
+	// `() => 0` lambda, and `State.Value` caches per lambda, so the bindable and the hot-patcher see two
+	// different states for the same model instance. The model below reproduces that divergence directly.
+	[TestMethod]
+	public async Task When_ViewModelCreatedAfterDelta_Then_CommandsUpdateBoundState()
+	{
+		HotReloadService.UpdateApplication(new[] { typeof(When_ViewModelCreatedAfterDelta_MyModel_v1) });
+
+		// Like a page recreated after the delta: the new bindable self-patches onto the updated model from its ctor.
+		await using var bindable = new When_ViewModelCreatedAfterDelta_MyViewModel();
+		Dispatcher.TryEnqueue(() => bindable.PropertyChanged += (s, e) => { });
+		await WaitFor(() => bindable.Count == 0);
+
+		bindable.Increment.Execute(null);
+		bindable.Increment.Execute(null);
+		await WaitFor(() => bindable.Count == 2);
+	}
+
+	[ReactiveBindable(true)]
+	public partial class When_ViewModelCreatedAfterDelta_MyModel
+	{
+		private int _countReads;
+
+		// First read (the bindable's ctor) and later reads (the hot-patcher's reflection) resolve distinct cached states.
+		public IState<int> Count => _countReads++ == 0
+			? State.Value(this, () => 0)
+			: State.Value(this, static () => 0);
+
+		public async ValueTask Increment(CancellationToken ct) => await Count.UpdateAsync(c => c + 1, ct);
+	}
+
+	[ReactiveBindable(false)]
+	[Model(bindable: typeof(When_ViewModelCreatedAfterDelta_MyViewModel))]
+	[MetadataUpdateOriginalType(typeof(When_ViewModelCreatedAfterDelta_MyModel))]
+	public partial class When_ViewModelCreatedAfterDelta_MyModel_v1 : IAsyncDisposable
+	{
+		internal When_ViewModelCreatedAfterDelta_MyViewModel __reactiveBindableViewModel = default!;
+
+		public IState<int> Count => State.Value(this, () => 0);
+
+		public async ValueTask Increment(CancellationToken ct) => await Count.UpdateAsync(c => c + 1, ct);
+
+		public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+	}
+	#endregion
+
 	private async Task WaitFor(Func<bool> predicate)
 	{
 		for (var i = 0; i < 100; i++)
