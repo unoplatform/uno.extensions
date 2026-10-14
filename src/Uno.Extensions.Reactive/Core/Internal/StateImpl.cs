@@ -187,7 +187,8 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 				return; // Validation has been stopped.
 			}
 
-			var hasValue = TryGetValue(data, out var value);
+			// Note: Some(null) is a value (unlike None): the validator is invoked with null.
+			var hasValue = data.IsSome(out var value);
 			var results = hasValue
 				? await Task.Run(async () => await validator(value!, ct).ConfigureAwait(false), ct).ConfigureAwait(false)
 				: null; // No value to validate (None), clear the results.
@@ -202,7 +203,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 					{
 						// Makes sure to not publish results for a stale version of the data.
 						// As this is invoked by the update pipeline of the state, this check is atomic with other updates of the state.
-						var isSameData = TryGetValue(msg.CurrentData, out var currentValue)
+						var isSameData = msg.CurrentData.IsSome(out var currentValue)
 							? hasValue && EqualityComparer<T>.Default.Equals(currentValue, value)
 							: !hasValue;
 						if (isSameData)
@@ -241,9 +242,6 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		}
 		_validator = null;
 	}
-
-	private static bool TryGetValue(Option<T> data, out T? value)
-		=> data.IsSome(out value) && value is not null;
 
 	[MemberNotNull(nameof(_subscription))]
 	private void Enable()

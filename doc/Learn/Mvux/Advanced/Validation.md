@@ -30,7 +30,7 @@ The validator:
 
 - runs on a background thread for the initial value and then after every data change, including changes made from the UI through two-way bindings;
 - is cancelled (through its `CancellationToken`) when the value changes again before it completes. Results produced for a value that is no longer the current value of the state are discarded;
-- is not invoked when the state has no value. In that case the validation results are cleared;
+- is not invoked when the state has no value (`None`). In that case the validation results are cleared. A `null` value is still a value, so the validator is invoked with `null`;
 - does not put the state in error if it throws. The exception is logged and the previous results are kept.
 
 `Validate` returns the same state instance and can safely be invoked each time the property getter is evaluated: the last validator wins and validators are never stacked.
