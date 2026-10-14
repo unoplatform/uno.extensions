@@ -287,6 +287,73 @@ public class Given_StateWithValidation : FeedTests
 			.WithParameterName("state");
 	}
 
+	[TestMethod]
+	public async Task When_SetValidation_Then_ResultsPublished_And_DataKept()
+	{
+		var state = new StateImpl<string>(Context, Option.Some("initial"));
+
+		await state.SetValidationAsync(Error("manual"), CT);
+
+		state.Current.Current.Validation.Should().ContainSingle().Which.ErrorMessage.Should().Be("manual");
+		state.Current.Current.Data.SomeOrDefault().Should().Be("initial");
+		state.Current.Current.Error.Should().BeNull();
+	}
+
+	[TestMethod]
+	public async Task When_SetValidationNull_Then_ResultsCleared()
+	{
+		var state = new StateImpl<string>(Context, Option.Some("initial"));
+		await state.SetValidationAsync(Error("manual"), CT);
+
+		await state.SetValidationAsync(null, CT);
+
+		state.Current.Current.Validation.Should().BeEmpty();
+	}
+
+	[TestMethod]
+	public async Task When_SetValidationEmpty_Then_ResultsCleared()
+	{
+		var state = new StateImpl<string>(Context, Option.Some("initial"));
+		await state.SetValidationAsync(Error("manual"), CT);
+
+		await state.SetValidationAsync(Array.Empty<ValidationResult>(), CT);
+
+		state.Current.Current.Validation.Should().BeEmpty();
+	}
+
+	[TestMethod]
+	public async Task When_SetValidationCancelled_Then_Throws_And_NotPublished()
+	{
+		var state = new StateImpl<string>(Context, Option.Some("initial"));
+		using var cts = new CancellationTokenSource();
+		cts.Cancel();
+
+		await state.Invoking(s => s.SetValidationAsync(Error("manual"), cts.Token).AsTask())
+			.Should()
+			.ThrowAsync<OperationCanceledException>();
+
+		state.Current.Current.Validation.Should().BeEmpty();
+	}
+
+	[TestMethod]
+	public async Task When_SetValidation_And_Validator_Then_ReplacedOnNextDataChange()
+	{
+		var validator = new TestValidator();
+		var state = new StateImpl<string>(Context, Option.Some("initial"));
+		_ = state.Validate(validator.Validate);
+		(await validator.WaitForCall(0)).Complete(Error("initial"));
+		await WaitForValidation(state, "initial");
+
+		await state.SetValidationAsync(Error("manual"), CT);
+		state.Current.Current.Validation.Should().ContainSingle().Which.ErrorMessage.Should().Be("manual");
+
+		await state.SetAsync("updated", CT);
+		(await validator.WaitForCall(1)).Complete(Error("updated"));
+		await WaitForValidation(state, "updated");
+
+		state.Current.Current.Validation.Should().ContainSingle().Which.ErrorMessage.Should().Be("updated");
+	}
+
 	private static ValidationResult[] Error(string message)
 		=> new[] { new ValidationResult(message) };
 
