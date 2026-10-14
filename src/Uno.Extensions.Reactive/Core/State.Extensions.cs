@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -386,5 +387,27 @@ partial class State
 		impl.SetValidator(validator);
 
 		return state;
+	}
+
+	/// <summary>
+	/// Sets the validation results of a state, published on the <see cref="MessageAxis.Validation"/> of the state.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to update.</param>
+	/// <param name="results">The validation results of the current value of the state, null or empty to clear them.</param>
+	/// <param name="ct">A token to abort the async operation.</param>
+	/// <remarks>
+	/// This is useful to validate on demand, for instance the whole form when the user clicks Save.
+	/// If a validator has been set using <c>Validate</c>, it replaces those results on the next data change of the state.
+	/// </remarks>
+	public static ValueTask SetValidationAsync<T>(this IState<T> state, IEnumerable<ValidationResult>? results, CancellationToken ct = default)
+	{
+		ArgumentNullException.ThrowIfNull(state);
+		ct.ThrowIfCancellationRequested();
+
+		// Materialize the results here, so the update pipeline of the state does not enumerate the caller's sequence.
+		var validation = results?.ToImmutableList();
+
+		return state.UpdateMessageAsync(msg => msg.Validation(validation), ct);
 	}
 }

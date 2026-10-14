@@ -51,7 +51,7 @@ Two entry points, both writing the axis through the existing `StateImpl.UpdateMe
 
 1. **Manual (always available):**
    ```csharp
-   await Person.UpdateMessageAsync(m => m.Validation(results), ct);
+   await Person.SetValidationAsync(results, ct); // Shortcut for UpdateMessageAsync(m => m.Validation(results), ct)
    ```
 2. **Declarative validator hook on the state (recommended surface):**
    ```csharp
@@ -100,6 +100,7 @@ user types → Bindable.SetValue → StateImpl.UpdateMessageAsync (Data, Binding
 - `MessageAxes.Validation`, `MessageAxis.Validation`
 - `MessageAxisExtensions.Validation(...)`, `GetValidation(...)`, `MessageEntry<T>.Validation`
 - `State.Validate<T>(this IState<T>, Func<T, CancellationToken, ValueTask<IEnumerable<ValidationResult>>>)`
+- `State.SetValidationAsync<T>(this IState<T>, IEnumerable<ValidationResult>?, CancellationToken)` (null/empty = clear)
 - `BindableViewModelBase` and `Bindable<T>` now implement `INotifyDataErrorInfo` (`HasErrors`, `GetErrors`, `ErrorsChanged` — `EventHandler<DataErrorsChangedEventArgs>`, compliant with the events rule), explicitly, plus a public `bool HasErrors` on both.
 - Docs: new `doc/Learn/Mvux/Advanced/Validation.md` + TOC, cross-link from `doc/Learn/Validation/ValidationOverview.md`.
 

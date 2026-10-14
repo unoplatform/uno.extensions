@@ -49,7 +49,7 @@ public partial record PersonModel(IValidator Validator)
 
 ### Setting validation results manually
 
-Validation results are a metadata axis of the messages of the state, like the error or progress. You can set them yourself, for instance to validate the whole form when the user clicks Save:
+Validation results are a metadata axis of the messages of the state, like the error or progress. You can set them yourself with `SetValidationAsync`, for instance to validate the whole form when the user clicks Save:
 
 ```csharp
 public async ValueTask Save(CancellationToken ct)
@@ -57,7 +57,7 @@ public async ValueTask Save(CancellationToken ct)
     var person = await Person;
     var results = (await Validator.ValidateAsync(person!, null, ct)).ToList();
 
-    await Person.UpdateMessageAsync(msg => msg.Validation(results), ct);
+    await Person.SetValidationAsync(results, ct);
     if (results.Count is 0)
     {
         // Save the person
@@ -65,7 +65,9 @@ public async ValueTask Save(CancellationToken ct)
 }
 ```
 
-Passing `null` or an empty list clears the results. Setting results identical to the current ones (same `ErrorMessage` and `MemberNames`) does not raise any change.
+Passing `null` or an empty list clears the results. Setting results identical to the current ones (same `ErrorMessage` and `MemberNames`) does not raise any change. If a validator has been set with `Validate`, it replaces those results on the next change of the value.
+
+`SetValidationAsync` is a shortcut for `UpdateMessageAsync(msg => msg.Validation(results), ct)`, which you can use to update the validation along with other axes of the message.
 
 > [!NOTE]
 > Validation results are local to the state that has them: they are **not** forwarded to feeds derived from it, such as `Select`, `Combine` or a `Feed.Async` that awaits the state. A derived `FullName` feed never shows the errors of the `Person` state.
