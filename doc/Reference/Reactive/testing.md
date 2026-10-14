@@ -175,10 +175,11 @@ vm.SetMock(RecipeModelMock.Empty with { Steps = ListFeedMock.Loading<Step>() });
 vm.SetMock(RecipeModelMock.Empty with { Steps = ListFeedMock.Error<Step>(new TimeoutException()) });
 ```
 
-An input declared as a state (`IState<T>`, `IListState<T>`) is mocked where the
-state itself is read, so its bindable shows the mock. An edit made through the
-state applies over the mock, as it would over a service result, and the feeds
-derived from the state see it. Each `SetMock` starts the state over from its mock.
+An input declared as a state (`IState<T>`, `IListState<T>`) is mocked under the
+state's own edits, so its bindable shows the mock. An edit made through the state
+applies over the mock, as it would over a service result, and the feeds derived
+from the state see it. Each `SetMock` drops the earlier edits, unless the mock is
+itself a state, which keeps the edits made through it.
 
 > [!IMPORTANT]
 > Mocking is only active for a view-model built by `Create` (which opens a

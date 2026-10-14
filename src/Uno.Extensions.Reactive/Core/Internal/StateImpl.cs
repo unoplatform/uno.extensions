@@ -46,6 +46,11 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	internal UpdateFeed<T> Inner => UpdatesTarget._inner;
 
 	/// <summary>
+	/// Gets the feed this state was built over. Its updates apply on the context's subscription to that feed.
+	/// </summary>
+	internal IFeed<T> Source => _inner.Source;
+
+	/// <summary>
 	/// Legacy - Used only be legacy IInput syntax
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
@@ -94,16 +99,10 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		=> _updatesTarget = ReferenceEquals(this, replacement) ? null : replacement;
 
 	/// <summary>
-	/// Gets the subscription every reader of this state reads, directly or through the context's subscription to this state.
+	/// Drops the updates made through this state, so it shows its source again.
 	/// </summary>
-	internal FeedSubscription<T> Subscription
-	{
-		get
-		{
-			Enable();
-			return _subscription;
-		}
-	}
+	internal void ClearUpdates()
+		=> _inner.Clear();
 
 	public IAsyncEnumerable<Message<T>> GetSource(SourceContext context, CancellationToken ct = default)
 	{

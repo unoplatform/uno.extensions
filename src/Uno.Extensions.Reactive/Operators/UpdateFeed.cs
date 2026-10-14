@@ -53,7 +53,7 @@ internal record FeedUpdate<T>(
 
 internal sealed class UpdateFeed<T> : IFeed<T>
 {
-	private readonly AsyncEnumerableSubject<(IFeedUpdate<T>[]? added, IFeedUpdate<T>[]? removed)> _updates = new(ReplayMode.Disabled);
+	private readonly AsyncEnumerableSubject<(IFeedUpdate<T>[]? added, IFeedUpdate<T>[]? removed, bool clear)> _updates = new(ReplayMode.Disabled);
 	private readonly IFeed<T> _source;
 	private readonly Predicate<Message<T>>? _waitForParent;
 
@@ -63,20 +63,31 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 		_waitForParent = waitForParent;
 	}
 
+	/// <summary>
+	/// Gets the feed the updates are applied on.
+	/// </summary>
+	internal IFeed<T> Source => _source;
+
 	public async ValueTask Update(Func<Message<T>?, bool, IMessageEntry<T>, bool> predicate, Action<bool, MessageBuilder<T, T>> updater, CancellationToken ct)
 	{
 		var update = new FeedUpdate<T>(predicate, updater);
-		_updates.SetNext((new[] { update }, null));
+		_updates.SetNext((new[] { update }, null, false));
 	}
 
 	internal void Add(IFeedUpdate<T> update)
-		=> _updates.SetNext((new[] { update }, null));
+		=> _updates.SetNext((new[] { update }, null, false));
 
 	internal void Replace(IFeedUpdate<T> previous, IFeedUpdate<T> current)
-		=> _updates.SetNext((new[] { current }, new[] { previous }));
+		=> _updates.SetNext((new[] { current }, new[] { previous }, false));
 
 	internal void Remove(IFeedUpdate<T> update)
-		=> _updates.SetNext((null, new[] { update }));
+		=> _updates.SetNext((null, new[] { update }, false));
+
+	/// <summary>
+	/// Drops every update, compacted ones included, so the feed shows its source again.
+	/// </summary>
+	internal void Clear()
+		=> _updates.SetNext((null, null, true));
 
 	/// <inheritdoc />
 	public IAsyncEnumerable<Message<T>> GetSource(SourceContext context, CancellationToken ct)
@@ -126,7 +137,7 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 		public IAsyncEnumerator<Message<T>> GetAsyncEnumerator(CancellationToken ct = default)
 			=> _subject.GetAsyncEnumerator(ct);
 
-		private void OnUpdateReceived((IFeedUpdate<T>[]? added, IFeedUpdate<T>[]? removed) args)
+		private void OnUpdateReceived((IFeedUpdate<T>[]? added, IFeedUpdate<T>[]? removed, bool clear) args)
 		{
 			lock (this)
 			{
@@ -136,6 +147,19 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 				}
 
 				bool needsUpdate = false, canDoIncrementalUpdate = !_isInError;
+				if (args.clear)
+				{
+					foreach (var rollbackable in _compactedUpdates.Values)
+					{
+						rollbackable.Rollback(_message);
+					}
+
+					needsUpdate = !_activeUpdates.IsEmpty || !_compactedUpdates.IsEmpty;
+					canDoIncrementalUpdate = false;
+					_activeUpdates = ImmutableList<IFeedUpdate<T>>.Empty;
+					_compactedUpdates = ImmutableDictionary<IFeedUpdate<T>, IFeedRollbackableUpdate<T>>.Empty;
+				}
+
 				if (args.removed is { Length: > 0 } removed)
 				{
 					var updates = _activeUpdates.RemoveRange(removed);
