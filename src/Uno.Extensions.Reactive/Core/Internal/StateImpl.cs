@@ -216,6 +216,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		}
 		catch (OperationCanceledException) when (ct.IsCancellationRequested)
 		{
+			// Expected: the value changed (a new validation has been started) or the validation has been stopped.
 		}
 		catch (Exception error)
 		{
