@@ -371,15 +371,19 @@ partial class State
 	/// If the validator throws, the error is logged and the previous results are kept (the state is not set in error).
 	/// This is idempotent: invoking this method multiple times on the same state replaces the validator (starting at the next data change).
 	/// </remarks>
+	/// <exception cref="ArgumentNullException">If the <paramref name="state"/> or the <paramref name="validator"/> is null.</exception>
 	/// <exception cref="NotSupportedException">If the <paramref name="state"/> has not been created using the MVUX State factories.</exception>
 	public static IState<T> Validate<T>(this IState<T> state, Func<T, CancellationToken, ValueTask<IEnumerable<ValidationResult>>> validator)
 	{
+		ArgumentNullException.ThrowIfNull(state);
+		ArgumentNullException.ThrowIfNull(validator);
+
 		if (state is not StateImpl<T> impl)
 		{
 			throw new NotSupportedException($"Validation is supported only on states created using the State factories (got '{state.GetType().Name}').");
 		}
 
-		impl.SetValidator(validator ?? throw new ArgumentNullException(nameof(validator)));
+		impl.SetValidator(validator);
 
 		return state;
 	}
