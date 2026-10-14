@@ -62,7 +62,7 @@ Two entry points, both writing the axis through the existing `StateImpl.UpdateMe
    - Idempotent: model property getters are re-evaluated, so re-registration replaces, never stacks.
    - After every `Data` change: cancel the in-flight validation, run the validator off the UI thread, then write `Validation` **only if the data is still the version that was validated** (reference/version check) — stale results are discarded.
    - Validator exceptions are logged and do not fault the state (not surfaced as `Error` axis). Previous results are kept.
-   - The validator runs only when the state has a value: `None` clears the results, `Undefined` keeps them.
+   - The validator runs only when the state has a value: `None` clears the results, `Undefined` keeps them. `Some(null)` is a value: the validator is invoked with `null`.
    - `IValidator` fits the delegate directly (`_validator.ValidateAsync`), so no bridge package is required. A convenience `Validate(this IState<T>, IValidator)` overload is an open question (§7 Q3).
 
 ### 4.3 Consumer — the VM reroutes to INDEI
