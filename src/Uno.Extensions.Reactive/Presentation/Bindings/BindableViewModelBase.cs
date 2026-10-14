@@ -84,6 +84,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 			+ "This method should be used only by generated code, consider to remove usage in your app.");
 
 		var state = ctx.GetOrCreateState(feed);
+		TrackBindableFeed(propertyName, feed);
 
 		return CreateProperty(propertyName, (StateImpl<TProperty>)state, isReadOnly: feed != state);
 	}
