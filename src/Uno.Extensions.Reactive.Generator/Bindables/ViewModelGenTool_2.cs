@@ -157,8 +157,10 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 
 						var previousModel = (object){N.Model};
 
-						__Reactive_BindableInitializeForUpdatedModel(updatedModel, {NS.Core}.SourceContext.GetOrCreate(updatedModel));
+						// Patch first: re-key the shared subscriptions onto the updated model's feeds before any member
+						// initialized from the updated model (e.g. a newly added derived feed) subscribes to them (#3226).
 						__Reactive_TryPatchBindableProperties(previousModel, updatedModel);
+						__Reactive_BindableInitializeForUpdatedModel(updatedModel, {NS.Core}.SourceContext.GetOrCreate(updatedModel));
 
 						base.RaisePropertyChanged(""""); // 'Model' and any other mapped property.
 					}}

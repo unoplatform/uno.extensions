@@ -16,6 +16,16 @@ namespace Uno.Extensions.Reactive.Tests.Extensions;
 [TestClass]
 public class Given_StateForEach : FeedTests
 {
+	// `SetAsync` completes once the state has applied the update, not once the ForEach callbacks have run,
+	// so asserting right after it races the callbacks. Bounded so a dropped callback still fails the test.
+	private async Task WaitForCallbacks(List<int> result, int expectedCount)
+	{
+		for (var i = 0; i < 200 && result.Count < expectedCount; i++)
+		{
+			await Task.Delay(10, CT);
+		}
+	}
+
 	[TestMethod]
 	public async Task When_ForEachAsync_Then_AcceptsNotNullAndStruct()
 	{
@@ -70,6 +80,7 @@ public class Given_StateForEach : FeedTests
 		await state.SetAsync(3, CT);
 		await state.SetAsync(4, CT);
 
+		await WaitForCallbacks(result, 3);
 		result.Should().BeEquivalentTo(new[] { 2, 3, 4 });
 	}
 
@@ -85,6 +96,7 @@ public class Given_StateForEach : FeedTests
 		await state.SetAsync(3, CT);
 		await state.SetAsync(4, CT);
 
+		await WaitForCallbacks(result, 3);
 		result.Should().BeEquivalentTo(new[] { 2, 3, 4 });
 	}
 
@@ -108,6 +120,7 @@ public class Given_StateForEach : FeedTests
 		await state.SetAsync(3, CT);
 		await state.SetAsync(4, CT);
 
+		await WaitForCallbacks(result, 3);
 		result.Should().BeEquivalentTo(new[] { 2, 3, 4 });
 	}
 
@@ -132,6 +145,7 @@ public class Given_StateForEach : FeedTests
 		await state.SetAsync(3, CT);
 		await state.SetAsync(4, CT);
 
+		await WaitForCallbacks(result, 3);
 		result.Should().BeEquivalentTo(new[] { 2, 3, 4 });
 	}
 
@@ -183,9 +197,7 @@ public class Given_StateForEach : FeedTests
 		await state.SetAsync(42, CT);
 		await state.SetAsync(3, CT);
 
-		//Test fails sometime because of time needed to process the exception
-		await Task.Delay(100);
-
+		await WaitForCallbacks(result, 2);
 		result.Should().BeEquivalentTo(new[] { 2, 3 });
 	}
 

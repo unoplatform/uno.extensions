@@ -16,6 +16,8 @@
 		<PackageReference Include="coverlet.collector" />
 		<!-- Drives the generators in-process (Given_FeedsMockGenerator, Given_FeedsGenerator_Commands) -->
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+		<!-- The messenger the generator recognizes on a constructor (Given_FeedsMockGenerator) -->
+		<PackageReference Include="CommunityToolkit.Mvvm" />
 	</ItemGroup>
 
 	<ItemGroup>

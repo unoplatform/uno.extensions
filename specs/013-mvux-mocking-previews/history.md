@@ -281,6 +281,37 @@ same subscription and recurse.
 Tests cover the shared state/operator update, replacement-feed subscription alias, mock re-swap, derived scalar/list
 chains, local state-edit isolation, live-context fail-hard behavior, and state-to-state update handoff.
 
+## v18 — `Create` passes a messenger
+
+The MVUX messaging pattern calls `messenger.Observe(...)` in the model's constructor, which throws on the null
+`Create` passed, so such a model got no mock at all. `Create` now passes a fresh `WeakReferenceMessenger` for a
+parameter typed `CommunityToolkit.Mvvm.Messaging.IMessenger` (matched by symbol), and a typed default for every
+other one. A messenger of its own keeps an app's messages out of a preview; the weak one is what the messaging
+documentation registers, and it never extends a recipient's lifetime. The R1 guard on `CtorDependency(Eager=true)` is
+still not built, so `Create` still throws for a constructor that dereferences any other parameter. The messenger is a
+stopgap until R1, recorded so it does not grow into a list of known types: the match is exact (a parameter typed
+`WeakReferenceMessenger`, or an interface deriving from `IMessenger`, stays null-injected), and a test or preview
+cannot reach the messenger. R1 replaces it, where a fresh messenger can become the default value of an `IMessenger`
+argument. Fixture: `NoteModel`. Tests: `Given_GeneratedMock` and `Given_FeedsMockGenerator`.
+
+## v19 — a state input is swapped under its own updates
+
+v17 swapped a state input at the context's subscription to the state, but no reader of a state goes through it:
+every reader ends at the state's own subscription, over its `UpdateFeed`. A list state's bindable showed the error
+of the real, null-injected loader, and a scalar state read directly did the same. This was a regression of v17:
+v16 still swapped a state input as a state, since its bindable reads the state itself.
+
+The swap now sits one level lower, where the state's `UpdateFeed` reads its source: the context's subscription to
+that feed, already swappable under mocking. The state keeps its own updates, so an edit applies over the mock and
+the feeds derived from the state see it, as in a live app, and hot reload and mocking still share one
+subscription-owned swap (v17). `SetMock` clears the state's updates (`UpdateFeed.Clear`), so re-applying a mock,
+`{Model}Mock.Empty` included, starts over from it; a mock that is itself a state also takes the member's writes, and
+the member's own state restores its source. Dropped draft: a state built over the mock for each swap and read
+through the state's own subscription, which brought back a second replacement point, a process-wide table of the
+built states and a fire-and-forget dispose. Limits: a state built over another member feed shares that feed's
+subscription, so mocking the state mocks that feed too; hot reload still swaps a state at the context's
+subscription to the state. Fixture: `TasksModel`. Tests: `Given_GeneratedMock` and `Given_SingleProjectMock`.
+
 ---
 
 ## Final decision register
@@ -292,7 +323,7 @@ chains, local state-edit isolation, live-context fail-hard behavior, and state-t
 | D3 | A facade (`SetModel` and generated setters) sits in front of the hooks; `HotSwapFeed` and the handles stay non-public | v1 |
 | D4 | ~~Dedicated mockable flag in `FeedConfiguration`~~ **replaced in v7** by the per-context gate `SourceContext.IsMockingActive` (D12) | v1 to v7 |
 | D5 | Mocking code generation is **external** (consumer project); the MVUX generator only does analysis, attributes and hidden hooks | v1 |
-| D6 | The swap is anchored so derived feeds survive (non-negotiable): at the context's subscription to each feed, shared by hot reload and mocking and read by the state and every derivation; derived members remain individually overridable | v1, v2, v16 and v17 |
+| D6 | The swap is anchored so derived feeds survive (non-negotiable): at the context's subscription to each feed, shared by hot reload and mocking and read by the state and every derivation; a state input at the context's subscription to the feed its updates apply on, so the state keeps its edits over the mock; derived members remain individually overridable | v1, v2, v16, v17 and v19 |
 | D7 | The non-AOT nature of the mocking path is accepted (development and test only) | v1 |
 | D8 | Converters are application-owned illustrations at `FeedView.Source` (returning `IMessageEntry`); the feature implements none | v4 |
 | D9 | Tiers 2 and 3 are strictly typed; the tier 1 object is confined to tier 1 | v4 |

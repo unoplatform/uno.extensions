@@ -84,6 +84,114 @@ public class Given_FeedsMockGenerator
 	}
 
 	[TestMethod]
+	public void When_CtorTakesAMessenger_Then_CreatePassesAFreshOne()
+	{
+		// The MVUX messaging pattern observes the messenger in the model's constructor, which throws on null.
+		var (sources, diagnostics) = Run(Preamble + """
+			[Model(typeof(ItemsViewModel))]
+			[FeedDependency("Items", OnParameter = "service")]
+			public class ItemsModel
+			{
+				public ItemsModel(IService service, CommunityToolkit.Mvvm.Messaging.IMessenger messenger) { }
+				public IListFeed<string> Items => null!;
+			}
+
+			public class ItemsViewModel
+			{
+				public ItemsViewModel(IService service, CommunityToolkit.Mvvm.Messaging.IMessenger messenger) { }
+				protected ItemsViewModel(ItemsModel model) { }
+				public ItemsModel Model => null!;
+			}
+			""", referenceToolkit: true);
+
+		diagnostics.Should().BeEmpty();
+		sources.Should().ContainSingle()
+			.Which.Should().Contain("new global::App.ItemsViewModel(default(global::App.IService)! /* service */, "
+				+ "(global::CommunityToolkit.Mvvm.Messaging.IMessenger)new global::CommunityToolkit.Mvvm.Messaging.WeakReferenceMessenger() /* messenger */)");
+	}
+
+	[TestMethod]
+	public void When_CtorTakesANullableMessenger_Then_CreatePassesAFreshOne()
+	{
+		var (sources, diagnostics) = Run(Preamble + """
+			[Model(typeof(ItemsViewModel))]
+			[FeedDependency("Items", OnParameter = "service")]
+			public class ItemsModel
+			{
+				public ItemsModel(IService service, CommunityToolkit.Mvvm.Messaging.IMessenger? messenger) { }
+				public IListFeed<string> Items => null!;
+			}
+
+			public class ItemsViewModel
+			{
+				public ItemsViewModel(IService service, CommunityToolkit.Mvvm.Messaging.IMessenger? messenger) { }
+				protected ItemsViewModel(ItemsModel model) { }
+				public ItemsModel Model => null!;
+			}
+			""", referenceToolkit: true);
+
+		diagnostics.Should().BeEmpty();
+		sources.Should().ContainSingle()
+			.Which.Should().Contain("(global::CommunityToolkit.Mvvm.Messaging.IMessenger)new global::CommunityToolkit.Mvvm.Messaging.WeakReferenceMessenger() /* messenger */)");
+	}
+
+	[TestMethod]
+	public void When_CtorTakesAnotherTypeNamedIMessenger_Then_CreateNullInjectsIt()
+	{
+		// The toolkit is referenced, so its IMessenger resolves: only the symbol, not the name, may match.
+		var (sources, diagnostics) = Run(Preamble + """
+			public interface IMessenger { }
+
+			[Model(typeof(ItemsViewModel))]
+			[FeedDependency("Items", OnParameter = "service")]
+			public class ItemsModel
+			{
+				public ItemsModel(IService service, IMessenger messenger) { }
+				public IListFeed<string> Items => null!;
+			}
+
+			public class ItemsViewModel
+			{
+				public ItemsViewModel(IService service, IMessenger messenger) { }
+				protected ItemsViewModel(ItemsModel model) { }
+				public ItemsModel Model => null!;
+			}
+			""", referenceToolkit: true);
+
+		diagnostics.Should().BeEmpty();
+		sources.Should().ContainSingle()
+			.Which.Should().Contain("new global::App.ItemsViewModel(default(global::App.IService)! /* service */, default(global::App.IMessenger)! /* messenger */)");
+	}
+
+	[TestMethod]
+	public void When_CompilationDoesNotReferenceTheToolkit_Then_NothingNamesIt()
+	{
+		// A consumer without CommunityToolkit.Mvvm would not compile a mock naming it, even for a parameter called IMessenger.
+		var (sources, diagnostics) = Run(Preamble + """
+			public interface IMessenger { }
+
+			[Model(typeof(ItemsViewModel))]
+			[FeedDependency("Items", OnParameter = "service")]
+			public class ItemsModel
+			{
+				public ItemsModel(IService service, IMessenger messenger) { }
+				public IListFeed<string> Items => null!;
+			}
+
+			public class ItemsViewModel
+			{
+				public ItemsViewModel(IService service, IMessenger messenger) { }
+				protected ItemsViewModel(ItemsModel model) { }
+				public ItemsModel Model => null!;
+			}
+			""");
+
+		diagnostics.Should().BeEmpty();
+		sources.Should().ContainSingle()
+			.Which.Should().NotContain("CommunityToolkit");
+	}
+
+	[TestMethod]
 	public void When_ViewModelHasNoPublicCtor_Then_ReportsMOCK0001AndEmitsNothing()
 	{
 		var (sources, diagnostics) = Run(Preamble + """
@@ -348,16 +456,18 @@ public class Given_FeedsMockGenerator
 		return count;
 	}
 
-	private static (string[] Sources, Diagnostic[] Diagnostics) Run(string source)
+	private static (string[] Sources, Diagnostic[] Diagnostics) Run(string source, bool referenceToolkit = false)
 	{
-		// The framework plus the Uno.Extensions assemblies of the test host: enough for the fixture source to
-		// compile, small enough for the generator's walk over referenced assemblies to stay quick.
+		// The framework and the Uno.Extensions assemblies of the test host: enough for the fixture source to compile,
+		// small enough for the generator's walk over referenced assemblies to stay quick. CommunityToolkit.Mvvm only
+		// when a test opts in, since a consumer may not reference it.
 		var references = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!)
 			.Split(Path.PathSeparator)
 			.Where(path => Path.GetFileName(path) is { } name
 				&& (name.StartsWith("System.", StringComparison.Ordinal)
 					|| name.StartsWith("netstandard", StringComparison.Ordinal)
-					|| name.StartsWith("Uno.Extensions.", StringComparison.Ordinal))
+					|| name.StartsWith("Uno.Extensions.", StringComparison.Ordinal)
+					|| (referenceToolkit && name.StartsWith("CommunityToolkit.Mvvm", StringComparison.Ordinal)))
 				// The MVUX generator assembly duplicates the public attributes of Uno.Extensions.Reactive.
 				&& !name.StartsWith("Uno.Extensions.Reactive.Generator", StringComparison.Ordinal))
 			.Select(path => MetadataReference.CreateFromFile(path));

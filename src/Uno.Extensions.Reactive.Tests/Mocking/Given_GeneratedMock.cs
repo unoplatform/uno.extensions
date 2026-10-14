@@ -98,6 +98,19 @@ public class Given_GeneratedMock : FeedUITests
 	}
 
 	[TestMethod]
+	public async Task When_ModelObservesAMessengerInItsCtor_Then_CreateSucceedsAndInputFlows()
+	{
+		// NoteModel calls messenger.Observe in its constructor, which throws on a null messenger.
+		var vm = NoteViewModelMock.Create(new NoteModelMock { Pinned = FeedMock.Value(new Note(1, "pinned")) });
+		var ctx = SourceContext.GetOrCreate(vm.Model);
+		using var scope = ctx.AsCurrent();
+
+		var (text, _) = ctx.GetOrCreateState(vm.Model.PinnedText).Record();
+
+		await text.WaitForData("pinned");
+	}
+
+	[TestMethod]
 	public async Task When_InputMocked_Then_DerivedFeedComputesOverTheMock()
 	{
 		var vm = MenuViewModelMock.Create(new MenuModelMock { Items = ListFeedMock.Value("a", "b") });
@@ -211,6 +224,144 @@ public class Given_GeneratedMock : FeedUITests
 		count.Should().NotContain(
 			message => message.Current.Data.SomeOrDefault() == 1,
 			"an edit of the state stays local to it, as in a live app, while the swap reaches the derived feed");
+	}
+
+	[TestMethod]
+	public async Task When_ListStateInputMocked_Then_ViewModelCarriesTheMockedItems()
+	{
+		var vm = TasksViewModelMock.Create(new TasksModelMock { Tasks = ListFeedMock.Value(new TaskItem("1", "a"), new TaskItem("2", "b")) });
+		using var scope = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+
+		var (tasks, _) = vm.Tasks.Record();
+
+		await tasks.WaitForData(items => items.SequenceEqual(new[] { new TaskItem("1", "a"), new TaskItem("2", "b") }));
+		tasks.Should().NotContain(message => message.Current.Error != null, "the real, null-injected loader never runs");
+	}
+
+	[TestMethod]
+	public async Task When_ListStateInputReSwapped_Then_ViewModelCarriesTheNewItems()
+	{
+		var vm = TasksViewModelMock.Create(new TasksModelMock { Tasks = ListFeedMock.Value(new TaskItem("1", "a")) });
+		using var scope = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+
+		var (tasks, _) = vm.Tasks.Record();
+		await tasks.WaitForData(items => items.SequenceEqual(new[] { new TaskItem("1", "a") }));
+
+		vm.SetMock(TasksModelMock.Empty with { Tasks = ListFeedMock.Value(new TaskItem("2", "b"), new TaskItem("3", "c")) });
+
+		await tasks.WaitForData(items => items.SequenceEqual(new[] { new TaskItem("2", "b"), new TaskItem("3", "c") }));
+	}
+
+	[TestMethod]
+	public async Task When_ListStateInputMockedAsLoading_Then_ViewModelIsLoading()
+	{
+		var vm = TasksViewModelMock.Create(new TasksModelMock { Tasks = ListFeedMock.Loading<TaskItem>() });
+		using var scope = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+
+		var (tasks, _) = vm.Tasks.Record();
+
+		await tasks.WaitForMessage(message => message.Current.IsTransient);
+		tasks.Should().NotContain(message => message.Current.Error != null, "the real, null-injected loader never runs");
+	}
+
+	[TestMethod]
+	public async Task When_ListStateInputMockedAsError_Then_ViewModelCarriesTheMockedError()
+	{
+		var vm = TasksViewModelMock.Create(new TasksModelMock { Tasks = ListFeedMock.Error<TaskItem>(new TestException()) });
+		using var scope = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+
+		var (tasks, _) = vm.Tasks.Record();
+
+		await tasks.WaitForMessage(message => message.Current.Error is TestException);
+	}
+
+	[TestMethod]
+	public async Task When_SetMockPassesTheOriginalListState_Then_TheRealInputRuns()
+	{
+		var vm = TasksViewModelMock.Create(new TasksModelMock { Tasks = ListFeedMock.Value(new TaskItem("1", "a")) });
+		using var scope = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+
+		var (tasks, _) = vm.Tasks.Record();
+		await tasks.WaitForData(items => items.SequenceEqual(new[] { new TaskItem("1", "a") }));
+
+		vm.SetMock(TasksModelMock.Empty with { Tasks = vm.Model.Tasks });
+
+		await tasks.WaitForMessage(message => message.Current.Error is NullReferenceException);
+	}
+
+	[TestMethod]
+	public async Task When_MockedListStateInputIsEdited_Then_TheEditReachesTheViewModel()
+	{
+		var vm = TasksViewModelMock.Create(new TasksModelMock { Tasks = ListFeedMock.Value(new TaskItem("1", "a")) });
+		using var scope = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+
+		var (tasks, _) = vm.Tasks.Record();
+		await tasks.WaitForData(items => items.SequenceEqual(new[] { new TaskItem("1", "a") }));
+
+		await vm.Model.Tasks.AddAsync(new TaskItem("2", "b"), CT);
+
+		await tasks.WaitForData(items => items.SequenceEqual(new[] { new TaskItem("1", "a"), new TaskItem("2", "b") }));
+		tasks.Should().NotContain(message => message.Current.Error != null, "the real, null-injected loader never runs");
+	}
+
+	[TestMethod]
+	public async Task When_ListStateInputMockedWithAListState_Then_ItsEditsReachTheViewModel()
+	{
+		var mock = ListState<TaskItem>.Value(new object(), () => ImmutableList.Create(new TaskItem("1", "a")));
+		var vm = TasksViewModelMock.Create(new TasksModelMock { Tasks = mock });
+		using var scope = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+
+		var (tasks, _) = vm.Tasks.Record();
+		await tasks.WaitForData(items => items.SequenceEqual(new[] { new TaskItem("1", "a") }));
+
+		await vm.Model.Tasks.AddAsync(new TaskItem("2", "b"), CT);
+
+		await tasks.WaitForData(items => items.SequenceEqual(new[] { new TaskItem("1", "a"), new TaskItem("2", "b") }));
+	}
+
+	[TestMethod]
+	public async Task When_ListStateInputMocked_Then_DerivedFeedComputesOverTheMock()
+	{
+		var vm = TasksViewModelMock.Create(new TasksModelMock { Tasks = ListFeedMock.Value(new TaskItem("1", "a"), new TaskItem("2", "b")) });
+		var ctx = SourceContext.GetOrCreate(vm.Model);
+		using var scope = ctx.AsCurrent();
+
+		var (count, _) = ctx.GetOrCreateState(vm.Model.TasksCount).Record();
+
+		await count.WaitForData(2);
+		count.Should().NotContain(message => message.Current.Error != null, "the real, null-injected loader never runs");
+	}
+
+	[TestMethod]
+	public async Task When_MockedListStateInputIsEdited_Then_DerivedFeedSeesTheEdit()
+	{
+		var vm = TasksViewModelMock.Create(new TasksModelMock { Tasks = ListFeedMock.Value(new TaskItem("1", "a")) });
+		var ctx = SourceContext.GetOrCreate(vm.Model);
+		using var scope = ctx.AsCurrent();
+
+		var (count, _) = ctx.GetOrCreateState(vm.Model.TasksCount).Record();
+		await count.WaitForData(1);
+
+		await vm.Model.Tasks.AddAsync(new TaskItem("2", "b"), CT);
+
+		await count.WaitForData(2);
+	}
+
+	[TestMethod]
+	public async Task When_SetMockReappliesTheSameListFeedMock_Then_AnEarlierEditIsDropped()
+	{
+		var mock = ListFeedMock.Value(new TaskItem("1", "a"));
+		var vm = TasksViewModelMock.Create(new TasksModelMock { Tasks = mock });
+		using var scope = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+
+		var (tasks, _) = vm.Tasks.Record();
+		await tasks.WaitForData(items => items.Count == 1);
+		await vm.Model.Tasks.AddAsync(new TaskItem("2", "b"), CT);
+		await tasks.WaitForData(items => items.Count == 2);
+
+		vm.SetMock(new TasksModelMock { Tasks = mock });
+
+		await tasks.WaitForData(items => items.SequenceEqual(new[] { new TaskItem("1", "a") }));
 	}
 
 	[TestMethod]

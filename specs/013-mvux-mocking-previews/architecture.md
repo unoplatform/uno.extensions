@@ -24,14 +24,14 @@ Every feed factory caches its instance via `AttachedProperty.GetOrCreate` keyed 
 **Anchor:** the context keeps one subscription per feed, and every reader of a feed goes through it: the feed's state and `SelectFeed`, `WhereFeed`, `WhereListFeed`, `CombineFeed`, the list adapters, `Messages()` and dynamic feeds (through `FeedDependency`). In a context where `SourceContext.IsMockingActive` is set (§6), that subscription reads its feed through a `HotSwapFeed<T>`, so `SetMock` swaps the member's subscription and every reader sees the mock. A list feed's `AsFeed()` adapter reads the list feed's subscription, so one swap reaches the list state and every derivation. Consequences:
 
 - a swap reaches the VM member and the business logic through the same subscription, in whichever order they subscribed;
-- derivations read the subscription, below the state's own updates: an edit of the state stays local to it, as in a live app;
+- derivations of a feed input read the feed's subscription, below the updates of the state built over it: an edit of that state stays local to it, as in a live app;
 - `HotSwapFeed` reads its feed directly, not through the context, which would route it back to the subscription itself; a mock that is the member's own feed restores the real feed;
-- feeds and states use the same subscription-level source replacement; when an actual `StateImpl` replaces another state, its `HotSwap` redirects future writes to the replacement state's `UpdateFeed`;
+- a state input keeps its own updates: what is swapped is the feed they apply on, at the context's subscription to it, like any other member; the state's readers and the feeds derived from the state then see the mock with the edits over it, as in a live app. Each `SetMock` clears the state's updates, so it starts over from its mock even when the same mock is re-applied; a mock that is itself a state also takes the member's writes, and the member itself restores its source (v19);
 - a state's internal `UpdateFeed` uses the same subscription wrapper; eager states and updates without a subscriber explicitly activate that subscription;
 - no `dynamic`, no duck-typed re-init needed for feeds: **`SetMock` = one typed swap per mocked member** (D11): a fail-hard check that the member's subscription is swappable, then the swap. No per-member generated handle. (The HR `dynamic` path stays untouched, HR-only.)
 - outside a mocking context nothing is wrapped: a subscription reads its feed as before.
 
-Costs and limits, accepted for a development-only path (D7): under mocking a subscription does not complete when its feed completes, and a mock derived from the member it replaces would observe itself.
+Costs and limits, accepted for a development-only path (D7): under mocking a subscription does not complete when its feed completes, a mock derived from the member it replaces would observe itself, and a state built over another member feed shares that feed's subscription, so mocking the state mocks that feed too.
 
 ```mermaid
 flowchart TB
@@ -101,7 +101,7 @@ public static partial class RecipeViewModelMock
 }
 ```
 
-- `Create()` constructs the **real VM** via `new {Vm}(default!, …)`; **compile-time guard**: if `[CtorDependency(Eager=true)]` names parameter `p`, `Create` **requires** a real/fake `p` argument (or the generator emits an error diagnostic if no safe overload is possible).
+- `Create()` constructs the **real VM** via `new {Vm}(default(T)!, …)`, with a fresh `WeakReferenceMessenger` instead for every parameter typed `CommunityToolkit.Mvvm.Messaging.IMessenger` (v18); **compile-time guard (R1, not built yet)**: if `[CtorDependency(Eager=true)]` names parameter `p`, `Create` **requires** a real/fake `p` argument (or the generator emits an error diagnostic if no safe overload is possible). Until it is built, `Create` throws for a constructor that dereferences any other parameter. The messenger is a **stopgap until R1**, not the first entry of a list of known types: no other type gets a stand-in, and R1 replaces it, where a fresh messenger can become the default value of an `IMessenger` argument that a test or preview can then send messages through.
 - `SetMock` may be called repeatedly (live transitions, G6); `with`-expressions on the record make variants cheap (`Empty with { Steps = … }`).
 - `required init` on service-dependent inputs = compile-time completeness. **Derived members are optional overrides**: `null` (default) → the real derivation recomputes over the swapped inputs; non-null → that member's own subscription is swapped too, like an input's — lets a test pin a derived value without caring about its inputs.
 - **Tier 2 and tier 3 never accept `MessageEntry`, an untyped feed envelope, or any other tier-1 authoring abstraction. Their contracts remain `IFeed<T>`, `IListFeed<T>`, typed states and typed commands end to end.**
