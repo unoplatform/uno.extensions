@@ -60,6 +60,7 @@ Each scenario should:
 | **Feed.Async↔AsyncEnumerable syntax** | Switch between `Feed.Async` and `Feed.AsyncEnumerable` | Validates syntax change across different Feed factory methods. |
 | **Self-patch with ctor-deps** | New VM constructed AFTER HR on a model with required ctor params | Exercises `TryHotPatch` self-patch path: `__reactiveModelArgs` must be captured in the outermost public ctor before the call fires. |
 | **Inheritance parent-only HR** | Edit a parent model while a child VM is live; child has its own feed and inherits parent's | Exercises base-type shadow walk + base-only-patch detection. Inherited feed must hot-swap; child-only feed must stay intact. |
+| **Add derived feed next to a state + command** | A `Count.Select(...)` feed is added while `Count` (state) and `Increment` (command) are live and bound | #3226. The patcher must re-key the shared subscription before the new feed subscribes to the updated state, otherwise the command updates a state the view no longer shows. |
 
 ## 4. Scenario catalog
 
@@ -220,6 +221,22 @@ Each scenario should:
 - **Status**: Failing on this branch — requires inheritance support
   from `dev/mara/fix-mvux-hr` (base-type walk + base-only-patch).
 
+### 4.13 Add derived feed next to a live state and command (implemented)
+
+- **ID**: `When_AddDerivedFeedToModelWithStateAndCommand_Then_CommandUpdatesBoundState`
+- **Goal**: Prove that adding a feed derived from an existing state does not
+  detach the live bindable from the state the commands update (#3226).
+- **Model**: `MvuxHotReloadAddDerivedFeedModel` with `IState<int> Count`
+  (`State.Value`) and an `Increment` command (`Count.UpdateAsync`).
+- **HR change**: Single delta — add
+  `IFeed<bool> IsGoalReached => Count.Select(c => c >= 10);`.
+- **Assertion**: The live VM's bound `Count` follows the updated model's
+  state (resets to `0`), and two `Increment` executions after the delta
+  bring the bound text to `2`.
+- **Status**: Added with the fix for #3226. Not executable on a Windows host
+  (see `specs/lessons.md`, hard-linked outputs); to be confirmed by the CI
+  Skia hot-reload lane.
+
 ## 5. Organizational notes
 
 - One test method per scenario.
@@ -247,3 +264,4 @@ Each scenario should:
 | `MvuxHotReloadCtorDepsModel.cs` | Model for ctor-deps self-patch scenario |
 | `MvuxHotReloadParentModel.cs` | Base model for inheritance scenario |
 | `MvuxHotReloadInheritedChildModel.cs` | Derived model for inheritance scenario |
+| `MvuxHotReloadAddDerivedFeedModel.cs` | Model for the add-derived-feed scenario (#3226) |
