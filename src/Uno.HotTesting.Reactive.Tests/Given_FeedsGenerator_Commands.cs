@@ -52,6 +52,50 @@ public class Given_FeedsGenerator_Commands
 		vm.Should().NotContain("await model.");
 	}
 
+	[TestMethod]
+	public void When_MethodIsAwaitableThroughExtensionGetAwaiter_Then_ViewModelImportsTheExtension()
+	{
+		// The awaitable lives in a namespace the model's namespace doesn't nest in, so the generated file
+		// only compiles (see Run) if it brings the extension GetAwaiter in scope itself.
+		var (sources, diagnostics) = Run("""
+			using System;
+			using System.Runtime.CompilerServices;
+			using System.Threading;
+			using Awaitables;
+
+			namespace Awaitables
+			{
+				public readonly struct Job { }
+
+				public readonly struct JobAwaiter : INotifyCompletion
+				{
+					public bool IsCompleted => true;
+					public void GetResult() { }
+					public void OnCompleted(Action continuation) => continuation();
+				}
+
+				public static class JobExtensions
+				{
+					public static JobAwaiter GetAwaiter(this Job job) => default;
+				}
+			}
+
+			namespace App
+			{
+				public partial record CounterModel
+				{
+					public Job Increment(CancellationToken ct) => default;
+				}
+			}
+			""");
+
+		diagnostics.Should().BeEmpty();
+		var vm = sources.Should().ContainSingle(source => source.Contains("class CounterViewModel")).Subject;
+
+		vm.Should().Contain("using static global::Awaitables.JobExtensions;");
+		Occurrences(vm, "await ((global::Awaitables.Job)model.Increment(reactive_ct));").Should().Be(2);
+	}
+
 	private static int Occurrences(string text, string value)
 	{
 		var count = 0;
