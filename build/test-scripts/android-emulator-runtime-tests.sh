@@ -142,6 +142,18 @@ cleanup() {
   fi
   if [[ -n "${EMULATOR_PID}" ]]; then
     adb -s emulator-5554 emu kill 2>/dev/null || true
+    # Bounded: in build 239767 the emulator acknowledged `emu kill` but never exited, and an
+    # unbounded `wait` held a green 2-minute run for 98 minutes. Force it (qemu is a child of the
+    # `emulator` launcher, so kill it by name too).
+    for _ in $(seq 1 30); do
+      kill -0 "${EMULATOR_PID}" 2>/dev/null || break
+      sleep 1
+    done
+    if kill -0 "${EMULATOR_PID}" 2>/dev/null; then
+      echo "Emulator still running 30s after 'emu kill'; killing it."
+      kill -9 "${EMULATOR_PID}" 2>/dev/null || true
+    fi
+    pkill -9 -f "qemu-system.*${AVD_NAME}" 2>/dev/null || true
     wait "${EMULATOR_PID}" 2>/dev/null || true
   fi
 }
