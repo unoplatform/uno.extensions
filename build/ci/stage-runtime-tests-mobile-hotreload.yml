@@ -17,23 +17,28 @@ parameters:
   # makes the DevServer reload its workspace (~5 min on the mac agent), so keep the list short.
   # Engine filters are substring matches on the full test name. Only chain '& !' exclusions: the
   # parser has no operator precedence, so mixing '|' with '&' misparses even with parentheses.
-  # 'Given_HotReload.' (with the dot) is exactly the Reactive and Navigation Given_HotReload classes.
-  # Each exclusion names the issue that tracks it. Given_TabBar_HotReload is left out on both
-  # platforms (Android: #3237; iOS: not yet measured).
+  # Launch 1 takes every '_HotReload' class, the desktop lane's filter, except the two named below,
+  # so a new Given_*_HotReload class runs on mobile without a filter change. Launch 2 is
+  # Given_Navigation_HotReload. Given_TabBar_HotReload is left out on both platforms (Android: #3237;
+  # iOS: not yet measured). Each test exclusion names the issue that tracks it.
   # Per app launch, so a hung launch can't eat the whole job: up to 10 min of DevServer workspace
   # load (first launch only), then 2-5 min of tests.
   RunTimeoutSeconds: 1200
   # #3241: When_PageXamlUpdatedWhileUnmaterialized (API 34). #3250: When_VmCtorParamOrderChangedViaHR
   # (Mono SIGSEGV applying the delta, intermittent).
   AndroidTestFilters: >-
-    Given_HotReload.
+    _HotReload
+    & !Given_Navigation_HotReload
+    & !Given_TabBar_HotReload
     & !When_PageXamlUpdatedWhileUnmaterialized_Then_RevealShowsUpdatedContent;
     Given_Navigation_HotReload
     & !When_VmCtorParamOrderChangedViaHR_Then_NewInstanceReflectsUpdate
   # #3240: the five MVUX model-update tests. #3242: When_RemoveAndReAddMultipleProperties.
   # #3245: Region.Name changed via XAML HR (three tests, intermittent).
   IosTestFilters: >-
-    Given_HotReload.
+    _HotReload
+    & !Given_Navigation_HotReload
+    & !Given_TabBar_HotReload
     & !When_UpdateMvuxFeedSource_Then_NewViewModelReflectsUpdate
     & !When_NewVMWithCtorDepsConstructedAfterHR_Then_ReflectsUpdate
     & !When_UpdateInheritedParentModel_Then_ChildBindingsRefresh
