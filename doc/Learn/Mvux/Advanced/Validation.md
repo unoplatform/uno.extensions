@@ -126,7 +126,7 @@ public async ValueTask Save(CancellationToken ct)
 
 Passing `null` or an empty list clears the results. Setting results identical to the current ones (same `ErrorMessage` and `MemberNames`) does not raise any change. If a validator has been set with `Validate`, it replaces those results on the next change of the value.
 
-`SetValidationAsync` is a shortcut for `UpdateMessageAsync(msg => msg.Validation(results), ct)`, which you can use to update the validation along with other axes of the message.
+`SetValidationAsync` publishes the results the same way as the validator of the state and the [validation of commands](#validating-when-a-command-is-executed). To update the validation along with other axes of the message, you can also use `UpdateMessageAsync(msg => msg.Validation(results), ct)`.
 
 > [!NOTE]
 > Validation results are local to the state that has them: they are **not** forwarded to feeds derived from it, such as `Select`, `Combine` or a `Feed.Async` that awaits the state. A derived `FullName` feed never shows the errors of the `Person` state.
