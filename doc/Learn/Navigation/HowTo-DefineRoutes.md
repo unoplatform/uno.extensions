@@ -172,6 +172,9 @@ When defining route names, it's crucial to choose names carefully to avoid poten
 - Extension
 - Settings
 
+> [!NOTE]
+> When a route has no registered view, navigation looks up a matching type by name only in the assemblies of the load context that loaded Uno.Extensions.Navigation, followed by the default load context. If your views or view models live in another `AssemblyLoadContext` (for example, an assembly loaded with `Assembly.LoadFile`), register them explicitly with a `ViewMap` and `RouteMap`.
+
 #### View
 
 The **View** parameter refers to the view associated with the route. The view must be registered beforehand within the `IViewRegistry`, and you can establish the association using the `FindByViewModel` method. Note in the following example how we add a route for a new page called `LoginPage`:
