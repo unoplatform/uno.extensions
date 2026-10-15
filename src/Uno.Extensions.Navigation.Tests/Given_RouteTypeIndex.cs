@@ -82,6 +82,29 @@ public class Given_RouteTypeIndex
 		}
 	}
 
+	[TestMethod]
+	public void When_AssemblyAlsoInOwnLoadContextWithOtherCasing_Then_DefaultCopyIgnored()
+	{
+		var appContext = new AssemblyLoadContext("AppLoadContextWithOwnCopyOtherCasing", isCollectible: true);
+		try
+		{
+			// Simple names are compared case-insensitively by the loader, so a copy whose name differs only in casing is
+			// still the same assembly.
+			var id = Guid.NewGuid().ToString("N");
+			LoadEmittedAssembly(AssemblyLoadContext.Default, $"samesimplenamelib{id}", $"DefaultCopyOnly{id}Model");
+			LoadEmittedAssembly(appContext, $"SameSimpleNameLib{id}", $"OwnCopyOnly{id}Model");
+
+			var index = IndexFor(appContext);
+
+			index.Should().NotContainKey($"DefaultCopyOnly{id}Model",
+				"assembly simple names differing only in casing name the same assembly");
+		}
+		finally
+		{
+			appContext.Unload();
+		}
+	}
+
 	private static IDictionary<string, Type> IndexFor(AssemblyLoadContext ownContext)
 		=> RouteTypeIndex.Build(RouteTypeIndex.OwnAndDefaultContextAssemblies(ownContext));
 

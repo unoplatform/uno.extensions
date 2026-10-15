@@ -29,7 +29,7 @@ internal static class RouteTypeIndex
 			return ownAssemblies;
 		}
 
-		var ownNames = new HashSet<string?>(ownAssemblies.Select(asb => asb.GetName().Name), StringComparer.Ordinal);
+		var ownNames = new HashSet<string?>(ownAssemblies.Select(asb => asb.GetName().Name), StringComparer.OrdinalIgnoreCase);
 		return ownAssemblies
 			.Concat(AssemblyLoadContext.Default.Assemblies.Where(asb => !ownNames.Contains(asb.GetName().Name)))
 			.ToArray();
