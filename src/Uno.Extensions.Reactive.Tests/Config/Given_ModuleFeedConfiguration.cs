@@ -19,7 +19,8 @@ public class Given_ModuleFeedConfiguration
 	[TestMethod]
 	public void When_NoEntryAssembly_Then_FirstModuleIsApp()
 	{
-		// Android (MonoVM and CoreCLR): Assembly.GetEntryAssembly() is null, which used to leave MVUX hot-reload disabled (unoplatform/uno#25417).
+		// Android (MonoVM and CoreCLR) and iOS (Mono, during module initialization): Assembly.GetEntryAssembly() is null,
+		// which used to leave MVUX hot-reload disabled (unoplatform/uno#25417, unoplatform/uno.extensions#3240).
 		var isConfigured = 0;
 
 		ModuleFeedConfiguration.IsAppModule("MyApp", null, ref isConfigured).Should().BeTrue();

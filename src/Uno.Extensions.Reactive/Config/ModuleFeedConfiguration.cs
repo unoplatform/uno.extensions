@@ -50,7 +50,8 @@ public static class ModuleFeedConfiguration
 		}
 	}
 
-	// Android (MonoVM and CoreCLR) has no entry assembly, so the first module to configure is taken as the app:
+	// No entry assembly is known on Android (MonoVM and CoreCLR: never set) nor on iOS (Mono: set only once Main starts,
+	// after the module initializers have run), so the first module to configure is taken as the app:
 	// the app's module initializer runs before any code of the libraries it references.
 	internal static bool IsAppModule(string module, string? entryAssembly, ref int isConfiguredWithoutEntryAssembly)
 		=> entryAssembly is null
