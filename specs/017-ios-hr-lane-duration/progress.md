@@ -31,7 +31,7 @@ Local measurement, iOS 18.5 simulator, 2 launches of 1 test each:
 - [x] `ios-simulator-runtime-tests.sh`: `SIMULATOR_BOOT_ONLY=true` selects and boots the simulator, then exits.
 - [x] Hot-reload lane: boot the simulator right after Xcode selection, so its data migration overlaps the build.
 - [x] Correct the comments that said only the first launch loads the workspace, and that install doesn't wait.
-- [ ] CI: iOS and Android hot-reload lane durations on the PR run.
+- [ ] CI: iOS and Android hot-reload lane durations, once these commits run on #3238 or `main` (a PR into `dev/sb/mobile-hr-lanes` gets no Azure run).
 
 ## Out of scope
 

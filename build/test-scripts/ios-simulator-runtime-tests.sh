@@ -108,11 +108,13 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# Fire-and-forget boot (a no-op when SIMULATOR_BOOT_ONLY already started it). Deliberately NOT
+# Fire-and-forget boot, skipped when SIMULATOR_BOOT_ONLY already started it. Deliberately NOT
 # `simctl bootstatus -b`: that blocks until every CoreSimulator data-migration plugin finishes, 5+
 # minutes on a fresh hosted mac runner. "Booted" lands long before those settle, but
 # `simctl install` still waits for them, which is why the hot-reload lane boots before its build.
-xcrun simctl boot "${device_udid}" || true
+if ! xcrun simctl list devices | grep -qF "(${device_udid}) (Booted)"; then
+  xcrun simctl boot "${device_udid}" || true
+fi
 
 boot_deadline=$((SECONDS + 180))
 state=""
