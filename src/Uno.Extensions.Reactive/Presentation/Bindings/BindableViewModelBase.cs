@@ -46,7 +46,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	/// Indicates if any of the properties of this view model has validation errors (cf. <see cref="INotifyDataErrorInfo"/>).
 	/// </summary>
 	/// <remarks>
-	/// Validation errors are the validation results published on the <see cref="MessageAxis.Validation"/> of the backing states (e.g. using <see cref="State.Validate{T}"/>).
+	/// Validation errors are the validation results published on the <see cref="MessageAxis.Validation"/> of the backing states (e.g. using <see cref="State.Validate{T}(IState{T}, Func{T, CancellationToken, ValueTask{IEnumerable{ValidationResult}}}, Microsoft.Extensions.Localization.IStringLocalizer)"/>).
 	/// If the model already declares a member named HasErrors, it will hide this property, but the <see cref="INotifyDataErrorInfo"/> implementation remains valid.
 	/// </remarks>
 	public bool HasErrors => _validation?.HasErrors ?? false;

@@ -35,6 +35,28 @@ The validator:
 
 `Validate` returns the same state instance and can safely be invoked each time the property getter is evaluated: the last validator wins and validators are never stacked.
 
+### Single-rule validators
+
+For a single rule, overloads let you return only the error message, or a predicate and its message, instead of building the list of `ValidationResult`:
+
+```csharp
+public partial record PersonModel
+{
+    // Returns the error message, or null when the value is valid.
+    public IState<string> Name => State.Value(this, () => string.Empty)
+        .Validate(async (name, ct) => string.IsNullOrWhiteSpace(name) ? "Name is required" : null);
+
+    // Returns true when the value is valid.
+    public IState<int> Age => State.Value(this, () => 0)
+        .Validate(async (age, ct) => age is >= 0 and <= 150, "Age must be between 0 and 150");
+}
+```
+
+The error is reported for the state itself (empty `MemberNames`, cf. [Consuming errors in the view](#consuming-errors-in-the-view)). Use the overload returning a list of `ValidationResult` to report several errors, or errors targeting members of a record.
+
+> [!NOTE]
+> A validator lambda which only throws (no `return`) matches several overloads. Give it an explicit return type, for example `ValueTask<IEnumerable<ValidationResult>> (string name, CancellationToken ct) => throw ...`.
+
 ### Using the `IValidator` service
 
 The `IValidator` service of [Uno.Extensions.Validation](xref:Uno.Extensions.Validation.Overview) matches the shape of the validator delegate, so it can be used as is:
@@ -46,6 +68,39 @@ public partial record PersonModel(IValidator Validator)
         .Validate((person, ct) => Validator.ValidateAsync(person, null, ct));
 }
 ```
+
+### Localizing messages
+
+When the app uses [localization](xref:Uno.Extensions.Localization.Overview), inject the `IStringLocalizer` in the model and pass it as the last argument of `Validate`, with any overload: the error messages are then resource keys, resolved through the localizer.
+
+```csharp
+public partial record PersonModel(IStringLocalizer Localizer, IValidator Validator)
+{
+    // Returns the resource key of the error message, or null when the value is valid.
+    public IState<string> Name => State.Value(this, () => string.Empty)
+        .Validate(async (name, ct) => string.IsNullOrWhiteSpace(name) ? "Validation_NameRequired" : null, Localizer);
+
+    // Returns true when the value is valid.
+    public IState<int> Age => State.Value(this, () => 0)
+        .Validate(async (age, ct) => age is >= 0 and <= 150, "Validation_AgeRange", Localizer);
+
+    // The ErrorMessage of each result is a resource key, e.g. [Required(ErrorMessage = "Validation_EmailRequired")].
+    public IState<Person> Person => State.Value(this, () => new Person())
+        .Validate((person, ct) => Validator.ValidateAsync(person, null, ct), Localizer);
+}
+```
+
+- This is the only place where validation messages are localized: `Uno.Extensions.Validation` reports the `ErrorMessage` of DataAnnotations attributes and the `WithMessage` of FluentValidation as written, so use resource keys there (see [validation messages](xref:Uno.Extensions.Validation.Overview#validation-messages)).
+- Messages are resolved each time the validator produces results, using the current culture. As changing the culture [requires an app restart](xref:Uno.Extensions.Localization.Overview#ui-culture), messages already produced are not updated.
+- A key which is not found in the resources keeps the message as produced by the validator, so non-localized messages can be mixed with keys.
+- The `MemberNames` of the results are kept.
+- Resolved messages are not formatted: a `{0}` in a resource is displayed as is. For messages with arguments, don't pass the localizer to `Validate`, and use it in the validator instead:
+
+  ```csharp
+  .Validate(async (person, ct) => person.Age < 18
+      ? [new ValidationResult(Localizer["Validation_MinAge", 18], [nameof(Person.Age)])]
+      : [])
+  ```
 
 ### Setting validation results manually
 
