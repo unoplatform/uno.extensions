@@ -7,6 +7,7 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Testing;
+using static Uno.Extensions.Reactive.Tests.ValidationTestHelper;
 
 namespace Uno.Extensions.Reactive.Tests.Core.Axes;
 
@@ -202,20 +203,5 @@ public class Given_ValidationAxis : FeedTests
 		await WaitFor(() => recorder.LastOrDefault()?.Current.Validation.Contains(localResult) ?? false);
 
 		recorder.Last().Current.Validation.Should().Equal(localResult);
-	}
-
-	private static async Task WaitFor(Func<bool> predicate)
-	{
-		for (var i = 0; i < 500; i++)
-		{
-			if (predicate())
-			{
-				return;
-			}
-
-			await Task.Delay(10);
-		}
-
-		throw new TimeoutException();
 	}
 }

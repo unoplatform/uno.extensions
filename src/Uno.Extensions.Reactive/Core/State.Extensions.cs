@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Localization;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Utils;
+using Uno.Extensions.Validation;
 
 namespace Uno.Extensions.Reactive;
 
@@ -391,9 +392,7 @@ partial class State
 			throw new NotSupportedException($"Validation is supported only on states created using the State factories (got '{state.GetType().Name}').");
 		}
 
-		impl.SetValidator(localizer is null
-			? validator
-			: async (value, ct) => Localize(await validator(value, ct).ConfigureAwait(false), localizer));
+		impl.SetValidator(validator.Localized(localizer));
 
 		return state;
 	}
@@ -415,9 +414,12 @@ partial class State
 		ct.ThrowIfCancellationRequested();
 
 		// Materialize the results here, so the update pipeline of the state does not enumerate the caller's sequence.
-		var validation = results?.ToImmutableList();
+		var validation = ValidationHelper.ToResults(results) ?? ImmutableList<ValidationResult>.Empty;
 
-		return state.UpdateMessageAsync(msg => msg.Validation(validation), ct);
+		// A state created by the State factories publishes through its single entry point, like its validator and commands.
+		return state is IValidationTarget target
+			? target.PublishValidationAsync(validation, ct)
+			: state.UpdateMessageAsync(msg => msg.Validation(validation), ct);
 	}
 
 	/// <summary>
@@ -438,7 +440,7 @@ partial class State
 	{
 		ArgumentNullException.ThrowIfNull(validator);
 
-		return state.Validate(ToValidator(validator), localizer);
+		return state.Validate(ValidationHelper.FromErrorMessage(validator), localizer);
 	}
 
 	/// <summary>
@@ -462,36 +464,27 @@ partial class State
 		ArgumentNullException.ThrowIfNull(isValid);
 		ArgumentException.ThrowIfNullOrEmpty(error);
 
-		return state.Validate(ToValidator<T>(async (value, ct) => await isValid(value, ct).ConfigureAwait(false) ? null : error), localizer);
+		return state.Validate(ValidationHelper.FromPredicate(isValid, error), localizer);
 	}
 
-	private static Func<T, CancellationToken, ValueTask<IEnumerable<ValidationResult>>> ToValidator<T>(AsyncFunc<T, string?> getErrorMessage)
-		=> async (value, ct) => await getErrorMessage(value, ct).ConfigureAwait(false) is { Length: > 0 } message
-			? [new ValidationResult(message)]
-			: Array.Empty<ValidationResult>();
-
 	/// <summary>
-	/// Resolves the error message of each result as a resource key.
+	/// Validates the value of a state each time it changes, using an <see cref="IValidator"/>.
 	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to validate.</param>
+	/// <param name="validator">The validator to use (e.g. the one registered by <c>UseValidation</c>).</param>
+	/// <param name="localizer">An optional localizer: when provided, the <see cref="ValidationResult.ErrorMessage"/> of the results are resource keys resolved through it.</param>
+	/// <returns>The given <paramref name="state"/>, so it can be used to chain other operations.</returns>
 	/// <remarks>
-	/// This is materialized (not lazy) so the localizer is invoked once per result, on the validator thread, and not each time the results are enumerated.
-	/// Results whose key is not found are kept as is: the value of a not found string is not reliable (e.g. the ResourceLoaderStringLocalizer replaces '.' by '/' in keys).
+	/// This has the same behavior as <see cref="Validate{T}(IState{T}, Func{T, CancellationToken, ValueTask{IEnumerable{ValidationResult}}}, IStringLocalizer)"/>.
 	/// </remarks>
-	private static IEnumerable<ValidationResult> Localize(IEnumerable<ValidationResult>? results, IStringLocalizer localizer)
+	/// <exception cref="ArgumentNullException">If the <paramref name="state"/> or the <paramref name="validator"/> is null.</exception>
+	/// <exception cref="NotSupportedException">If the <paramref name="state"/> has not been created using the MVUX State factories.</exception>
+	public static IState<T> Validate<T>(this IState<T> state, IValidator validator, IStringLocalizer? localizer = null)
+		where T : notnull
 	{
-		if (results is null)
-		{
-			return Array.Empty<ValidationResult>();
-		}
+		ArgumentNullException.ThrowIfNull(validator);
 
-		var localized = new List<ValidationResult>();
-		foreach (var result in results)
-		{
-			localized.Add(result is { ErrorMessage: { Length: > 0 } key } && localizer[key] is { ResourceNotFound: false } message
-				? new ValidationResult(message.Value, result.MemberNames)
-				: result);
-		}
-
-		return localized;
+		return state.Validate(ValidationHelper.FromValidator<T>(validator), localizer);
 	}
 }

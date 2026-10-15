@@ -14,6 +14,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Testing;
 using Uno.Extensions.Validation;
+using static Uno.Extensions.Reactive.Tests.ValidationTestHelper;
 
 namespace Uno.Extensions.Reactive.Tests.Core;
 
@@ -426,52 +427,50 @@ public class Given_StateWithValidation : FeedTests
 			.Build();
 		var validator = host.Services.GetRequiredService<IValidator>();
 		var localizer = new TestLocalizer { { "Validation_NameRequired", "Le nom est requis" } };
-		var state = new StateImpl<Person>(Context, Option.Some(new Person()));
+		var state = new StateImpl<ValidatedPerson>(Context, Option.Some(new ValidatedPerson()));
 
-		_ = state.Validate((person, ct) => validator.ValidateAsync(person, null, ct), localizer);
+		_ = state.Validate(validator, localizer);
 
 		await WaitFor(() => state.Current.Current.Validation.Any(result => result.ErrorMessage == "Le nom est requis"));
-		state.Current.Current.Validation.Should().ContainSingle().Which.MemberNames.Should().Equal(nameof(Person.Name));
+		state.Current.Current.Validation.Should().ContainSingle().Which.MemberNames.Should().Equal(nameof(ValidatedPerson.Name));
 	}
 
-	public sealed class Person
+	[TestMethod]
+	public async Task When_ValidatorReturnsSuccess_Then_Ignored()
 	{
-		[Required(ErrorMessage = "Validation_NameRequired")]
-		public string? Name { get; set; }
+		var state = new StateImpl<string>(Context, Option.Some("initial"));
+
+		_ = state.Validate(async (value, ct) => new[] { ValidationResult.Success!, new ValidationResult("error") });
+
+		await WaitForValidation(state, "error");
+		state.Current.Current.Validation.Should().ContainSingle().Which.ErrorMessage.Should().Be("error");
 	}
 
-	private sealed class TestLocalizer : IStringLocalizer, IEnumerable<KeyValuePair<string, string>>
+	[TestMethod]
+	public async Task When_IValidator_Then_ResultsPublished()
 	{
-		private readonly ConcurrentDictionary<string, string> _resources = new();
-		private int _lookups;
+		using var host = new HostBuilder()
+			.UseValidation()
+			.Build();
+		var validator = host.Services.GetRequiredService<IValidator>();
+		var state = new StateImpl<ValidatedPerson>(Context, Option.Some(new ValidatedPerson()));
 
-		public int Lookups => _lookups;
+		_ = state.Validate(validator).Should().BeSameAs(state);
 
-		public void Add(string name, string value)
-			=> _resources[name] = value;
+		await WaitFor(() => state.Current.Current.Validation.Any(result => result.ErrorMessage == "Validation_NameRequired"));
+		state.Current.Current.Validation.Should().ContainSingle().Which.MemberNames.Should().Equal(nameof(ValidatedPerson.Name));
 
-		public LocalizedString this[string name]
-		{
-			get
-			{
-				Interlocked.Increment(ref _lookups);
-				return _resources.TryGetValue(name, out var value)
-					? new LocalizedString(name, value)
-					: new LocalizedString(name, name, resourceNotFound: true);
-			}
-		}
+		await state.UpdateAsync(_ => new ValidatedPerson { Name = "John" }, CT);
+		await WaitFor(() => state.Current.Current.Validation.Count == 0);
+	}
 
-		IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator()
-			=> _resources.GetEnumerator();
 
-		global::System.Collections.IEnumerator global::System.Collections.IEnumerable.GetEnumerator()
-			=> _resources.GetEnumerator();
+	[TestMethod]
+	public void When_NullIValidator_Then_Throws()
+	{
+		var state = new StateImpl<ValidatedPerson>(Context, Option.Some(new ValidatedPerson()));
 
-		public LocalizedString this[string name, params object[] arguments]
-			=> new(name, string.Format(CultureInfo.CurrentCulture, this[name].Value, arguments));
-
-		public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
-			=> _resources.Select(kvp => new LocalizedString(kvp.Key, kvp.Value));
+		state.Invoking(s => s.Validate(default(IValidator)!)).Should().Throw<ArgumentNullException>();
 	}
 
 	[TestMethod]
@@ -491,6 +490,10 @@ public class Given_StateWithValidation : FeedTests
 			.Should()
 			.Throw<ArgumentNullException>()
 			.WithParameterName("isValid");
+		state.Invoking(s => s.Validate(default(IValidator)!))
+			.Should()
+			.Throw<ArgumentNullException>()
+			.WithParameterName("validator");
 	}
 
 	[TestMethod]
@@ -552,6 +555,28 @@ public class Given_StateWithValidation : FeedTests
 	}
 
 	[TestMethod]
+	public async Task When_SetValidationWithNullResults_Then_Ignored()
+	{
+		var state = new StateImpl<string>(Context, Option.Some("initial"));
+
+		await state.SetValidationAsync([null!, new ValidationResult("manual"), null!], CT);
+
+		state.Current.Current.Validation.Should().ContainSingle().Which.ErrorMessage.Should().Be("manual");
+	}
+
+	[TestMethod]
+	public async Task When_SetValidationOnCustomState_Then_PublishedThroughUpdateMessage()
+	{
+		var state = new RecordingState();
+
+		await state.SetValidationAsync(Error("manual"), CT);
+
+		state.Updates.Should().ContainSingle()
+			.Which.Current.Validation.Should().ContainSingle()
+			.Which.ErrorMessage.Should().Be("manual");
+	}
+
+	[TestMethod]
 	public async Task When_SetValidation_And_Validator_Then_ReplacedOnNextDataChange()
 	{
 		var validator = new TestValidator();
@@ -575,21 +600,6 @@ public class Given_StateWithValidation : FeedTests
 
 	private async Task WaitForValidation(StateImpl<string> state, string errorMessage)
 		=> await WaitFor(() => state.Current.Current.Validation.Any(result => result.ErrorMessage == errorMessage));
-
-	private static async Task WaitFor(Func<bool> predicate)
-	{
-		for (var i = 0; i < 500; i++)
-		{
-			if (predicate())
-			{
-				return;
-			}
-
-			await Task.Delay(10);
-		}
-
-		throw new TimeoutException();
-	}
 
 	private sealed class TestValidator
 	{
@@ -633,6 +643,30 @@ public class Given_StateWithValidation : FeedTests
 
 		public void Fail(Exception error)
 			=> Result.SetException(error);
+	}
+
+	private sealed class RecordingState : IState<string>
+	{
+		public List<Message<string>> Updates { get; } = new();
+
+		public SourceContext Context => SourceContext.None;
+
+		IRequestSource IState.Requests => throw new NotSupportedException();
+
+		public IAsyncEnumerable<Message<string>> GetSource(SourceContext context, CancellationToken ct = default)
+			=> throw new NotSupportedException();
+
+		public ValueTask UpdateMessageAsync(Action<MessageBuilder<string>> updater, CancellationToken ct)
+		{
+			var builder = Message<string>.Initial.With();
+			updater(builder);
+			Updates.Add(builder.Build());
+
+			return default;
+		}
+
+		public ValueTask DisposeAsync()
+			=> default;
 	}
 
 	private sealed class CustomState : IState<string>
