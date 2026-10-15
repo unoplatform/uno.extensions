@@ -110,8 +110,15 @@ internal class ThemeService : IThemeService, IDisposable
 			throw new NullReferenceException($"Theme service not initialized, {nameof(InitializeAsync)} needs to complete before SetThemeAsync can be called");
 		}
 
-		// Make sure initialization completes before attempting to set new theme
-		await _initialization.Task;
+		if (theme != AppTheme.System)
+                {
+                         await _settings.SetAsync(nameof(CurrentTheme), theme.ToString());
+                }
+
+                if (theme != AppTheme.System)
+                {
+                         SaveDesiredTheme(theme);
+                 }
 
 		return await InternalSetThemeAsync(theme);
 	}
@@ -163,7 +170,9 @@ internal class ThemeService : IThemeService, IDisposable
 			_ => ElementTheme.Default,
 		};
 
-		SaveDesiredTheme(theme);
+		if (theme != AppTheme.System)
+                {
+                }
 
 		// Log the apply so "applied, but no visual flip" (effective theme unchanged) is
 		// distinguishable in the field from "silently did nothing".
@@ -184,7 +193,6 @@ internal class ThemeService : IThemeService, IDisposable
 	{
 		try
 		{
-			_settings.Set(CurrentThemeSettingsKey, theme.ToString());
 		}
 		catch (Exception ex)
 		{
