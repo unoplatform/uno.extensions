@@ -137,13 +137,6 @@ if [[ -n "${app_container}" && -d "${app_container}" ]]; then
 else
   echo "WARNING: could not resolve the app data container; falling back to ${result_file}"
 fi
-rm -f "${result_file}"
-
-# macOS base64 uses -b; GNU uses -w.
-encoded_filter="$(printf '%s' "${TEST_FILTER}" | base64 -b 0 2>/dev/null || printf '%s' "${TEST_FILTER}" | base64 -w 0)"
-
-export SIMCTL_CHILD_UITEST_RUNTIME_AUTOSTART_RESULT_FILE="${result_file}"
-export SIMCTL_CHILD_UITEST_RUNTIME_TESTS_FILTER="${encoded_filter}"
 
 # Hot-reload lane only (DEV_SERVER_PORT set): the simulator shares the host's loopback, so the app
 # reaches the DevServer directly. DOTNET_MODIFIABLE_ASSEMBLIES has to be passed here: the DevServer
@@ -155,29 +148,59 @@ if [[ -n "${DEV_SERVER_PORT:-}" ]]; then
   export SIMCTL_CHILD_UITEST_RUNTIME_IS_SECONDARY_APP=true
 fi
 
-echo "Launching ${BUNDLE_ID} (result=${result_file}, filter='${TEST_FILTER}')..."
-xcrun simctl launch --terminate-running-process "${device_udid}" "${BUNDLE_ID}" >"${launch_log}" 2>&1 || {
-  echo "ERROR: simctl launch failed." >&2
-  cat "${launch_log}" >&2 || true
-  exit 1
-}
-cat "${launch_log}"
+# Each ';'-separated entry of TEST_FILTERS runs in a fresh app process (TEST_FILTER is the
+# single-run default), and the NUnit documents are merged. The hot-reload lane needs this: on
+# desktop the engine gives every [RunsInSecondaryApp] class its own app, while ~100 deltas piled
+# into one Mono process end in BadImageFormatException for every later test.
+IFS=';' read -r -a test_filters <<<"${TEST_FILTERS:-${TEST_FILTER}}"
+result_base="${result_file%.xml}"
 
-echo "Waiting up to ${RUN_TIMEOUT_SECONDS}s for ${result_file}..."
-SECONDS=0
-while [[ ${SECONDS} -lt ${RUN_TIMEOUT_SECONDS} ]]; do
-  if [[ -f "${result_file}" ]]; then
-    break
+# Launches the app with filter $1 (--terminate-running-process makes it a fresh process) and copies
+# its NUnit document to $2.
+run_tests() {
+  local filter="$1" local_result="$2"
+  local result_file="${result_base}-${run_index}.xml"
+  rm -f "${result_file}"
+
+  # macOS base64 uses -b; GNU uses -w.
+  local encoded_filter
+  encoded_filter="$(printf '%s' "${filter}" | base64 -b 0 2>/dev/null || printf '%s' "${filter}" | base64 -w 0)"
+  export SIMCTL_CHILD_UITEST_RUNTIME_AUTOSTART_RESULT_FILE="${result_file}"
+  export SIMCTL_CHILD_UITEST_RUNTIME_TESTS_FILTER="${encoded_filter}"
+
+  echo "Launching ${BUNDLE_ID} (result=${result_file}, filter='${filter}')..."
+  xcrun simctl launch --terminate-running-process "${device_udid}" "${BUNDLE_ID}" >"${launch_log}" 2>&1 || {
+    echo "ERROR: simctl launch failed." >&2
+    cat "${launch_log}" >&2 || true
+    exit 1
+  }
+  cat "${launch_log}"
+
+  echo "Waiting up to ${RUN_TIMEOUT_SECONDS}s for ${result_file}..."
+  SECONDS=0
+  while [[ ${SECONDS} -lt ${RUN_TIMEOUT_SECONDS} ]]; do
+    if [[ -f "${result_file}" ]]; then
+      break
+    fi
+    sleep 5
+  done
+
+  if [[ ! -f "${result_file}" ]]; then
+    echo "ERROR: ${result_file} did not appear within ${RUN_TIMEOUT_SECONDS}s." >&2
+    exit 1
   fi
-  sleep 5
+
+  cp "${result_file}" "${local_result}"
+  echo "Copied ${result_file} -> ${local_result}"
+}
+
+result_parts=()
+run_index=0
+for filter in "${test_filters[@]}"; do
+  run_index=$((run_index + 1))
+  result_parts+=("${results_dir}/part-${run_index}.xml")
+  run_tests "${filter}" "${results_dir}/part-${run_index}.xml"
 done
-
-if [[ ! -f "${result_file}" ]]; then
-  echo "ERROR: ${result_file} did not appear within ${RUN_TIMEOUT_SECONDS}s." >&2
-  exit 1
-fi
-
-cp "${result_file}" "${results_path}"
-echo "Copied ${result_file} -> ${results_path}"
+python3 "${BUILD_SOURCESDIRECTORY}/build/test-scripts/merge-nunit-results.py" "${results_path}" "${result_parts[@]}"
 
 RUNTIME_TEST_RESULTS="${results_path}" python3 "${BUILD_SOURCESDIRECTORY}/build/test-scripts/validate-runtime-test-results.py"

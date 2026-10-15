@@ -128,7 +128,7 @@ if [[ -z "${launcher_activity}" ]]; then
 fi
 echo "Package name: ${PACKAGE_NAME}"
 echo "Launcher activity: ${launcher_activity}"
-device_result_file="/storage/emulated/0/Android/data/${PACKAGE_NAME}/files/uno-extensions-rt-${timestamp}.xml"
+device_result_base="/storage/emulated/0/Android/data/${PACKAGE_NAME}/files/uno-extensions-rt-${timestamp}"
 
 adb start-server
 
@@ -213,66 +213,89 @@ fi
 adb shell pm grant "${PACKAGE_NAME}" android.permission.WRITE_EXTERNAL_STORAGE 2>/dev/null || true
 adb shell pm grant "${PACKAGE_NAME}" android.permission.READ_EXTERNAL_STORAGE 2>/dev/null || true
 
-# Base64 so the filter survives `am start -e` quoting rules.
-encoded_filter="$(printf '%s' "${TEST_FILTER}" | base64 -w 0)"
+# Each ';'-separated entry of TEST_FILTERS runs in a fresh app process (TEST_FILTER is the
+# single-run default), and the NUnit documents are merged. The hot-reload lane needs this: on
+# desktop the engine gives every [RunsInSecondaryApp] class its own app, while ~100 deltas piled
+# into one Mono process end in BadImageFormatException for every later test.
+IFS=';' read -r -a test_filters <<<"${TEST_FILTERS:-${TEST_FILTER}}"
 
-echo "Starting ${PACKAGE_NAME} (result=${device_result_file}, filter='${TEST_FILTER}')..."
-# No `monkey -p` fallback: monkey launches the activity but cannot forward -e extras, so the
-# in-app autostart would never see the result-file variable and this would wait out the full
-# timeout for a file that never appears. Failing fast surfaces the real cause.
-am_start_output="$(
-  adb shell am start \
-    -a android.intent.action.MAIN \
-    -c android.intent.category.LAUNCHER \
-    -e UITEST_RUNTIME_AUTOSTART_RESULT_FILE "${device_result_file}" \
-    -e UITEST_RUNTIME_TESTS_FILTER "${encoded_filter}" \
-    ${secondary_app_extras[@]+"${secondary_app_extras[@]}"} \
-    -n "${PACKAGE_NAME}/${launcher_activity}" \
-    2>&1
-)" || {
-  echo "ERROR: am start failed for ${PACKAGE_NAME}/${launcher_activity}." >&2
-  printf '%s\n' "${am_start_output:-}" >&2
-  adb shell cmd package resolve-activity --brief "${PACKAGE_NAME}" >&2 || true
-  exit 1
+# Launches the app with filter $1 and pulls its NUnit document to $2.
+run_tests() {
+  local filter="$1" local_result="$2"
+  local device_result_file="${device_result_base}-${run_index}.xml"
+  adb shell am force-stop "${PACKAGE_NAME}" || true
+
+  # Base64 so the filter survives `am start -e` quoting rules.
+  local encoded_filter
+  encoded_filter="$(printf '%s' "${filter}" | base64 -w 0)"
+
+  echo "Starting ${PACKAGE_NAME} (result=${device_result_file}, filter='${filter}')..."
+  # No `monkey -p` fallback: monkey launches the activity but cannot forward -e extras, so the
+  # in-app autostart would never see the result-file variable and this would wait out the full
+  # timeout for a file that never appears. Failing fast surfaces the real cause.
+  am_start_output="$(
+    adb shell am start \
+      -a android.intent.action.MAIN \
+      -c android.intent.category.LAUNCHER \
+      -e UITEST_RUNTIME_AUTOSTART_RESULT_FILE "${device_result_file}" \
+      -e UITEST_RUNTIME_TESTS_FILTER "${encoded_filter}" \
+      ${secondary_app_extras[@]+"${secondary_app_extras[@]}"} \
+      -n "${PACKAGE_NAME}/${launcher_activity}" \
+      2>&1
+  )" || {
+    echo "ERROR: am start failed for ${PACKAGE_NAME}/${launcher_activity}." >&2
+    printf '%s\n' "${am_start_output:-}" >&2
+    adb shell cmd package resolve-activity --brief "${PACKAGE_NAME}" >&2 || true
+    exit 1
+  }
+  printf '%s\n' "${am_start_output}"
+
+  local app_died=0
+  echo "Waiting up to ${RUN_TIMEOUT_SECONDS}s for ${device_result_file}..."
+  SECONDS=0
+  while [[ ${SECONDS} -lt ${RUN_TIMEOUT_SECONDS} ]]; do
+    if adb shell "[ -f \"${device_result_file}\" ] && echo found || true" 2>/dev/null | tr -d '\r' | grep -q '^found$'; then
+      break
+    fi
+    sleep 5
+    if ! adb shell ps 2>/dev/null | grep -q "${PACKAGE_NAME}"; then
+      echo "App process is gone; breaking out of the wait loop."
+      app_died=1
+      break
+    fi
+  done
+
+  if ! adb shell "[ -f \"${device_result_file}\" ] && echo found || true" 2>/dev/null | tr -d '\r' | grep -q '^found$'; then
+    # Say which of the two exits happened. Reporting the timeout unconditionally described a
+    # crash 11s after launch as a 30-minute wait (build 228848), which sends the next reader
+    # looking at the wrong thing.
+    if [[ "${app_died}" == "1" ]]; then
+      echo "ERROR: the app exited after ${SECONDS}s without writing ${device_result_file}." >&2
+    else
+      echo "ERROR: ${device_result_file} did not appear within ${RUN_TIMEOUT_SECONDS}s." >&2
+    fi
+    # The app's own lines first: a startup abort (missing assemblies, a managed exception) shows
+    # up here and is otherwise buried in several thousand lines of system boot chatter.
+    echo "--- logcat, app + fatal lines ---" >&2
+    grep -E "${PACKAGE_NAME}|monodroid|AndroidRuntime|FATAL|DEBUG.*Abort message" "${logcat_log}" 2>/dev/null | tail -n 80 >&2 || true
+    echo "--- emulator log (tail) ---" >&2
+    tail -n 200 "${emulator_log}" >&2 || true
+    echo "--- logcat (tail) ---" >&2
+    tail -n 400 "${logcat_log}" >&2 || true
+    exit 1
+  fi
+
+  adb pull "${device_result_file}" "${local_result}"
+  echo "Pulled ${device_result_file} -> ${local_result}"
 }
-printf '%s\n' "${am_start_output}"
 
-app_died=0
-echo "Waiting up to ${RUN_TIMEOUT_SECONDS}s for ${device_result_file}..."
-SECONDS=0
-while [[ ${SECONDS} -lt ${RUN_TIMEOUT_SECONDS} ]]; do
-  if adb shell "[ -f \"${device_result_file}\" ] && echo found || true" 2>/dev/null | tr -d '\r' | grep -q '^found$'; then
-    break
-  fi
-  sleep 5
-  if ! adb shell ps 2>/dev/null | grep -q "${PACKAGE_NAME}"; then
-    echo "App process is gone; breaking out of the wait loop."
-    app_died=1
-    break
-  fi
+result_parts=()
+run_index=0
+for filter in "${test_filters[@]}"; do
+  run_index=$((run_index + 1))
+  result_parts+=("${results_dir}/part-${run_index}.xml")
+  run_tests "${filter}" "${results_dir}/part-${run_index}.xml"
 done
-
-if ! adb shell "[ -f \"${device_result_file}\" ] && echo found || true" 2>/dev/null | tr -d '\r' | grep -q '^found$'; then
-  # Say which of the two exits happened. Reporting the timeout unconditionally described a
-  # crash 11s after launch as a 30-minute wait (build 228848), which sends the next reader
-  # looking at the wrong thing.
-  if [[ "${app_died}" == "1" ]]; then
-    echo "ERROR: the app exited after ${SECONDS}s without writing ${device_result_file}." >&2
-  else
-    echo "ERROR: ${device_result_file} did not appear within ${RUN_TIMEOUT_SECONDS}s." >&2
-  fi
-  # The app's own lines first: a startup abort (missing assemblies, a managed exception) shows
-  # up here and is otherwise buried in several thousand lines of system boot chatter.
-  echo "--- logcat, app + fatal lines ---" >&2
-  grep -E "${PACKAGE_NAME}|monodroid|AndroidRuntime|FATAL|DEBUG.*Abort message" "${logcat_log}" 2>/dev/null | tail -n 80 >&2 || true
-  echo "--- emulator log (tail) ---" >&2
-  tail -n 200 "${emulator_log}" >&2 || true
-  echo "--- logcat (tail) ---" >&2
-  tail -n 400 "${logcat_log}" >&2 || true
-  exit 1
-fi
-
-adb pull "${device_result_file}" "${results_path}"
-echo "Pulled ${device_result_file} -> ${results_path}"
+python3 "${BUILD_SOURCESDIRECTORY}/build/test-scripts/merge-nunit-results.py" "${results_path}" "${result_parts[@]}"
 
 RUNTIME_TEST_RESULTS="${results_path}" python3 "${BUILD_SOURCESDIRECTORY}/build/test-scripts/validate-runtime-test-results.py"

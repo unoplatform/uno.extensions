@@ -11,12 +11,28 @@ parameters:
   # Fixed: the port is baked into the app at build time, and the agents are fresh. Below the
   # ephemeral range (49152+), which Windows also carves reserved blocks out of.
   DevServerPort: 47100
-  # The Reactive and Navigation Given_HotReload classes (21 tests), the ones green on an Android
-  # emulator. Given_Navigation_HotReload (6 of 22 fail) and Given_TabBar_HotReload (21 of 23 fail,
-  # most after Mono throws BadImageFormatException on a delta) still run on Skia only; widen to
-  # '_HotReload' once they pass on Mono (unoplatform/uno.extensions#3237). The engine filter is a
-  # substring match on the full name.
-  TestFilter: 'Given_HotReload'
+  # One app launch per entry (';'-separated), like the one secondary app per class the engine uses
+  # on desktop: ~100 deltas piled into one Mono process end in BadImageFormatException
+  # (unoplatform/uno.extensions#3243). Engine filters are substring matches on the full test name,
+  # '&' and '!' supported. Each exclusion names the issue that tracks it.
+  # Given_TabBar_HotReload is left out on both platforms (Android: #3237; iOS: not yet measured).
+  # #3241: When_PageXamlUpdatedWhileUnmaterialized (API 34).
+  AndroidTestFilters: >-
+    Reactive.WinUI.Tests.Given_HotReload;
+    Navigation.UI.Tests.Given_HotReload
+    & !When_PageXamlUpdatedWhileUnmaterialized_Then_RevealShowsUpdatedContent;
+    Given_Navigation_HotReload
+  # #3240: the five MVUX model-update tests. #3242: When_RemoveAndReAddMultipleProperties.
+  IosTestFilters: >-
+    Reactive.WinUI.Tests.Given_HotReload
+    & !When_UpdateMvuxFeedSource_Then_NewViewModelReflectsUpdate
+    & !When_NewVMWithCtorDepsConstructedAfterHR_Then_ReflectsUpdate
+    & !When_UpdateInheritedParentModel_Then_ChildBindingsRefresh
+    & !When_AddDerivedFeedToModelWithStateAndCommand_Then_CommandUpdatesBoundState
+    & !When_UpdateStateValue_Then_NewViewModelReflectsUpdate
+    & !When_RemoveAndReAddMultipleProperties_Then_AllBindingsWork;
+    Navigation.UI.Tests.Given_HotReload;
+    Given_Navigation_HotReload
 
 jobs:
   - job: Android_HotReload_Tests
@@ -108,7 +124,7 @@ jobs:
         env:
           BUILD_SOURCESDIRECTORY: $(Build.SourcesDirectory)
           RuntimeTestsArtifactPath: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin
-          TEST_FILTER: ${{ parameters.TestFilter }}
+          TEST_FILTERS: ${{ parameters.AndroidTestFilters }}
           DEV_SERVER_PORT: ${{ parameters.DevServerPort }}
 
       - task: PublishTestResults@2
@@ -212,7 +228,7 @@ jobs:
           RuntimeTestsArtifactPath: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin
           SIMULATOR_DEVICE: $(IosSimulatorDevice)
           SIMULATOR_RUNTIME_PREFIX: $(IosSimulatorRuntimePrefix)
-          TEST_FILTER: ${{ parameters.TestFilter }}
+          TEST_FILTERS: ${{ parameters.IosTestFilters }}
           DEV_SERVER_PORT: ${{ parameters.DevServerPort }}
 
       - task: PublishTestResults@2
