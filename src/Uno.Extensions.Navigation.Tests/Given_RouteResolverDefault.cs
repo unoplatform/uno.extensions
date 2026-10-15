@@ -12,9 +12,9 @@ namespace Uno.Extensions.Navigation.Tests;
 /// Guards which assemblies <see cref="RouteResolverDefault"/> searches when it resolves a route by name.
 /// </summary>
 /// <remarks>
-/// A downstream host that loads previewed apps into their own collectible <see cref="AssemblyLoadContext"/>s
-/// runs several apps in one process. The implicit lookup must only see the resolver's own load context and
-/// the default one, never another app's context, which may be unloading.
+/// A downstream host can run several apps in one process, each in its own collectible <see cref="AssemblyLoadContext"/>.
+/// The implicit lookup must only see the resolver's own load context and the default one, never another app's context,
+/// which may be unloading.
 /// </remarks>
 [TestClass]
 public class Given_RouteResolverDefault
@@ -44,11 +44,8 @@ public class Given_RouteResolverDefault
 		var appContext = new AssemblyLoadContext("AppLoadContext", isCollectible: true);
 		try
 		{
-			// Every other dependency falls back to the default context, as in a host that loads apps separately.
-			var resolverAssembly = appContext.LoadFromAssemblyPath(typeof(RouteResolverDefault).Assembly.Location);
+			var resolver = CreateResolverInOwnContext(appContext);
 			var appAssembly = LoadEmittedAssembly(appContext, "OwnLoadContextApp", nameof(SharedNameModel));
-			var resolverType = resolverAssembly.GetType(typeof(RouteResolverDefault).FullName!, throwOnError: true)!;
-			var resolver = CreateResolver(resolverType);
 
 			var sharedNameModel = ViewModelForPath(resolver, "SharedName");
 			sharedNameModel.Should().NotBeNull();
@@ -60,6 +57,37 @@ public class Given_RouteResolverDefault
 		{
 			appContext.Unload();
 		}
+	}
+
+	[TestMethod]
+	public void When_AssemblyAlsoInOwnLoadContext_Then_DefaultCopyIgnored()
+	{
+		var appContext = new AssemblyLoadContext("AppLoadContextWithOwnCopy", isCollectible: true);
+		try
+		{
+			var resolver = CreateResolverInOwnContext(appContext);
+			LoadEmittedAssembly(AssemblyLoadContext.Default, "SameSimpleNameLib", "DefaultCopyOnlyModel");
+			var ownCopy = LoadEmittedAssembly(appContext, "SameSimpleNameLib", "OwnCopyOnlyModel");
+
+			ViewModelForPath(resolver, "DefaultCopyOnly").Should().BeNull(
+				"the default context's copy of an assembly the resolver's own context also has must not be scanned");
+			ViewModelForPath(resolver, "OwnCopyOnly").Should().Be(ownCopy.GetType("SameSimpleNameLib.OwnCopyOnlyModel", throwOnError: true));
+		}
+		finally
+		{
+			appContext.Unload();
+		}
+	}
+
+	/// <summary>
+	/// Loads a second copy of the resolver's assembly into <paramref name="context"/>; every other dependency falls back
+	/// to the default context.
+	/// </summary>
+	private static IRouteResolver CreateResolverInOwnContext(AssemblyLoadContext context)
+	{
+		var resolverAssembly = context.LoadFromAssemblyPath(typeof(RouteResolverDefault).Assembly.Location);
+		var resolverType = resolverAssembly.GetType(typeof(RouteResolverDefault).FullName!, throwOnError: true)!;
+		return CreateResolver(resolverType);
 	}
 
 	private static Assembly LoadEmittedAssembly(AssemblyLoadContext context, string assemblyName, string typeName)
