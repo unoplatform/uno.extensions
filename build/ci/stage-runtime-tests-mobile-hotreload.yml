@@ -25,14 +25,16 @@ parameters:
     Navigation.UI.Tests.Given_HotReload
     & !When_PageXamlUpdatedWhileUnmaterialized_Then_RevealShowsUpdatedContent;
     Given_Navigation_HotReload
-  # #3240: the five MVUX model-update tests. #3245: When_RegionNameAddedViaXamlHR.
+  # #3240: the five MVUX model-update tests. #3242: When_RemoveAndReAddMultipleProperties.
+  # #3245: When_RegionNameAddedViaXamlHR.
   IosTestFilters: >-
     Reactive.WinUI.Tests.Given_HotReload
     & !When_UpdateMvuxFeedSource_Then_NewViewModelReflectsUpdate
     & !When_NewVMWithCtorDepsConstructedAfterHR_Then_ReflectsUpdate
     & !When_UpdateInheritedParentModel_Then_ChildBindingsRefresh
     & !When_AddDerivedFeedToModelWithStateAndCommand_Then_CommandUpdatesBoundState
-    & !When_UpdateStateValue_Then_NewViewModelReflectsUpdate;
+    & !When_UpdateStateValue_Then_NewViewModelReflectsUpdate
+    & !When_RemoveAndReAddMultipleProperties_Then_AllBindingsWork;
     Navigation.UI.Tests.Given_HotReload;
     Given_Navigation_HotReload
     & !When_RegionNameAddedViaXamlHR_Then_NavigationResolvesNewRegion
