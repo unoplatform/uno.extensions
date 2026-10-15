@@ -19,9 +19,15 @@ parameters:
   # Per app launch, so a hung launch can't eat the whole job: up to 10 min of DevServer workspace
   # load (first launch only), then 2-5 min of tests.
   RunTimeoutSeconds: 1200
+  # #3235: the five MVUX model-update tests (fixed there; re-include when it merges).
   # #3241: When_PageXamlUpdatedWhileUnmaterialized (API 34).
   AndroidTestFilters: >-
-    Reactive.WinUI.Tests.Given_HotReload;
+    Reactive.WinUI.Tests.Given_HotReload
+    & !When_UpdateMvuxFeedSource_Then_NewViewModelReflectsUpdate
+    & !When_NewVMWithCtorDepsConstructedAfterHR_Then_ReflectsUpdate
+    & !When_UpdateInheritedParentModel_Then_ChildBindingsRefresh
+    & !When_AddDerivedFeedToModelWithStateAndCommand_Then_CommandUpdatesBoundState
+    & !When_UpdateStateValue_Then_NewViewModelReflectsUpdate;
     Navigation.UI.Tests.Given_HotReload
     & !When_PageXamlUpdatedWhileUnmaterialized_Then_RevealShowsUpdatedContent;
     Given_Navigation_HotReload
