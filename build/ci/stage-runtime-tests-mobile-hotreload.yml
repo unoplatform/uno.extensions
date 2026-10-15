@@ -23,13 +23,15 @@ parameters:
   # Per app launch, so a hung launch can't eat the whole job: up to 10 min of DevServer workspace
   # load (first launch only), then 2-5 min of tests.
   RunTimeoutSeconds: 1200
-  # #3241: When_PageXamlUpdatedWhileUnmaterialized (API 34).
+  # #3241: When_PageXamlUpdatedWhileUnmaterialized (API 34). #3250: When_VmCtorParamOrderChangedViaHR
+  # (Mono SIGSEGV applying the delta, intermittent).
   AndroidTestFilters: >-
     Given_HotReload.
     & !When_PageXamlUpdatedWhileUnmaterialized_Then_RevealShowsUpdatedContent;
     Given_Navigation_HotReload
+    & !When_VmCtorParamOrderChangedViaHR_Then_NewInstanceReflectsUpdate
   # #3240: the five MVUX model-update tests. #3242: When_RemoveAndReAddMultipleProperties.
-  # #3245: When_RegionNameAddedViaXamlHR.
+  # #3245: Region.Name changed via XAML HR (three tests, intermittent).
   IosTestFilters: >-
     Given_HotReload.
     & !When_UpdateMvuxFeedSource_Then_NewViewModelReflectsUpdate
@@ -40,6 +42,8 @@ parameters:
     & !When_RemoveAndReAddMultipleProperties_Then_AllBindingsWork;
     Given_Navigation_HotReload
     & !When_RegionNameAddedViaXamlHR_Then_NavigationResolvesNewRegion
+    & !When_RegionRenamedViaXamlHR_Then_NavigationUsesNewName
+    & !When_PanelRegionNamesSwappedViaXamlHR_Then_NavigationStillWorks
 
 jobs:
   - job: Android_HotReload_Tests
