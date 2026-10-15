@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.Loader;
 
 namespace Uno.Extensions.Navigation;
 
@@ -197,7 +198,7 @@ public class RouteResolverDefault : RouteResolver
 			}
 		}
 		if (Logger.IsEnabled(LogLevel.Warning))
-			Logger.LogWarningMessage($"Navigation failed: Could not resolve type for path '{path}'.");
+			Logger.LogWarningMessage($"Navigation failed: Could not resolve type for path '{path}' (implicit lookup only searches the app's own load context and the default one; map types loaded elsewhere with a ViewMap or RouteMap).");
 
 		return null;
 
@@ -270,7 +271,12 @@ public class RouteResolverDefault : RouteResolver
 		{
 			if (loadedTypes is null)
 			{
-				loadedTypes = (from asb in AppDomain.CurrentDomain.GetAssemblies()
+				var ownContext = AssemblyLoadContext.GetLoadContext(typeof(RouteResolverDefault).Assembly) ?? AssemblyLoadContext.Default;
+				var assemblies = OwnAndDefaultContextAssemblies(ownContext);
+				if (Logger.IsEnabled(LogLevel.Debug))
+					Logger.LogDebugMessage($"Auto-resolve: Indexing types from {assemblies.Length} assemblies in load context '{ownContext.Name}' and the default one");
+
+				loadedTypes = (from asb in assemblies
 							   where (!(asb.FullName ?? string.Empty).StartsWith("_") && !AssemblyExtensions.Excludes.Contains(asb.FullName ?? string.Empty))
 							   from t in asb.SafeGetTypes()
 							   where t.IsClass
@@ -279,6 +285,24 @@ public class RouteResolverDefault : RouteResolver
 
 			return loadedTypes;
 		}
+	}
+
+	/// <summary>
+	/// The assemblies of <paramref name="ownContext"/>, then those of the default context whose simple name is not already
+	/// among them, so a type from the app's own context wins over a same-named one in the default context.
+	/// </summary>
+	private static Assembly[] OwnAndDefaultContextAssemblies(AssemblyLoadContext ownContext)
+	{
+		var ownAssemblies = ownContext.Assemblies.ToArray();
+		if (ownContext == AssemblyLoadContext.Default)
+		{
+			return ownAssemblies;
+		}
+
+		var ownNames = new HashSet<string?>(ownAssemblies.Select(asb => asb.GetName().Name), StringComparer.Ordinal);
+		return ownAssemblies
+			.Concat(AssemblyLoadContext.Default.Assemblies.Where(asb => !ownNames.Contains(asb.GetName().Name)))
+			.ToArray();
 	}
 }
 
