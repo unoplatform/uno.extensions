@@ -62,35 +62,52 @@ public static class MockingService
 	}
 
 	/// <summary>
-	/// Swaps the source of a scalar feed member (called by generated <c>SetModel</c>).
+	/// Swaps the source of a scalar feed or state member (called by generated <c>SetModel</c>).
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public static void SwapFeed<T>(object owner, IFeed<T> current, IFeed<T> replacement)
 		where T : notnull
 	{
-		var ctx = SourceContext.GetOrCreate(owner);
-		if (current is StateImpl<T> currentState && replacement is StateImpl<T> replacementState)
+		if (current is StateImpl<T> state)
 		{
-			currentState.HotSwap(replacementState);
+			SwapStateSource(state, replacement, $"Value type: {typeof(T)}.");
+			return;
 		}
+
+		var ctx = SourceContext.GetOrCreate(owner);
 
 		SwapSubscription(ctx, current, replacement, $"Value type: {typeof(T)}.");
 	}
 
 	/// <summary>
-	/// Swaps the source of a list-feed member (called by generated <c>SetModel</c>).
+	/// Swaps the source of a list-feed or list-state member (called by generated <c>SetModel</c>).
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public static void SwapListFeed<T>(object owner, IListFeed<T> current, IListFeed<T> replacement)
 		where T : notnull
 	{
-		var ctx = SourceContext.GetOrCreate(owner);
-		if (current is ListStateImpl<T> currentState && replacement is ListStateImpl<T> replacementState)
+		if (current is ListStateImpl<T> listState)
 		{
-			currentState.HotSwap(replacementState);
+			var source = replacement is ListStateImpl<T> replacementState ? replacementState.Implementation : ListFeed.AsFeed(replacement);
+			SwapStateSource(listState.Implementation, source, $"Item type: {typeof(T)}.");
+			return;
 		}
 
+		var ctx = SourceContext.GetOrCreate(owner);
+
 		SwapSubscription<IImmutableList<T>>(ctx, current, replacement, $"Item type: {typeof(T)}.");
+	}
+
+	// A state member keeps its own updates: what is replaced is the feed they apply on, at the context's subscription
+	// to it, so the state's readers and the feeds derived from the state see the mock with the edits over it.
+	// SetMock starts the state over from its mock: the edits made before are dropped, even when the mock is the same.
+	// A mock that is itself a state also takes the member's writes; the member itself restores its source.
+	private static void SwapStateSource<T>(StateImpl<T> state, IFeed<T> replacement, string typeInfo)
+	{
+		var isRestore = ReferenceEquals(state, replacement);
+		state.HotSwap(replacement as StateImpl<T> ?? state);
+		SwapSubscription<T>(state.Context, state.Source, isRestore ? state.Source : replacement, typeInfo);
+		state.ClearUpdates();
 	}
 
 	// The member's state and the feeds derived from it all read the feed through this one subscription.
