@@ -16,23 +16,26 @@ parameters:
   # (unoplatform/uno.extensions#3243). Engine filters are substring matches on the full test name,
   # '&' and '!' supported. Each exclusion names the issue that tracks it.
   # Given_TabBar_HotReload is left out on both platforms (Android: #3237; iOS: not yet measured).
+  # Per app launch, so a hung launch can't eat the whole job: up to 10 min of DevServer workspace
+  # load (first launch only), then 2-5 min of tests.
+  RunTimeoutSeconds: 1200
   # #3241: When_PageXamlUpdatedWhileUnmaterialized (API 34).
   AndroidTestFilters: >-
     Reactive.WinUI.Tests.Given_HotReload;
     Navigation.UI.Tests.Given_HotReload
     & !When_PageXamlUpdatedWhileUnmaterialized_Then_RevealShowsUpdatedContent;
     Given_Navigation_HotReload
-  # #3240: the five MVUX model-update tests. #3242: When_RemoveAndReAddMultipleProperties.
+  # #3240: the five MVUX model-update tests. #3245: When_RegionNameAddedViaXamlHR.
   IosTestFilters: >-
     Reactive.WinUI.Tests.Given_HotReload
     & !When_UpdateMvuxFeedSource_Then_NewViewModelReflectsUpdate
     & !When_NewVMWithCtorDepsConstructedAfterHR_Then_ReflectsUpdate
     & !When_UpdateInheritedParentModel_Then_ChildBindingsRefresh
     & !When_AddDerivedFeedToModelWithStateAndCommand_Then_CommandUpdatesBoundState
-    & !When_UpdateStateValue_Then_NewViewModelReflectsUpdate
-    & !When_RemoveAndReAddMultipleProperties_Then_AllBindingsWork;
+    & !When_UpdateStateValue_Then_NewViewModelReflectsUpdate;
     Navigation.UI.Tests.Given_HotReload;
     Given_Navigation_HotReload
+    & !When_RegionNameAddedViaXamlHR_Then_NavigationResolvesNewRegion
 
 jobs:
   - job: Android_HotReload_Tests
@@ -125,6 +128,7 @@ jobs:
           BUILD_SOURCESDIRECTORY: $(Build.SourcesDirectory)
           RuntimeTestsArtifactPath: $(Build.SourcesDirectory)/src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin
           TEST_FILTERS: ${{ parameters.AndroidTestFilters }}
+          RUN_TIMEOUT_SECONDS: ${{ parameters.RunTimeoutSeconds }}
           DEV_SERVER_PORT: ${{ parameters.DevServerPort }}
 
       - task: PublishTestResults@2
@@ -152,7 +156,8 @@ jobs:
 
   - job: iOS_HotReload_Tests
     displayName: 'Hot-Reload Tests - iOS Simulator (Debug)'
-    timeoutInMinutes: 90
+    # ~30 min to build, then up to RunTimeoutSeconds per test launch.
+    timeoutInMinutes: 120
     cancelTimeoutInMinutes: 0
 
     pool:
@@ -229,6 +234,7 @@ jobs:
           SIMULATOR_DEVICE: $(IosSimulatorDevice)
           SIMULATOR_RUNTIME_PREFIX: $(IosSimulatorRuntimePrefix)
           TEST_FILTERS: ${{ parameters.IosTestFilters }}
+          RUN_TIMEOUT_SECONDS: ${{ parameters.RunTimeoutSeconds }}
           DEV_SERVER_PORT: ${{ parameters.DevServerPort }}
 
       - task: PublishTestResults@2
