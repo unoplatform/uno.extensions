@@ -25,11 +25,6 @@ parameters:
   # #3240: the five MVUX model-update tests. #3242: When_RemoveAndReAddMultipleProperties.
   IosTestFilters: >-
     Reactive.WinUI.Tests.Given_HotReload
-    & !When_UpdateMvuxFeedSource_Then_NewViewModelReflectsUpdate
-    & !When_NewVMWithCtorDepsConstructedAfterHR_Then_ReflectsUpdate
-    & !When_UpdateInheritedParentModel_Then_ChildBindingsRefresh
-    & !When_AddDerivedFeedToModelWithStateAndCommand_Then_CommandUpdatesBoundState
-    & !When_UpdateStateValue_Then_NewViewModelReflectsUpdate
     & !When_RemoveAndReAddMultipleProperties_Then_AllBindingsWork;
     Navigation.UI.Tests.Given_HotReload;
     Given_Navigation_HotReload
