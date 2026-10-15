@@ -176,6 +176,12 @@ run_tests() {
   }
   cat "${launch_log}"
 
+  # `simctl launch` prints "<bundle id>: <pid>". Simulator apps are host processes, so the pid can be
+  # watched directly: without it a crash right after launch waits out the whole RUN_TIMEOUT_SECONDS.
+  local app_pid
+  app_pid="$(sed -n 's/^.*: \([0-9][0-9]*\)$/\1/p' "${launch_log}" | tail -n 1)"
+
+  local app_died=0
   echo "Waiting up to ${RUN_TIMEOUT_SECONDS}s for ${result_file}..."
   SECONDS=0
   while [[ ${SECONDS} -lt ${RUN_TIMEOUT_SECONDS} ]]; do
@@ -183,10 +189,27 @@ run_tests() {
       break
     fi
     sleep 5
+    # The app exits right after writing its results, so look for them before calling it a death.
+    if [[ -f "${result_file}" ]]; then
+      break
+    fi
+    if [[ -n "${app_pid}" ]] && ! kill -0 "${app_pid}" 2>/dev/null; then
+      echo "App process ${app_pid} is gone; breaking out of the wait loop."
+      app_died=1
+      break
+    fi
   done
 
   if [[ ! -f "${result_file}" ]]; then
-    echo "ERROR: ${result_file} did not appear within ${RUN_TIMEOUT_SECONDS}s." >&2
+    if [[ "${app_died}" == "1" ]]; then
+      echo "ERROR: the app exited after ${SECONDS}s without writing ${result_file}." >&2
+    else
+      echo "ERROR: ${result_file} did not appear within ${RUN_TIMEOUT_SECONDS}s." >&2
+    fi
+    echo "--- app log (tail) ---" >&2
+    xcrun simctl spawn "${device_udid}" log show --last 30m --style compact \
+      --predicate "processImagePath CONTAINS \"Uno.Extensions.RuntimeTests\"" 2>/dev/null \
+      | tail -n 80 >&2 || true
     exit 1
   fi
 
