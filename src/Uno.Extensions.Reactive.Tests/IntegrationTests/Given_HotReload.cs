@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -330,6 +331,165 @@ public partial class Given_HotReload : FeedUITests
 
 		public IFeed<string> MyFeed => Feed.Async(async ct => "Feed value from model v2");
 		public IFeed<string> MySecondFeed => Feed.Async(async ct => "Second feed value from model v2");
+
+		public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+	}
+	#endregion
+
+	#region When_AddDerivedFeedInModel_Then_StateBindableFollowsUpdatedModel
+	// Repro for https://github.com/unoplatform/uno.extensions/issues/3226:
+	// an HR delta that adds a feed derived from an existing state (`Count.Select(...)`) must not leave
+	// the `Count` bindable on the previous model's state while commands update the new model's state.
+	[TestMethod]
+	public async Task When_AddDerivedFeedInModel_Then_StateBindableFollowsUpdatedModel()
+	{
+		var bindable = new When_AddDerivedFeedInModel_MyViewModel_Updated();
+
+		var tcs = new TaskCompletionSource();
+		Dispatcher.TryEnqueue(() => bindable.PropertyChanged += (s, e) => tcs.TrySetResult());
+
+		bindable.Increment.Execute(null);
+		await WaitFor(() => bindable.Count == 1);
+
+		HotReloadService.UpdateApplication(new[] { typeof(When_AddDerivedFeedInModel_MyModel_v1) });
+
+		await tcs.Task;
+		When_AddDerivedFeedInModel_MyModel_v1.LastInstance.Should().NotBeNull();
+
+		// The bindable now follows the updated model's state (which starts at 0) ...
+		await WaitFor(() => bindable.Count == 0);
+
+		// ... and the command, rebuilt against the updated model, updates that same state.
+		bindable.Increment.Execute(null);
+		bindable.Increment.Execute(null);
+		await WaitFor(() => bindable.Count == 2);
+
+		// The feed added by the delta is live and derives from the state the command updates.
+		for (var i = 3; i <= 10; i++)
+		{
+			bindable.Increment.Execute(null);
+			await WaitFor(() => bindable.Count == i);
+		}
+		await WaitFor(() => bindable.IsGoalReached);
+
+		// A second delta must still find the shared subscription (the reason the patcher runs before the initializer).
+		tcs = new TaskCompletionSource();
+		HotReloadService.UpdateApplication(new[] { typeof(When_AddDerivedFeedInModel_MyModel_v2) });
+
+		await tcs.Task;
+		await WaitFor(() => bindable.Count == 0);
+		await WaitFor(() => !bindable.IsGoalReached);
+
+		bindable.Increment.Execute(null);
+		await WaitFor(() => bindable.Count == 1);
+	}
+
+	[ReactiveBindable(true)]
+	public partial class When_AddDerivedFeedInModel_MyModel
+	{
+		public IState<int> Count => State.Value(this, () => 0);
+
+		public async ValueTask Increment(CancellationToken ct) => await Count.UpdateAsync(c => c + 1, ct);
+	}
+
+	[ReactiveBindable(false)]
+	[Model(bindable: typeof(When_AddDerivedFeedInModel_MyViewModel))]
+	[MetadataUpdateOriginalType(typeof(When_AddDerivedFeedInModel_MyModel))]
+	public partial class When_AddDerivedFeedInModel_MyModel_v1 : IAsyncDisposable
+	{
+		public static When_AddDerivedFeedInModel_MyModel_v1? LastInstance { get; private set; }
+
+		internal When_AddDerivedFeedInModel_MyViewModel __reactiveBindableViewModel = default!;
+
+		public When_AddDerivedFeedInModel_MyModel_v1() => LastInstance = this;
+
+		public IState<int> Count => State.Value(this, () => 0);
+
+		public IFeed<bool> IsGoalReached => Count.Select(c => c >= 10);
+
+		public async ValueTask Increment(CancellationToken ct) => await Count.UpdateAsync(c => c + 1, ct);
+
+		public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+	}
+
+	[ReactiveBindable(false)]
+	[Model(bindable: typeof(When_AddDerivedFeedInModel_MyViewModel))]
+	[MetadataUpdateOriginalType(typeof(When_AddDerivedFeedInModel_MyModel))]
+	public partial class When_AddDerivedFeedInModel_MyModel_v2 : IAsyncDisposable
+	{
+		internal When_AddDerivedFeedInModel_MyViewModel __reactiveBindableViewModel = default!;
+
+		public IState<int> Count => State.Value(this, () => 0);
+
+		public IFeed<bool> IsGoalReached => Count.Select(c => c >= 10);
+
+		public async ValueTask Increment(CancellationToken ct) => await Count.UpdateAsync(c => c + 1, ct);
+
+		public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+	}
+
+	// Emulates the EnC-updated generated view model: the real delta rewrites `__Reactive_BindableInitializeForUpdatedModel`
+	// in place so it also initializes the newly added `IsGoalReached` member.
+	public class When_AddDerivedFeedInModel_MyViewModel_Updated : When_AddDerivedFeedInModel_MyViewModel
+	{
+		private Bindable<bool>? _isGoalReached;
+
+		public bool IsGoalReached => _isGoalReached?.GetValue() ?? false;
+
+		protected override void __Reactive_BindableInitializeForUpdatedModel(object updatedModel, SourceContext ctx)
+		{
+			base.__Reactive_BindableInitializeForUpdatedModel(updatedModel, ctx);
+
+			dynamic model = updatedModel;
+			_isGoalReached ??= new Bindable<bool>(Property<bool>(nameof(IsGoalReached), (IFeed<bool>)model.IsGoalReached));
+		}
+	}
+	#endregion
+
+	#region When_ViewModelCreatedAfterDelta_Then_CommandsUpdateBoundState
+	// Repro for the scenario reported in https://github.com/unoplatform/uno.extensions/issues/3226:
+	// a page recreated after the delta builds its view model with the EnC-updated ctor, whose `model.Count`
+	// call does not run the same getter as reflection on the original model type. Each getter has its own
+	// `() => 0` lambda, and `State.Value` caches per lambda, so the bindable and the hot-patcher see two
+	// different states for the same model instance. The model below reproduces that divergence directly.
+	[TestMethod]
+	public async Task When_ViewModelCreatedAfterDelta_Then_CommandsUpdateBoundState()
+	{
+		HotReloadService.UpdateApplication(new[] { typeof(When_ViewModelCreatedAfterDelta_MyModel_v1) });
+
+		// Like a page recreated after the delta: the new bindable self-patches onto the updated model from its ctor.
+		await using var bindable = new When_ViewModelCreatedAfterDelta_MyViewModel();
+		Dispatcher.TryEnqueue(() => bindable.PropertyChanged += (s, e) => { });
+		await WaitFor(() => bindable.Count == 0);
+
+		bindable.Increment.Execute(null);
+		bindable.Increment.Execute(null);
+		await WaitFor(() => bindable.Count == 2);
+	}
+
+	[ReactiveBindable(true)]
+	public partial class When_ViewModelCreatedAfterDelta_MyModel
+	{
+		private int _countReads;
+
+		// First read (the bindable's ctor) and later reads (the hot-patcher's reflection) resolve distinct cached states.
+		public IState<int> Count => _countReads++ == 0
+			? State.Value(this, () => 0)
+			: State.Value(this, static () => 0);
+
+		public async ValueTask Increment(CancellationToken ct) => await Count.UpdateAsync(c => c + 1, ct);
+	}
+
+	[ReactiveBindable(false)]
+	[Model(bindable: typeof(When_ViewModelCreatedAfterDelta_MyViewModel))]
+	[MetadataUpdateOriginalType(typeof(When_ViewModelCreatedAfterDelta_MyModel))]
+	public partial class When_ViewModelCreatedAfterDelta_MyModel_v1 : IAsyncDisposable
+	{
+		internal When_ViewModelCreatedAfterDelta_MyViewModel __reactiveBindableViewModel = default!;
+
+		public IState<int> Count => State.Value(this, () => 0);
+
+		public async ValueTask Increment(CancellationToken ct) => await Count.UpdateAsync(c => c + 1, ct);
 
 		public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 	}

@@ -135,6 +135,53 @@ public class Given_HotReload
 
 	[TestMethod]
 	[RunsOnUIThread]
+	public async Task When_AddDerivedFeedToModelWithStateAndCommand_Then_CommandUpdatesBoundState(CancellationToken ct)
+	{
+		await using var vm = new MvuxHotReloadAddDerivedFeedViewModel();
+		var text = new TextBlock();
+		var ui = new StackPanel { DataContext = vm, Children = { text } };
+		text.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("Count") });
+
+		await UIHelper.Load(ui, ct);
+		await TestHelper.WaitFor(() => text.Text == "0", ct);
+
+		vm.Increment.Execute(null);
+		await TestHelper.WaitFor(() => text.Text == "1", ct);
+
+		// HR: add a feed derived from the existing state (#3226)
+		await using var delta = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadAddDerivedFeedModel.cs",
+			"""// derived feed added here""",
+			"""public IFeed<bool> IsGoalReached => Count.Select(c => c >= 10);""",
+			ct);
+
+		// The live VM is hot-patched onto the updated model, whose state starts at 0 ...
+		await TestHelper.WaitFor(() => text.Text == "0", TimeSpan.FromSeconds(5), ct);
+
+		// ... and the command, rebuilt against the updated model, updates the state the view is bound to.
+		vm.Increment.Execute(null);
+		vm.Increment.Execute(null);
+		await TestHelper.WaitFor(() => text.Text == "2", TimeSpan.FromSeconds(5), ct);
+		Assert.AreEqual("2", text.Text);
+
+		// The page recreated after the delta (the scenario reported in the issue) self-patches from its ctor.
+		await using var vm2 = new MvuxHotReloadAddDerivedFeedViewModel();
+		var text2 = new TextBlock();
+		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
+		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("Count") });
+
+		await UIHelper.Load(ui2, ct);
+		await TestHelper.TryWaitFor(() => text2.Text == "0", 5000, ct);
+		Assert.AreEqual("0", text2.Text, "A view model created after the delta must start from the updated model's state.");
+
+		vm2.Increment.Execute(null);
+		vm2.Increment.Execute(null);
+		await TestHelper.TryWaitFor(() => text2.Text == "2", 5000, ct);
+		Assert.AreEqual("2", text2.Text, "Commands of a view model created after the delta must update the state the view is bound to.");
+	}
+
+	[TestMethod]
+	[RunsOnUIThread]
 	public async Task When_RemoveAndReAddFeedProperty_Then_BindingsWork(CancellationToken ct)
 	{
 		await using var vm1 = new MvuxHotReloadFeedRemoveViewModel();
