@@ -100,7 +100,11 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 }
 ```
 
-Both `EmbeddedSource` and `ContentSource` methods will also create settings files that are specific to the current environment by default, `appsettings.<hostenvironment>.json` (eg `appsettings.development.json`). This can be disabled by setting the `includeEnvironmentSettings` argument to `false` (default value is `true`):
+Both `EmbeddedSource` and `ContentSource` methods will also create settings files that are specific to the current environment by default, `appsettings.<hostenvironment>.json` (eg `appsettings.development.json`). This can be disabled by setting the `includeEnvironmentSettings` argument to `false` (default value is `true`).
+
+When a configuration name is passed, the environment-specific file includes it as well, and is read from the same kind of source as the base file. For example, `EmbeddedSource<App>("platform")` reads both `appsettings.platform.json` and `appsettings.platform.<hostenvironment>.json` (eg `appsettings.platform.development.json`) from the embedded resources of the `App` assembly.
+
+To disable the environment-specific file:
 
 ```csharp
 private IHost Host { get; set; }
