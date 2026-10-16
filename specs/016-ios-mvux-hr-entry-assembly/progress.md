@@ -8,7 +8,7 @@ Issue: https://github.com/unoplatform/uno.extensions/issues/3240
 
 On the iOS simulator (Mono interpreter, Debug), `Assembly.GetEntryAssembly()` is `null` while module initializers run and only becomes non-null once `Main` starts. Temporary `Console.WriteLine` diagnostics (os_log):
 
-```
+```text
 14:50:59.635 ConfigureHotReload module=Uno.Extensions.RuntimeTests isEnabled=True cachedEntry=<null> liveEntry=<null> isApp=True tid=1
 14:50:59.640 Main liveEntry=Uno.Extensions.RuntimeTests
              ConfigureHotReload module=Uno.Extensions.Reactive.WinUI.Tests isEnabled=True cachedEntry=<null> liveEntry=Uno.Extensions.RuntimeTests isApp=False
@@ -17,7 +17,7 @@ On the iOS simulator (Mono interpreter, Debug), `Assembly.GetEntryAssembly()` is
 
 `ModuleFeedConfiguration._entryAssembly` is a `static readonly` captured when the type initializes, which is inside the app's `[ModuleInitializer]`, so it is `null` on iOS. Before #3235 the app module never matched and `EffectiveHotReload` stayed `Disabled`. That is the same symptom as Android (unoplatform/uno#25417), for a different reason: Android has no entry assembly at all, while iOS has one that isn't populated yet.
 
-#3235's first-caller rule already covers iOS: the entry assembly's module initializer runs before `Main`, so it runs before any library's initializer and wins.
+PR #3235's first-caller rule already covers iOS: the entry assembly's module initializer runs before `Main`, so it runs before any library's initializer and wins.
 
 Side note: the issue's suggested logging recipe can't show `Module '<name>' has enabled...`, because that message is logged from the module initializer, before `Main` can call `InitializeLogging()`.
 
