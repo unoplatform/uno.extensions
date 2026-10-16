@@ -14,6 +14,12 @@ namespace Uno.Extensions.Navigation;
 internal static class RouteTypeIndex
 {
 	/// <summary>
+	/// The load context that loaded <paramref name="anchor"/>, or the default context for an assembly that has none.
+	/// </summary>
+	internal static AssemblyLoadContext OwnContextOf(Assembly anchor)
+		=> AssemblyLoadContext.GetLoadContext(anchor) ?? AssemblyLoadContext.Default;
+
+	/// <summary>
 	/// The assemblies of <paramref name="ownContext"/>, followed by those of the default context.
 	/// </summary>
 	/// <remarks>

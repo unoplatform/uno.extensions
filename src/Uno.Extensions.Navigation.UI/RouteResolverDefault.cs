@@ -270,7 +270,7 @@ public class RouteResolverDefault : RouteResolver
 		{
 			if (loadedTypes is null)
 			{
-				var ownContext = AssemblyLoadContext.GetLoadContext(typeof(RouteResolverDefault).Assembly) ?? AssemblyLoadContext.Default;
+				var ownContext = RouteTypeIndex.OwnContextOf(typeof(RouteResolverDefault).Assembly);
 				var assemblies = RouteTypeIndex.OwnAndDefaultContextAssemblies(ownContext);
 				if (Logger.IsEnabled(LogLevel.Debug))
 				{
