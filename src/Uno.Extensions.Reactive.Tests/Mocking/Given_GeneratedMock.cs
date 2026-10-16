@@ -320,6 +320,46 @@ public class Given_GeneratedMock : FeedUITests
 	}
 
 	[TestMethod]
+	public async Task When_SelectionListMocked_Then_ViewModelCarriesTheMockedItems()
+	{
+		var vm = TaskPickerViewModelMock.Create(new TaskPickerModelMock { Tasks = ListFeedMock.Value(new TaskItem("1", "a"), new TaskItem("2", "b")) });
+		using var scope = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+
+		var (tasks, _) = vm.Tasks.Record();
+
+		await tasks.WaitForData(items => items.SequenceEqual(new[] { new TaskItem("1", "a"), new TaskItem("2", "b") }));
+	}
+
+	[TestMethod]
+	public async Task When_SelectionListReSwapped_Then_ViewModelCarriesTheNewItems()
+	{
+		var vm = TaskPickerViewModelMock.Create(new TaskPickerModelMock { Tasks = ListFeedMock.Value(new TaskItem("1", "a")) });
+		using var scope = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+
+		var (tasks, _) = vm.Tasks.Record();
+		await tasks.WaitForData(items => items.SequenceEqual(new[] { new TaskItem("1", "a") }));
+
+		vm.SetMock(TaskPickerModelMock.Empty with { Tasks = ListFeedMock.Value(new TaskItem("2", "b"), new TaskItem("3", "c")) });
+
+		await tasks.WaitForData(items => items.SequenceEqual(new[] { new TaskItem("2", "b"), new TaskItem("3", "c") }));
+	}
+
+	[TestMethod]
+	public async Task When_ItemSelectedInMockedSelectionList_Then_TheSelectionStateGetsIt()
+	{
+		var vm = TaskPickerViewModelMock.Create(new TaskPickerModelMock { Tasks = ListFeedMock.Value(new TaskItem("1", "a"), new TaskItem("2", "b")) });
+		using var scope = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+
+		var (tasks, _) = vm.Tasks.Record();
+		var (selected, _) = vm.Model.Selected.Record();
+		await tasks.WaitForData(items => items.Count == 2);
+
+		(await ((IListState<TaskItem>)vm.Model.Tasks).TrySelectAsync(new TaskItem("2", "b"), CT)).Should().BeTrue();
+
+		await selected.WaitForMessage(message => message.Current.Data.SomeOrDefault() == new TaskItem("2", "b"));
+	}
+
+	[TestMethod]
 	public async Task When_ListStateInputMocked_Then_DerivedFeedComputesOverTheMock()
 	{
 		var vm = TasksViewModelMock.Create(new TasksModelMock { Tasks = ListFeedMock.Value(new TaskItem("1", "a"), new TaskItem("2", "b")) });

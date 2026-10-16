@@ -11,7 +11,7 @@ using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Operators;
 
-internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, IStateImpl
+internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, IStateImpl, IListStateView<TSource>
 {
 	internal static MessageAxis<object?> SelectionUpdateSource { get; } = new(MessageAxes.SelectionSource, _ => null) { IsTransient = true };
 	
@@ -27,7 +27,7 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 	private readonly SubscriptionMode _mode;
 
 	private int _state = State.New;
-	private IState<IImmutableList<TSource>>? _impl;
+	private StateImpl<IImmutableList<TSource>>? _impl;
 
 	private static class State
 	{
@@ -67,6 +67,9 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 
 	/// <inheritdoc />
 	public IRequestSource Requests => Enable().Requests;
+
+	/// <inheritdoc />
+	StateImpl<IImmutableList<TSource>> IListStateView<TSource>.Implementation => Enable();
 
 	/// <inheritdoc />
 	public IAsyncEnumerable<Message<IImmutableList<TSource>>> GetSource(SourceContext context, CancellationToken ct = default)
@@ -109,7 +112,7 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 				ct)
 			.ConfigureAwait(false);
 
-	private IState<IImmutableList<TSource>> Enable()
+	private StateImpl<IImmutableList<TSource>> Enable()
 	{
 		switch (Interlocked.CompareExchange(ref _state, State.Enabled, State.New))
 		{

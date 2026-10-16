@@ -86,9 +86,9 @@ public static class MockingService
 	public static void SwapListFeed<T>(object owner, IListFeed<T> current, IListFeed<T> replacement)
 		where T : notnull
 	{
-		if (current is ListStateImpl<T> listState)
+		if (current is IListStateView<T> listState)
 		{
-			var source = replacement is ListStateImpl<T> replacementState ? replacementState.Implementation : ListFeed.AsFeed(replacement);
+			var source = replacement is IListStateView<T> replacementState ? replacementState.Implementation : ListFeed.AsFeed(replacement);
 			SwapStateSource(listState.Implementation, source, $"Item type: {typeof(T)}.");
 			return;
 		}

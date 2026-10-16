@@ -312,6 +312,16 @@ built states and a fire-and-forget dispose. Limits: a state built over another m
 subscription, so mocking the state mocks that feed too; hot reload still swaps a state at the context's
 subscription to the state. Fixture: `TasksModel`. Tests: `Given_GeneratedMock` and `Given_SingleProjectMock`.
 
+## v20 — a list with a selection is swapped through its state
+
+`.Selection(...)` wraps a list in a list state of its own (`ListFeedSelection`), which reads the wrapped feed
+through a state it builds on first read. v19 swapped a list state through the state it wraps but matched only
+`ListStateImpl`, so a list with a selection was still swapped at the context's subscription to itself, which no
+reader goes through: its bindable showed the error of the real, null-injected loader, whatever the mock set. Both
+list states now expose the state they wrap (`IListStateView<T>`), and `SwapListFeed` swaps either one through it.
+`SetMock` clears that state's updates, the current selection included; the selection state keeps its value, and a
+selection made afterwards syncs both ways again. Fixture: `TaskPickerModel`. Tests: `Given_GeneratedMock`.
+
 ---
 
 ## Final decision register
