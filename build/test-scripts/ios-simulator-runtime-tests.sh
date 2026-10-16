@@ -137,37 +137,93 @@ if [[ -n "${app_container}" && -d "${app_container}" ]]; then
 else
   echo "WARNING: could not resolve the app data container; falling back to ${result_file}"
 fi
-rm -f "${result_file}"
 
-# macOS base64 uses -b; GNU uses -w.
-encoded_filter="$(printf '%s' "${TEST_FILTER}" | base64 -b 0 2>/dev/null || printf '%s' "${TEST_FILTER}" | base64 -w 0)"
-
-export SIMCTL_CHILD_UITEST_RUNTIME_AUTOSTART_RESULT_FILE="${result_file}"
-export SIMCTL_CHILD_UITEST_RUNTIME_TESTS_FILTER="${encoded_filter}"
-
-echo "Launching ${BUNDLE_ID} (result=${result_file}, filter='${TEST_FILTER}')..."
-xcrun simctl launch --terminate-running-process "${device_udid}" "${BUNDLE_ID}" >"${launch_log}" 2>&1 || {
-  echo "ERROR: simctl launch failed." >&2
-  cat "${launch_log}" >&2 || true
-  exit 1
-}
-cat "${launch_log}"
-
-echo "Waiting up to ${RUN_TIMEOUT_SECONDS}s for ${result_file}..."
-SECONDS=0
-while [[ ${SECONDS} -lt ${RUN_TIMEOUT_SECONDS} ]]; do
-  if [[ -f "${result_file}" ]]; then
-    break
-  fi
-  sleep 5
-done
-
-if [[ ! -f "${result_file}" ]]; then
-  echo "ERROR: ${result_file} did not appear within ${RUN_TIMEOUT_SECONDS}s." >&2
-  exit 1
+# Hot-reload lane only (DEV_SERVER_PORT set): the simulator shares the host's loopback, so the app
+# reaches the DevServer directly. DOTNET_MODIFIABLE_ASSEMBLIES has to be passed here: the DevServer
+# package only sets it for mlaunch, which `simctl launch` bypasses.
+if [[ -n "${DEV_SERVER_PORT:-}" ]]; then
+  source "${BUILD_SOURCESDIRECTORY}/build/test-scripts/dev-server.sh"
+  start_dev_server "${logs_dir}/devserver.log"
+  export SIMCTL_CHILD_DOTNET_MODIFIABLE_ASSEMBLIES=debug
+  export SIMCTL_CHILD_UITEST_RUNTIME_IS_SECONDARY_APP=true
 fi
 
-cp "${result_file}" "${results_path}"
-echo "Copied ${result_file} -> ${results_path}"
+# Each ';'-separated entry of TEST_FILTERS runs in a fresh app process (TEST_FILTER is the
+# single-run default), and the NUnit documents are merged. The hot-reload lane needs this: on
+# desktop the engine gives every [RunsInSecondaryApp] class its own app, while ~100 deltas piled
+# into one Mono process end in BadImageFormatException for every later test.
+IFS=';' read -r -a test_filters <<<"${TEST_FILTERS:-${TEST_FILTER}}"
+result_base="${result_file%.xml}"
+
+# Launches the app with filter $1 (--terminate-running-process makes it a fresh process) and copies
+# its NUnit document to $2.
+run_tests() {
+  local filter="$1" local_result="$2"
+  local result_file="${result_base}-${run_index}.xml"
+  rm -f "${result_file}"
+
+  # macOS base64 uses -b; GNU uses -w.
+  local encoded_filter
+  encoded_filter="$(printf '%s' "${filter}" | base64 -b 0 2>/dev/null || printf '%s' "${filter}" | base64 -w 0)"
+  export SIMCTL_CHILD_UITEST_RUNTIME_AUTOSTART_RESULT_FILE="${result_file}"
+  export SIMCTL_CHILD_UITEST_RUNTIME_TESTS_FILTER="${encoded_filter}"
+
+  echo "Launching ${BUNDLE_ID} (result=${result_file}, filter='${filter}')..."
+  xcrun simctl launch --terminate-running-process "${device_udid}" "${BUNDLE_ID}" >"${launch_log}" 2>&1 || {
+    echo "ERROR: simctl launch failed." >&2
+    cat "${launch_log}" >&2 || true
+    exit 1
+  }
+  cat "${launch_log}"
+
+  # `simctl launch` prints "<bundle id>: <pid>". Simulator apps are host processes, so the pid can be
+  # watched directly: without it a crash right after launch waits out the whole RUN_TIMEOUT_SECONDS.
+  local app_pid
+  app_pid="$(sed -n 's/^.*: \([0-9][0-9]*\)$/\1/p' "${launch_log}" | tail -n 1)"
+
+  local app_died=0
+  echo "Waiting up to ${RUN_TIMEOUT_SECONDS}s for ${result_file}..."
+  SECONDS=0
+  while [[ ${SECONDS} -lt ${RUN_TIMEOUT_SECONDS} ]]; do
+    if [[ -f "${result_file}" ]]; then
+      break
+    fi
+    sleep 5
+    # The app exits right after writing its results, so look for them before calling it a death.
+    if [[ -f "${result_file}" ]]; then
+      break
+    fi
+    if [[ -n "${app_pid}" ]] && ! kill -0 "${app_pid}" 2>/dev/null; then
+      echo "App process ${app_pid} is gone; breaking out of the wait loop."
+      app_died=1
+      break
+    fi
+  done
+
+  if [[ ! -f "${result_file}" ]]; then
+    if [[ "${app_died}" == "1" ]]; then
+      echo "ERROR: the app exited after ${SECONDS}s without writing ${result_file}." >&2
+    else
+      echo "ERROR: ${result_file} did not appear within ${RUN_TIMEOUT_SECONDS}s." >&2
+    fi
+    echo "--- app log (tail) ---" >&2
+    xcrun simctl spawn "${device_udid}" log show --last 30m --style compact \
+      --predicate "processImagePath CONTAINS \"Uno.Extensions.RuntimeTests\"" 2>/dev/null \
+      | tail -n 80 >&2 || true
+    exit 1
+  fi
+
+  cp "${result_file}" "${local_result}"
+  echo "Copied ${result_file} -> ${local_result}"
+}
+
+result_parts=()
+run_index=0
+for filter in "${test_filters[@]}"; do
+  run_index=$((run_index + 1))
+  result_parts+=("${results_dir}/part-${run_index}.xml")
+  run_tests "${filter}" "${results_dir}/part-${run_index}.xml"
+done
+python3 "${BUILD_SOURCESDIRECTORY}/build/test-scripts/merge-nunit-results.py" "${results_path}" "${result_parts[@]}"
 
 RUNTIME_TEST_RESULTS="${results_path}" python3 "${BUILD_SOURCESDIRECTORY}/build/test-scripts/validate-runtime-test-results.py"

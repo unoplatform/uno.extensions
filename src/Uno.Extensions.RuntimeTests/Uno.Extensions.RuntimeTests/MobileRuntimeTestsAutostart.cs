@@ -34,6 +34,14 @@ internal static class MobileRuntimeTestsAutostart
 {
 	private const string ResultFileVariable = "UITEST_RUNTIME_AUTOSTART_RESULT_FILE";
 	private const string FilterVariable = "UITEST_RUNTIME_TESTS_FILTER";
+	// Set by the hot-reload lanes, which start a DevServer next to the device. [RunsInSecondaryApp]
+	// classes then run in this process instead of being skipped: the engine can't spawn a secondary
+	// app on mobile, but HotReloadHelper only needs this app's DevServer connection.
+	private const string IsSecondaryAppVariable = "UITEST_RUNTIME_IS_SECONDARY_APP";
+
+	// The DevServer loads its Roslyn workspace once the app connects, which takes minutes on a CI
+	// agent. Unwaited, that load counts against the first hot-reload test's 5-minute engine timeout.
+	private static readonly TimeSpan HotReloadWorkspaceTimeout = TimeSpan.FromMinutes(10);
 
 	/// <summary>
 	/// If <c>UITEST_RUNTIME_AUTOSTART_RESULT_FILE</c> is set, waits for the
@@ -108,20 +116,50 @@ internal static class MobileRuntimeTestsAutostart
 			?? throw new InvalidOperationException(
 				"Could not locate a UnitTestsControl within 30s of app start.");
 
-		var results = await RunTestsAsync(dispatcher, unitTests, BuildConfigFromEnvironment()).ConfigureAwait(false);
+		var isSecondaryApp = Environment.GetEnvironmentVariable(IsSecondaryAppVariable) == "true";
+		if (isSecondaryApp)
+		{
+			await WaitForHotReloadWorkspaceAsync().ConfigureAwait(false);
+		}
+
+		var results = await RunTestsAsync(dispatcher, unitTests, isSecondaryApp, BuildConfigFromEnvironment()).ConfigureAwait(false);
 
 		Directory.CreateDirectory(Path.GetDirectoryName(resultFile) ?? ".");
 		await File.WriteAllTextAsync(resultFile, results, Encoding.UTF8).ConfigureAwait(false);
 	}
 
+	private static async Task WaitForHotReloadWorkspaceAsync()
+	{
+#if DEBUG // The DevServer client is only referenced by non-optimized builds.
+		if (Uno.UI.RemoteControl.RemoteControlClient.Instance?.Processors
+			.OfType<Uno.UI.RemoteControl.HotReload.ClientHotReloadProcessor>()
+			.FirstOrDefault() is not { } hotReload)
+		{
+			Console.WriteLine("MobileRuntimeTestsAutostart: no hot-reload client, not waiting for the DevServer workspace.");
+			return;
+		}
+
+		// Not fatal: on a timeout the tests still run and report their own, more specific, failures.
+		var loaded = hotReload.WaitForWorkspaceLoaded(CancellationToken.None);
+		var completed = await Task.WhenAny(loaded, Task.Delay(HotReloadWorkspaceTimeout)).ConfigureAwait(false);
+		Console.WriteLine(completed == loaded
+			? "MobileRuntimeTestsAutostart: DevServer workspace loaded."
+			: $"MobileRuntimeTestsAutostart: DevServer workspace not loaded after {HotReloadWorkspaceTimeout}, running the tests anyway.");
+#else
+		await Task.CompletedTask.ConfigureAwait(false);
+#endif
+	}
+
 	private static Task<string> RunTestsAsync(
 		DispatcherQueue dispatcher,
 		UnitTestsControl unitTests,
+		bool isSecondaryApp,
 		UnitTestEngineConfig config)
 		=> OnDispatcherAsync(
 			dispatcher,
 			async () =>
 			{
+				unitTests.IsSecondaryApp = isSecondaryApp;
 				await unitTests.RunTests(CancellationToken.None, config).ConfigureAwait(true);
 				return unitTests.NUnitTestResultsDocument;
 			},

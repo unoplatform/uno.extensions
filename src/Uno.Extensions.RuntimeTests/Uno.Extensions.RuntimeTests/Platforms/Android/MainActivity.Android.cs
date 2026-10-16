@@ -28,6 +28,7 @@ public class MainActivity : Uno.UI.Runtime.Android.ApplicationActivity
     {
         "UITEST_RUNTIME_AUTOSTART_RESULT_FILE",
         "UITEST_RUNTIME_TESTS_FILTER",
+        "UITEST_RUNTIME_IS_SECONDARY_APP",
     };
 
     protected override void OnCreate(Bundle? savedInstanceState)

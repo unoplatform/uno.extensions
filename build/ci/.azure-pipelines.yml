@@ -114,6 +114,17 @@ stages:
   # Builds the mobile / wasm runtime-test apps as artifacts; the jobs below consume them.
   - template: stage-build-runtimetests-mobile.yml
 
+# Its own stage, parallel to everything else: the iOS job runs ~35 min, and inside Build_Tests it
+# held up Runtime_Tests_Devices (which waits for the whole stage) by ~25 min on every PR. Each job
+# builds and runs on one agent, so nothing needs to wait for it.
+- stage: Hot_Reload_Tests_Mobile
+  displayName: Hot-Reload Tests - Mobile
+  dependsOn: Determine_Changes
+  # Don't trigger this stage if only docs files are changed
+  condition: and(succeeded(), ne(dependencies.Determine_Changes.outputs['evaluate_changes.DetermineChanges.docsOnly'], 'true'))
+  jobs:
+  - template: stage-runtime-tests-mobile-hotreload.yml
+
 - stage: Runtime_Tests_Devices
   displayName: Runtime Tests - Devices
   dependsOn: Build_Tests
