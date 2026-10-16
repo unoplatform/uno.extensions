@@ -25,7 +25,7 @@ public class Given_RouteTypeIndex
 		{
 			LoadEmittedAssembly(otherContext, "OtherLoadContextApp", "OtherLoadContextOnlyModel");
 
-			var index = IndexFor(AssemblyLoadContext.Default);
+			var index = IndexFor(typeof(Given_RouteTypeIndex).Assembly);
 
 			index.Should().NotContainKey("OtherLoadContextOnlyModel",
 				"a type loaded only into another app's load context must not be indexed");
@@ -38,6 +38,29 @@ public class Given_RouteTypeIndex
 	}
 
 	[TestMethod]
+	public void When_TypeOnlyInSiblingLoadContext_Then_NotIndexed()
+	{
+		var appContext = new AssemblyLoadContext("AppLoadContextWithSibling", isCollectible: true);
+		var siblingContext = new AssemblyLoadContext("SiblingLoadContext", isCollectible: true);
+		try
+		{
+			var appAssembly = LoadEmittedAssembly(appContext, "AppWithSibling", "AppWithSiblingModel");
+			LoadEmittedAssembly(siblingContext, "SiblingApp", "SiblingLoadContextOnlyModel");
+
+			var index = IndexFor(appAssembly);
+
+			index.Should().NotContainKey("SiblingLoadContextOnlyModel",
+				"a type loaded only into another app's load context must not be indexed, even while that context is alive");
+			index["AppWithSiblingModel"].Assembly.Should().BeSameAs(appAssembly);
+		}
+		finally
+		{
+			appContext.Unload();
+			siblingContext.Unload();
+		}
+	}
+
+	[TestMethod]
 	public void When_OwnLoadContext_Then_OwnTypeWinsOverDefault()
 	{
 		var appContext = new AssemblyLoadContext("AppLoadContext", isCollectible: true);
@@ -45,7 +68,7 @@ public class Given_RouteTypeIndex
 		{
 			var appAssembly = LoadEmittedAssembly(appContext, "OwnLoadContextApp", nameof(SharedNameModel));
 
-			var index = IndexFor(appContext);
+			var index = IndexFor(appAssembly);
 
 			index[nameof(SharedNameModel)].Assembly.Should().BeSameAs(appAssembly,
 				"the app's own type must win over a same-named type in the default load context");
@@ -70,7 +93,7 @@ public class Given_RouteTypeIndex
 			LoadEmittedAssembly(AssemblyLoadContext.Default, assemblyName, $"DefaultCopyOnly{id}Model");
 			var ownCopy = LoadEmittedAssembly(appContext, assemblyName, $"OwnCopyOnly{id}Model");
 
-			var index = IndexFor(appContext);
+			var index = IndexFor(ownCopy);
 
 			index.Should().NotContainKey($"DefaultCopyOnly{id}Model",
 				"the default context's copy of an assembly the own context also has must not be indexed");
@@ -92,12 +115,13 @@ public class Given_RouteTypeIndex
 			// still the same assembly.
 			var id = Guid.NewGuid().ToString("N");
 			LoadEmittedAssembly(AssemblyLoadContext.Default, $"samesimplenamelib{id}", $"DefaultCopyOnly{id}Model");
-			LoadEmittedAssembly(appContext, $"SameSimpleNameLib{id}", $"OwnCopyOnly{id}Model");
+			var ownCopy = LoadEmittedAssembly(appContext, $"SameSimpleNameLib{id}", $"OwnCopyOnly{id}Model");
 
-			var index = IndexFor(appContext);
+			var index = IndexFor(ownCopy);
 
 			index.Should().NotContainKey($"DefaultCopyOnly{id}Model",
 				"assembly simple names differing only in casing name the same assembly");
+			index[$"OwnCopyOnly{id}Model"].Assembly.Should().BeSameAs(ownCopy);
 		}
 		finally
 		{
@@ -105,8 +129,12 @@ public class Given_RouteTypeIndex
 		}
 	}
 
-	private static IDictionary<string, Type> IndexFor(AssemblyLoadContext ownContext)
-		=> RouteTypeIndex.Build(RouteTypeIndex.OwnAndDefaultContextAssemblies(ownContext));
+	/// <summary>
+	/// Builds the index the way <see cref="RouteResolverDefault"/> does, with <paramref name="anchor"/> standing in for
+	/// the Uno.Extensions.Navigation.UI assembly.
+	/// </summary>
+	private static IDictionary<string, Type> IndexFor(Assembly anchor)
+		=> RouteTypeIndex.Build(RouteTypeIndex.OwnAndDefaultContextAssemblies(RouteTypeIndex.OwnContextOf(anchor)));
 
 	private static Assembly LoadEmittedAssembly(AssemblyLoadContext context, string assemblyName, string typeName)
 	{
