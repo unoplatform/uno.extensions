@@ -21,8 +21,8 @@ parameters:
   # so a new Given_*_HotReload class runs on mobile without a filter change. Launch 2 is
   # Given_Navigation_HotReload. Given_TabBar_HotReload is left out on both platforms (Android: #3237;
   # iOS: not yet measured). Each test exclusion names the issue that tracks it.
-  # Per app launch, so a hung launch can't eat the whole job: up to 10 min of DevServer workspace
-  # load (first launch only), then 2-5 min of tests.
+  # Per app launch, so a hung launch can't eat the whole job: the DevServer reloads its workspace for
+  # every launch (minutes on a mac agent, longest on the first), then 2-5 min of tests.
   RunTimeoutSeconds: 1200
   # #3241: When_PageXamlUpdatedWhileUnmaterialized (API 34). #3250: When_VmCtorParamOrderChangedViaHR
   # (Mono SIGSEGV applying the delta, intermittent).
@@ -193,6 +193,19 @@ jobs:
           fi
           xcodebuild -version
         displayName: 'Select Xcode'
+
+      # Started now so the simulator's first-boot data migration, which `simctl install` waits for,
+      # overlaps the build. Needs the Xcode selected above.
+      - bash: |
+          chmod +x build/test-scripts/ios-simulator-runtime-tests.sh
+          build/test-scripts/ios-simulator-runtime-tests.sh
+        displayName: 'Boot iOS simulator'
+        workingDirectory: $(Build.SourcesDirectory)
+        env:
+          BUILD_SOURCESDIRECTORY: $(Build.SourcesDirectory)
+          SIMULATOR_DEVICE: $(IosSimulatorDevice)
+          SIMULATOR_RUNTIME_PREFIX: $(IosSimulatorRuntimePrefix)
+          SIMULATOR_BOOT_ONLY: 'true'
 
       # See the Android job for why this is a props file.
       - bash: |

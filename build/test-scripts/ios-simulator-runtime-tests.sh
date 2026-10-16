@@ -12,7 +12,6 @@ set -euo pipefail
 IFS=$'\n\t'
 
 : "${BUILD_SOURCESDIRECTORY:?BUILD_SOURCESDIRECTORY is required}"
-: "${RuntimeTestsArtifactPath:?RuntimeTestsArtifactPath is required}"
 
 # Device name and runtime must both exist on the agent image, and the runtime must match the SDK
 # the .app was linked against in the build stage. Studio Live hit repeated failures here: a device
@@ -36,6 +35,39 @@ results_path="${results_dir}/ios-runtime-tests-results.xml"
 
 mkdir -p "${results_dir}" "${logs_dir}"
 rm -f "${result_file}"
+
+device_udid="$(xcrun simctl list devices --json | python3 -c "
+import json, sys
+devices = json.load(sys.stdin)['devices']
+prefix, name = '${SIMULATOR_RUNTIME_PREFIX}', '${SIMULATOR_DEVICE}'
+for runtime, entries in devices.items():
+    if not runtime.startswith(prefix):
+        continue
+    for device in entries:
+        if device.get('isAvailable') is not False and device.get('name') == name:
+            print(device['udid'])
+            sys.exit(0)
+sys.exit(1)
+" || true)"
+
+if [[ -z "${device_udid}" ]]; then
+  echo "ERROR: no available simulator for device='${SIMULATOR_DEVICE}' runtime prefix='${SIMULATOR_RUNTIME_PREFIX}'" >&2
+  xcrun simctl list devices available >&2
+  exit 1
+fi
+echo "Selected simulator UDID: ${device_udid}"
+
+# SIMULATOR_BOOT_ONLY=true starts the boot and returns, before the cleanup trap that would shut the
+# simulator down. The hot-reload lane runs it before its build step: a fresh hosted simulator spends
+# minutes in CoreSimulator data migration after reaching "Booted", and `simctl install` below waits
+# for it (2.5-5 min per run in builds 239608-239810). Started early, that overlaps the build.
+if [[ "${SIMULATOR_BOOT_ONLY:-}" == "true" ]]; then
+  xcrun simctl boot "${device_udid}" || true
+  echo "Boot of ${device_udid} started; the test run waits for it."
+  exit 0
+fi
+
+: "${RuntimeTestsArtifactPath:?RuntimeTestsArtifactPath is required}"
 
 app_bundle="$(find "${RuntimeTestsArtifactPath}" -type d -name '*.app' -print | head -n 1 || true)"
 if [[ -z "${app_bundle}" ]]; then
@@ -61,27 +93,6 @@ if [[ -z "${BUNDLE_ID:-}" ]]; then
 fi
 echo "Bundle identifier: ${BUNDLE_ID}"
 
-device_udid="$(xcrun simctl list devices --json | python3 -c "
-import json, sys
-devices = json.load(sys.stdin)['devices']
-prefix, name = '${SIMULATOR_RUNTIME_PREFIX}', '${SIMULATOR_DEVICE}'
-for runtime, entries in devices.items():
-    if not runtime.startswith(prefix):
-        continue
-    for device in entries:
-        if device.get('isAvailable') is not False and device.get('name') == name:
-            print(device['udid'])
-            sys.exit(0)
-sys.exit(1)
-" || true)"
-
-if [[ -z "${device_udid}" ]]; then
-  echo "ERROR: no available simulator for device='${SIMULATOR_DEVICE}' runtime prefix='${SIMULATOR_RUNTIME_PREFIX}'" >&2
-  xcrun simctl list devices available >&2
-  exit 1
-fi
-echo "Selected simulator UDID: ${device_udid}"
-
 cleanup() {
   if [[ -n "${device_udid:-}" ]]; then
     # Managed Console.WriteLine and Apple's own launch diagnostics all land in os_log; without
@@ -97,10 +108,13 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# Fire-and-forget boot. Deliberately NOT `simctl bootstatus -b`: that blocks until every
-# CoreSimulator data-migration plugin finishes, 5+ minutes on a fresh hosted mac runner. The
-# "Booted" state lands long before those settle, and install/launch wait only as long as needed.
-xcrun simctl boot "${device_udid}" || true
+# Fire-and-forget boot, skipped when SIMULATOR_BOOT_ONLY already started it. Deliberately NOT
+# `simctl bootstatus -b`: that blocks until every CoreSimulator data-migration plugin finishes, 5+
+# minutes on a fresh hosted mac runner. "Booted" lands long before those settle, but
+# `simctl install` still waits for them, which is why the hot-reload lane boots before its build.
+if ! xcrun simctl list devices | grep -qF "(${device_udid}) (Booted)"; then
+  xcrun simctl boot "${device_udid}" || true
+fi
 
 boot_deadline=$((SECONDS + 180))
 state=""
