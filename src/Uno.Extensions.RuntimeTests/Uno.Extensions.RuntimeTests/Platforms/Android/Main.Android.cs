@@ -19,9 +19,13 @@ public class Application : Uno.UI.Runtime.Android.NativeApplication
     {
     }
 
-    protected override UnoPlatformHost CreateHost() =>
-        UnoPlatformHostBuilder.Create()
+    protected override UnoPlatformHost CreateHost()
+    {
+        App.InitializeLogging();
+
+        return UnoPlatformHostBuilder.Create()
             .App(() => new App())
             .UseAndroid()
             .Build();
+    }
 }

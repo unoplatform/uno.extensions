@@ -112,6 +112,7 @@ public static class PlatformHelper
 	///       <item><term>
 	///         <see cref="Assembly.GetEntryAssembly()"/>: NativeAOT returns a non-<see langword="null"/> value.
 	///         Android with MonoVM and CoreCLR returns <see langword="null"/> (!).
+	///         iOS with MonoVM returns <see langword="null"/> until <c>Main</c> starts, e.g. inside a module initializer (!).
 	///       </term></item>
 	///       <item><term>
 	///         <see cref="Assembly.GetExecutingAssembly()"/>: NativeAOT always an exception (!).
