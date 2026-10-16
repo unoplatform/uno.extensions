@@ -173,7 +173,7 @@ When defining route names, it's crucial to choose names carefully to avoid poten
 - Settings
 
 > [!NOTE]
-> When a route has no registered view, navigation looks up a matching type by name only in the assemblies of the load context that loaded Uno.Extensions.Navigation, followed by the default load context. If your views or view models live in another `AssemblyLoadContext` (for example, an assembly loaded with `Assembly.LoadFile`), register them explicitly with a `ViewMap` and `RouteMap`.
+> When a route has no registered view, navigation looks up a matching type by name, searching only the assemblies of the load context that loaded `Uno.Extensions.Navigation.UI` (from the `Uno.Extensions.Navigation.WinUI` package), then those of the default load context. If your views or view models live in another `AssemblyLoadContext` (for example, an assembly loaded with `Assembly.LoadFile`), register them explicitly with a `ViewMap` and `RouteMap`.
 
 #### View
 
