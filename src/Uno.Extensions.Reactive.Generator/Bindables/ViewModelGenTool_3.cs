@@ -86,6 +86,11 @@ internal partial class ViewModelGenTool_3 : ICodeGenTool
 			: $"{NS.Bindings}.BindableViewModelBase";
 
 		var members = GetMembers(model).ToList();
+		if (members.Any(member => member.Name == N.HasErrors)
+			&& model.GetMembers(N.HasErrors).FirstOrDefault(member => member.IsAccessible() && !member.IsStatic) is { } hasErrors)
+		{
+			_ctx.Context.ReportDiagnostic(Rules.FEED1001.GetDiagnostic(model, hasErrors, vmName));
+		}
 
 		var vm = this.InSameNamespaceOf(
 			model,
