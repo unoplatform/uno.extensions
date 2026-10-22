@@ -166,8 +166,10 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 					pageTokens.Received(page.Tokens);
 				}
 
+				// Note: An unset selection means that nothing is selected (e.g. the selection made on a list state is lost when its source publishes a new list),
+				//		 unless it has been unset by an operator (e.g. the ListFeedSelection while the list is being edited, the selection state still holds the item).
 				if (msg.Changes.Contains(MessageAxis.Selection)
-					&& msg.Current.GetSelectionInfo() is { } selectionInfo
+					&& (msg.Current.GetSelectionInfo() ?? (msg.Current.Get(MessageAxis.SelectionSource) is null ? SelectionInfo.Empty : null)) is { } selectionInfo
 					&& msg.Current.Get(BindableViewModelBase.BindingSource) != collection)
 				{
 					selection.SetFromSource(selectionInfo);

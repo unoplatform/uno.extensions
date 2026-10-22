@@ -13,7 +13,7 @@ namespace Uno.Extensions.Reactive.Operators;
 
 internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, IStateImpl
 {
-	internal static MessageAxis<object?> SelectionUpdateSource { get; } = new(MessageAxes.SelectionSource, _ => null) { IsTransient = true };
+	internal static MessageAxis<object?> SelectionUpdateSource { get; } = MessageAxis.SelectionSource;
 	
 	// Sentinel marker to indicate selection was cleared due to data changes (not an explicit user action)
 	private static readonly object InternalSelectionClear = new();

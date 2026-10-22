@@ -59,6 +59,11 @@ public abstract class MessageAxis : IEquatable<MessageAxis>
 	/// </remarks>
 	internal static MessageAxis<SelectionInfo> Selection => new(MessageAxes.Selection, SelectionInfo.Aggregate);
 
+	/// <summary>
+	/// The source of the last update of the <see cref="Selection"/> made by an operator (e.g. the ListFeedSelection), if any.
+	/// </summary>
+	internal static MessageAxis<object?> SelectionSource => new(MessageAxes.SelectionSource, _ => null) { IsTransient = true };
+
 	internal MessageAxis(string identifier)
 	{
 		Identifier = identifier;
