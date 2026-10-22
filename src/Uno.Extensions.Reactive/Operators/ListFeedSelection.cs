@@ -130,7 +130,7 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 
 		Context
 			.GetOrCreateSource(_selectionState)
-			.Where(msg => msg.Changes.Contains(MessageAxis.Data) && msg.Current.Get(SelectionUpdateSource) != this)
+			.Where(msg => msg.Changes.Contains(MessageAxis.Data))
 			.ForEachAwaitWithCancellationAsync(SyncFromStateToList, ConcurrencyMode.AbortPrevious, _ct.Token);
 
 		Context
@@ -145,6 +145,16 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 		async ValueTask SyncFromStateToList(Message<TOther> otherMsg, CancellationToken ct)
 		{
 			// Note: We sync only the SelectedItem. Error, Transient and any other axis are **not** expected to flow between the 2 sources.
+
+			if (otherMsg.Current.Get(SelectionUpdateSource) == this && currentSelectionFromState is not null)
+			{
+				// The selection has been made on the list, which is already selected accordingly, so we don't re-apply it now.
+				// But as it's only a volatile update of the list, it will be lost on the next message of the source (refresh, next page, etc.),
+				// so we keep track of it to have it re-applied (by key) on the new list instead of the previous value of the state.
+				// https://github.com/unoplatform/uno.extensions/issues/3258
+				currentSelectionFromState.Other = otherMsg.Current.Data;
+				return;
+			}
 
 			var updatedSelectionFromState = new SelectionFeedUpdate(this, otherMsg.Current.Data);
 
@@ -188,12 +198,22 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 	private class SelectionFeedUpdate : IFeedUpdate<IImmutableList<TSource>>
 	{
 		private readonly ListFeedSelection<TSource, TOther> _owner;
-		private readonly Option<TOther> _other;
+		private Option<TOther> _other;
 
 		public SelectionFeedUpdate(ListFeedSelection<TSource, TOther> owner, Option<TOther> other)
 		{
 			_owner = owner;
 			_other = other;
+		}
+
+		/// <summary>
+		/// The value of the selection state to apply on the list. Can be updated without re-applying it,
+		/// when the list already reflects it (i.e. the selection has been made on the list).
+		/// </summary>
+		public Option<TOther> Other
+		{
+			get { lock (this) { return _other; } }
+			set { lock (this) { _other = value; } }
 		}
 
 		public bool IsActive(Message<IImmutableList<TSource>>? parent, bool parentChanged, IMessageEntry<IImmutableList<TSource>> msg)
@@ -204,7 +224,7 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 		public void Apply(bool _, MessageBuilder<IImmutableList<TSource>, IImmutableList<TSource>> msg)
 		{
 			var items = msg.CurrentData.SomeOrDefault(ImmutableList<TSource>.Empty);
-			var selection = _owner._otherToSelection(items, _other);
+			var selection = _owner._otherToSelection(items, Other);
 
 			msg
 				.Set(MessageAxis.Selection, selection)
