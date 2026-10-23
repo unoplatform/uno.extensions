@@ -2,12 +2,13 @@
 """Validate an NUnit runtime-test result file.
 
 Shared by the android / ios / wasm runtime-test scripts so all three fail the same way. Exits
-non-zero when the file is unparseable, contains no test cases, or contains any case whose result is
-neither Passed nor Skipped.
+non-zero when the file is unparseable, contains no passed test case, or contains any case whose
+result is neither Passed nor Skipped.
 
 A run that produces *zero* cases is treated as a failure: an app that starts, writes an empty
 document and exits looks identical to a green run to the publish task, and that is precisely how a
-silently-broken filter or a crashed test host slips through.
+silently-broken filter or a crashed test host slips through. All-skipped is the same trap: the
+hot-reload lanes report every case Skipped if the in-process secondary-app switch never arrives.
 """
 import os
 import sys
@@ -39,3 +40,6 @@ if failed:
     for name, result in failed:
         print(f" - {name}: {result}")
     sys.exit(1)
+
+if not any(case.get("result") == "Passed" for case in cases):
+    raise SystemExit(f"None of the {len(cases)} runtime test cases in {results_path} passed.")

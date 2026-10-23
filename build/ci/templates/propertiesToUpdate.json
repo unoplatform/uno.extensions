@@ -1,4 +1,0 @@
-﻿[
-  { "PropertyName": "MauiUnoVersion", "PackageId": "Uno.WinUI" },  
-  { "PropertyName": "NonMauiUnoVersion", "PackageId": "Uno.WinUI" },  
-]

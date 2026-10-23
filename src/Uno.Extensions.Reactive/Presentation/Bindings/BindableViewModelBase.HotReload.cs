@@ -39,8 +39,9 @@ partial class BindableViewModelBase
 		{
 			if (_instances is null)
 			{
-				if (_untypedLog.IsEnabled(LogLevel.Information))
-					_untypedLog.Info("Hot reload has been disabled.");
+				// A model has been updated but hot-reload is not enabled: the update will have no effect, so do not stay silent.
+				if (_untypedLog.IsEnabled(LogLevel.Warning))
+					_untypedLog.Warn($"Hot reload is disabled for MVUX, the update of {originalModel} will not be applied.");
 
 				return;
 			}
@@ -287,6 +288,12 @@ partial class BindableViewModelBase
 				var previousFeed = GetAsFeed(previousModel, previousProperty);
 				var updatedFeed = GetAsFeed(updatedModel, updatedProperty);
 
+				if (previousFeed is { } fromModel && GetLastFeed(property, fromModel.valueType) is { } tracked)
+				{
+					// Swap the feed the bindable is attached to, not a fresh read of the model (cf. TrackBindableFeed).
+					previousFeed = tracked;
+				}
+
 				if (previousFeed is null && updatedFeed is null)
 				{
 					if (trace) log.Trace($"Property {property} was and is not a feed property.");
@@ -415,6 +422,18 @@ partial class BindableViewModelBase
 			? (instance, valueType)
 			: null;
 
+	// A bindable stays attached to the subscription of the feed it was created from, so that feed is what a hot-patch must swap.
+	// Reading the property again from the model is not equivalent: once a metadata update has been applied, the EnC-updated
+	// bindable ctor and reflection on the original model type may run different getters, each with its own cached lambda,
+	// so `State.Value(this, () => ...)` / `Feed.Async(...)` return another instance for the same model (#3226).
+	private void TrackBindableFeed<T>(string property, IFeed<T> feed)
+	{
+		if (FeedConfiguration.EffectiveHotReload.HasFlag(HotReloadSupport.State))
+		{
+			(_propertyFeedsCache ??= new())[(property, typeof(T))] = feed;
+		}
+	}
+
 	private (object instance, Type valueType)? GetLastFeed(string property, Type valueType)
 		=> _propertyFeedsCache?.TryGetValue((property, valueType), out var instance) is true
 			? (instance, valueType)
@@ -454,21 +473,41 @@ partial class BindableViewModelBase
 		// (If it's already an IState, we let to the context the responsibility to re-use it or not.)
 		var context = SourceContext.GetOrCreate(model);
 		var state = context.GetOrCreateState(previous);
-		if (state is not IHotSwapState<T> hotSwap)
+		var subscription = context.States.GetOrCreateSubscription(previous);
+		if (!subscription.CanHotSwap)
 		{
 			if (model.Log().IsEnabled(LogLevel.Information))
 			{
-				model.Log().Info($"The state '{state.GetType()}' used for '{property}' does not support hot-swap.");
+				model.Log().Info($"The subscription used for '{property}' does not support hot-swap.");
 			}
 
 			return;
 		}
 
-		hotSwap.HotSwap(updated);
+		if (previous is StateImpl<T> previousState && updated is StateImpl<T> updatedState)
+		{
+			previousState.HotSwap(updatedState);
+		}
 
-		// We also make sure to register the state as the backing state for the updated feed.
-		// This is useful for incremental updates, where we will search for state from the current `updated`.
+		// Swap first: the bindable must follow the updated model even if re-keying below fails (#3226).
+		subscription.HotSwap(updated);
+
+		// Keep both identities on the same state and subscription for later incremental updates.
 		context.States.GetOrCreateState<IFeed<T>, IState<T>>(updated, (ctx, f) => state);
-		(_propertyFeedsCache ??= new())[(property, typeof(T))] = updated;
+		try
+		{
+			context.States.SetSubscription(updated, subscription);
+			(_propertyFeedsCache ??= new())[(property, typeof(T))] = updated;
+		}
+		catch (InvalidOperationException error) when (error is not ObjectDisposedException)
+		{
+			// Something already subscribed to the updated feed (e.g. a derived feed added by the same delta).
+			// Keep tracking the previous feed: it still resolves to the shared subscription for the next delta.
+			(_propertyFeedsCache ??= new())[(property, typeof(T))] = previous;
+			if (model.Log().IsEnabled(LogLevel.Warning))
+			{
+				model.Log().Warn(error, $"The updated feed of '{property}' already has its own subscription; the shared one could not be re-keyed onto it.");
+			}
+		}
 	}
 }

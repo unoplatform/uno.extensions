@@ -13,22 +13,24 @@ public class Given_CoreListFeedOperators
 {
 	#region GetAwaiter
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))]
 	public async Task When_GetAwaiter_Then_AcceptsNotNullAndStruct()
 	{
-		// Note: Those ar compilation tests! Will always throw null ref
+		await Assert.ThrowsExactlyAsync<NullReferenceException>(async () =>
+		{
+			// Note: Those ar compilation tests! Will always throw null ref
 
-		var intValue = await default(IListFeed<int>)!;
-		var nullableIntValue = await default(IListFeed<int?>)!;
+			var intValue = await default(IListFeed<int>)!;
+			var nullableIntValue = await default(IListFeed<int?>)!;
 
-		var stringValue = await default(IListFeed<string>)!;
-		var nullableStringValue = await default(IListFeed<string?>)!;
+			var stringValue = await default(IListFeed<string>)!;
+			var nullableStringValue = await default(IListFeed<string?>)!;
 
-		var structValue = await default(IListFeed<MyStruct>)!;
-		var nullableStructValue = await default(IListFeed<MyStruct?>)!;
+			var structValue = await default(IListFeed<MyStruct>)!;
+			var nullableStructValue = await default(IListFeed<MyStruct?>)!;
 
-		var classValue = await default(IListFeed<MyClass>)!;
-		var nullableClassValue = await default(IListFeed<MyClass?>)!;
+			var classValue = await default(IListFeed<MyClass>)!;
+			var nullableClassValue = await default(IListFeed<MyClass?>)!;
+		});
 	}
 
 	[TestMethod]
@@ -117,20 +119,23 @@ public class Given_CoreListFeedOperators
 
 	#region Value
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: Those are compilation tests! Will always throw null ref
 	public async Task When_Value_Then_AcceptsNotNullAndStruct()
 	{
-		var intValue = await default(IListFeed<int>)!.Value();
-		var nullableIntValue = await default(IListFeed<int?>)!.Value();
+		// Note: Those are compilation tests! Will always throw null ref
+		await Assert.ThrowsExactlyAsync<NullReferenceException>(async () =>
+		{
+			var intValue = await default(IListFeed<int>)!.Value();
+			var nullableIntValue = await default(IListFeed<int?>)!.Value();
 
-		var stringValue = await default(IListFeed<string>)!.Value();
-		var nullableStringValue = await default(IListFeed<string?>)!.Value();
+			var stringValue = await default(IListFeed<string>)!.Value();
+			var nullableStringValue = await default(IListFeed<string?>)!.Value();
 
-		var structValue = await default(IListFeed<MyStruct>)!.Value();
-		var nullableStructValue = await default(IListFeed<MyStruct?>)!.Value();
+			var structValue = await default(IListFeed<MyStruct>)!.Value();
+			var nullableStructValue = await default(IListFeed<MyStruct?>)!.Value();
 
-		var classValue = await default(IListFeed<MyClass>)!.Value();
-		var nullableClassValue = await default(IListFeed<MyClass?>)!.Value();
+			var classValue = await default(IListFeed<MyClass>)!.Value();
+			var nullableClassValue = await default(IListFeed<MyClass?>)!.Value();
+		});
 	}
 
 	[TestMethod]
@@ -158,20 +163,23 @@ public class Given_CoreListFeedOperators
 
 	#region Data
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: Those are compilation tests! Will always throw null ref
 	public async Task When_Data_Then_AcceptsNotNullAndStruct()
 	{
-		var intValue = await default(IListFeed<int>)!.Data();
-		var nullableIntValue = await default(IListFeed<int?>)!.Data();
+		// Note: Those are compilation tests! Will always throw null ref
+		await Assert.ThrowsExactlyAsync<NullReferenceException>(async () =>
+		{
+			var intValue = await default(IListFeed<int>)!.Data();
+			var nullableIntValue = await default(IListFeed<int?>)!.Data();
 
-		var stringValue = await default(IListFeed<string>)!.Data();
-		var nullableStringValue = await default(IListFeed<string?>)!.Data();
+			var stringValue = await default(IListFeed<string>)!.Data();
+			var nullableStringValue = await default(IListFeed<string?>)!.Data();
 
-		var structValue = await default(IListFeed<MyStruct>)!.Data();
-		var nullableStructValue = await default(IListFeed<MyStruct?>)!.Data();
+			var structValue = await default(IListFeed<MyStruct>)!.Data();
+			var nullableStructValue = await default(IListFeed<MyStruct?>)!.Data();
 
-		var classValue = await default(IListFeed<MyClass>)!.Data();
-		var nullableClassValue = await default(IListFeed<MyClass?>)!.Data();
+			var classValue = await default(IListFeed<MyClass>)!.Data();
+			var nullableClassValue = await default(IListFeed<MyClass?>)!.Data();
+		});
 	}
 
 	[TestMethod]
@@ -193,37 +201,43 @@ public class Given_CoreListFeedOperators
 
 	#region Message
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: Those are compilation tests! Will always throw null ref
 	public async Task When_Message_Then_AcceptsNotNullAndStruct()
 	{
-		var intValue = await default(IListFeed<int>)!.Message();
-		var nullableIntValue = await default(IListFeed<int?>)!.Message();
+		// Note: Those are compilation tests! Will always throw null ref
+		await Assert.ThrowsExactlyAsync<NullReferenceException>(async () =>
+		{
+			var intValue = await default(IListFeed<int>)!.Message();
+			var nullableIntValue = await default(IListFeed<int?>)!.Message();
 
-		var stringValue = await default(IListFeed<string>)!.Message();
-		var nullableStringValue = await default(IListFeed<string?>)!.Message();
+			var stringValue = await default(IListFeed<string>)!.Message();
+			var nullableStringValue = await default(IListFeed<string?>)!.Message();
 
-		var structValue = await default(IListFeed<MyStruct>)!.Message();
-		var nullableStructValue = await default(IListFeed<MyStruct?>)!.Message();
+			var structValue = await default(IListFeed<MyStruct>)!.Message();
+			var nullableStructValue = await default(IListFeed<MyStruct?>)!.Message();
 
-		var classValue = await default(IListFeed<MyClass>)!.Message();
-		var nullableClassValue = await default(IListFeed<MyClass?>)!.Message();
+			var classValue = await default(IListFeed<MyClass>)!.Message();
+			var nullableClassValue = await default(IListFeed<MyClass?>)!.Message();
+		});
 	}
 
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: Those are compilation tests! Will always throw null ref
 	public async Task When_Messages_Then_AcceptsNotNullAndStruct()
 	{
-		var intValue = default(IListFeed<int>)!.Messages();
-		var nullableIntValue = default(IListFeed<int?>)!.Messages();
+		// Note: Those are compilation tests! Will always throw null ref
+		await Assert.ThrowsExactlyAsync<NullReferenceException>(async () =>
+		{
+			var intValue = default(IListFeed<int>)!.Messages();
+			var nullableIntValue = default(IListFeed<int?>)!.Messages();
 
-		var stringValue = default(IListFeed<string>)!.Messages();
-		var nullableStringValue = default(IListFeed<string?>)!.Messages();
+			var stringValue = default(IListFeed<string>)!.Messages();
+			var nullableStringValue = default(IListFeed<string?>)!.Messages();
 
-		var structValue = default(IListFeed<MyStruct>)!.Messages();
-		var nullableStructValue = default(IListFeed<MyStruct?>)!.Messages();
+			var structValue = default(IListFeed<MyStruct>)!.Messages();
+			var nullableStructValue = default(IListFeed<MyStruct?>)!.Messages();
 
-		var classValue = default(IListFeed<MyClass>)!.Messages();
-		var nullableClassValue = default(IListFeed<MyClass?>)!.Messages();
+			var classValue = default(IListFeed<MyClass>)!.Messages();
+			var nullableClassValue = default(IListFeed<MyClass?>)!.Messages();
+		});
 	}
 	#endregion
 

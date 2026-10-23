@@ -21,6 +21,14 @@ public class Given_HotReload
 		HotReloadHelper.DefaultMetadataUpdateTimeout = TimeSpan.FromSeconds(60);
 	}
 
+	// UIHelper.Load allows TestHelper.DefaultTimeout (1s) for Loaded, which the first load in a cold
+	// app on a CI emulator or simulator misses (unoplatform/uno.extensions#3242).
+	private static async Task LoadAsync(FrameworkElement element, CancellationToken ct)
+	{
+		UIHelper.Content = element;
+		await TestHelper.WaitFor(() => element.IsLoaded, TimeSpan.FromSeconds(10), ct);
+	}
+
 	[TestMethod]
 	public async Task When_UpdateMethodBody_Then_MetadataUpdateReceived(CancellationToken ct)
 	{
@@ -44,7 +52,7 @@ public class Given_HotReload
 		var ui = new StackPanel { DataContext = vm, Children = { text } };
 		text.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
-		await UIHelper.Load(ui, ct);
+		await LoadAsync(ui, ct);
 		await TestHelper.WaitFor(() => text.Text == "original", ct);
 
 		await using var _ = await HotReloadHelper.UpdateSourceFile(
@@ -63,7 +71,7 @@ public class Given_HotReload
 		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
 		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
-		await UIHelper.Load(ui2, ct);
+		await LoadAsync(ui2, ct);
 		await TestHelper.WaitFor(() => text2.Text == "updated", TimeSpan.FromSeconds(5), ct);
 
 		Assert.AreEqual("updated", text2.Text);
@@ -78,7 +86,7 @@ public class Given_HotReload
 		var ui1 = new StackPanel { DataContext = vm1, Children = { text1 } };
 		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("Value") });
 
-		await UIHelper.Load(ui1, ct);
+		await LoadAsync(ui1, ct);
 		await TestHelper.WaitFor(() => text1.Text == "hello-original", ct);
 
 		// HR-edit the model itself so a shadow type is generated and registered in `_latestShadow`.
@@ -98,7 +106,7 @@ public class Given_HotReload
 		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
 		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("Value") });
 
-		await UIHelper.Load(ui2, ct);
+		await LoadAsync(ui2, ct);
 		await TestHelper.WaitFor(() => text2.Text == "hello-updated", TimeSpan.FromSeconds(5), ct);
 
 		Assert.AreEqual("hello-updated", text2.Text);
@@ -115,7 +123,7 @@ public class Given_HotReload
 		parentText.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("ParentValue") });
 		childText.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("ChildValue") });
 
-		await UIHelper.Load(ui, ct);
+		await LoadAsync(ui, ct);
 		await TestHelper.WaitFor(() => parentText.Text == "parent-original" && childText.Text == "child-original", ct);
 
 		// HR-edit the PARENT model. The child instance must:
@@ -135,6 +143,53 @@ public class Given_HotReload
 
 	[TestMethod]
 	[RunsOnUIThread]
+	public async Task When_AddDerivedFeedToModelWithStateAndCommand_Then_CommandUpdatesBoundState(CancellationToken ct)
+	{
+		await using var vm = new MvuxHotReloadAddDerivedFeedViewModel();
+		var text = new TextBlock();
+		var ui = new StackPanel { DataContext = vm, Children = { text } };
+		text.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("Count") });
+
+		await LoadAsync(ui, ct);
+		await TestHelper.WaitFor(() => text.Text == "0", ct);
+
+		vm.Increment.Execute(null);
+		await TestHelper.WaitFor(() => text.Text == "1", ct);
+
+		// HR: add a feed derived from the existing state (#3226)
+		await using var delta = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadAddDerivedFeedModel.cs",
+			"""// derived feed added here""",
+			"""public IFeed<bool> IsGoalReached => Count.Select(c => c >= 10);""",
+			ct);
+
+		// The live VM is hot-patched onto the updated model, whose state starts at 0 ...
+		await TestHelper.WaitFor(() => text.Text == "0", TimeSpan.FromSeconds(5), ct);
+
+		// ... and the command, rebuilt against the updated model, updates the state the view is bound to.
+		vm.Increment.Execute(null);
+		vm.Increment.Execute(null);
+		await TestHelper.WaitFor(() => text.Text == "2", TimeSpan.FromSeconds(5), ct);
+		Assert.AreEqual("2", text.Text);
+
+		// The page recreated after the delta (the scenario reported in the issue) self-patches from its ctor.
+		await using var vm2 = new MvuxHotReloadAddDerivedFeedViewModel();
+		var text2 = new TextBlock();
+		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
+		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("Count") });
+
+		await LoadAsync(ui2, ct);
+		await TestHelper.TryWaitFor(() => text2.Text == "0", 5000, ct);
+		Assert.AreEqual("0", text2.Text, "A view model created after the delta must start from the updated model's state.");
+
+		vm2.Increment.Execute(null);
+		vm2.Increment.Execute(null);
+		await TestHelper.TryWaitFor(() => text2.Text == "2", 5000, ct);
+		Assert.AreEqual("2", text2.Text, "Commands of a view model created after the delta must update the state the view is bound to.");
+	}
+
+	[TestMethod]
+	[RunsOnUIThread]
 	public async Task When_RemoveAndReAddFeedProperty_Then_BindingsWork(CancellationToken ct)
 	{
 		await using var vm1 = new MvuxHotReloadFeedRemoveViewModel();
@@ -142,7 +197,7 @@ public class Given_HotReload
 		var ui1 = new StackPanel { DataContext = vm1, Children = { text1 } };
 		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
-		await UIHelper.Load(ui1, ct);
+		await LoadAsync(ui1, ct);
 		await TestHelper.WaitFor(() => text1.Text == "hello", ct);
 		Assert.AreEqual("hello", text1.Text);
 
@@ -166,7 +221,7 @@ public class Given_HotReload
 		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
 		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
-		await UIHelper.Load(ui2, ct);
+		await LoadAsync(ui2, ct);
 		await TestHelper.WaitFor(() => text2.Text == "hello", ct);
 		Assert.AreEqual("hello", text2.Text);
 	}
@@ -180,7 +235,7 @@ public class Given_HotReload
 		list1.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Path = new PropertyPath("Items") });
 		var ui1 = new StackPanel { DataContext = vm1, Children = { list1 } };
 
-		await UIHelper.Load(ui1, ct);
+		await LoadAsync(ui1, ct);
 		await TestHelper.WaitFor(() => list1.Items.Count == 3, ct);
 		Assert.AreEqual(3, list1.Items.Count);
 
@@ -204,7 +259,7 @@ public class Given_HotReload
 		list2.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Path = new PropertyPath("Items") });
 		var ui2 = new StackPanel { DataContext = vm2, Children = { list2 } };
 
-		await UIHelper.Load(ui2, ct);
+		await LoadAsync(ui2, ct);
 		await TestHelper.WaitFor(() => list2.Items.Count == 3, ct);
 		Assert.AreEqual(3, list2.Items.Count);
 	}
@@ -218,7 +273,7 @@ public class Given_HotReload
 		var ui1 = new StackPanel { DataContext = vm1, Children = { text1 } };
 		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
-		await UIHelper.Load(ui1, ct);
+		await LoadAsync(ui1, ct);
 		await TestHelper.WaitFor(() => text1.Text == "stateful", ct);
 		Assert.AreEqual("stateful", text1.Text);
 
@@ -241,7 +296,7 @@ public class Given_HotReload
 		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
 		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
-		await UIHelper.Load(ui2, ct);
+		await LoadAsync(ui2, ct);
 		await TestHelper.WaitFor(() => text2.Text == "stateful", TimeSpan.FromSeconds(5), ct);
 		Assert.AreEqual("stateful", text2.Text);
 	}
@@ -257,7 +312,7 @@ public class Given_HotReload
 		list1.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Path = new PropertyPath("Items") });
 		var ui1 = new StackPanel { DataContext = vm1, Children = { text1, list1 } };
 
-		await UIHelper.Load(ui1, ct);
+		await LoadAsync(ui1, ct);
 		await TestHelper.WaitFor(() => text1.Text == "title" && list1.Items.Count == 3, ct);
 
 		await using var delta1a = await HotReloadHelper.UpdateSourceFile(
@@ -291,7 +346,7 @@ public class Given_HotReload
 		list2.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Path = new PropertyPath("Items") });
 		var ui2 = new StackPanel { DataContext = vm2, Children = { text2, list2 } };
 
-		await UIHelper.Load(ui2, ct);
+		await LoadAsync(ui2, ct);
 		await TestHelper.WaitFor(() => text2.Text == "title" && list2.Items.Count == 3, ct);
 		Assert.AreEqual("title", text2.Text);
 		Assert.AreEqual(3, list2.Items.Count);
@@ -306,7 +361,7 @@ public class Given_HotReload
 		var ui1 = new StackPanel { DataContext = vm1, Children = { text1 } };
 		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
-		await UIHelper.Load(ui1, ct);
+		await LoadAsync(ui1, ct);
 		await TestHelper.WaitFor(() => text1.Text == "convertible", ct);
 		Assert.AreEqual("convertible", text1.Text);
 
@@ -322,7 +377,7 @@ public class Given_HotReload
 		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
 		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
-		await UIHelper.Load(ui2, ct);
+		await LoadAsync(ui2, ct);
 		await TestHelper.WaitFor(() => text2.Text == "convertible", TimeSpan.FromSeconds(5), ct);
 		Assert.AreEqual("convertible", text2.Text);
 	}
@@ -339,7 +394,7 @@ public class Given_HotReload
 		var ui = new StackPanel { DataContext = vm, Children = { text } };
 		text.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
-		await UIHelper.Load(ui, ct);
+		await LoadAsync(ui, ct);
 		await TestHelper.WaitFor(() => text.Text == "stateful", ct);
 		Assert.AreEqual("stateful", text.Text);
 
@@ -360,7 +415,7 @@ public class Given_HotReload
 		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
 		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
-		await UIHelper.Load(ui2, ct);
+		await LoadAsync(ui2, ct);
 		await TestHelper.WaitFor(() => text2.Text == "updated", TimeSpan.FromSeconds(5), ct);
 		Assert.AreEqual("updated", text2.Text);
 	}
@@ -374,7 +429,7 @@ public class Given_HotReload
 		var ui1 = new StackPanel { DataContext = vm1, Children = { text1 } };
 		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
-		await UIHelper.Load(ui1, ct);
+		await LoadAsync(ui1, ct);
 		await TestHelper.WaitFor(() => text1.Text == "enumerable", ct);
 		Assert.AreEqual("enumerable", text1.Text);
 
@@ -397,7 +452,7 @@ public class Given_HotReload
 		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
 		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
-		await UIHelper.Load(ui2, ct);
+		await LoadAsync(ui2, ct);
 		await TestHelper.WaitFor(() => text2.Text == "enumerable", TimeSpan.FromSeconds(5), ct);
 		Assert.AreEqual("enumerable", text2.Text);
 	}
@@ -411,7 +466,7 @@ public class Given_HotReload
 		var ui1 = new StackPanel { DataContext = vm1, Children = { text1 } };
 		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
-		await UIHelper.Load(ui1, ct);
+		await LoadAsync(ui1, ct);
 		await TestHelper.WaitFor(() => text1.Text == "enumerable", ct);
 		Assert.AreEqual("enumerable", text1.Text);
 
@@ -427,7 +482,7 @@ public class Given_HotReload
 		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
 		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
-		await UIHelper.Load(ui2, ct);
+		await LoadAsync(ui2, ct);
 		await TestHelper.WaitFor(() => text2.Text == "enumerable", TimeSpan.FromSeconds(5), ct);
 		Assert.AreEqual("enumerable", text2.Text);
 
@@ -443,7 +498,7 @@ public class Given_HotReload
 		var ui3 = new StackPanel { DataContext = vm3, Children = { text3 } };
 		text3.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
-		await UIHelper.Load(ui3, ct);
+		await LoadAsync(ui3, ct);
 		await TestHelper.WaitFor(() => text3.Text == "enumerable", TimeSpan.FromSeconds(5), ct);
 		Assert.AreEqual("enumerable", text3.Text);
 	}
@@ -457,7 +512,7 @@ public class Given_HotReload
 		var ui1 = new StackPanel { DataContext = vm1, Children = { text1 } };
 		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
-		await UIHelper.Load(ui1, ct);
+		await LoadAsync(ui1, ct);
 		await TestHelper.WaitFor(() => text1.Text == "round-trip", ct);
 		Assert.AreEqual("round-trip", text1.Text);
 
@@ -473,7 +528,7 @@ public class Given_HotReload
 		var ui2 = new StackPanel { DataContext = vm2, Children = { text2 } };
 		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
-		await UIHelper.Load(ui2, ct);
+		await LoadAsync(ui2, ct);
 		await TestHelper.WaitFor(() => text2.Text == "round-trip", TimeSpan.FromSeconds(5), ct);
 		Assert.AreEqual("round-trip", text2.Text);
 
@@ -489,7 +544,7 @@ public class Given_HotReload
 		var ui3 = new StackPanel { DataContext = vm3, Children = { text3 } };
 		text3.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
-		await UIHelper.Load(ui3, ct);
+		await LoadAsync(ui3, ct);
 		await TestHelper.WaitFor(() => text3.Text == "round-trip", TimeSpan.FromSeconds(5), ct);
 		Assert.AreEqual("round-trip", text3.Text);
 	}

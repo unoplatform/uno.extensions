@@ -90,6 +90,7 @@ public partial class App : Application
 			builder.AddFilter("Uno", LogLevel.Warning);
 			builder.AddFilter("Uno.UI.RuntimeTests", LogLevel.Trace);
 			builder.AddFilter("Uno.UI.RemoteControl", LogLevel.Trace);
+			builder.AddFilter("Uno.Extensions.Reactive", LogLevel.Information);
 			builder.AddFilter("Windows", LogLevel.Warning);
 			builder.AddFilter("Microsoft", LogLevel.Warning);
 

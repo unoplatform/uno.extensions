@@ -101,8 +101,8 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
 host
     .UseAuthentication(auth =>
     {
-        auth.AddOidc()
-            .AutoRedirectUriFromAuthenticationBroker(); // 👈 takes URI from WAB
+        auth.AddOidc(oidc => oidc
+            .AutoRedirectUriFromWebAuthenticationBroker()); // 👈 takes URI from WAB
     });
 ```
 
@@ -176,7 +176,7 @@ public partial class MainViewModel
 host
     .UseAuthentication(auth =>
     {
-        auth.AddOidc()
+        auth.AddOidc(oidc => oidc
             .ConfigureOidcClientOptions(options =>
             {
                 // toggle PAR
@@ -187,7 +187,7 @@ host
 
                 // skip issuer name validation (only if you know what you’re doing)
                 options.Policy.Discovery.ValidateIssuerName = false;
-            });
+            }));
     });
 ```
 
@@ -267,7 +267,7 @@ A: Not for the basic flow; config is enough.
 A: Yes, the OIDC provider stores and refreshes tokens. ([Uno Platform][1])
 
 **Q: Can I do platform-specific redirect URIs?**
-A: Yes—use `.AutoRedirectUriFromAuthenticationBroker()` so the platform decides. ([Uno Platform][1])
+A: Yes—use `.AutoRedirectUriFromWebAuthenticationBroker()` so the platform decides. ([Uno Platform][1])
 
 ---
 

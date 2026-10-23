@@ -148,13 +148,13 @@ From this walk through, you can see how the IAuthenticationService can be used t
 
 ### 2. Invoking an Authentication Service
 
-- Add `Http` to the `<UnoFeatures>` property in the Class Library (.csproj) file. This will bring the references we need to access `Refit`.
+- Add `HttpRefit` to the `<UnoFeatures>` property in the Class Library (.csproj) file. This will bring the references we need to access `Refit`.
 
     ```diff
     <UnoFeatures>
         Material;
         Authentication;
-    +   Http;
+    +   HttpRefit;
         Toolkit;
         MVUX;
     </UnoFeatures>
@@ -196,7 +196,7 @@ From this walk through, you can see how the IAuthenticationService can be used t
             .Configure(host =>
             {
                 host
-                .UseHttp((context, services) =>
+                .UseHttp((context, http) =>
                     http.AddRefitClient<IDummyJsonEndpoint>(context)
                 );
             });
@@ -244,8 +244,10 @@ From this walk through, you can see how the IAuthenticationService can be used t
                                 var authResponse = await authService.Login(creds, cancellationToken);
                                 if (authResponse?.Token is not null)
                                 {
-                                    credentials["AccessToken"] = authResponse.Token;
-                                    return credentials;
+                                    return new Dictionary<string, string>
+                                    {
+                                        [TokenCacheExtensions.AccessTokenKey] = authResponse.Token
+                                    };
                                 }
                                 return default;
                             })
@@ -256,6 +258,8 @@ From this walk through, you can see how the IAuthenticationService can be used t
     ```
 
     In this case, the Username and Password are extracted out of the credentials dictionary and added to an instance of the Credentials class (which we added earlier, along with the IDummyJsonEndpoint interface), which is passed to the Login method.
+
+    The dictionary returned by `Login` is persisted in the token cache, so return a new dictionary holding only the tokens. Returning `credentials` would store the user's password.
 
 - Update the MainPage to include a TextBox for entering the password:
 

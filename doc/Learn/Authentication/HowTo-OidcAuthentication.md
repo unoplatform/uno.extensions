@@ -107,7 +107,7 @@ Under the hood, `OidcAuthenticationProvider` relies on [Duende.IdentityModel.Oid
 - `Scope`: The scope of the access token.
 
 - `RedirectUri`: The URL that the identity provider will redirect to after the user has authenticated.
-  > It is also possible to populate this setting automatically from the WebAuthenticationBroker using the `.AutoRedirectUriFromAuthenticationBroker()` extension method, which will set the redirect URI to the value returned by the `WebAuthenticationBroker.GetCurrentApplicationCallbackUri()` method, which should discover the correct redirect URI for the application/platform. More information can be found in the [Web Authentication Broker documentation](xref:Uno.Features.WAB).
+  > It is also possible to populate this setting automatically from the WebAuthenticationBroker using the `.AutoRedirectUriFromWebAuthenticationBroker()` extension method (`builder.AddOidc(oidc => oidc.AutoRedirectUriFromWebAuthenticationBroker())`), which will set the redirect URI to the value returned by the `WebAuthenticationBroker.GetCurrentApplicationCallbackUri()` method, which should discover the correct redirect URI for the application/platform. More information can be found in the [Web Authentication Broker documentation](xref:Uno.Features.WAB).
   >
   > When used, this setting will override the value set in the configuration file for both the redirect URI and the post-logout redirect URI.
   > **This setting is ON by default on WebAssembly but opt-in on other platforms.**
@@ -115,14 +115,14 @@ Under the hood, `OidcAuthenticationProvider` relies on [Duende.IdentityModel.Oid
 - **Advanced settings**: some advanced settings may need to access directly the `OidcClientOptions` from `IdentityModel.OidcClient` used by this extension. This can be done by using the `.ConfigureOidcClientOptions()` extension method.
 
     ```csharp
-    builder.AddOidc()
+    builder.AddOidc(oidc => oidc
         .ConfigureOidcClientOptions(options =>
         {
             // Example of advanced settings for the OidcClientOptions
-            options.DisablePushedAuthorization  = false; // Disable the PAR endpoint
+            options.DisablePushedAuthorization = true; // Disable the PAR endpoint
             options.Policy.RequireIdentityTokenOnRefreshTokenResponse = true; // Require an identity token on refresh token response
             options.Policy.Discovery.ValidateIssuerName = false; // Disable issuer name validation
-        });
+        }));
     ```
 
 ### 4. Use the provider in your application

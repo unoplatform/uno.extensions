@@ -14,25 +14,28 @@ public partial class Given_CoreListStateOperators : FeedTests
 {
 	#region UpdateAsync
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: This is a compilation tests!
 	public async Task When_UpdateAsync_Then_AcceptsNotNullAndStruct()
 	{
-		await default(IListState<int>)!.UpdateAsync(_ => ImmutableList.Create(42), CT);
-		await default(IListState<int>)!.UpdateAsync(_ => default(IImmutableList<int>), CT);
-		await default(IListState<int?>)!.UpdateAsync(_ => ImmutableList.Create<int?>(42), CT);
-		await default(IListState<int?>)!.UpdateAsync(_ => default(IImmutableList<int?>), CT);
-		await default(IListState<string>)!.UpdateAsync(_ => ImmutableList.Create(""), CT);
-		await default(IListState<string>)!.UpdateAsync(_ => default(IImmutableList<string>), CT);
-		await default(IListState<string?>)!.UpdateAsync(_ => ImmutableList.Create<string?>(""), CT);
-		await default(IListState<string?>)!.UpdateAsync(_ => default(IImmutableList<string?>), CT);
-		await default(IListState<MyStruct>)!.UpdateAsync(_ => ImmutableList.Create<MyStruct>(new MyStruct()), CT);
-		await default(IListState<MyStruct>)!.UpdateAsync(_ => default(IImmutableList<MyStruct>), CT);
-		await default(IListState<MyStruct?>)!.UpdateAsync(_ => ImmutableList.Create<MyStruct?>(new MyStruct()), CT);
-		await default(IListState<MyStruct?>)!.UpdateAsync(_ => default(IImmutableList<MyStruct?>), CT);
-		await default(IListState<MyClass>)!.UpdateAsync(_ => ImmutableList.Create<MyClass>(new MyClass()), CT);
-		await default(IListState<MyClass>)!.UpdateAsync(_ => default(IImmutableList<MyClass>), CT);
-		await default(IListState<MyClass?>)!.UpdateAsync(_ => ImmutableList.Create<MyClass?>(new MyClass()), CT);
-		await default(IListState<MyClass?>)!.UpdateAsync(_ => default(IImmutableList<MyClass?>), CT);
+		// Note: This is a compilation tests!
+		await Assert.ThrowsExactlyAsync<NullReferenceException>(async () =>
+		{
+			await default(IListState<int>)!.UpdateAsync(_ => ImmutableList.Create(42), CT);
+			await default(IListState<int>)!.UpdateAsync(_ => default(IImmutableList<int>), CT);
+			await default(IListState<int?>)!.UpdateAsync(_ => ImmutableList.Create<int?>(42), CT);
+			await default(IListState<int?>)!.UpdateAsync(_ => default(IImmutableList<int?>), CT);
+			await default(IListState<string>)!.UpdateAsync(_ => ImmutableList.Create(""), CT);
+			await default(IListState<string>)!.UpdateAsync(_ => default(IImmutableList<string>), CT);
+			await default(IListState<string?>)!.UpdateAsync(_ => ImmutableList.Create<string?>(""), CT);
+			await default(IListState<string?>)!.UpdateAsync(_ => default(IImmutableList<string?>), CT);
+			await default(IListState<MyStruct>)!.UpdateAsync(_ => ImmutableList.Create<MyStruct>(new MyStruct()), CT);
+			await default(IListState<MyStruct>)!.UpdateAsync(_ => default(IImmutableList<MyStruct>), CT);
+			await default(IListState<MyStruct?>)!.UpdateAsync(_ => ImmutableList.Create<MyStruct?>(new MyStruct()), CT);
+			await default(IListState<MyStruct?>)!.UpdateAsync(_ => default(IImmutableList<MyStruct?>), CT);
+			await default(IListState<MyClass>)!.UpdateAsync(_ => ImmutableList.Create<MyClass>(new MyClass()), CT);
+			await default(IListState<MyClass>)!.UpdateAsync(_ => default(IImmutableList<MyClass>), CT);
+			await default(IListState<MyClass?>)!.UpdateAsync(_ => ImmutableList.Create<MyClass?>(new MyClass()), CT);
+			await default(IListState<MyClass?>)!.UpdateAsync(_ => default(IImmutableList<MyClass?>), CT);
+		});
 	}
 
 	[TestMethod]
@@ -274,25 +277,28 @@ public partial class Given_CoreListStateOperators : FeedTests
 
 	#region UpdateDataAsync
 	[TestMethod]
-	[ExpectedException(typeof(NullReferenceException))] // Note: This is a compilation tests!
 	public async Task When_UpdateDataAsync_Then_AcceptsNotNullAndStruct()
 	{
-		await default(IListState<int>)!.UpdateDataAsync(_ => ImmutableList.Create(42), CT);
-		await default(IListState<int>)!.UpdateDataAsync(_ => default(ImmutableList<int>)!, CT);
-		await default(IListState<int?>)!.UpdateDataAsync(_ => ImmutableList.Create<int?>(42), CT);
-		await default(IListState<int?>)!.UpdateDataAsync(_ => default(ImmutableList<int?>)!, CT);
-		await default(IListState<string>)!.UpdateDataAsync(_ => ImmutableList.Create(""), CT);
-		await default(IListState<string>)!.UpdateDataAsync(_ => default(ImmutableList<string>)!, CT);
-		await default(IListState<string?>)!.UpdateDataAsync(_ => ImmutableList.Create<string?>(""), CT);
-		await default(IListState<string?>)!.UpdateDataAsync(_ => default(ImmutableList<string?>)!, CT);
-		await default(IListState<MyStruct>)!.UpdateDataAsync(_ => ImmutableList.Create<MyStruct>(new MyStruct()), CT);
-		await default(IListState<MyStruct>)!.UpdateDataAsync(_ => default(ImmutableList<MyStruct>)!, CT);
-		await default(IListState<MyStruct?>)!.UpdateDataAsync(_ => ImmutableList.Create<MyStruct?>(new MyStruct()), CT);
-		await default(IListState<MyStruct?>)!.UpdateDataAsync(_ => default(ImmutableList<MyStruct?>)!, CT);
-		await default(IListState<MyClass>)!.UpdateDataAsync(_ => ImmutableList.Create<MyClass>(new MyClass()), CT);
-		await default(IListState<MyClass>)!.UpdateDataAsync(_ => default(ImmutableList<MyClass>)!, CT);
-		await default(IListState<MyClass?>)!.UpdateDataAsync(_ => ImmutableList.Create<MyClass?>(new MyClass()), CT);
-		await default(IListState<MyClass?>)!.UpdateDataAsync(_ => default(ImmutableList<MyClass?>)!, CT);
+		// Note: This is a compilation tests!
+		await Assert.ThrowsExactlyAsync<NullReferenceException>(async () =>
+		{
+			await default(IListState<int>)!.UpdateDataAsync(_ => ImmutableList.Create(42), CT);
+			await default(IListState<int>)!.UpdateDataAsync(_ => default(ImmutableList<int>)!, CT);
+			await default(IListState<int?>)!.UpdateDataAsync(_ => ImmutableList.Create<int?>(42), CT);
+			await default(IListState<int?>)!.UpdateDataAsync(_ => default(ImmutableList<int?>)!, CT);
+			await default(IListState<string>)!.UpdateDataAsync(_ => ImmutableList.Create(""), CT);
+			await default(IListState<string>)!.UpdateDataAsync(_ => default(ImmutableList<string>)!, CT);
+			await default(IListState<string?>)!.UpdateDataAsync(_ => ImmutableList.Create<string?>(""), CT);
+			await default(IListState<string?>)!.UpdateDataAsync(_ => default(ImmutableList<string?>)!, CT);
+			await default(IListState<MyStruct>)!.UpdateDataAsync(_ => ImmutableList.Create<MyStruct>(new MyStruct()), CT);
+			await default(IListState<MyStruct>)!.UpdateDataAsync(_ => default(ImmutableList<MyStruct>)!, CT);
+			await default(IListState<MyStruct?>)!.UpdateDataAsync(_ => ImmutableList.Create<MyStruct?>(new MyStruct()), CT);
+			await default(IListState<MyStruct?>)!.UpdateDataAsync(_ => default(ImmutableList<MyStruct?>)!, CT);
+			await default(IListState<MyClass>)!.UpdateDataAsync(_ => ImmutableList.Create<MyClass>(new MyClass()), CT);
+			await default(IListState<MyClass>)!.UpdateDataAsync(_ => default(ImmutableList<MyClass>)!, CT);
+			await default(IListState<MyClass?>)!.UpdateDataAsync(_ => ImmutableList.Create<MyClass?>(new MyClass()), CT);
+			await default(IListState<MyClass?>)!.UpdateDataAsync(_ => default(ImmutableList<MyClass?>)!, CT);
+		});
 	}
 
 	[TestMethod]

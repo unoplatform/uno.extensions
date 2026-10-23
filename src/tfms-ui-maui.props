@@ -1,4 +1,4 @@
-<!-- TFMS for libraries that references Uno.WinUI (i.e. WinUI) -->
+﻿<!-- TFMS for libraries that references Uno.WinUI (i.e. WinUI) -->
 <Project>
 	<PropertyGroup Condition="'$(UnoTargetFrameworkOverride)'!=''">
 		<TargetFrameworks>$(UnoTargetFrameworkOverride)</TargetFrameworks>
@@ -8,8 +8,17 @@
 		<TargetFrameworks Condition="'$(Build_Android)'=='true'">$(TargetFrameworks);net10.0-android</TargetFrameworks>
 		<TargetFrameworks Condition="'$(Build_Windows)'=='true'">$(TargetFrameworks);net10.0-windows10.0.19041</TargetFrameworks>
 		<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+		<!-- Every line above appends ';tfm', so the list starts with ';'. MSBuild skips the empty entry, but
+		     Roslyn's MSBuildWorkspace (the hot-reload DevServer) loads it as a TargetFramework-less flavor of
+		     the project, and a head without framework references makes the DevServer restore and reload the
+		     whole workspace on every app launch. -->
+		<TargetFrameworks>$(TargetFrameworks.Trim(';'))</TargetFrameworks>
 	</PropertyGroup>
 	<PropertyGroup>
-		<WindowsSdkPackageVersion>10.0.19041.57</WindowsSdkPackageVersion>
+		<WindowsSdkPackageVersion>10.0.19041.87</WindowsSdkPackageVersion>
+	</PropertyGroup>
+	<PropertyGroup>
+		<!-- The SDK supplies newer AndroidX than MAUI's Ktx packages allow; the newer ones are compatible. -->
+		<NoWarn>$(NoWarn);NU1608</NoWarn>
 	</PropertyGroup>
 </Project>

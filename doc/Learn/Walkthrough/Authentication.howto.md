@@ -269,7 +269,7 @@ Requires the `Authentication` and `HttpRefit` UnoFeatures.
   <UnoFeatures>
     Material;
     Authentication;
-    Http;
+    HttpRefit;
     Toolkit;
     MVUX;
   </UnoFeatures>
@@ -373,9 +373,12 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
 
                         if (!string.IsNullOrEmpty(resp?.Token))
                         {
-                            // store token in the auth dictionary
-                            credentials["AccessToken"] = resp.Token;
-                            return credentials;
+                            // return only the tokens: this dictionary is persisted,
+                            // so returning credentials would store the password
+                            return new Dictionary<string, string>
+                            {
+                                [TokenCacheExtensions.AccessTokenKey] = resp.Token
+                            };
                         }
 
                         return default;

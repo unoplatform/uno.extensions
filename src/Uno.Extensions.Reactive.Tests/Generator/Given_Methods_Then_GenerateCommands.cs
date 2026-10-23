@@ -676,9 +676,9 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	}
 
 	[TestMethod]
-	[DataRow(nameof(When_MultipleFeedParameter_ViewModel.MyMethod), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter))]
-	[DataRow(nameof(When_MultipleFeedParameter_ViewModel.MyMethodWithCt), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), _ct)]
-	private async Task When_MultipleFeedParameter_ViewModel_ArgsReDispatchedProperly(string method, params string[] expectedArgs)
+	[DataRow(nameof(When_MultipleFeedParameter_ViewModel.MyMethod), nameof(When_MultipleFeedParameter_ViewModel.MyParameter), nameof(When_MultipleFeedParameter_ViewModel.MyParameter2))]
+	[DataRow(nameof(When_MultipleFeedParameter_ViewModel.MyMethodWithCt), nameof(When_MultipleFeedParameter_ViewModel.MyParameter), nameof(When_MultipleFeedParameter_ViewModel.MyParameter2), _ct)]
+	public async Task When_MultipleFeedParameter_ViewModel_ArgsReDispatchedProperly(string method, params string[] expectedArgs)
 	{
 		await using var vm = new When_MultipleFeedParameter_ViewViewModel();
 
@@ -688,6 +688,8 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 		var command = ((PropertyInfo)commandInfo).GetValue(vm) as ICommand;
 		command.Should().NotBeNull();
 
+		// We have to wait for the external parameters to be provided by the feeds
+		await WaitFor(() => command!.CanExecute(null));
 		command!.Execute(null);
 
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -795,7 +797,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod2WithCt), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), _viewParam, _ct)]
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod3), _viewParam, nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter2))]
 	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod3WithCt), _viewParam, nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter2), _ct)]
-	private async Task When_MixedViewAndFeedParameter_ArgsReDispatchedProperly(string method, params string[] expectedArgs)
+	public async Task When_MixedViewAndFeedParameter_ArgsReDispatchedProperly(string method, params string[] expectedArgs)
 	{
 		await using var vm = new When_MixedViewAndFeedParameter_ViewViewModel();
 
@@ -805,6 +807,8 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 		var command = ((PropertyInfo)commandInfo).GetValue(vm) as ICommand;
 		command.Should().NotBeNull();
 
+		// We have to wait for the external parameters to be provided by the feeds
+		await WaitFor(() => command!.CanExecute(_viewParam));
 		command!.Execute(_viewParam);
 
 		await WaitFor(() => vm.InvokeCount == 1);

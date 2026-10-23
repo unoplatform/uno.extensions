@@ -7,13 +7,13 @@ Concrete surfaces, touch-list, phasing, tests. Names negotiable; semantics fixed
 | Piece | Package | Notes |
 | --- | --- | --- |
 | Dependency attributes | `Uno.Extensions.Reactive` (core) | must survive as metadata in the app assembly |
-| Mockable gate + HotSwap wrap at feed cache | core | **`SourceContext.IsMockingActive`** (new per-context bit, D12) read in `StateImpl` ctor; wrap wired at the `AttachedProperty`/factory cache |
+| Mockable gate + swappable subscription | core | **`SourceContext.IsMockingActive`** (new per-context bit, D12) read by `FeedSubscription`; the same subscription-owned `HotSwapFeed` serves hot reload and mocking |
 | Author-declared `MessageEntry` + `AxisValue` (plain CLR) + internal `MessageEntryFeed` | core | tier-1, AOT-safe, **not** a `DependencyObject` |
 | `FeedView.Source` coercion bridge | `Uno.Extensions.Reactive.UI` | tier-1 |
 | Analysis + hidden hooks emission | `Uno.Extensions.Reactive.Generator` | on Model & VM partials, on by default (opt-out) |
 | Mock vocabulary (`FeedMock`/`ListFeedMock`/`CommandMock`/`FeedMockState`) | **`Uno.HotTesting.Reactive`** (new) | referenced by test/preview projects only |
 | Mocking generator (`{Model}Mock`, `Create`, `SetMock`) | `Uno.HotTesting.Reactive` (analyzer asset) | runs in consumer project, reads app metadata |
-| Reflection swap driver (reused, fail-hard) | core | reuse hot-reload's `IHotSwapState<T>` iteration; **throw on un-swappable member** (D11) |
+| Typed subscription swap (fail-hard) | core | `MockingService` resolves the member's `FeedSubscription`; **throw when it is not swappable** (D11) |
 | `MockingService.Enable()` activation scope | `Uno.HotTesting.Reactive` | frozen name; sets `SourceContext.IsMockingActive` on the ambient/pre-seeded context (§6) |
 
 ## 2. Core (`Uno.Extensions.Reactive`)
@@ -45,9 +45,9 @@ public sealed class CtorDependencyAttribute : Attribute
 
 ### 2.2 Mockable gate + swap anchor
 
-- **`SourceContext.IsMockingActive`** (per-context bit, D12 — distinct from `HotReload`, no global static, no bespoke `AsyncLocal`) — **set by the activation scope (§6), off by default**; context not mockable → no wrap, so a live app pays nothing (spec G9/R7). Read at wrap time in `StateImpl` ctor **instead of** `FeedConfiguration.EffectiveHotReload`.
-- When the owning context is mockable: feed factories wrap the cached instance in `HotSwapFeed<T>` (the wrapper IS the cached value → stable identity; derivations compose on the wrapper). Minimal wiring: wrap inside `AttachedProperty.GetOrCreate` call sites in `Core/Feed.cs` / `Core/ListFeed.cs` factories (one helper reading the context bit).
-- **Swap = reflection over the context's `IHotSwapState<T>` members** (D11), reusing the hot-reload driver (`BindableViewModelBase.HotReload`), **fail-hard**: a mocked member that cannot be swapped throws (no silent skip — the hot-reload delta).
+- **`SourceContext.IsMockingActive`** (per-context bit, D12 — distinct from `HotReload`, no global static, no bespoke `AsyncLocal`) — **set by the activation scope (§6), off by default**; `FeedSubscription` reads it when deciding whether to inject the shared wrapper, so a live app context outside mocking pays nothing (spec G9/R7).
+- When the owning context is mockable: each subscription of the context reads its feed through a `HotSwapFeed` (a state's `UpdateFeed` excepted), and the feed's state and every derivation read that one subscription, so they all see a swap (architecture §1).
+- **Swap = a typed call per mocked member** (`MockingService.SwapFeed`/`SwapListFeed`, D11) that swaps the member's subscription, **fail-hard**: a mocked member that cannot be swapped throws (no silent skip — the hot-reload delta). If an actual state replaces another actual state, a narrow handoff redirects future writes to the replacement; source replacement remains subscription-owned.
 
 ### 2.3 Tier-1 core surfaces
 
@@ -63,8 +63,8 @@ On by default (the runtime decides activation). Opt-out: `[assembly: EnableFeedM
 1. **Analysis pass** (per Model): classify members `ServiceDependent(param) | DerivedFrom(feed) | Independent`; lambda/anonymous/local-function bodies = deferred boundary. **Ctor instrumentation**: walk ctor bodies + field/property initializers + primary-ctor eager captures → mark `CtorDependency(Eager=true)` per offending parameter. Hand-declared attributes override/merge (author is the escape hatch).
 2. **Emit attributes** (§2.1) on the generated Model partial.
 3. **Emitted seams** (`EditorBrowsable(Never)`) — only what reflection cannot synthesize:
-   - Model partial: **no per-feed `__Mock_Swap_{Member}`** — swap is reflection over `IHotSwapState<T>` at runtime (D11). (The `HotSwapFeed` wrappers already expose the swap seam the reflection driver uses.)
-   - VM partial: **no dedicated construction seam** — null-inject construction reuses the existing public constructors (`new {Vm}(default!, …)`); under an ambient `MockingService.Enable()` scope the `SourceContext` created at construction is mockable (D12), and the bit is captured on the context instance so a lazy first subscription after the scope is disposed still wraps. Commands have no `IHotSwapState<T>` and are unreachable by the reflection swap, so a **dedicated public `__Mock_SetCommand(string name, IAsyncCommand)`** seam (`EditorBrowsable(Never)`) reassigns the command property post-construction (R2). Fail-hard: an unknown command name throws (strict, like D11).
+   - Model partial: **no per-feed `__Mock_Swap_{Member}`** — swap is a typed call per member at runtime (D11), which swaps the member's subscription.
+   - VM partial: **no dedicated construction seam** — null-inject construction reuses the existing public constructors (`new {Vm}(default!, …)`); under an ambient `MockingService.Enable()` scope the `SourceContext` created at construction is mockable (D12), and the bit is captured on the context instance so a lazy first subscription after the scope is disposed still wraps. Commands are not feeds and have no subscription swap path, so a **dedicated public `__Mock_SetCommand(string name, IAsyncCommand)`** seam (`EditorBrowsable(Never)`) reassigns the command property post-construction (R2). Fail-hard: an unknown command name throws (strict, like D11).
 4. Diagnostics: `FEED3201` eager ctor access detected (info: `Create` will require the service), `FEED3202` unstable feed identity (capture pattern defeats caching), `FEED3203` explicit attribute contradicts analysis.
 
 ## 4. Mocking package (`Uno.HotTesting.Reactive`)
@@ -167,18 +167,18 @@ Mechanism (resolved against source — `Core/Internal/SourceContext.cs`, D12):
 - **Eager vs lazy = solved by pre-seed**: `Create(...)` pre-seeds a mockable context on the VM/Model owner (`PreConfigure`/`Set`), so a lazy first subscription after the `using` block still wraps — the bit is on the context instance, not only on the ambient `AsyncLocal`.
 - **Ambient propagation**: the existing `AsyncLocal<SourceContext> Current` carries mocking activation across async construction; no bespoke `AsyncLocal`.
 - **Nested / concurrency / lifetime**: per-context-instance bit → concurrent tests don't leak; contexts created inside a scope stay mockable for their own lifetime after `Dispose`.
-- **Wiring**: `StateImpl` ctor reads `context.IsMockingActive` (replaces the `EffectiveHotReload` read); swap is reflection over `IHotSwapState<T>` (D11).
+- **Wiring**: `FeedSubscription` wraps once when hot reload is enabled or `context.IsMockingActive`; `StateImpl` contains no source hot-swap wrapper. Hot reload aliases each replacement feed to the existing subscription for incremental updates; mocking performs the same typed subscription swap without a second state-level mechanism (D11).
 
 ## 7. Phasing
 
 - **P0 — de-risk canaries (blocking):**
   a. (tier-1, on hold) `MessageEntry` wrapper visual states + push axis-diff — deferred with tier 1;
-  b. wrap-at-cache via `SourceContext.IsMockingActive`: swap `Steps` → `StepsCount` (`Select`) re-emits (D6/D12 — THE gate). The hot-reload path already proves derivation-survives-swap; this canary re-verifies it under the per-context gate;
+  b. swappable subscription via `SourceContext.IsMockingActive`: swap `Steps` → `StepsCount` (`Select`) re-emits (D6/D12 — THE gate). The hot-reload path already proves derivation-survives-swap; this canary re-verifies it under the per-context gate;
   c. null-inject construction on a lazy model; eager-ctor fixture NREs as predicted;
   d. feed-identity stability matrix (capture patterns) → informs FEED3202;
-  e. `MockingService.Enable()` → `IsMockingActive` on the pre-seeded context: prove **no wrap when the context is not mockable**, and reflection swap is **fail-hard** on an un-swappable member (D11).
+  e. `MockingService.Enable()` → `IsMockingActive` on the pre-seeded context: prove **no wrap when the context is not mockable**, and the typed subscription swap is **fail-hard** on an un-swappable member (D11).
 - **P1 — Tier 1** (core+UI): `Feed.Value`, author-declared `MessageEntry` + `AxisValue` (custom axes), `MessageEntryFeed` + push semantics, `FeedView` bridge, documentation-only converter illustration. Ships alone.
-- **P2 — Core: `SourceContext.IsMockingActive` + wrap gate in `StateImpl` + fail-hard reflection swap + attributes + analysis + `__Mock_SetCommand` seam** (MVUX gen). No per-feed swap hooks; no `__Mock_Create` (public ctors + ambient scope).
+- **P2 — Core: `SourceContext.IsMockingActive` + subscription-owned wrapper shared with hot reload + fail-hard typed swap + attributes + analysis + `__Mock_SetCommand` seam** (MVUX gen). No per-feed swap hooks; no `__Mock_Create` (public ctors + ambient scope).
 - **P3 — Mocking package**: typed vocabulary + consumer generator (`{Model}Mock`/`Create`/`SetMock`).
 - **P4 — Tier 3 catalogs + Hot Design checkpoint** (name freeze), docs.
 
@@ -189,7 +189,7 @@ Mechanism (resolved against source — `Core/Internal/SourceContext.cs`, D12):
 - Every typed `FeedMock`/`ListFeedMock`/`CommandMock` state emits expected axes.
 - Author-declared entry maps to Data/Error/Progress/Undefined correctly; custom axes map and diff correctly.
 - Consecutive entry instances produce correct core + custom axis diffs.
-- Wrap identity (`AttachedProperty` returns the same wrapper); swap propagation through `Select`/`Where` and chained derived feeds; live re-swap.
+- One subscription per feed and context, read by its state and its derivations, swappable only in a mocking context; swap propagation through `Select`/`Where` and chained derived feeds; live re-swap.
 
 ### Generators
 
@@ -208,7 +208,7 @@ Mechanism (resolved against source — `Core/Internal/SourceContext.cs`, D12):
 ### Scoped activation (with §6 spike)
 
 - **Context not mockable → feeds are the raw instances** (no `HotSwapFeed` in the cache, no measurable overhead) — the G9 guard test.
-- **Fail-hard swap**: a mocked member with no `IHotSwapState<T>` throws (D11), asserted.
+- **Fail-hard swap**: a mocked member whose subscription was created outside a mockable/hot-reload context throws (D11), asserted.
 - Assembly-init scope covers every test of the run; a per-test scope covers only its own.
 - Nested `Enable()` scopes restore correctly; parallel tests do not leak mocking activation; async construction retains the intended scope; lazy first subscription after scope disposal has defined behavior; existing contexts remain deterministic after `Dispose`.
 

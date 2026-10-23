@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,34 +37,6 @@ public class Given_Navigation_VmCreationFailure
 		public ThrowingCtorViewModel()
 		{
 			throw new InvalidOperationException(FailureMessage);
-		}
-	}
-
-	private sealed class CapturingLoggerProvider : ILoggerProvider
-	{
-		public ConcurrentQueue<(LogLevel Level, string Message, Exception? Exception)> Entries { get; } = new();
-
-		public ILogger CreateLogger(string categoryName) => new CapturingLogger(this);
-
-		public void Dispose()
-		{
-		}
-
-		private sealed class CapturingLogger : ILogger
-		{
-			private readonly CapturingLoggerProvider _owner;
-
-			public CapturingLogger(CapturingLoggerProvider owner)
-			{
-				_owner = owner;
-			}
-
-			public IDisposable? BeginScope<TState>(TState state) where TState : notnull => default;
-
-			public bool IsEnabled(LogLevel logLevel) => true;
-
-			public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
-				=> _owner.Entries.Enqueue((logLevel, formatter(state, exception), exception));
 		}
 	}
 
@@ -179,7 +150,7 @@ public class Given_Navigation_VmCreationFailure
 		var completed = await Task.WhenAny(navigation, Task.Delay(Timeout));
 		completed.Should().Be(navigation, "a failing view-model constructor must fault the navigation, not hang it");
 
-		var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => navigation);
+		var exception = await Assert.ThrowsExactlyAsync<InvalidOperationException>(() => navigation);
 		exception.Message.Should().Be(ThrowingCtorViewModel.FailureMessage, "the original constructor exception must propagate unwrapped");
 
 		var errors = app.Logs.Entries.Where(e => e.Level == LogLevel.Error).ToArray();
@@ -195,7 +166,7 @@ public class Given_Navigation_VmCreationFailure
 		await using var app = await SetupAppAsync(cts.Token);
 
 		var navigation = app.FrameNavigator.NavigateRouteAsync(this, "TestPageTwo");
-		await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => navigation);
+		await Assert.ThrowsExactlyAsync<InvalidOperationException>(() => navigation);
 
 		// The faulted navigation must not wedge the pipeline: EndNavigation ran,
 		// so a follow-up navigation on the same navigator succeeds.

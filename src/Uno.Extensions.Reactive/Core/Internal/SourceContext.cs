@@ -282,8 +282,7 @@ public sealed class SourceContext : IAsyncDisposable
 	/// so no <see cref="Operators.HotSwapFeed{T}"/> indirection is ever injected into a running application (G9/R7).
 	/// </summary>
 	/// <remarks>
-	/// This is the per-context gate that <c>MockingService.Enable()</c> drives, read at wrap time in
-	/// <see cref="StateImpl{T}"/>'s constructor instead of the global <see cref="Config.FeedConfiguration.EffectiveHotReload"/>.
+	/// This is the per-context gate that <c>MockingService.Enable()</c> drives, read at wrap time in <see cref="FeedSubscription{T}"/>'s constructor.
 	/// </remarks>
 	internal bool IsMockingActive { get; }
 

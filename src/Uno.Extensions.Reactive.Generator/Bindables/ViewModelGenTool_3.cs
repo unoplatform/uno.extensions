@@ -170,8 +170,10 @@ internal partial class ViewModelGenTool_3 : ICodeGenTool
 						((dynamic)updatedModel).__reactiveBindableViewModel = (dynamic)this;
 						base.RegisterDisposable((global::System.IAsyncDisposable)updatedModel);
 
-						__Reactive_BindableInitializeForUpdatedModel(updatedModel, {NS.Core}.SourceContext.GetOrCreate(updatedModel));
+						// Patch first: re-key the shared subscriptions onto the updated model's feeds before any member
+						// initialized from the updated model (e.g. a newly added derived feed) subscribes to them (#3226).
 						__Reactive_TryPatchBindableProperties(previousModel, updatedModel);
+						__Reactive_BindableInitializeForUpdatedModel(updatedModel, {NS.Core}.SourceContext.GetOrCreate(updatedModel));
 
 						if ((updatedModel as object) is global::System.ComponentModel.INotifyPropertyChanged newNpc)
 						{{
@@ -224,7 +226,8 @@ internal partial class ViewModelGenTool_3 : ICodeGenTool
 					{members.Select(member => member.GetDeclaration()).Align(5)}
 
 					{GenerateVmMockingSeam(members).Align(5)}
-				}}");
+				}}",
+			CommandFromMethod.GetAwaiterImports(members));
 
 
 		// If type is at least internally accessible, add it to a mapping from the VM type to it's bindable counterpart to ease usage in navigation engine.

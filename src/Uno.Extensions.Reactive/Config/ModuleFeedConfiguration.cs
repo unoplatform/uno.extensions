@@ -21,6 +21,8 @@ public static class ModuleFeedConfiguration
 	private static readonly string? _entryAssembly = Assembly.GetEntryAssembly()?.GetName().Name;
 #pragma warning restore RS0030
 
+	private static int _isConfiguredWithoutEntryAssembly;
+
 	/// <summary>
 	/// Configures hot-reload for MVUX framework.
 	/// </summary>
@@ -31,7 +33,7 @@ public static class ModuleFeedConfiguration
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public static void ConfigureHotReload(string module, bool isEnabled)
 	{
-		if (_entryAssembly?.Equals(module, StringComparison.OrdinalIgnoreCase) ?? false)
+		if (IsAppModule(module, _entryAssembly, ref _isConfiguredWithoutEntryAssembly))
 		{
 			// Note: it's fine to directly use FeedConfiguration.HotReload as it's internal for now.
 			// We should consider to have a dedicated flag otherwise (to not wipe the config of the user).
@@ -44,7 +46,15 @@ public static class ModuleFeedConfiguration
 		}
 		else if (_log.IsEnabled(LogLevel.Information))
 		{
-			_log.Info($"Module '{module}' has requested to {(isEnabled ? "enabled" : "disabled")} hot-reload support for MVUX, but has hot-reload has already been configured by another module, request has been ignored..");
+			_log.Info($"Module '{module}' has requested to {(isEnabled ? "enable" : "disable")} hot-reload support for MVUX, but it is not the application module, request has been ignored.");
 		}
 	}
+
+	// No entry assembly is known on Android (MonoVM and CoreCLR: never set) nor on iOS (Mono: set only once Main starts,
+	// after the module initializers have run), so the first module to configure is taken as the app:
+	// the app's module initializer runs before any code of the libraries it references.
+	internal static bool IsAppModule(string module, string? entryAssembly, ref int isConfiguredWithoutEntryAssembly)
+		=> entryAssembly is null
+			? Interlocked.Exchange(ref isConfiguredWithoutEntryAssembly, 1) == 0
+			: entryAssembly.Equals(module, StringComparison.OrdinalIgnoreCase);
 }

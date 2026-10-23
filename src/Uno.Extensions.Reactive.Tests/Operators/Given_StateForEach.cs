@@ -16,40 +16,56 @@ namespace Uno.Extensions.Reactive.Tests.Extensions;
 [TestClass]
 public class Given_StateForEach : FeedTests
 {
-	[TestMethod]
-	[ExpectedException(typeof(ArgumentNullException))] // Note: This is a compilation tests!
-	public async Task When_ForEachAsync_Then_AcceptsNotNullAndStruct()
+	// `SetAsync` completes once the state has applied the update, not once the ForEach callbacks have run,
+	// so asserting right after it races the callbacks. Bounded so a dropped callback still fails the test.
+	private async Task WaitForCallbacks(List<int> result, int expectedCount)
 	{
-		_ = default(IState<int>)!.ForEach(async (i, ct) => this.ToString());
-		_ = default(IState<int?>)!.ForEach(async (i, ct) => this.ToString());
-		_ = default(IState<string>)!.ForEach(async (i, ct) => this.ToString());
-#nullable disable
-#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
-		_ =  default(IState<string?>)!.ForEach(async (i, ct) => this.ToString());
-#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
-#nullable restore
-		_ = default(IState<MyStruct>)!.ForEach(async (i, ct) => this.ToString());
-		_ = default(IState<MyStruct?>)!.ForEach(async (i, ct) => this.ToString());
-		_ = default(IState<MyClass>)!.ForEach(async (i, ct) => this.ToString());
-#nullable disable
-#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
-		_ = default(IState<MyClass?>)!.ForEach(async (i, ct) => this.ToString());
-#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
-#nullable restore
+		for (var i = 0; i < 200 && result.Count < expectedCount; i++)
+		{
+			await Task.Delay(10, CT);
+		}
 	}
 
 	[TestMethod]
-	[ExpectedException(typeof(ArgumentNullException))] // Note: This is a compilation tests!
+	public async Task When_ForEachAsync_Then_AcceptsNotNullAndStruct()
+	{
+		// Note: This is a compilation tests!
+		await Assert.ThrowsExactlyAsync<ArgumentNullException>(async () =>
+		{
+			_ = default(IState<int>)!.ForEach(async (i, ct) => this.ToString());
+			_ = default(IState<int?>)!.ForEach(async (i, ct) => this.ToString());
+			_ = default(IState<string>)!.ForEach(async (i, ct) => this.ToString());
+#nullable disable
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+			_ =  default(IState<string?>)!.ForEach(async (i, ct) => this.ToString());
+#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+#nullable restore
+			_ = default(IState<MyStruct>)!.ForEach(async (i, ct) => this.ToString());
+			_ = default(IState<MyStruct?>)!.ForEach(async (i, ct) => this.ToString());
+			_ = default(IState<MyClass>)!.ForEach(async (i, ct) => this.ToString());
+#nullable disable
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+			_ = default(IState<MyClass?>)!.ForEach(async (i, ct) => this.ToString());
+#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+#nullable restore
+		});
+	}
+
+	[TestMethod]
 	public async Task When_ForEachDataAsync_Then_AcceptsNotNullAndStruct()
 	{
-		_ = default(IState<int>)!.ForEach(async (i, ct) => this.ToString());
-		_ = default(IState<int?>)!.ForEachData(async (i, ct) => this.ToString());
-		_ = default(IState<string>)!.ForEachData(async (i, ct) => this.ToString());
-		_ = default(IState<string?>)!.ForEachData(async (i, ct) => this.ToString());
-		_ = default(IState<MyStruct>)!.ForEachData(async (i, ct) => this.ToString());
-		_ = default(IState<MyStruct?>)!.ForEachData(async (i, ct) => this.ToString());
-		_ = default(IState<MyClass>)!.ForEachData(async (i, ct) => this.ToString());
-		_ = default(IState<MyClass?>)!.ForEachData(async (i, ct) => this.ToString());
+		// Note: This is a compilation tests!
+		await Assert.ThrowsExactlyAsync<ArgumentNullException>(async () =>
+		{
+			_ = default(IState<int>)!.ForEach(async (i, ct) => this.ToString());
+			_ = default(IState<int?>)!.ForEachData(async (i, ct) => this.ToString());
+			_ = default(IState<string>)!.ForEachData(async (i, ct) => this.ToString());
+			_ = default(IState<string?>)!.ForEachData(async (i, ct) => this.ToString());
+			_ = default(IState<MyStruct>)!.ForEachData(async (i, ct) => this.ToString());
+			_ = default(IState<MyStruct?>)!.ForEachData(async (i, ct) => this.ToString());
+			_ = default(IState<MyClass>)!.ForEachData(async (i, ct) => this.ToString());
+			_ = default(IState<MyClass?>)!.ForEachData(async (i, ct) => this.ToString());
+		});
 	}
 
 	[TestMethod]
@@ -64,6 +80,7 @@ public class Given_StateForEach : FeedTests
 		await state.SetAsync(3, CT);
 		await state.SetAsync(4, CT);
 
+		await WaitForCallbacks(result, 3);
 		result.Should().BeEquivalentTo(new[] { 2, 3, 4 });
 	}
 
@@ -79,6 +96,7 @@ public class Given_StateForEach : FeedTests
 		await state.SetAsync(3, CT);
 		await state.SetAsync(4, CT);
 
+		await WaitForCallbacks(result, 3);
 		result.Should().BeEquivalentTo(new[] { 2, 3, 4 });
 	}
 
@@ -102,6 +120,7 @@ public class Given_StateForEach : FeedTests
 		await state.SetAsync(3, CT);
 		await state.SetAsync(4, CT);
 
+		await WaitForCallbacks(result, 3);
 		result.Should().BeEquivalentTo(new[] { 2, 3, 4 });
 	}
 
@@ -126,6 +145,7 @@ public class Given_StateForEach : FeedTests
 		await state.SetAsync(3, CT);
 		await state.SetAsync(4, CT);
 
+		await WaitForCallbacks(result, 3);
 		result.Should().BeEquivalentTo(new[] { 2, 3, 4 });
 	}
 
@@ -177,9 +197,7 @@ public class Given_StateForEach : FeedTests
 		await state.SetAsync(42, CT);
 		await state.SetAsync(3, CT);
 
-		//Test fails sometime because of time needed to process the exception
-		await Task.Delay(100);
-
+		await WaitForCallbacks(result, 2);
 		result.Should().BeEquivalentTo(new[] { 2, 3 });
 	}
 

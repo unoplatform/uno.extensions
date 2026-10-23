@@ -12,7 +12,7 @@ namespace Uno.Extensions.RuntimeTests.Droid;
     ConfigurationChanges = global::Uno.UI.ActivityHelper.AllConfigChanges,
     WindowSoftInputMode = SoftInput.AdjustNothing | SoftInput.StateHidden
 )]
-public class MainActivity : Microsoft.UI.Xaml.ApplicationActivity
+public class MainActivity : Uno.UI.Runtime.Android.ApplicationActivity
 {
     /// <summary>
     /// Variables the CI script may pass as intent extras. Android has no way to set process
@@ -28,6 +28,7 @@ public class MainActivity : Microsoft.UI.Xaml.ApplicationActivity
     {
         "UITEST_RUNTIME_AUTOSTART_RESULT_FILE",
         "UITEST_RUNTIME_TESTS_FILTER",
+        "UITEST_RUNTIME_IS_SECONDARY_APP",
     };
 
     protected override void OnCreate(Bundle? savedInstanceState)

@@ -129,7 +129,9 @@ For every MVUX model it finds, the generator emits, next to the model:
   (a `{Model}Mock.Empty` pins every input to its empty state);
 - a `partial class {Vm}Mock` with `Create(...)` factories that build the **real
   view-model** with every constructor parameter null-injected (services,
-  navigator, ...), then apply the mock;
+  navigator, ...) except every parameter typed
+  `CommunityToolkit.Mvvm.Messaging.IMessenger`, which gets a fresh messenger of
+  its own, then apply the mock;
 - a `SetMock(this {Vm}, {Model}Mock)` extension that swaps each mocked feed.
 
 A view-model whose constructors are all non-public cannot be built this way:
@@ -172,6 +174,12 @@ var vm = RecipeViewModelMock.Create(new RecipeModelMock { Steps = ListFeedMock.V
 vm.SetMock(RecipeModelMock.Empty with { Steps = ListFeedMock.Loading<Step>() });
 vm.SetMock(RecipeModelMock.Empty with { Steps = ListFeedMock.Error<Step>(new TimeoutException()) });
 ```
+
+An input declared as a state (`IState<T>`, `IListState<T>`) is mocked under the
+state's own edits, so its bindable shows the mock. An edit made through the state
+applies over the mock, as it would over a service result, and the feeds derived
+from the state see it. Each `SetMock` drops the earlier edits, unless the mock is
+itself a state, which keeps the edits made through it.
 
 > [!IMPORTANT]
 > Mocking is only active for a view-model built by `Create` (which opens a

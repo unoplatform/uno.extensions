@@ -8,13 +8,73 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Core;
+using Uno.Extensions.Reactive.Operators;
 using Uno.Extensions.Reactive.Testing;
+using Uno.HotTesting.Reactive;
 
 namespace Uno.Extensions.Reactive.Tests.Core;
 
 [TestClass]
 public class Given_FeedSubscription : FeedTests
 {
+	[TestMethod]
+	public void When_SourceIsUpdateFeed_Then_HotSwapIsAvailable()
+	{
+		using var context = CreateMockingContext();
+		var source = new UpdateFeed<string>(Feed.Async(async ct => "original"));
+
+		context.SourceContext.States.GetOrCreateSubscription(source).CanHotSwap.Should().BeTrue();
+	}
+
+	[TestMethod]
+	public async Task When_ModeIsEager_Then_SourceIsEnumeratedWithoutSubscriber()
+	{
+		using var context = CreateMockingContext();
+		var messageConsumed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+		var source = Feed<int>.Create(Source);
+		var subscription = context.SourceContext.States.GetOrCreateSubscription(source);
+
+		subscription.UpdateMode(SubscriptionMode.Eager);
+
+		await messageConsumed.Task.WaitAsync(CT);
+		subscription.Current.Current.Data.SomeOrDefault().Should().Be(42);
+
+		async IAsyncEnumerable<Message<int>> Source([EnumeratorCancellation] CancellationToken ct)
+		{
+			yield return Message<int>.Initial.With().Data(42);
+			messageConsumed.SetResult();
+		}
+	}
+
+	[TestMethod]
+	public async Task When_HotSwapEnabled_Then_SourceIsEnumeratedDirectly()
+	{
+		using var context = CreateMockingContext();
+		var source = Feed.Async(async ct => "original");
+		var subscription = context.SourceContext.States.GetOrCreateSubscription(source);
+		await using var reader = subscription.GetMessages(context.SourceContext, CT).GetAsyncEnumerator(CT);
+
+		await ReadUntilData(reader, "original");
+	}
+
+	[TestMethod]
+	public async Task When_HotSwapped_Then_ExistingSubscriberAndReplacementIdentityUseSameSubscription()
+	{
+		using var context = CreateMockingContext();
+		var original = Feed.Async(async ct => "original");
+		var subscription = context.SourceContext.States.GetOrCreateSubscription(original);
+		await using var reader = subscription.GetMessages(context.SourceContext, CT).GetAsyncEnumerator(CT);
+
+		await ReadUntilData(reader, "original");
+
+		var replacement = Feed.Async(async ct => "replacement");
+		context.SourceContext.States.SetSubscription(replacement, subscription);
+		subscription.HotSwap(replacement);
+
+		context.SourceContext.States.GetOrCreateSubscription(replacement).Should().BeSameAs(subscription);
+		await ReadUntilData(reader, "replacement");
+	}
+
 	[TestMethod]
 	public async Task When_SubscribeTwice_Then_SourceSubscribedOnlyOnce()
 	{
@@ -154,6 +214,27 @@ public class Given_FeedSubscription : FeedTests
 		requestSource.Send(myRequest);
 
 		receivedRequest.Should().BeEquivalentTo(new[] { myRequest });
+	}
+
+	private static FeedTestContext CreateMockingContext()
+	{
+		using (MockingService.Enable())
+		{
+			return new FeedTestContext();
+		}
+	}
+
+	private static async Task ReadUntilData<T>(IAsyncEnumerator<Message<T>> reader, T expected)
+	{
+		while (await reader.MoveNextAsync())
+		{
+			if (reader.Current.Current.Data.IsSome(out var value) && Equals(value, expected))
+			{
+				return;
+			}
+		}
+
+		Assert.Fail($"The subscription completed before producing '{expected}'.");
 	}
 
 	private record MyTestRequest : IContextRequest;

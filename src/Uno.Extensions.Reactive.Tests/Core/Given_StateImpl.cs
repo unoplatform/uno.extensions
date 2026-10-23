@@ -10,12 +10,37 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Operators;
 using Uno.Extensions.Reactive.Testing;
+using Uno.HotTesting.Reactive;
 
 namespace Uno.Extensions.Reactive.Tests.Core;
 
 [TestClass]
 public class Given_StateImpl : FeedTests
 {
+	[TestMethod]
+	public async Task When_UpdateHasNoSubscriber_Then_SubscriptionIsEnabled()
+	{
+		using var context = CreateMockingContext();
+		var sut = new StateImpl<string>(context.SourceContext, Feed.Async(async ct => "initial"));
+
+		await sut.UpdateMessageAsync(message => message.Data("updated"), CT).AsTask().WaitAsync(CT);
+
+		sut.Current.Current.Data.SomeOrDefault().Should().Be("updated");
+	}
+
+	[TestMethod]
+	public async Task When_RedirectedUpdateHasNoSubscriber_Then_TargetSubscriptionIsEnabled()
+	{
+		using var context = CreateMockingContext();
+		var current = new StateImpl<string>(context.SourceContext, Feed.Async(async ct => "current"));
+		var replacement = new StateImpl<string>(context.SourceContext, Feed.Async(async ct => "replacement"));
+		current.HotSwap(replacement);
+
+		await current.UpdateMessageAsync(message => message.Data("updated"), CT).AsTask().WaitAsync(CT);
+
+		replacement.Current.Current.Data.SomeOrDefault().Should().Be("updated");
+	}
+
 	[TestMethod]
 	public async Task When_Create_Then_TaskDoNotLeak()
 	{
@@ -103,6 +128,14 @@ public class Given_StateImpl : FeedTests
 		result.Should().Be(r => r
 			.Message("0", Progress.Final, Error.No)
 			.Message("42", Progress.Final, Error.No, Changed.Data));
+	}
+
+	private static FeedTestContext CreateMockingContext()
+	{
+		using (MockingService.Enable())
+		{
+			return new FeedTestContext();
+		}
 	}
 
 	#region Compaction

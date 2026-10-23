@@ -110,6 +110,13 @@ public sealed class TestDispatcher : IDispatcher, IDisposable
 	{
 		_isDisposed = true;
 		_evt.Set();
-		_thread.Join();
+
+		// A continuation awaiting ExecuteAsync resumes inline on this thread, so a test's cleanup can
+		// dispose the dispatcher from it (MSTest 4 runs tests async end-to-end). Joining would wait on
+		// ourselves; the loop exits once the current item returns.
+		if (!HasThreadAccess)
+		{
+			_thread.Join();
+		}
 	}
 }

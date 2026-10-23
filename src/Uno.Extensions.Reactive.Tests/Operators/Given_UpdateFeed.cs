@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -184,6 +185,54 @@ public class Given_UpdateFeed : FeedTests
 		await result.WaitForMessages(5, CT);
 
 		result.Last().Current.Data.SomeOrDefault().Should().Be(15);
+	}
+	#endregion
+
+	#region Clear
+	[TestMethod]
+	public async Task When_Clear_Then_EveryActiveUpdateReverted()
+	{
+		var source = Feed.Async(async ct => 0);
+		var sut = new UpdateFeed<int>(source);
+		var result = sut.Record();
+
+		sut.Add(SetData(42));
+		await result.WaitForMessages(2, CT);
+		sut.Add(AddValue(1));
+		await result.WaitForMessages(3, CT);
+
+		sut.Clear();
+		await result.WaitForMessages(4, CT);
+
+		result.Should().Be(r => r
+			.Message(0)
+			.Message(42, Changed.Data)
+			.Message(43, Changed.Data)
+			.Message(0, Changed.Data)
+		);
+	}
+
+	[TestMethod]
+	public async Task When_StateUpdatesCleared_Then_StateShowsItsSourceAgain()
+	{
+		// What SetMock relies on: the source is still running (a mocked one never completes), so the edit is still active.
+		var state = new StateImpl<int>(Context, Feed.AsyncEnumerable(RunningSource));
+		var (result, _) = ((IState<int>)state).Record();
+		await result.WaitForMessages(1, CT);
+
+		await state.UpdateAsync(_ => 42, CT);
+		await result.WaitForMessages(2, CT);
+
+		state.ClearUpdates();
+		await result.WaitForMessages(3, CT);
+
+		result.Last().Current.Data.SomeOrDefault().Should().Be(0);
+
+		static async IAsyncEnumerable<int> RunningSource([EnumeratorCancellation] CancellationToken ct)
+		{
+			yield return 0;
+			await Task.Delay(Timeout.Infinite, ct);
+		}
 	}
 	#endregion
 
