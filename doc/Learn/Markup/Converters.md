@@ -21,6 +21,23 @@ new Button()
         .Converter(Converters.InverseBoolConverter));
 ```
 
+### Converter Parameter and Language
+
+As with `ConverterParameter` and `ConverterLanguage` in XAML, you can pass a parameter and a language that the binding hands to your converter's `Convert` and `ConvertBack` methods.
+
+For example, with a converter that formats a number using the parameter as the format string and the language as the culture, the following displays the price as Canadian French currency, such as `1 234,50 $`:
+
+```cs
+new TextBlock()
+    .Text(x => x.Binding(() => vm.Price)
+        .Converter(Converters.FormatConverter)
+        .ConverterParameter("C2")
+        .ConverterLanguage("fr-CA"));
+```
+
+> [!NOTE]
+> On Uno Platform targets, the converter currently receives the current culture instead of the language set with `ConverterLanguage`. On WinUI, it receives the language you set.
+
 ## Convert
 
 ### Custom text
