@@ -61,10 +61,7 @@ public static class ServiceCollectionExtensions
 					.AddSingleton<RouteNotifier>()
 					.AddSingleton<IRouteNotifier>(sp => sp.GetRequiredService<RouteNotifier>())
 					.AddSingleton<IRouteUpdater>(sp => sp.GetRequiredService<RouteNotifier>())
-#if BROWSERWASM1_0_OR_GREATER
-					.AddHostedService<BrowserAddressBarService>()
-					.AddHostedService<BackButtonService>()
-#endif
+					.AddBrowserNavigationServices()
 					.AddScoped<Navigator>()
 
 
@@ -123,6 +120,15 @@ public static class ServiceCollectionExtensions
 
 					.AddScopedInstance<INavigator>();
 	}
+
+	// Runtime, not a symbol: Uno 7 ships no browserwasm build of this library, so the browser
+	// runs the plain net10.0 one.
+	private static IServiceCollection AddBrowserNavigationServices(this IServiceCollection services)
+		=> PlatformHelper.IsWebAssembly
+			? services
+				.AddHostedService<BrowserAddressBarService>()
+				.AddHostedService<BackButtonService>()
+			: services;
 
 	internal static IServiceCollection ConfigureNavigatorFactory(this IServiceCollection services, Action<INavigatorFactory> register)
 	{
