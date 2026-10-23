@@ -33,6 +33,10 @@ below cover only what changes in Extensions.
 - Those iOS apps now need the Keychain [entitlements](xref:Uno.Extensions.Storage.HowToRequiredEntitlements)
   for the default store.
 
+### Authentication
+
+- **Skia Desktop sign-in works out of the box for the Web and OIDC providers.** `AddWeb()` and `AddOidc()` now register `DesktopWebAuthenticationBrokerProvider`, a loopback `WebAuthenticationBroker` (system browser + `localhost` listener), on Windows, macOS and Linux. Previously Uno's broker threw `NotImplementedException` on that target and the interactive sign-in could not complete. The registration goes through `ApiExtensibility` and the first registration wins, so an app that already supplies its own `IWebAuthenticationBrokerProvider` keeps it as long as it registers before `AddWeb()`/`AddOidc()`. The redirect URI on this target must be a loopback HTTP address; see [Web Authentication](xref:Uno.Extensions.Authentication.HowToWebAuthentication) and [OIDC Authentication](xref:Uno.Extensions.Authentication.HowToOidcAuthentication).
+
 ## Upgrading to Extensions 7.4
 
 ### Minimum Uno Platform version

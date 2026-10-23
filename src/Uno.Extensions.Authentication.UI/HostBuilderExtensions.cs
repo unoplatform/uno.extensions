@@ -25,6 +25,12 @@ public static class HostBuilderExtensions
 	/// <returns>
 	/// The <see cref="IAuthenticationBuilder"/> that was passed in.
 	/// </returns>
+	/// <remarks>
+	/// On Skia Desktop this registers the loopback <c>DesktopWebAuthenticationBrokerProvider</c>
+	/// as the process-wide <c>WebAuthenticationBroker</c> implementation, first registration wins:
+	/// an app that supplies its own <c>IWebAuthenticationBrokerProvider</c> must register it before
+	/// calling this.
+	/// </remarks>
 	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static IAuthenticationBuilder AddWeb(
 		this IAuthenticationBuilder builder,
@@ -33,6 +39,9 @@ public static class HostBuilderExtensions
 	{
 #if WINDOWS
 		WinUIEx.WebAuthenticator.CheckOAuthRedirectionActivation();
+#else
+		// No-op off Skia Desktop, and first registration wins - see TryRegister.
+		DesktopWebAuthenticationBrokerProvider.TryRegister();
 #endif
 		var hostBuilder = (builder as IBuilder)?.HostBuilder;
 		if (hostBuilder is null)
@@ -86,6 +95,9 @@ public static class HostBuilderExtensions
 	{
 #if WINDOWS
 		WinUIEx.WebAuthenticator.CheckOAuthRedirectionActivation();
+#else
+		// No-op off Skia Desktop, and first registration wins - see TryRegister.
+		DesktopWebAuthenticationBrokerProvider.TryRegister();
 #endif
 		var hostBuilder = (builder as IBuilder)?.HostBuilder;
 		if (hostBuilder is null)

@@ -40,7 +40,7 @@ variables:
   # the whole point of turning these stages back on. The engine filter is a substring match on the
   # fully-qualified test name with '|' for OR, so this MUST stay namespace fragments and never a
   # class name: 'Given_MsalAuthentication' silently ran only half the auth suite.
-  RuntimeTestsFilter: 'Storage.UI.Tests | Authentication.MSAL.UI.Tests'
+  RuntimeTestsFilter: 'Storage.UI.Tests | Authentication.MSAL.UI.Tests | Authentication.UI.Tests'
 
 stages:
 - stage: Determine_Changes
