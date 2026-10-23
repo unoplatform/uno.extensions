@@ -98,6 +98,16 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
 
 - Calling `LoginAsync` opens the `LoginStartUri` in the web view. The `LoginStartUri` will then redirect the user to the identity provider's login page. After the user successfully logs in, the identity provider will redirect the user back to the application. The `WebAuthenticationProvider` will then store the user's access token in credential storage.
 
+#### Skia Desktop (Windows, macOS, Linux)
+
+Uno Platform has no built-in `WebAuthenticationBroker` on the Skia Desktop target, so `AddWeb()` registers one: `DesktopWebAuthenticationBrokerProvider`, which opens `LoginStartUri` in the system browser and receives the redirect on a loopback HTTP listener. It is registered through Uno's `ApiExtensibility` registry, where the first registration wins, so an app that supplies its own `IWebAuthenticationBrokerProvider` must register it before calling `AddWeb()`.
+
+- `LoginCallbackUri` (and `LogoutCallbackUri`) must be a loopback HTTP address, for example `http://localhost:5001/authentication-callback`, registered with the identity provider as is. A custom scheme is not routed back to a desktop app.
+- `WebAuthenticationBroker.GetCurrentApplicationCallbackUri()` returns `http://localhost:{port}/authentication-callback` on this target, with a port the broker picks once per process; set `WinRTFeatureConfiguration.WebAuthenticationBroker.DefaultReturnUri` to pin it. Do not call it before `AddWeb()` has run: the broker resolves its provider on first use.
+- The listener completes on the first request to the callback path, which any page in the same browser can reach: bind the response to the request (a `state` value your backend echoes back, checked in `PostLogin`) rather than trusting whatever arrives.
+- If no redirect arrives within `WinRTFeatureConfiguration.WebAuthenticationBroker.AuthenticationTimeout`, the flow is reported as cancelled with `ResponseErrorDetail` set to `DesktopWebAuthenticationBrokerProvider.TimeoutErrorDetail` (408).
+- To open the page some other way (a specific browser, a private window), derive from `DesktopWebAuthenticationBrokerProvider`, override `LaunchBrowserAsync`, and register your type with `ApiExtensibility.Register` before `AddWeb()`. Apps that call `WebAuthenticationBroker` directly can register the broker themselves with `DesktopWebAuthenticationBrokerProvider.TryRegister()` during startup.
+
 ### 4. Process post-login tokens
 
 - You can process the user's returned response for tokens by registering a delegate with the `WebAuthenticationProvider`.

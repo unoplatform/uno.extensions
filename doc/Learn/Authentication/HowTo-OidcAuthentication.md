@@ -125,6 +125,15 @@ Under the hood, `OidcAuthenticationProvider` relies on [Duende.IdentityModel.Oid
         }));
     ```
 
+#### Skia Desktop (Windows, macOS, Linux)
+
+Uno Platform has no built-in `WebAuthenticationBroker` on the Skia Desktop target, so `AddOidc()` registers one: `DesktopWebAuthenticationBrokerProvider`, which opens the sign-in page in the system browser and receives the redirect on a loopback HTTP listener. It is registered through Uno's `ApiExtensibility` registry, where the first registration wins, so an app that supplies its own `IWebAuthenticationBrokerProvider` must register it before calling `AddOidc()`.
+
+- The `RedirectUri` (and `PostLogoutRedirectUri`) must be a loopback HTTP address, for example `http://localhost:5001/authentication-callback`, and that exact value must be registered with the identity provider. A custom scheme is not routed back to a desktop app.
+- `WebAuthenticationBroker.GetCurrentApplicationCallbackUri()` returns `http://localhost:{port}/authentication-callback` on this target, with a port the broker picks once per process; set `WinRTFeatureConfiguration.WebAuthenticationBroker.DefaultReturnUri` to pin it. Do not call it before `AddOidc()` has run: the broker resolves its provider on first use.
+- If no redirect arrives within `WinRTFeatureConfiguration.WebAuthenticationBroker.AuthenticationTimeout`, the flow is reported as cancelled with `ResponseErrorDetail` set to `DesktopWebAuthenticationBrokerProvider.TimeoutErrorDetail` (408).
+- To open the page some other way (a specific browser, a private window), derive from `DesktopWebAuthenticationBrokerProvider`, override `LaunchBrowserAsync`, and register your type with `ApiExtensibility.Register` before `AddOidc()`.
+
 ### 4. Use the provider in your application
 
 - Update the `MainPage` to include a button that will allow the user to sign in with your desired service.
