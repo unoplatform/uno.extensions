@@ -142,6 +142,17 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 					return;
 				}
 
+				// Note: An unset selection means that the source dropped the selection made on the view (e.g. a volatile update of the list state, lost when its source publishes a new list),
+				//		 unless it has been unset by an operator (e.g. the ListFeedSelection while the list is being edited, the selection state still holds the item).
+				//		 The view keeps its selection while indexes are still valid (e.g. next page loaded), but must not restore it on reset (e.g. refresh).
+				//		 This has to be set before the Switch so it's already set when the view handles the reset of the collection.
+				if (msg.Changes.Contains(MessageAxis.Selection)
+					&& msg.Current.GetSelectionInfo() is null
+					&& msg.Current.Get(MessageAxis.SelectionSource) is null)
+				{
+					selection.SetLostBySource();
+				}
+
 				var items = default(IImmutableList<T>);
 				if (msg.Changes.Contains(MessageAxis.Data, out var changes))
 				{
@@ -166,10 +177,8 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 					pageTokens.Received(page.Tokens);
 				}
 
-				// Note: An unset selection means that nothing is selected (e.g. the selection made on a list state is lost when its source publishes a new list),
-				//		 unless it has been unset by an operator (e.g. the ListFeedSelection while the list is being edited, the selection state still holds the item).
 				if (msg.Changes.Contains(MessageAxis.Selection)
-					&& (msg.Current.GetSelectionInfo() ?? (msg.Current.Get(MessageAxis.SelectionSource) is null ? SelectionInfo.Empty : null)) is { } selectionInfo
+					&& msg.Current.GetSelectionInfo() is { } selectionInfo
 					&& msg.Current.Get(BindableViewModelBase.BindingSource) != collection)
 				{
 					selection.SetFromSource(selectionInfo);

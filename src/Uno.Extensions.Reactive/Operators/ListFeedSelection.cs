@@ -198,6 +198,7 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 	private class SelectionFeedUpdate : IFeedUpdate<IImmutableList<TSource>>
 	{
 		private readonly ListFeedSelection<TSource, TOther> _owner;
+		private readonly object _gate = new();
 		private Option<TOther> _other;
 
 		public SelectionFeedUpdate(ListFeedSelection<TSource, TOther> owner, Option<TOther> other)
@@ -212,8 +213,8 @@ internal sealed class ListFeedSelection<TSource, TOther> : IListState<TSource>, 
 		/// </summary>
 		public Option<TOther> Other
 		{
-			get { lock (this) { return _other; } }
-			set { lock (this) { _other = value; } }
+			get { lock (_gate) { return _other; } }
+			set { lock (_gate) { _other = value; } }
 		}
 
 		public bool IsActive(Message<IImmutableList<TSource>>? parent, bool parentChanged, IMessageEntry<IImmutableList<TSource>> msg)

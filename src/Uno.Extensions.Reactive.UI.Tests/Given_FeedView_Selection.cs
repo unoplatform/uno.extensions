@@ -40,13 +40,26 @@ public partial class Given_FeedView_Selection : FeedTests
 
 		public IState<Item> EditableSelected => State<Item>.Empty(this);
 
+		private int _inserted;
+
+		/// <summary>
+		/// Makes the next loads start with an additional item, so the items already loaded move down by one row.
+		/// </summary>
+		public void InsertOnTop() => Interlocked.Increment(ref _inserted);
+
+		public IListFeed<Item> Multi => ListFeed
+			.PaginatedAsync(async (PageRequest request, CancellationToken ct) => Load(request.CurrentCount))
+			.Selection(MultiSelected);
+
+		public IState<IImmutableList<Item>> MultiSelected => State<IImmutableList<Item>>.Empty(this);
+
 		private IImmutableList<Item> Load(uint start)
 		{
 			// Each load of the first page (initial load or refresh) gets a new generation, so the test can tell the refreshed items apart.
 			var generation = start is 0 ? Interlocked.Increment(ref _loads) : _loads;
 
 			return Enumerable
-				.Range((int)start, PageSize)
+				.Range((int)start - _inserted, PageSize)
 				.Select(i => new Item($"I-{i + 1:000}", $"Item {i + 1}", generation))
 				.ToImmutableList();
 		}
@@ -86,7 +99,22 @@ public partial class Given_FeedView_Selection : FeedTests
 	}
 
 	[TestMethod]
-	public async Task When_SelectedFromListView_And_ListFeedWithoutSelectionRefreshed_Then_ListViewMatchesState()
+	public async Task When_SelectedFromListView_And_SelectedItemMovedByRefresh_Then_SelectionFollowsItem()
+	{
+		var (vm, feedView, lv) = await Setup(nameof(Given_FeedView_Selection_Model.Items));
+
+		lv.SelectedIndex = 6;
+		await WaitForSelection(vm, lv, "I-007", "after the selection made on the ListView");
+
+		vm.Model.InsertOnTop();
+		await Refresh(feedView, lv);
+
+		await WaitForSelection(vm, lv, "I-007", "after the FeedView has been refreshed");
+		lv.SelectedIndex.Should().Be(7, "the refresh inserted an item above the selected one");
+	}
+
+	[TestMethod]
+	public async Task When_SelectedFromListView_And_ListFeedWithoutSelectionRefreshed_Then_SelectionCleared()
 	{
 		var (vm, feedView, lv) = await Setup(nameof(Given_FeedView_Selection_Model.Plain));
 
@@ -95,15 +123,51 @@ public partial class Given_FeedView_Selection : FeedTests
 
 		await Refresh(feedView, lv);
 
-		// The selection might or might not be kept, but the ListView must reflect the list state.
+		// Without the Selection operator, nothing keeps the selection when the source publishes a new list,
+		// so the ListView must not restore the selection (by index!) on the reloaded items.
 		try
 		{
-			await UIHelper.WaitFor(async ct => (lv.SelectedItem as Item)?.Id == (await ((IListState<Item>)vm.Plain).GetSelectedItem(ct))?.Id, CT);
+			await UIHelper.WaitFor(async ct => lv.SelectedItem is null && await ((IListState<Item>)vm.Plain).GetSelectedItem(ct) is null, CT);
 		}
 		catch (TimeoutException)
 		{
 			var state = await ((IListState<Item>)vm.Plain).GetSelectedItem(CT);
-			Assert.Fail($"ListView.SelectedItem={(lv.SelectedItem as Item)?.Id ?? "<none>"} while the list state selected item is {state?.Id ?? "<none>"}.");
+			Assert.Fail($"Selection should have been cleared by the refresh: ListView.SelectedItem={(lv.SelectedItem as Item)?.Id ?? "<none>"}, state={state?.Id ?? "<none>"}.");
+		}
+	}
+
+	[TestMethod]
+	public async Task When_SelectedFromListView_And_ListFeedWithoutSelectionNextPageLoaded_Then_ListViewSelectionKept()
+	{
+		var (vm, _, lv) = await Setup(nameof(Given_FeedView_Selection_Model.Plain));
+
+		lv.SelectedIndex = 6;
+		await UIHelper.WaitFor(async ct => (await ((IListState<Item>)vm.Plain).GetSelectedItem(ct))?.Id == "I-007", CT);
+
+		await LoadNextPage(lv);
+
+		// Loading a page only adds items, so the ListView keeps its selection (as it does on main).
+		lv.SelectedItem.Should().BeOfType<Item>().Which.Id.Should().Be("I-007");
+	}
+
+	[TestMethod]
+	public async Task When_MultipleSelectedFromListView_And_FeedViewRefreshed_Then_SelectionStateKept()
+	{
+		var (vm, feedView, lv) = await Setup(nameof(Given_FeedView_Selection_Model.Multi), "Multiple");
+
+		lv.SelectedItems.Add(lv.Items[6]);
+		await UIHelper.WaitFor(async ct => (await vm.Model.MultiSelected.Value(ct)) is [{ Id: "I-007" }], CT);
+
+		await Refresh(feedView, lv);
+
+		try
+		{
+			await UIHelper.WaitFor(async ct => lv.SelectedItems is [Item { Id: "I-007" }] && await vm.Model.MultiSelected.Value(ct) is [{ Id: "I-007" }], CT);
+		}
+		catch (TimeoutException)
+		{
+			var state = await vm.Model.MultiSelected.Value(CT);
+			Assert.Fail($"Selection is not ['I-007'] after the FeedView has been refreshed: ListView.SelectedItems=[{string.Join(", ", lv.SelectedItems.OfType<Item>().Select(i => i.Id))}], state=[{string.Join(", ", state?.Select(i => i.Id) ?? [])}].");
 		}
 	}
 
@@ -129,7 +193,7 @@ public partial class Given_FeedView_Selection : FeedTests
 		}
 	}
 
-	private async Task<(Given_FeedView_Selection_ViewModel, FeedView, ListView)> Setup(string source)
+	private async Task<(Given_FeedView_Selection_ViewModel, FeedView, ListView)> Setup(string source, string selectionMode = "Single")
 	{
 		var vm = new Given_FeedView_Selection_ViewModel();
 		var feedView = (FeedView)XamlReader.Load(
@@ -141,7 +205,7 @@ public partial class Given_FeedView_Selection : FeedTests
 				RefreshingState="None">
 				<mvux:FeedView.ValueTemplate>
 					<DataTemplate>
-						<ListView ItemsSource="{Binding Data}" SelectionMode="Single" />
+						<ListView ItemsSource="{Binding Data}" SelectionMode="{{selectionMode}}" />
 					</DataTemplate>
 				</mvux:FeedView.ValueTemplate>
 			</mvux:FeedView>
