@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -25,6 +27,7 @@ public sealed record MessageEntry<T> : IMessageEntry, IMessageEntry<T>
 	private Option<T>? _cachedData;
 	private Exception? _cachedError;
 	private bool? _cachedProgress;
+	private IImmutableList<ValidationResult>? _cachedValidation;
 
 	internal MessageEntry(IReadOnlyDictionary<MessageAxis, MessageAxisValue> values)
 	{
@@ -97,6 +100,27 @@ public sealed record MessageEntry<T> : IMessageEntry, IMessageEntry<T>
 		}
 	}
 	bool IMessageEntry.IsTransient => IsTransient;
+
+	/// <summary>
+	/// The validation results associated to the data of this entry, if any.
+	/// </summary>
+	/// <remarks>This is never null: an empty list means that no validation results are associated to this entry.</remarks>
+	public IImmutableList<ValidationResult> Validation
+	{
+		get
+		{
+			if (_cachedValidation is null)
+			{
+				_cachedValidation = this.GetValidation();
+			}
+			else
+			{
+				FeedDependency.NotifyTouched(this, MessageAxis.Validation);
+			}
+
+			return _cachedValidation;
+		}
+	}
 
 	internal MessageAxisValue this[MessageAxis axis]
 	{

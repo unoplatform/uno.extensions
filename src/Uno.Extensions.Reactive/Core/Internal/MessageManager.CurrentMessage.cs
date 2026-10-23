@@ -21,16 +21,16 @@ internal partial class MessageManager<TParent, TResult>
 		public Message<TResult> Local => _owner._local.result;
 
 		internal MessageBuilder<TParent, TResult> WithParentOnly(Message<TParent>? updatedParent)
-			=> new(updatedParent ?? Parent, _owner._local.result);
+			=> new(updatedParent ?? Parent, _owner._local.result, _owner._forwardLocalAxes);
 
 		public MessageBuilder<TParent, TResult> With() 
-			=> new(Parent, (_owner._local.defined, _owner._local.result));
+			=> new(Parent, (_owner._local.defined, _owner._local.result), _owner._forwardLocalAxes);
 
 		public MessageBuilder<TParent, TResult> With(Message<TParent>? updatedParent)
-			=> new(updatedParent ?? Parent, (_owner._local.defined, _owner._local.result));
+			=> new(updatedParent ?? Parent, (_owner._local.defined, _owner._local.result), _owner._forwardLocalAxes);
 
 		// Internal dedicated to the DynamicFeed. Should not be used outside of it.
 		internal MessageBuilder<TParent, TResult> With(IMessage? updatedParent)
-			=> new(updatedParent ?? Parent, (_owner._local.defined, _owner._local.result));
+			=> new(updatedParent ?? Parent, (_owner._local.defined, _owner._local.result), _owner._forwardLocalAxes);
 	}
 }

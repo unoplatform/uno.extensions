@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive;
@@ -351,5 +355,59 @@ partial class State
 		_ = ForEachAsync(state, action, caller, line);
 
 		return Disposable.Empty;
+	}
+
+	/// <summary>
+	/// Validates the value of a state each time it changes, publishing the results on the <see cref="MessageAxis.Validation"/> of the state.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to validate.</param>
+	/// <param name="validator">The async method which validates a value of the state.</param>
+	/// <returns>The given <paramref name="state"/>, so it can be used to chain other operations.</returns>
+	/// <remarks>
+	/// Validation never blocks a value: invalid values are still set on the state, validation results only annotate them.
+	/// The validator runs on a background thread each time the data changes (including the initial value) and the previous pending validation is cancelled.
+	/// Results produced for a value that is no longer the current value of the state are discarded.
+	/// When the state has no value (None), the validation results are cleared. A null value is still a value: the validator is invoked with null.
+	/// If the validator throws, the error is logged and the previous results are kept (the state is not set in error).
+	/// This is idempotent: invoking this method multiple times on the same state replaces the validator (starting at the next data change).
+	/// </remarks>
+	/// <exception cref="ArgumentNullException">If the <paramref name="state"/> or the <paramref name="validator"/> is null.</exception>
+	/// <exception cref="NotSupportedException">If the <paramref name="state"/> has not been created using the MVUX State factories.</exception>
+	public static IState<T> Validate<T>(this IState<T> state, Func<T, CancellationToken, ValueTask<IEnumerable<ValidationResult>>> validator)
+	{
+		ArgumentNullException.ThrowIfNull(state);
+		ArgumentNullException.ThrowIfNull(validator);
+
+		if (state is not StateImpl<T> impl)
+		{
+			throw new NotSupportedException($"Validation is supported only on states created using the State factories (got '{state.GetType().Name}').");
+		}
+
+		impl.SetValidator(validator);
+
+		return state;
+	}
+
+	/// <summary>
+	/// Sets the validation results of a state, published on the <see cref="MessageAxis.Validation"/> of the state.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to update.</param>
+	/// <param name="results">The validation results of the current value of the state, null or empty to clear them.</param>
+	/// <param name="ct">A token to abort the async operation.</param>
+	/// <remarks>
+	/// This is useful to validate on demand, for instance the whole form when the user clicks Save.
+	/// If a validator has been set using <c>Validate</c>, it replaces those results on the next data change of the state.
+	/// </remarks>
+	public static ValueTask SetValidationAsync<T>(this IState<T> state, IEnumerable<ValidationResult>? results, CancellationToken ct = default)
+	{
+		ArgumentNullException.ThrowIfNull(state);
+		ct.ThrowIfCancellationRequested();
+
+		// Materialize the results here, so the update pipeline of the state does not enumerate the caller's sequence.
+		var validation = results?.ToImmutableList();
+
+		return state.UpdateMessageAsync(msg => msg.Validation(validation), ct);
 	}
 }
