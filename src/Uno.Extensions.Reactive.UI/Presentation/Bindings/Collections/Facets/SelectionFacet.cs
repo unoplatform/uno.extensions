@@ -108,13 +108,22 @@ internal class SelectionFacet : IDisposable, ISelectionInfo
 		//		we are be able to properly restore it here.
 		// Note: This will work only for the first selected item, i.e. only for SelectionMode.Single which is the main case we are interested in (master-details).
 
-		// Other actions (like Remove and Reset) will be pushed by the ListView itself.
+		// Other actions (like Remove, or a Reset when the source lost the selection) will be pushed by the ListView itself.
 
 		if (args is RichNotifyCollectionChangedEventArgs { Action: NotifyCollectionChangedAction.Replace, IsReplaceOfSameEntities: true }
 			&& CurrentPosition >= args.OldStartingIndex
 			&& CurrentPosition < args.OldStartingIndex + args.OldItems!.Count)
 		{
 			MoveCurrentToPosition(CurrentPosition, isCancelable: false, isSelectionRangeUpdate: true);
+		}
+		else if (args.Action is NotifyCollectionChangedAction.Reset
+			&& _service is { IsLostBySource: false }
+			&& _service.GetSelectedRanges() is [{ Length: 1 } selected])
+		{
+			// On reset the ListView clears its selection (that we didn't push to the service, cf. SetCurrent),
+			// so we restore it from the service, which is kept in sync with the source (unless the source lost it, then the clear is pushed as usual).
+			// https://github.com/unoplatform/uno.extensions/issues/3258
+			MoveCurrentToPosition(selected.FirstIndex, isCancelable: false, isSelectionRangeUpdate: true);
 		}
 	}
 
@@ -247,7 +256,10 @@ internal class SelectionFacet : IDisposable, ISelectionInfo
 		CurrentPosition = index;
 		CurrentItem = value;
 
-		if (!isSelectionRangeUpdate)
+		// Note: When the collection is being reset by the source, the ListView clears its selection.
+		//		 This is not a selection made by the user, so we don't push it to the service (we restore the selection once reset, cf. RestoreCurrentItemOnSourceChanged),
+		//		 unless the source already lost the selection (cf. ISelectionService.IsLostBySource), in which case the clear is pushed to keep the service in sync with the view.
+		if (!isSelectionRangeUpdate && !(_collectionChangedFacet.IsRaisingReset && _service is { IsLostBySource: false }))
 		{
 			if (index >= 0)
 			{
