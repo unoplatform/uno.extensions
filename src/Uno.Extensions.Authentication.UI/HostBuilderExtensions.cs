@@ -25,6 +25,12 @@ public static class HostBuilderExtensions
 	/// <returns>
 	/// The <see cref="IAuthenticationBuilder"/> that was passed in.
 	/// </returns>
+	/// <remarks>
+	/// On Skia Desktop this registers the loopback <c>DesktopWebAuthenticationBrokerProvider</c>
+	/// as the process-wide <c>WebAuthenticationBroker</c> implementation, first registration wins:
+	/// an app that supplies its own <c>IWebAuthenticationBrokerProvider</c> must register it before
+	/// calling this.
+	/// </remarks>
 	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static IAuthenticationBuilder AddWeb(
 		this IAuthenticationBuilder builder,
@@ -39,6 +45,12 @@ public static class HostBuilderExtensions
 		{
 			return builder;
 		}
+
+#if !WINDOWS
+		// A builder without a host registers nothing, so neither does the broker. No-op off
+		// Skia Desktop, and first registration wins - see TryRegister.
+		DesktopWebAuthenticationBrokerProvider.TryRegister();
+#endif
 
 		hostBuilder
 			.UseConfiguration(configure: configBuilder =>
@@ -76,6 +88,12 @@ public static class HostBuilderExtensions
 	/// <returns>
 	/// The <see cref="IAuthenticationBuilder"/> that was passed in.
 	/// </returns>
+	/// <remarks>
+	/// On Skia Desktop this registers the loopback <c>DesktopWebAuthenticationBrokerProvider</c>
+	/// as the process-wide <c>WebAuthenticationBroker</c> implementation, first registration wins:
+	/// an app that supplies its own <c>IWebAuthenticationBrokerProvider</c> must register it before
+	/// calling this.
+	/// </remarks>
 	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static IAuthenticationBuilder AddWeb<TService>(
 		this IAuthenticationBuilder builder,
@@ -92,6 +110,12 @@ public static class HostBuilderExtensions
 		{
 			return builder;
 		}
+
+#if !WINDOWS
+		// A builder without a host registers nothing, so neither does the broker. No-op off
+		// Skia Desktop, and first registration wins - see TryRegister.
+		DesktopWebAuthenticationBrokerProvider.TryRegister();
+#endif
 
 		hostBuilder
 			.UseConfiguration(configure: configBuilder =>

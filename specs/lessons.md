@@ -313,3 +313,18 @@ Pass `"Attempts": 1` when diagnosing. The engine retries a failed test up to 3 t
 
 **Apply to:** any change to how `BindableListFeed`/`SelectionFacet` map the `Selection` axis to the view. Cover both shapes of source message in runtime tests — a refresh (reset) and a next page (add) — for a list with *and* without `.Selection()`; a guard that accepts either outcome guards nothing.
 
+## Uno's static `WebAuthenticationBroker` snapshots its provider once; tests must register a shared double before anything touches it
+
+**Problem:** `Windows.Security.Authentication.Web.WebAuthenticationBroker` resolves its `IWebAuthenticationBrokerProvider` in its **static constructor** (`ApiExtensibility.CreateInstance`, else the built-in provider, whose Skia build throws `NotImplementedException`). There is one instance per process, and `ApiExtensibility.Register` is `TryAdd`. So a test that registers a provider after any test (or any product code) has touched the static broker registers nothing, and a test that drives the static broker after the real `DesktopWebAuthenticationBrokerProvider.TryRegister()` ran opens a real browser on the CI agent.
+
+**Correct pattern:** one shared test double for the process, registered through an idempotent helper called at the top of every test that goes through the static broker, `WebAuthenticatorBrowser`, or an `AddOidc`/`AddWeb` host (`StaticBrokerRegistration.EnsureRegistered` in `Uno.Extensions.Authentication.UI.Tests`), which also asserts that `ApiExtensibility.CreateInstance` hands back that exact instance before any flow is driven, so a stray earlier registration fails loudly instead of launching a browser. The positive path (the real broker registering on an empty registry) is unobservable in such a process; say so instead of writing a vacuous test.
+
+**Apply to:** any product code that registers into `ApiExtensibility` and any test of it. The same holds for every Uno API that resolves an extension once (static constructor or `Lazy`): the first touch wins for the process lifetime.
+
+## `this.Log()` caches one logger per type at first access; give registry-built types a logger seam
+
+**Problem:** `Uno.Core.Extensions.Logging.Singleton`'s `Log<T>(this T)` creates the logger from `LogExtensionPoint.AmbientLoggerFactory` once per closed type and never re-reads the factory, so a test cannot install a capturing factory after the type has logged once (and the runtime-test host installs its own factory, with a `"Uno" -> Warning` filter, at startup). A token-leak guard written against the ambient factory would be order-dependent or silently capture nothing.
+
+**Correct pattern:** types built outside DI (Uno's extensibility registry, static helpers) take an optional `ILogger` through a protected constructor and fall back to `this.Log()` lazily; the test double passes a capturing logger whose `IsEnabled` is always `true`, and the leak test asserts the capture saw the type's own lines before asserting what it did not see. `typeof(T).Log()` (the `Type` overload) does not cache and is the right call for a one-off line from a static method.
+
+**Apply to:** any `this.Log()` user that a test needs to observe, and any assertion on log *absence* - it is vacuous unless the same test proves the logger was wired.
