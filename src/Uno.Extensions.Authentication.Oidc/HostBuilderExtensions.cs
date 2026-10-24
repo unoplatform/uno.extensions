@@ -41,16 +41,18 @@ public static class HostBuilderExtensions
 	{
 #if WINDOWS
 		WinUIEx.WebAuthenticator.CheckOAuthRedirectionActivation();
-#else
-		// No-op off Skia Desktop, and first registration wins - see TryRegister.
-		DesktopWebAuthenticationBrokerProvider.TryRegister();
 #endif
-
 		var hostBuilder = (builder as IBuilder)?.HostBuilder;
 		if (hostBuilder is null)
 		{
 			return builder;
 		}
+
+#if !WINDOWS
+		// A builder without a host registers nothing, so neither does the broker. No-op off
+		// Skia Desktop, and first registration wins - see TryRegister.
+		DesktopWebAuthenticationBrokerProvider.TryRegister();
+#endif
 
 		hostBuilder = hostBuilder
 			.ConfigureServices((ctx, services) =>
