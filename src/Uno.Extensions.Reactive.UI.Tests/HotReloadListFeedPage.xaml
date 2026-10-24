@@ -1,0 +1,16 @@
+<Page x:Class="Uno.Extensions.Reactive.WinUI.Tests.HotReloadListFeedPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:ui="using:Uno.Extensions.Reactive.UI">
+	<ui:FeedView x:Name="_feedView" Source="{Binding Items}">
+		<DataTemplate>
+			<ItemsControl ItemsSource="{Binding Data}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding}" />
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</DataTemplate>
+	</ui:FeedView>
+</Page>
