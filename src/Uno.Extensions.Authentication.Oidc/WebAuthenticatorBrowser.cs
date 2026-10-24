@@ -26,10 +26,7 @@ public class WebAuthenticatorBrowser : IBrowser
 				.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(options.StartUrl), new Uri(options.EndUrl))
 				.AsTask(linkedCts.Token);
 
-			return new BrowserResult
-			{
-				Response = userResult.ResponseData
-			};
+			return ToBrowserResult(userResult);
 #endif
 		}
 		catch (Exception ex)
@@ -42,7 +39,23 @@ public class WebAuthenticatorBrowser : IBrowser
 			};
 		}
 	}
+
+#if !WINDOWS
+	/// <summary>
+	/// The broker's result in the OIDC client's terms. WinRT has no timeout status: a broker that
+	/// gave up waiting reports <see cref="WebAuthenticationStatus.UserCancel"/> with
+	/// <see cref="DesktopWebAuthenticationBrokerProvider.TimeoutErrorDetail"/>, which is the one
+	/// cancel the client should treat as a timeout.
+	/// </summary>
+	internal static BrowserResult ToBrowserResult(WebAuthenticationResult result) =>
+		result.ResponseStatus switch
+		{
+			WebAuthenticationStatus.Success => new BrowserResult { ResultType = BrowserResultType.Success, Response = result.ResponseData },
+			WebAuthenticationStatus.UserCancel when result.ResponseErrorDetail == DesktopWebAuthenticationBrokerProvider.TimeoutErrorDetail =>
+				new BrowserResult { ResultType = BrowserResultType.Timeout, Error = "The sign-in page did not redirect back before the authentication timeout" },
+			WebAuthenticationStatus.UserCancel => new BrowserResult { ResultType = BrowserResultType.UserCancel, Error = "The user cancelled the sign-in" },
+			WebAuthenticationStatus.ErrorHttp => new BrowserResult { ResultType = BrowserResultType.HttpError, Error = $"The sign-in page failed with HTTP {result.ResponseErrorDetail}" },
+			_ => new BrowserResult { ResultType = BrowserResultType.UnknownError, Error = $"Unexpected web authentication status {result.ResponseStatus}" },
+		};
+#endif
 }
-
-
-

@@ -1,6 +1,10 @@
 #if !WINDOWS
+using System.Buffers;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Net;
+using System.Net.Http;
+using System.Net.Mime;
 using System.Net.Sockets;
 using System.Text;
 using Uno.AuthenticationBroker;
@@ -36,10 +40,16 @@ namespace Uno.Extensions.Authentication;
 /// </para>
 /// <para>
 /// The listener accepts the first request to the callback path from any page in the system
-/// browser or any local process; it cannot know which request it started. Flows that carry no
-/// protocol-level binding of their own (the Web provider's plain token-on-redirect shape) should
-/// bind the response with an OAuth <c>state</c> value - see the Web provider's <c>{State}</c>
-/// placeholder.
+/// browser or any local process; it cannot know which request it started. OIDC flows are bound
+/// by the protocol (<c>state</c>, <c>nonce</c>, PKCE, checked by the OIDC client). The Web
+/// provider's plain token-on-redirect shape carries no such binding and this broker adds none:
+/// an app using it on desktop must bind the response itself (for example a <c>state</c> value its
+/// backend echoes back, checked in <c>PostLogin</c>).
+/// </para>
+/// <para>
+/// Diagnostics go to the ambient logger (<c>UseLogging(enableUnoLogging: true)</c>), since the
+/// broker is created by Uno's extensibility registry rather than by DI. A derived broker can
+/// supply its own <see cref="ILogger"/> through the protected constructor.
 /// </para>
 /// </remarks>
 public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerProvider
@@ -72,14 +82,17 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 	private const string FragmentRelayHtml =
 		$$"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Signing in…</title></head><body><p>Completing sign-in…</p><script>var h=window.location.hash;window.location.replace(window.location.pathname+(h&&h.length>1?"{{RelayedFragmentQueryPrefix}}"+h.substring(1):"{{NoFragmentSentinelQuery}}"));</script></body></html>""";
 
-	private static readonly byte[] CompletionBody = Encoding.UTF8.GetBytes(CompletionHtml);
-	private static readonly byte[] FragmentRelayBody = Encoding.UTF8.GetBytes(FragmentRelayHtml);
+	private const string HtmlContentType = MediaTypeNames.Text.Html + "; charset=utf-8";
 
 	/// <summary>
-	/// Built outside DI (Uno's extensibility registry creates it), so this is the ambient logger
-	/// <c>UseLogging()</c> installs; <c>NullLogger</c> until then.
+	/// Both pages are served at the token-bearing callback URL (the completion page at the relayed
+	/// one), so neither may be cached by the browser.
 	/// </summary>
-	private ILogger Logger => this.Log();
+	private const string CacheControlHeader = "Cache-Control";
+	private const string CacheControlNoStore = "no-store";
+
+	private static readonly byte[] CompletionBody = Encoding.UTF8.GetBytes(CompletionHtml);
+	private static readonly byte[] FragmentRelayBody = Encoding.UTF8.GetBytes(FragmentRelayHtml);
 
 	/// <summary>
 	/// The largest <c>response_mode=form_post</c> body read, in characters. Any page in the system
@@ -95,6 +108,13 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 	private static readonly TimeSpan CompletionPageTimeout = TimeSpan.FromSeconds(5);
 
 	/// <summary>
+	/// How many ports <see cref="DefaultPort"/> tries before giving up on one that is free for both
+	/// address families; <c>localhost</c> may resolve to either, and the listener binds whichever
+	/// comes first.
+	/// </summary>
+	private const int DefaultPortProbeAttempts = 8;
+
+	/// <summary>
 	/// The loopback port used by <see cref="GetCurrentApplicationCallbackUri"/>, or 0 before the
 	/// first use: picked free, then kept so login and logout use the same redirect - until a bind
 	/// on it fails, which forgets it so the next flow picks another instead of failing until the
@@ -102,11 +122,39 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 	/// </summary>
 	private static int _defaultPort;
 
+	/// <summary>1 once <see cref="TryRegister"/> has registered this broker.</summary>
+	private static int _registered;
+
+	private readonly ILogger? _logger;
+
 	/// <summary>1 while this broker has a flow listening; a second one would only fail to bind.</summary>
 	private int _flowInProgress;
 
 	/// <summary>1 once the first flow has been announced in the log.</summary>
 	private int _announced;
+
+	/// <summary>
+	/// Creates the broker Uno's extensibility registry instantiates on the broker's first use.
+	/// </summary>
+	public DesktopWebAuthenticationBrokerProvider()
+	{
+	}
+
+	/// <summary>
+	/// Creates a broker that logs through <paramref name="logger"/>: for a derived broker that
+	/// carries a DI-provided logger instead of the ambient one.
+	/// </summary>
+	/// <param name="logger">The logger to use, or <see langword="null"/> for the ambient logger.</param>
+	protected DesktopWebAuthenticationBrokerProvider(ILogger? logger)
+	{
+		_logger = logger;
+	}
+
+	/// <summary>
+	/// The injected logger, or the ambient one <c>UseLogging(enableUnoLogging: true)</c> installs:
+	/// built outside DI (Uno's extensibility registry creates it), so a <c>NullLogger</c> until then.
+	/// </summary>
+	private ILogger Logger => _logger ?? this.Log();
 
 	private static int DefaultPort()
 	{
@@ -116,10 +164,7 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 			return port;
 		}
 
-		using var probe = new TcpListener(IPAddress.Loopback, 0);
-		probe.Start();
-		port = ((IPEndPoint)probe.LocalEndpoint).Port;
-		probe.Stop();
+		port = ProbeFreeLoopbackPort();
 
 		// First writer wins, so concurrent first calls still agree on one port.
 		var winner = Interlocked.CompareExchange(ref _defaultPort, port, 0);
@@ -127,7 +172,49 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 	}
 
 	/// <summary>
-	/// Registers this broker with Uno's extensibility registry when running on a desktop OS.
+	/// A port free on IPv4 loopback and, where the OS has it, on IPv6 loopback too: the listener
+	/// binds whichever address <c>localhost</c> resolves to first, so a port free on one family
+	/// only would fail the bind.
+	/// </summary>
+	private static int ProbeFreeLoopbackPort()
+	{
+		var port = 0;
+		for (var attempt = 0; attempt < DefaultPortProbeAttempts; attempt++)
+		{
+			using var probe = new TcpListener(IPAddress.Loopback, 0);
+			probe.Start();
+			port = ((IPEndPoint)probe.LocalEndpoint).Port;
+			probe.Stop();
+
+			if (!Socket.OSSupportsIPv6 || IsFreeOn(IPAddress.IPv6Loopback, port))
+			{
+				return port;
+			}
+		}
+
+		// Every candidate was taken on IPv6: hand out the last one anyway and let the bind
+		// failure say so; it forgets the port, so the next flow probes again.
+		return port;
+	}
+
+	private static bool IsFreeOn(IPAddress address, int port)
+	{
+		try
+		{
+			using var probe = new TcpListener(address, port);
+			probe.Start();
+			probe.Stop();
+			return true;
+		}
+		catch (SocketException)
+		{
+			return false;
+		}
+	}
+
+	/// <summary>
+	/// Registers this broker with Uno's extensibility registry when running on a desktop OS and
+	/// no other <see cref="IWebAuthenticationBrokerProvider"/> has been registered yet.
 	/// </summary>
 	/// <remarks>
 	/// Positive desktop allow-list: Android, iOS, Mac Catalyst and WebAssembly have working native
@@ -135,11 +222,14 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 	/// what Uno's runtime-asset selector loads on Skia mobile heads, so a
 	/// compile-time gate cannot make this decision. Registration is idempotent and first-wins: an
 	/// app that supplies its own <see cref="IWebAuthenticationBrokerProvider"/> must register it
-	/// before <c>AddWeb</c>/<c>AddOidc</c> run.
+	/// before <c>AddWeb</c>/<c>AddOidc</c> run; one registered afterwards is ignored by the
+	/// registry. <see cref="WebAuthenticationBroker"/> resolves its provider once, on first use,
+	/// so this must also run before anything touches that type.
 	/// </remarks>
 	/// <returns>
-	/// <see langword="true"/> when the process is on a desktop OS and the registration was
-	/// attempted; <see langword="false"/> on the platforms that keep their native broker.
+	/// <see langword="true"/> when this broker is the registered provider (registered now or by an
+	/// earlier call); <see langword="false"/> on the platforms that keep their native broker, or
+	/// when another provider was registered first and keeps winning.
 	/// </returns>
 	public static bool TryRegister()
 	{
@@ -148,15 +238,34 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 			return false;
 		}
 
-		if (OperatingSystem.IsWindows() || OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
+		if (!(OperatingSystem.IsWindows() || OperatingSystem.IsLinux() || OperatingSystem.IsMacOS()))
 		{
-			ApiExtensibility.Register(
-				typeof(IWebAuthenticationBrokerProvider),
-				_ => new DesktopWebAuthenticationBrokerProvider());
+			return false;
+		}
+
+		if (Volatile.Read(ref _registered) == 1)
+		{
 			return true;
 		}
 
-		return false;
+		if (ApiExtensibility.IsRegistered<IWebAuthenticationBrokerProvider>())
+		{
+			// The registry keeps the first registration; the app's provider handles sign-in. Said
+			// once at Information so a missing loopback broker is explainable from the log.
+			var logger = typeof(DesktopWebAuthenticationBrokerProvider).Log();
+			if (logger.IsEnabled(LogLevel.Information))
+			{
+				logger.LogInformation("An IWebAuthenticationBrokerProvider is already registered; the desktop loopback broker is not used");
+			}
+
+			return false;
+		}
+
+		ApiExtensibility.Register(
+			typeof(IWebAuthenticationBrokerProvider),
+			_ => new DesktopWebAuthenticationBrokerProvider());
+		Volatile.Write(ref _registered, 1);
+		return true;
 	}
 
 	/// <inheritdoc />
@@ -189,6 +298,11 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 		{
 			// A double-clicked sign-in button, typically. The second flow could only fail to bind
 			// the port the first one holds; say what happened instead.
+			if (Logger.IsEnabled(LogLevel.Debug))
+			{
+				Logger.LogDebug("Rejecting a second sign-in flow while one is listening on {Callback}", callbackUri.GetLeftPart(UriPartial.Path));
+			}
+
 			throw new InvalidOperationException("A sign-in or sign-out flow is already in progress on the desktop web authentication broker. Wait for it to complete, or cancel it, before starting another.");
 		}
 
@@ -204,7 +318,7 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 
 	private async Task<WebAuthenticationResult> ListenForCallbackAsync(Uri requestUri, Uri callbackUri, CancellationToken ct)
 	{
-		if (Interlocked.Exchange(ref _announced, 1) == 0 && Logger.IsEnabled(LogLevel.Information))
+		if (Logger.IsEnabled(LogLevel.Information) && Interlocked.Exchange(ref _announced, 1) == 0)
 		{
 			// First-wins registration is otherwise invisible: this line's presence or absence is
 			// how to tell whether this broker or an app-supplied one is handling sign-in.
@@ -217,8 +331,9 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 		using var listener = new HttpListener();
 		// Bind the whole loopback port and match the path manually: HttpListener prefixes need a
 		// trailing slash, and the IdP redirects to the exact configured path (no slash) - a prefix
-		// of "/authentication-callback/" would never see it. The port is ours alone, so the wider
-		// binding adds no exposure beyond the 404 branch below.
+		// of "/authentication-callback/" would never see it. Requests to other paths get a 404
+		// below, and so does anything that did not come from the loopback interface (http.sys on
+		// Windows routes a hostname prefix by Host header, so the binding alone does not prove it).
 		var prefix = $"http://{callbackUri.Host}:{callbackUri.Port}/";
 		listener.Prefixes.Add(prefix);
 		try
@@ -232,7 +347,7 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 			var wasDefault = Interlocked.CompareExchange(ref _defaultPort, 0, callbackUri.Port) == callbackUri.Port;
 			if (Logger.IsEnabled(LogLevel.Error))
 			{
-				Logger.LogError(ex, "Unable to listen on {Prefix} for the sign-in redirect: the port is in use, or this user may not bind it. {Remedy}", prefix, wasDefault ? "The next sign-in attempt picks a new port" : "Pin a different port through the callback URI, or free the port");
+				Logger.LogError(ex, "Unable to listen on {Prefix} for the sign-in redirect: the port is in use, or this user may not bind it. {Remedy}", prefix, wasDefault ? "The next sign-in attempt picks a new port (restart the app if the redirect URI was captured at startup)" : "Pin a different port through the callback URI, or free the port");
 			}
 
 			throw;
@@ -241,8 +356,26 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 		try
 		{
 			// Fire the browser and keep listening immediately: launch failures (no browser
-			// installed, no shell) throw synchronously from Process.Start and propagate here.
-			await LaunchBrowserAsync(requestUri, linked.Token).ConfigureAwait(false);
+			// installed, no shell) propagate here and end the flow.
+			try
+			{
+				await LaunchBrowserAsync(requestUri, linked.Token).ConfigureAwait(false);
+			}
+			catch (Win32Exception ex)
+			{
+				// Process.Start's "No such file or directory" names nothing; say which launcher.
+				if (Logger.IsEnabled(LogLevel.Error))
+				{
+					Logger.LogError(ex, "The system browser could not be opened for the sign-in request: {Launcher} failed to start", BrowserLauncherName);
+				}
+
+				throw;
+			}
+
+			if (Logger.IsEnabled(LogLevel.Debug))
+			{
+				Logger.LogDebug("Sign-in request opened in the system browser; waiting for the redirect to {Callback}", callbackUri.GetLeftPart(UriPartial.Path));
+			}
 
 			while (true)
 			{
@@ -255,23 +388,34 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 				{
 					context = await pending.WaitAsync(linked.Token).ConfigureAwait(false);
 				}
-				catch (OperationCanceledException) when (ct.IsCancellationRequested)
-				{
-					// The caller cancelled: propagate so WebAuthenticationBroker's task cancels.
-					Observe(pending);
-					throw;
-				}
 				catch (OperationCanceledException)
 				{
+					Observe(pending);
+					if (ct.IsCancellationRequested)
+					{
+						// The caller cancelled: propagate so WebAuthenticationBroker's task cancels.
+						throw;
+					}
+
 					// Only the broker's own AuthenticationTimeout can be left; WinRT has no
 					// distinct timeout status, so the detail carries the distinction.
-					Observe(pending);
 					if (Logger.IsEnabled(LogLevel.Warning))
 					{
-						Logger.LogWarning("No redirect reached {Callback} within the broker's AuthenticationTimeout ({Timeout}); reporting the flow as cancelled", callbackUri, WinRTFeatureConfiguration.WebAuthenticationBroker.AuthenticationTimeout);
+						Logger.LogWarning("No redirect reached {Callback} within the broker's AuthenticationTimeout ({Timeout}); reporting the flow as cancelled", callbackUri.GetLeftPart(UriPartial.Path), WinRTFeatureConfiguration.WebAuthenticationBroker.AuthenticationTimeout);
 					}
 
 					return new WebAuthenticationResult(null, TimeoutErrorDetail, WebAuthenticationStatus.UserCancel);
+				}
+
+				if (!IPAddress.IsLoopback(context.Request.RemoteEndPoint.Address))
+				{
+					if (Logger.IsEnabled(LogLevel.Warning))
+					{
+						Logger.LogWarning("Ignoring a request to the sign-in listener from a non-loopback address");
+					}
+
+					TryClose(context.Response, HttpStatusCode.NotFound);
+					continue;
 				}
 
 				if (!string.Equals(context.Request.Url?.AbsolutePath, callbackUri.AbsolutePath, StringComparison.OrdinalIgnoreCase))
@@ -310,14 +454,20 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 				// the result matches what the caller registered. Relayed fragments are restored to
 				// their original response shape; the sentinel means the redirect was genuinely bare.
 				var callbackBase = callbackUri.GetLeftPart(UriPartial.Path);
-				var responseData = query switch
+				var (responseData, shape) = query switch
 				{
-					NoFragmentSentinelQuery => callbackBase,
+					NoFragmentSentinelQuery => (callbackBase, "bare redirect"),
 					_ when query.StartsWith(RelayedFragmentQueryPrefix, StringComparison.Ordinal) =>
-						$"{callbackBase}#{query[RelayedFragmentQueryPrefix.Length..]}",
-					_ => callbackBase + query,
+						($"{callbackBase}#{query[RelayedFragmentQueryPrefix.Length..]}", "relayed fragment"),
+					_ when context.Request.HttpMethod == HttpMethod.Post.Method => (callbackBase + query, "form post"),
+					_ => (callbackBase + query, "query string"),
 				};
 				var result = new WebAuthenticationResult(responseData, 0, WebAuthenticationStatus.Success);
+
+				if (Logger.IsEnabled(LogLevel.Debug))
+				{
+					Logger.LogDebug("The sign-in redirect reached {Callback} as a {Shape}", callbackBase, shape);
+				}
 
 				// The sign-in is complete at this point; the completion page is a courtesy to the
 				// user, and a connection the browser dropped while it was written must not discard
@@ -344,9 +494,9 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 	/// </returns>
 	private async Task<string?> TryReadResponseQueryAsync(HttpListenerRequest request, CancellationToken ct)
 	{
-		if (request.HttpMethod != "POST" ||
+		if (request.HttpMethod != HttpMethod.Post.Method ||
 			!request.HasEntityBody ||
-			request.ContentType?.StartsWith("application/x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase) != true)
+			request.ContentType?.StartsWith(MediaTypeNames.Application.FormUrlEncoded, StringComparison.OrdinalIgnoreCase) != true)
 		{
 			return request.Url?.Query ?? string.Empty;
 		}
@@ -361,13 +511,14 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 			return null;
 		}
 
+		// One character past the limit is how a chunked body, which declares no length, is caught
+		// overrunning it. The pool may hand back more than asked for, so the read is sliced to
+		// exactly that length or the overrun check would never trip.
+		var buffer = ArrayPool<char>.Shared.Rent(MaxFormPostLength + 1);
 		try
 		{
-			// One character past the limit is how a chunked body, which declares no length, is
-			// caught overrunning it.
-			var buffer = new char[MaxFormPostLength + 1];
 			using var reader = new StreamReader(request.InputStream, request.ContentEncoding);
-			var length = await reader.ReadBlockAsync(buffer.AsMemory(), ct).ConfigureAwait(false);
+			var length = await reader.ReadBlockAsync(buffer.AsMemory(0, MaxFormPostLength + 1), ct).ConfigureAwait(false);
 			if (length > MaxFormPostLength)
 			{
 				return null;
@@ -383,6 +534,10 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 			}
 
 			return null;
+		}
+		finally
+		{
+			ArrayPool<char>.Shared.Return(buffer);
 		}
 	}
 
@@ -400,15 +555,15 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 			TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously,
 			TaskScheduler.Default);
 
-	private async Task<bool> TryRespondAsync(HttpListenerResponse response, byte[] body, CancellationToken ct)
+	private async Task TryRespondAsync(HttpListenerResponse response, byte[] body, CancellationToken ct)
 	{
 		try
 		{
-			response.ContentType = "text/html; charset=utf-8";
+			response.ContentType = HtmlContentType;
+			response.AddHeader(CacheControlHeader, CacheControlNoStore);
 			response.ContentLength64 = body.Length;
 			await response.OutputStream.WriteAsync(body, ct).ConfigureAwait(false);
 			response.Close();
-			return true;
 		}
 		catch (Exception ex) when (ex is HttpListenerException or IOException or ObjectDisposedException or OperationCanceledException)
 		{
@@ -420,7 +575,6 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 			}
 
 			response.Abort();
-			return false;
 		}
 	}
 
@@ -442,6 +596,13 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 		}
 	}
 
+	/// <summary>The OS facility the default <see cref="LaunchBrowserAsync"/> hands the URL to; for log lines.</summary>
+	private static string BrowserLauncherName =>
+		OperatingSystem.IsWindows() ? "the shell (ShellExecute)"
+		: OperatingSystem.IsMacOS() ? "open"
+		: OperatingSystem.IsLinux() ? "xdg-open"
+		: "the OS URL handler";
+
 	/// <summary>
 	/// Opens the system browser at the authorization request URI.
 	/// </summary>
@@ -457,30 +618,35 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 	/// <returns>A task that completes once the browser has been launched (not when sign-in ends).</returns>
 	protected virtual Task LaunchBrowserAsync(Uri requestUri, CancellationToken ct)
 	{
-		// ProcessStartInfo.ArgumentList (not a concatenated argument string) so nothing in the URL
-		// is ever interpreted by a shell.
-		// The launcher's Process handle is not needed once the browser is open.
-		if (OperatingSystem.IsWindows())
-		{
-			Process.Start(new ProcessStartInfo(requestUri.AbsoluteUri) { UseShellExecute = true })?.Dispose();
-		}
-		else if (OperatingSystem.IsMacOS())
-		{
-			Process.Start(new ProcessStartInfo("open") { ArgumentList = { requestUri.AbsoluteUri } })?.Dispose();
-		}
-		else if (OperatingSystem.IsLinux())
-		{
-			Process.Start(new ProcessStartInfo("xdg-open") { ArgumentList = { requestUri.AbsoluteUri } })?.Dispose();
-		}
-		else
-		{
-			// Also satisfies CA1416: the explicit OS guards prove Process.Start is never reached
-			// on the mobile TFMs this file still compiles for.
-			throw new PlatformNotSupportedException(
-				"The desktop web authentication broker can only launch a browser on Windows, macOS, or Linux.");
-		}
-
-		return Task.CompletedTask;
+		// Process.Start is synchronous and, on a cold default browser, slow enough to stall the
+		// click that started the flow: the providers await this on whatever context they run on,
+		// usually the UI thread. ProcessStartInfo.ArgumentList (not a concatenated argument
+		// string) so nothing in the URL is ever interpreted by a shell. The launcher's Process
+		// handle is not needed once the browser is open.
+		return Task.Run(
+			() =>
+			{
+				if (OperatingSystem.IsWindows())
+				{
+					Process.Start(new ProcessStartInfo(requestUri.AbsoluteUri) { UseShellExecute = true })?.Dispose();
+				}
+				else if (OperatingSystem.IsMacOS())
+				{
+					Process.Start(new ProcessStartInfo("open") { ArgumentList = { requestUri.AbsoluteUri } })?.Dispose();
+				}
+				else if (OperatingSystem.IsLinux())
+				{
+					Process.Start(new ProcessStartInfo("xdg-open") { ArgumentList = { requestUri.AbsoluteUri } })?.Dispose();
+				}
+				else
+				{
+					// Also satisfies CA1416: the explicit OS guards prove Process.Start is never
+					// reached on the mobile TFMs this file still compiles for.
+					throw new PlatformNotSupportedException(
+						"The desktop web authentication broker can only launch a browser on Windows, macOS, or Linux.");
+				}
+			},
+			ct);
 	}
 }
 #endif
