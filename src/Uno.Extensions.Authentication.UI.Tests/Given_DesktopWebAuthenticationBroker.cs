@@ -1,6 +1,6 @@
 // The desktop loopback broker only ever runs on Skia Desktop (TryRegister's runtime gate), and
 // HttpListener is unavailable in the browser sandbox and pointless on the mobile heads - so this
-// suite compiles only for the TFMs that can exercise it (net9.0 / net9.0-desktop).
+// suite compiles only for the TFMs that can exercise it (net10.0 / net10.0-desktop).
 #if !__ANDROID__ && !__IOS__ && !__WASM__ && !WINDOWS && !__MACCATALYST__
 using System;
 using System.Collections.Generic;
@@ -9,32 +9,28 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Uno.AuthenticationBroker;
+using Uno.Foundation.Extensibility;
+using Windows.Foundation;
 using Windows.Security.Authentication.Web;
 
 namespace Uno.Extensions.Authentication.UI.Tests;
 
 /// <summary>
 /// End-to-end coverage of <see cref="DesktopWebAuthenticationBrokerProvider"/>: the
-/// loopback listener round trip, callback validation, and cancellation - the "browser" is an HTTP
+/// loopback listener round trip, callback validation, cancellation, the registration with Uno's
+/// static <see cref="WebAuthenticationBroker"/>, and the log output - the "browser" is an HTTP
 /// GET against the callback, standing in for the IdP's post-sign-in redirect.
 /// </summary>
+/// <remarks>
+/// Not parallelizable: the timeout and default-port cases set process-wide statics
+/// (<see cref="WinRTFeatureConfiguration.WebAuthenticationBroker"/>, the broker's default port),
+/// and the static-broker cases share one registered instance.
+/// </remarks>
 [TestClass]
+[DoNotParallelize]
 public class Given_DesktopWebAuthenticationBroker
 {
-	private sealed class TestBroker : DesktopWebAuthenticationBrokerProvider
-	{
-		/// <summary>The fake browser; defaults to never navigating anywhere.</summary>
-		public Func<Uri, CancellationToken, Task> OnLaunch { get; set; } = (_, _) => Task.CompletedTask;
-
-		public Uri? LaunchedRequestUri { get; private set; }
-
-		protected override Task LaunchBrowserAsync(Uri requestUri, CancellationToken ct)
-		{
-			LaunchedRequestUri = requestUri;
-			return OnLaunch(requestUri, ct);
-		}
-	}
-
 	private static readonly Uri RequestUri = new("https://stub-idp.example/authorize?client_id=x");
 
 	[TestMethod]
@@ -69,7 +65,9 @@ public class Given_DesktopWebAuthenticationBroker
 
 		var result = await broker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, callback, cts.Token);
 
-		(await browser!).EnsureSuccessStatusCode();
+		var response = await browser!;
+		response.EnsureSuccessStatusCode();
+		response.Headers.CacheControl?.NoStore.Should().BeTrue("the completion page is served at a token-bearing URL and must not be cached");
 		result.ResponseStatus.Should().Be(WebAuthenticationStatus.Success);
 		result.ResponseData.Should().Be($"{callback}?code=stub-code&state=xyz");
 		broker.LaunchedRequestUri.Should().Be(RequestUri);
@@ -211,28 +209,21 @@ public class Given_DesktopWebAuthenticationBroker
 
 	/// <summary>
 	/// WinRT has no timeout status, so the broker's own AuthenticationTimeout is reported as
-	/// UserCancel - marked by the error detail, which is how the providers tell the two apart.
+	/// UserCancel - marked by the error detail, which is how callers tell the two apart.
 	/// </summary>
 	[TestMethod]
 	public async Task When_BrokerTimesOut_Then_UserCancelWithTimeoutDetail()
 	{
 		var broker = new TestBroker();
 		var callback = broker.GetCurrentApplicationCallbackUri();
-		var original = WinRTFeatureConfiguration.WebAuthenticationBroker.AuthenticationTimeout;
-		WinRTFeatureConfiguration.WebAuthenticationBroker.AuthenticationTimeout = TimeSpan.FromMilliseconds(200);
-		try
-		{
-			// The fake browser never redirects; only the broker's own timeout can end this.
-			var result = await broker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, callback, CancellationToken.None);
+		using var _ = ShortAuthenticationTimeout();
 
-			result.ResponseStatus.Should().Be(WebAuthenticationStatus.UserCancel);
-			result.ResponseErrorDetail.Should().Be(DesktopWebAuthenticationBrokerProvider.TimeoutErrorDetail,
-				"the detail is the only thing distinguishing a timeout from a cancel");
-		}
-		finally
-		{
-			WinRTFeatureConfiguration.WebAuthenticationBroker.AuthenticationTimeout = original;
-		}
+		// The fake browser never redirects; only the broker's own timeout can end this.
+		var result = await broker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, callback, CancellationToken.None);
+
+		result.ResponseStatus.Should().Be(WebAuthenticationStatus.UserCancel);
+		result.ResponseErrorDetail.Should().Be(DesktopWebAuthenticationBrokerProvider.TimeoutErrorDetail,
+			"the detail is the only thing distinguishing a timeout from a cancel");
 	}
 
 	/// <summary>
@@ -331,6 +322,185 @@ public class Given_DesktopWebAuthenticationBroker
 		Func<Task> act = () => broker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, callback, cts.Token);
 
 		await act.Should().ThrowAsync<OperationCanceledException>();
+	}
+
+	/// <summary>
+	/// Token-leak guard (AGENTS.md §5): every response shape plus the port-in-use and timeout
+	/// paths, with secrets in the code, the posted body and the relayed fragment - none of it may
+	/// reach the log at any level. The announcement line proves the capture is wired.
+	/// </summary>
+	[TestMethod]
+	public async Task When_ResponsesCarrySecrets_Then_NoneLogged()
+	{
+		var broker = new TestBroker();
+		var callback = broker.GetCurrentApplicationCallbackUri();
+		using var http = new HttpClient();
+		using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+
+		await CompleteAsync(broker, callback, (request, ct) => http.GetAsync($"{callback}?code=secret-code&access_token=secret-access&state=xyz", ct), cts.Token);
+		await CompleteAsync(broker, callback, async (request, ct) =>
+		{
+			await http.GetStringAsync(callback, ct);
+			await http.GetAsync($"{callback}?uno-fragment=1&id_token=secret-id-token", ct);
+		}, cts.Token);
+		using var form = new FormUrlEncodedContent(new Dictionary<string, string> { ["code"] = "secret-posted-code" });
+		await CompleteAsync(broker, callback, (request, ct) => http.PostAsync(callback, form, ct), cts.Token);
+
+		// The remaining paths must not be answered: the fake browser goes back to never navigating.
+		broker.Reset();
+
+		using (var squatter = new System.Net.HttpListener())
+		{
+			squatter.Prefixes.Add($"http://{callback.Host}:{callback.Port}/");
+			squatter.Start();
+			Func<Task> act = () => broker.AuthenticateAsync(WebAuthenticationOptions.None, new Uri($"{RequestUri}&login_hint=secret-hint"), callback, cts.Token);
+			await act.Should().ThrowAsync<System.Net.HttpListenerException>();
+		}
+
+		using (ShortAuthenticationTimeout())
+		{
+			await broker.AuthenticateAsync(WebAuthenticationOptions.None, new Uri($"{RequestUri}&login_hint=secret-hint"), callback, cts.Token);
+		}
+
+		var logs = broker.Logs.Text;
+		logs.Should().Contain("desktop loopback broker", "the capture must have seen the broker's own log lines");
+		logs.Should().Contain("Error:", "the port-in-use path must have logged");
+		logs.Should().Contain("Warning:", "the timeout path must have logged");
+		logs.Should().NotContain("secret", "no code, token or request parameter may appear in the log");
+	}
+
+	/// <summary>
+	/// First registration wins (Uno's registry is TryAdd): an app that registered its own provider
+	/// keeps it, <c>TryRegister</c> says so, and the registry still hands out the app's instance.
+	/// The positive case - the loopback broker registering on an empty registry - cannot be
+	/// observed in a process that needs the test double registered first.
+	/// </summary>
+	[TestMethod]
+	public void When_ProviderRegisteredFirst_Then_TryRegisterKeepsIt()
+	{
+		var shared = StaticBrokerRegistration.EnsureRegistered();
+
+		var registered = DesktopWebAuthenticationBrokerProvider.TryRegister();
+
+		registered.Should().BeFalse("another provider was registered first and must keep winning");
+		ApiExtensibility.CreateInstance<IWebAuthenticationBrokerProvider>(null!, out var provider).Should().BeTrue();
+		provider.Should().BeSameAs(shared);
+	}
+
+	/// <summary>
+	/// The static <see cref="WebAuthenticationBroker"/> resolves its provider once and keeps it:
+	/// callback and sign-in both reach the registered broker.
+	/// </summary>
+	[TestMethod]
+	public async Task When_AuthenticateThroughStaticBroker_Then_CallbackQueryReturned()
+	{
+		var shared = StaticBrokerRegistration.EnsureRegistered();
+		var callback = WebAuthenticationBroker.GetCurrentApplicationCallbackUri();
+		callback.Should().Be(shared.GetCurrentApplicationCallbackUri(), "the static broker must delegate to the registered provider");
+		callback.IsLoopback.Should().BeTrue();
+		callback.Scheme.Should().Be(Uri.UriSchemeHttp);
+		using var http = new HttpClient();
+		Task<HttpResponseMessage>? browser = null;
+		shared.OnLaunch = (request, ct) =>
+		{
+			browser = http.GetAsync($"{callback}?code=stub-code", ct);
+			return Task.CompletedTask;
+		};
+		using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+
+		var result = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, callback).AsTask(cts.Token);
+
+		(await browser!).EnsureSuccessStatusCode();
+		result.ResponseStatus.Should().Be(WebAuthenticationStatus.Success);
+		result.ResponseData.Should().Be($"{callback}?code=stub-code");
+		shared.LaunchedRequestUri.Should().Be(RequestUri);
+	}
+
+	/// <summary>
+	/// Through the static broker the timeout detail survives (Uno adds no timeout of its own that
+	/// would preempt it), and the one-flow-at-a-time guard is live because there is one instance.
+	/// </summary>
+	[TestMethod]
+	public async Task When_StaticBrokerTimesOut_Then_UserCancelWithTimeoutDetail()
+	{
+		var shared = StaticBrokerRegistration.EnsureRegistered();
+		var callback = WebAuthenticationBroker.GetCurrentApplicationCallbackUri();
+		using var _ = ShortAuthenticationTimeout();
+
+		var result = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, callback).AsTask();
+
+		result.ResponseStatus.Should().Be(WebAuthenticationStatus.UserCancel);
+		result.ResponseErrorDetail.Should().Be(DesktopWebAuthenticationBrokerProvider.TimeoutErrorDetail);
+		shared.LaunchedRequestUri.Should().Be(RequestUri);
+	}
+
+	[TestMethod]
+	public async Task When_SecondFlowThroughStaticBroker_Then_RejectedAndFirstCompletes()
+	{
+		var shared = StaticBrokerRegistration.EnsureRegistered();
+		var callback = WebAuthenticationBroker.GetCurrentApplicationCallbackUri();
+		using var http = new HttpClient();
+		var launched = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+		shared.OnLaunch = (request, ct) =>
+		{
+			launched.TrySetResult();
+			return Task.CompletedTask;
+		};
+		using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+
+		var first = WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, callback).AsTask(cts.Token);
+		await launched.Task.WaitAsync(cts.Token);
+
+		Func<Task> second = () => WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, callback).AsTask(cts.Token);
+		await second.Should().ThrowAsync<InvalidOperationException>().WithMessage("*already in progress*");
+
+		(await http.GetAsync($"{callback}?code=stub-code", cts.Token)).EnsureSuccessStatusCode();
+		(await first).ResponseStatus.Should().Be(WebAuthenticationStatus.Success);
+	}
+
+	[TestMethod]
+	public async Task When_CancelledThroughStaticBroker_Then_TaskCancels()
+	{
+		StaticBrokerRegistration.EnsureRegistered();
+		var callback = WebAuthenticationBroker.GetCurrentApplicationCallbackUri();
+		using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(100));
+
+		Func<Task> act = () => WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, callback).AsTask(cts.Token);
+
+		await act.Should().ThrowAsync<OperationCanceledException>();
+	}
+
+	/// <summary>Runs one flow to completion, with <paramref name="browser"/> standing in for the redirect.</summary>
+	private static async Task CompleteAsync(TestBroker broker, Uri callback, Func<Uri, CancellationToken, Task> browser, CancellationToken ct)
+	{
+		Task? redirect = null;
+		broker.OnLaunch = (request, token) =>
+		{
+			redirect = Task.Run(() => browser(request, token), token);
+			return Task.CompletedTask;
+		};
+
+		var result = await broker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, callback, ct);
+
+		await redirect!;
+		result.ResponseStatus.Should().Be(WebAuthenticationStatus.Success);
+	}
+
+	/// <summary>
+	/// Sets the broker's process-wide AuthenticationTimeout to 200 ms until disposed: long enough
+	/// for a listener to start, short enough not to stretch the lane. The timeout is a global
+	/// Uno setting, so it cannot be injected per instance.
+	/// </summary>
+	private static IDisposable ShortAuthenticationTimeout()
+	{
+		var original = WinRTFeatureConfiguration.WebAuthenticationBroker.AuthenticationTimeout;
+		WinRTFeatureConfiguration.WebAuthenticationBroker.AuthenticationTimeout = TimeSpan.FromMilliseconds(200);
+		return new Restore(() => WinRTFeatureConfiguration.WebAuthenticationBroker.AuthenticationTimeout = original);
+	}
+
+	private sealed class Restore(Action restore) : IDisposable
+	{
+		public void Dispose() => restore();
 	}
 }
 #endif

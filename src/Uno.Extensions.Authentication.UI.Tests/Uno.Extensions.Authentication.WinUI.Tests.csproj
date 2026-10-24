@@ -27,6 +27,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Authentication.UI\Uno.Extensions.Authentication.WinUI.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Authentication.Oidc\Uno.Extensions.Authentication.Oidc.WinUI.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.RuntimeTests\Uno.Extensions.RuntimeTests.Core\Uno.Extensions.RuntimeTests.Core.csproj" />
 	</ItemGroup>
