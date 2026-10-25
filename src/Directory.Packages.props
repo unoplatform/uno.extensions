@@ -1,14 +1,14 @@
 ﻿<Project ToolsVersion="15.0">
   <PropertyGroup>
     <!--
-      Uno 7.0 renders with Skia everywhere and drops the `Uno` assembly, so every Uno 6-era
-      package fails CS0012 out of the BindableTypeProviders generator. These are the first
-      Toolkit/Themes builds against Uno.WinUI 7.0.0-dev.2162 - the version Uno.Sdk.Private pins in
-      global.json. The SDK's own defaults (Toolkit 9.1.0-dev.2, Themes 7.1.0-dev.1) are still on
-      the Uno 6 line, so both must stay pinned here until the SDK catches up.
+      Keep these on the versions the public Uno.Sdk pins (7.0.0-dev.89: Toolkit 11.0.0-dev.155,
+      Themes 9.0.0-dev.56). Uno.Sdk.Private 7.0.0-dev.2428 still defaults to 11.0.0-dev.140 /
+      9.0.0-dev.41, which depend on Uno.WinUI.Lottie. The XAML generator compiles a call to the
+      GlobalStaticResources of every referenced XAML assembly into ours, so building against those
+      made our packages require Uno.UI.Lottie.dll, which Uno.Sdk 7.0.0-dev.89 apps no longer ship (#3262).
     -->
-    <UnoToolkitVersion>11.0.0-dev.140</UnoToolkitVersion>
-    <UnoThemesVersion>9.0.0-dev.41</UnoThemesVersion>
+    <UnoToolkitVersion>11.0.0-dev.155</UnoToolkitVersion>
+    <UnoThemesVersion>9.0.0-dev.56</UnoThemesVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" />
