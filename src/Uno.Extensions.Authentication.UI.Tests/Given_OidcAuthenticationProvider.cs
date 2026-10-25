@@ -19,7 +19,8 @@ namespace Uno.Extensions.Authentication.UI.Tests;
 /// The OIDC provider over the desktop loopback broker's callback: with <c>AutoRedirectUri</c> the
 /// redirect must follow the broker's current callback on every flow, not the one captured when
 /// the provider was built - the broker moves to another port when its default one could not be
-/// bound.
+/// bound. Sign-out must carry the cached id_token as its hint, or the identity provider never
+/// redirects back and the broker waits out its timeout.
 /// </summary>
 [TestClass]
 [DoNotParallelize]
@@ -30,29 +31,7 @@ public class Given_OidcAuthenticationProvider
 	{
 		StaticBrokerRegistration.EnsureRegistered();
 		var browser = new RecordingBrowser();
-		var provider = new OidcAuthenticationProvider(
-			NullLogger<OidcAuthenticationProvider>.Instance,
-			browser,
-			new NoConfiguration(),
-			new InMemoryTokenCache(),
-			new OidcAuthenticationSettings
-			{
-				AutoRedirectUri = true,
-				Options = new OidcClientOptions
-				{
-					ClientId = "client",
-					// No discovery round trip: the endpoints are given, and nothing is validated
-					// because the fake browser never returns a response.
-					ProviderInformation = new ProviderInformation
-					{
-						IssuerName = "https://stub-idp.example",
-						AuthorizeEndpoint = "https://stub-idp.example/authorize",
-						TokenEndpoint = "https://stub-idp.example/token",
-						KeySet = new JsonWebKeySet(),
-					},
-					LoadProfile = false,
-				},
-			});
+		var provider = CreateProvider(browser, new InMemoryTokenCache());
 		var firstCallback = new Uri("http://localhost:5101/authentication-callback");
 		var secondCallback = new Uri("http://localhost:5102/authentication-callback");
 		var original = WinRTFeatureConfiguration.WebAuthenticationBroker.DefaultReturnUri;
@@ -77,13 +56,69 @@ public class Given_OidcAuthenticationProvider
 		}
 	}
 
-	/// <summary>Records the redirect URI each sign-in was started with, and cancels the flow.</summary>
+	[TestMethod]
+	public async Task When_Logout_Then_CachedIdTokenSentAsHint()
+	{
+		StaticBrokerRegistration.EnsureRegistered();
+		var browser = new RecordingBrowser();
+		var tokens = new InMemoryTokenCache();
+		await tokens.SaveAsync(
+			OidcAuthenticationProvider.DefaultName,
+			new Dictionary<string, string>
+			{
+				[TokenCacheExtensions.AccessTokenKey] = "stub-access-token",
+				[TokenCacheExtensions.IdTokenKey] = "stub-id-token",
+			},
+			CancellationToken.None);
+		var provider = CreateProvider(browser, tokens);
+		provider.Build();
+		using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+
+		await provider.LogoutAsync(dispatcher: null, cts.Token);
+
+		browser.StartUrls.Should().ContainSingle()
+			.Which.Should().StartWith(EndSessionEndpoint)
+			.And.Contain("id_token_hint=stub-id-token", "without the hint the identity provider does not redirect back after sign-out");
+	}
+
+	private const string EndSessionEndpoint = "https://stub-idp.example/endsession";
+
+	private static OidcAuthenticationProvider CreateProvider(IBrowser browser, ITokenCache tokens)
+		=> new(
+			NullLogger<OidcAuthenticationProvider>.Instance,
+			browser,
+			new NoConfiguration(),
+			tokens,
+			new OidcAuthenticationSettings
+			{
+				AutoRedirectUri = true,
+				Options = new OidcClientOptions
+				{
+					ClientId = "client",
+					// No discovery round trip: the endpoints are given, and nothing is validated
+					// because the fake browser never returns a response.
+					ProviderInformation = new ProviderInformation
+					{
+						IssuerName = "https://stub-idp.example",
+						AuthorizeEndpoint = "https://stub-idp.example/authorize",
+						TokenEndpoint = "https://stub-idp.example/token",
+						EndSessionEndpoint = EndSessionEndpoint,
+						KeySet = new JsonWebKeySet(),
+					},
+					LoadProfile = false,
+				},
+			});
+
+	/// <summary>Records the start and redirect URI of each browser flow, and cancels the flow.</summary>
 	private sealed class RecordingBrowser : IBrowser
 	{
+		public List<string> StartUrls { get; } = new();
+
 		public List<string> EndUrls { get; } = new();
 
 		public Task<BrowserResult> InvokeAsync(BrowserOptions options, CancellationToken cancellationToken = default)
 		{
+			StartUrls.Add(options.StartUrl);
 			EndUrls.Add(options.EndUrl);
 			return Task.FromResult(new BrowserResult { ResultType = BrowserResultType.UserCancel });
 		}
