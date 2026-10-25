@@ -5,7 +5,7 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
 
 > **UnoFeatures:** `Authentication` (add to `<UnoFeatures>` in your `.csproj`)
 
-`WebAuthenticationProvider` provides an implementation that displays a web view in order for the user to login. After login, the web view redirects back to the application, along with any tokens. This tutorial will use web authorization to validate user credentials.
+`WebAuthenticationProvider` provides an implementation that uses the system's `WebAuthenticationBroker` API to display an authentication window for the user to login. After login, the authentication flow redirects back to the application, along with any tokens. This tutorial will use web authorization to validate user credentials.
 
 ## Step-by-step
 
@@ -90,7 +90,7 @@ uid: Uno.Extensions.Authentication.HowToWebAuthentication
     }
     ```
 
-- `LoginStartUri`: The URI that will be used to start the login process. This is the URI that will be opened in the web view.
+- `LoginStartUri`: The URI that will be used to start the login process. This is the URI that will be opened using the `WebAuthenticationBroker` API.
 
 - `LoginCallbackUri`: The URI the identity provider redirects to when the login completes. The web view closes when it navigates to this URI, and the tokens are read from it. It can be omitted only when `LoginStartUri` includes a `redirect_uri` query parameter, which is then used instead. Without either, the login fails.
 
