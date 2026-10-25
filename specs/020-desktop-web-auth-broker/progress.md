@@ -60,10 +60,24 @@ returned **fix-first**; this note records each finding and what was done about i
   `specs/019` and `specs/lessons.md`); fixed here so PR #3261 can go green. The GitHub
   "Build and Deploy Job" failure is an Azure Static Web Apps staging-slot quota, unrelated.
 
+## Found while running the Uno.Samples OIDC demo against this branch
+
+- Sign-out never returned to the app: `OidcAuthenticationProvider` called `LogoutAsync()` with no
+  `id_token_hint`, so the identity provider (Duende demo) stopped on its signed-out page with no link
+  back, and the loopback broker waited out its five-minute timeout before the app cleared its tokens.
+  Fixed: the cached id_token is passed as `IdTokenHint`, and the caller's `CancellationToken` reaches
+  `LogoutAsync`. Red/green: `Given_OidcAuthenticationProvider.When_Logout_Then_CachedIdTokenSentAsHint`.
+  The same change is in #3169 (spec 017 F11), which also honors `LogoutResult.IsError` (F2); that
+  behavior change stays there.
+- Live check: the sample app on macOS desktop, built against packages packed from this branch.
+  Before the fix sign-out returned after 5:00.38; after it, the demo's signed-out page carries the
+  "return to the application" link to the loopback callback, and following it (bare redirect, then
+  the relay's no-fragment request) completes sign-out immediately with tokens cleared.
+
 ## Verification
 
-- [x] Runtime-tests head rebuilt for `net10.0-desktop` on macOS, suite re-run: 23/23 (12 original
-      + 11 new). The OIDC redirect case fails with the provider fix stashed (second flow still sent
+- [x] Runtime-tests head rebuilt for `net10.0-desktop` on macOS, suite re-run: 24/24 (12 original
+      + 12 new). The OIDC redirect case fails with the provider fix stashed (second flow still sent
       to the first port) and passes with it.
 - [x] Release build of `Uno.Extensions.Authentication.Oidc.WinUI` (and its
       `Uno.Extensions.Authentication.WinUI` dependency) succeeds; the only warnings are the

@@ -84,7 +84,13 @@ internal record OidcAuthenticationProvider(
 		}
 
 		ApplyAutoRedirectUri();
-		await _client.LogoutAsync();
+		// Pass the cached id_token as the end-session hint: without it the identity provider
+		// cannot trust the post-logout redirect, so it stops on its own signed-out page and never
+		// redirects back to the app - on desktop the loopback broker then waits out its timeout.
+		var idToken = await Tokens.TokenAsync(TokenCacheExtensions.IdTokenKey, cancellationToken);
+		await _client.LogoutAsync(
+			new LogoutRequest { IdTokenHint = string.IsNullOrWhiteSpace(idToken) ? null : idToken },
+			cancellationToken);
 		return true;
 	}
 
