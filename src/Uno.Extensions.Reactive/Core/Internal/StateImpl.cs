@@ -158,7 +158,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	/// <remarks>
 	/// This is idempotent: if a validator has already been set, it is replaced (it will be used starting at the next data change).
 	/// </remarks>
-	internal void SetValidator(Func<T, CancellationToken, ValueTask<IEnumerable<ValidationResult>>> validator, object? source = null)
+	internal void SetValidator(AsyncFunc<T, IEnumerable<ValidationResult>> validator, object? source = null)
 	{
 		source ??= validator;
 		while (true)
@@ -444,7 +444,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	/// The validator of a state, with the token of its validation loop.
 	/// </summary>
 	/// <remarks>Immutable, so the validator can be replaced and the loop stopped atomically.</remarks>
-	private sealed record ValidationLoop(Func<T, CancellationToken, ValueTask<IEnumerable<ValidationResult>>> Validator, object Source, CancellationTokenSource Token);
+	private sealed record ValidationLoop(AsyncFunc<T, IEnumerable<ValidationResult>> Validator, object Source, CancellationTokenSource Token);
 
 	/// <summary>
 	/// The validation results of a state (cf. <see cref="PublishValidationAsync"/>).

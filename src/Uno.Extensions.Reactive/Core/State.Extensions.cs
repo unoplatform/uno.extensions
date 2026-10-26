@@ -377,7 +377,7 @@ partial class State
 	/// </remarks>
 	/// <exception cref="ArgumentNullException">If the <paramref name="state"/> or the <paramref name="validator"/> is null.</exception>
 	/// <exception cref="NotSupportedException">If the <paramref name="state"/> has not been created using the MVUX State factories.</exception>
-	public static IState<T> Validate<T>(this IState<T> state, Func<T, CancellationToken, ValueTask<IEnumerable<ValidationResult>>> validator)
+	public static IState<T> Validate<T>(this IState<T> state, AsyncFunc<T, IEnumerable<ValidationResult>> validator)
 	{
 		ArgumentNullException.ThrowIfNull(state);
 		ArgumentNullException.ThrowIfNull(validator);
