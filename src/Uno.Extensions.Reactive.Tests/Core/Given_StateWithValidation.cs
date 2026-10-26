@@ -6,8 +6,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Core;
+using Uno.Extensions.Reactive.Logging;
 using Uno.Extensions.Reactive.Testing;
 
 namespace Uno.Extensions.Reactive.Tests.Core;
@@ -158,6 +160,34 @@ public class Given_StateWithValidation : FeedTests
 
 		state.Current.Current.Error.Should().BeNull();
 		state.Current.Current.Data.SomeOrDefault().Should().Be("updated");
+	}
+
+	[TestMethod]
+	[DoNotParallelize] // Sets the global log provider
+	public async Task When_ValidatorThrows_Then_ValidatorIdentifiedInLogs_WithoutErrorMessage()
+	{
+		var logs = new RecordingLogProvider();
+		LogExtensions.SetProvider(logs);
+		try
+		{
+			var state = new StateImpl<string>(Context, Option.Some("initial"));
+			_ = state.Validate(ThrowingValidator);
+
+			await WaitFor(() => logs.Entries.Any(entry => entry.Level is LogLevel.Error));
+
+			var error = logs.Entries.First(entry => entry.Level is LogLevel.Error);
+			error.Message.Should()
+				.Contain($"'{nameof(Given_StateWithValidation)}.").And.Contain(nameof(ThrowingValidator)) // The user's type which declares the validator, and its (possibly mangled) name.
+				.And.Contain(nameof(InvalidOperationException));
+			error.Message.Should().NotContain("password", "the message of the error might contain user input");
+		}
+		finally
+		{
+			LogExtensions.Reset();
+		}
+
+		static ValueTask<IEnumerable<ValidationResult>> ThrowingValidator(string value, CancellationToken ct)
+			=> throw new InvalidOperationException("Invalid password 'p@ssw0rd'");
 	}
 
 	[TestMethod]
@@ -503,6 +533,41 @@ public class Given_StateWithValidation : FeedTests
 
 		public void Fail(Exception error)
 			=> Result.SetException(error);
+	}
+
+	private sealed class RecordingLogProvider : ILoggerProvider
+	{
+		private readonly List<(LogLevel Level, string Message)> _entries = new();
+
+		public IReadOnlyList<(LogLevel Level, string Message)> Entries
+		{
+			get
+			{
+				lock (_entries)
+				{
+					return _entries.ToList();
+				}
+			}
+		}
+
+		public ILogger CreateLogger(string categoryName) => new Logger(this);
+
+		public void Dispose() { }
+
+		private sealed class Logger(RecordingLogProvider owner) : ILogger
+		{
+			public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+
+			public bool IsEnabled(LogLevel logLevel) => true;
+
+			public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+			{
+				lock (owner._entries)
+				{
+					owner._entries.Add((logLevel, formatter(state, exception)));
+				}
+			}
+		}
 	}
 
 	/// <summary>

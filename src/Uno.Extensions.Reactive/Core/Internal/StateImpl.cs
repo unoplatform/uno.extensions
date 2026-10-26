@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -25,8 +26,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	private FeedSubscription<T>? _subscription;
 	private IDisposable? _subscriptionMode;
 
-	private Func<T, CancellationToken, ValueTask<IEnumerable<ValidationResult>>>? _validator;
-	private CancellationTokenSource? _validation;
+	private ValidationLoop? _validation;
 	private readonly object _validationResultsGate = new();
 	private ValidationUpdate? _validationResults;
 	private static long _validationVersion; // Shared by the states (not per instance), so versions remain comparable when results are redirected to the state that replaced this one.
@@ -153,59 +153,86 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	/// <summary>
 	/// Sets the validator which is used to produce the <see cref="MessageAxis.Validation"/> of this state each time its data changes.
 	/// </summary>
+	/// <param name="validator">The validator.</param>
+	/// <param name="source">The user's validator (delegate or service) from which the <paramref name="validator"/> has been created, used to identify it in logs.</param>
 	/// <remarks>
 	/// This is idempotent: if a validator has already been set, it is replaced (it will be used starting at the next data change).
 	/// </remarks>
-	internal void SetValidator(Func<T, CancellationToken, ValueTask<IEnumerable<ValidationResult>>> validator)
+	internal void SetValidator(Func<T, CancellationToken, ValueTask<IEnumerable<ValidationResult>>> validator, object? source = null)
 	{
-		if (Interlocked.Exchange(ref _validator, validator) is not null)
+		source ??= validator;
+		while (true)
 		{
-			return; // Validation loop already running, it will use the new validator on next data change.
-		}
+			if (Volatile.Read(ref _validation) is { } current)
+			{
+				// Validation loop already running, it will use the new validator on next data change.
+				if (Interlocked.CompareExchange(ref _validation, current with { Validator = validator, Source = source }, current) == current)
+				{
+					return;
+				}
 
-		var validation = CancellationTokenSource.CreateLinkedTokenSource(Context.Token);
-		if (Interlocked.CompareExchange(ref _validation, validation, null) is not null)
-		{
-			validation.Dispose();
+				continue;
+			}
+
+			var loop = new ValidationLoop(validator, source, CancellationTokenSource.CreateLinkedTokenSource(Context.Token));
+			if (Interlocked.CompareExchange(ref _validation, loop, null) is not null)
+			{
+				loop.Token.Dispose();
+				continue;
+			}
+
+			// Note: We use the AbortPrevious mode, so a pending validation is cancelled as soon as the data changes.
+			_ = Context
+				.GetOrCreateSource(this)
+				.Where(msg => msg.Changes.Contains(MessageAxis.Data))
+				.ForEachAwaitWithCancellationAsync(Validate, ConcurrencyMode.AbortPrevious, continueOnError: true, loop.Token.Token);
 			return;
 		}
-
-		// Note: We use the AbortPrevious mode, so a pending validation is cancelled as soon as the data changes.
-		_ = Context
-			.GetOrCreateSource(this)
-			.Where(msg => msg.Changes.Contains(MessageAxis.Data))
-			.ForEachAwaitWithCancellationAsync(Validate, ConcurrencyMode.AbortPrevious, continueOnError: true, validation.Token);
 	}
 
 	private async ValueTask Validate(Message<T> msg, CancellationToken ct)
 	{
+		var data = msg.Current.Data;
+		if (data.IsUndefined())
+		{
+			return; // Nothing to validate yet, keep the previous results (if any).
+		}
+
+		if (Volatile.Read(ref _validation) is not { } loop)
+		{
+			return; // Validation has been stopped.
+		}
+
+		// The version is taken before running the validator: if results are published (e.g. using SetValidationAsync) while it runs, they win.
+		var version = NextValidationVersion();
+
+		// Note: Some(null) is a value (unlike None): the validator is invoked with null.
+		var hasValue = data.IsSome(out var value);
+		IEnumerable<ValidationResult>? results;
 		try
 		{
-			var data = msg.Current.Data;
-			if (data.IsUndefined())
-			{
-				return; // Nothing to validate yet, keep the previous results (if any).
-			}
-
-			if (_validator is not { } validator)
-			{
-				return; // Validation has been stopped.
-			}
-
-			// The version is taken before running the validator: if results are published (e.g. using SetValidationAsync) while it runs, they win.
-			var version = NextValidationVersion();
-
-			// Note: Some(null) is a value (unlike None): the validator is invoked with null.
-			var hasValue = data.IsSome(out var value);
-			var results = hasValue
-				? await Task.Run(async () => await validator(value!, ct).ConfigureAwait(false), ct).ConfigureAwait(false)
+			results = hasValue
+				? await Task.Run(() => loop.Validator(value!, ct).AsTask(), ct).ConfigureAwait(false)
 				: null; // No value to validate (None), clear the results.
+		}
+		catch (OperationCanceledException) when (ct.IsCancellationRequested)
+		{
+			return; // Expected: the value changed (a new validation has been started) or the validation has been stopped.
+		}
+		catch (Exception error)
+		{
+			// Validation must never fault the state: we only log the error and keep the previous results.
+			LogFailure(error, loop, isPublishing: false);
+			return;
+		}
 
-			if (ct.IsCancellationRequested)
-			{
-				return;
-			}
+		if (ct.IsCancellationRequested)
+		{
+			return;
+		}
 
+		try
+		{
 			// Makes sure to not publish results for a stale version of the data.
 			await PublishValidationAsync(
 					results?.ToImmutableList(),
@@ -222,17 +249,47 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		}
 		catch (Exception error)
 		{
-			// Validation must never fault the state: we only log the error and keep the previous results.
-			// Note: We do not log the message of the error as it might contain user input.
-			var log = this.Log();
-			if (log.IsEnabled(LogLevel.Error))
+			LogFailure(error, loop, isPublishing: true);
+		}
+	}
+
+	/// <remarks>
+	/// The message of the error is logged only at the debug level, as it might contain user input.
+	/// </remarks>
+	private void LogFailure(Exception error, ValidationLoop loop, bool isPublishing)
+	{
+		var log = this.Log();
+		if (log.IsEnabled(LogLevel.Error))
+		{
+			if (isPublishing)
 			{
-				log.LogError("The validator of the state '{State}' failed with an '{ErrorType}'. Previous validation results are kept.", LogHelper.GetIdentifier(this), error.GetType().Name);
+				log.LogError("Failed to publish the results of the validator '{Validator}' on a state of '{ValueType}': its update pipeline failed with an '{ErrorType}'.", Describe(loop.Source), typeof(T).Name, error.GetType().Name);
 			}
-			if (log.IsEnabled(LogLevel.Debug))
+			else
 			{
-				log.LogDebug(error, "Validator failure details for the state '{State}'.", LogHelper.GetIdentifier(this));
+				log.LogError("The validator '{Validator}' of a state of '{ValueType}' failed with an '{ErrorType}'. Previous validation results are kept.", Describe(loop.Source), typeof(T).Name, error.GetType().Name);
 			}
+		}
+		if (log.IsEnabled(LogLevel.Debug))
+		{
+			log.LogDebug(error, "Validation failure details for the validator '{Validator}' of a state of '{ValueType}'.", Describe(loop.Source), typeof(T).Name);
+		}
+
+		static string Describe(object source)
+		{
+			if (source is not Delegate { Method: var method })
+			{
+				return source.GetType().Name;
+			}
+
+			// For a lambda, the method is declared by a compiler generated type: we use the type of the user's code which declares it.
+			var type = method.DeclaringType;
+			while (type?.IsDefined(typeof(CompilerGeneratedAttribute), inherit: false) is true && type.DeclaringType is not null)
+			{
+				type = type.DeclaringType;
+			}
+
+			return $"{type?.Name}.{method.Name}";
 		}
 	}
 
@@ -303,12 +360,11 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 
 	private void StopValidation()
 	{
-		if (Interlocked.Exchange(ref _validation, null) is { } validation)
+		if (Interlocked.Exchange(ref _validation, null) is { } loop)
 		{
-			validation.Cancel();
-			validation.Dispose();
+			loop.Token.Cancel();
+			loop.Token.Dispose();
 		}
-		_validator = null;
 	}
 
 	private void ClearValidationResults()
@@ -383,6 +439,12 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 			}
 		}
 	}
+
+	/// <summary>
+	/// The validator of a state, with the token of its validation loop.
+	/// </summary>
+	/// <remarks>Immutable, so the validator can be replaced and the loop stopped atomically.</remarks>
+	private sealed record ValidationLoop(Func<T, CancellationToken, ValueTask<IEnumerable<ValidationResult>>> Validator, object Source, CancellationTokenSource Token);
 
 	/// <summary>
 	/// The validation results of a state (cf. <see cref="PublishValidationAsync"/>).
