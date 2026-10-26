@@ -57,6 +57,12 @@ public readonly struct BindablePropertyInfo<T>
 		=> _subscribeValidation?.Invoke(onValidationUpdated);
 
 	/// <summary>
+	/// Indicates if this property can provide validation results (cf. <see cref="SubscribeValidation"/>).
+	/// </summary>
+	/// <remarks>The properties of the items of a list, for instance, does not provide any validation result.</remarks>
+	internal bool CanProvideValidation => _subscribeValidation is not null;
+
+	/// <summary>
 	/// Updates the property.
 	/// </summary>
 	/// <param name="updater">The method to update the current value.</param>
