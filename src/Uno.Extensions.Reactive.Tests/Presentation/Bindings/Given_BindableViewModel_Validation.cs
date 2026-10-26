@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -172,8 +172,17 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 	[TestMethod]
 	public async Task When_RecordMemberSetFromView_Then_ValidationDelivered()
 	{
-		await using var sut = await ExecuteOnDispatcher(() => new When_ValidatedRecord_ViewModel()); // Created on the UI thread, so the dispatcher of the VM is resolved
+		var initialized = false;
+		await using var sut = await ExecuteOnDispatcher(() =>
+		{
+			var vm = new When_ValidatedRecord_ViewModel(); // Created on the UI thread, so the dispatcher of the VM is resolved
+			vm.PropertyChanged += (snd, e) => initialized |= e.PropertyName == nameof(vm.Person);
+			return vm;
+		});
 
+		// The view model pushes the first value of the state to the view asynchronously:
+		// a value set from the view before that would be overwritten by the initial value (while the state keeps the value set from the view).
+		await WaitFor(() => initialized);
 		await ExecuteOnDispatcher(() => sut.Person.FirstName = "");
 		await WaitFor(async () => (await GetErrors(sut.Person, "FirstName")).Any());
 
