@@ -45,17 +45,14 @@ partial class Given_HotReload
 
 	private async Task WaitForErrors(BindableViewModelBase vm, string expected)
 	{
-		for (var i = 0; i < 500; i++)
+		try
 		{
-			if (await ExecuteOnDispatcher(() => GetErrorMessages(vm)) is [var single] && single == expected)
-			{
-				return;
-			}
-
-			await Task.Delay(10);
+			await ValidationTestHelper.WaitForAsync(async () => await ExecuteOnDispatcher(() => GetErrorMessages(vm)) is [var single] && single == expected);
 		}
-
-		throw new TimeoutException($"Errors are [{string.Join(", ", await ExecuteOnDispatcher(() => GetErrorMessages(vm)))}] while expecting [{expected}].");
+		catch (TimeoutException)
+		{
+			throw new TimeoutException($"Errors are [{string.Join(", ", await ExecuteOnDispatcher(() => GetErrorMessages(vm)))}] while expecting [{expected}].");
+		}
 	}
 
 	private static string[] GetErrorMessages(BindableViewModelBase vm)
