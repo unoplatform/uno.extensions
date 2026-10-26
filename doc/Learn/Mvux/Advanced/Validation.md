@@ -162,13 +162,24 @@ The results are **not** cleared when the value of the state is changed (e.g. by 
 
 - `Validation` accepts the same validators as `Validate`: an `IValidator`, a delegate returning a list of `ValidationResult`, a delegate returning the error message, or a predicate and its error. Each takes an optional localizer as last argument (see [Localizing messages](#localizing-messages)).
 - Validation errors don't change `CanExecute`, so the user can always retry.
-- If the validator throws, the execution fails (the error goes to the error handler of the command, like an error of the action), and the previous results are kept.
+- If the validator throws, the execution fails (the error goes to the error handler of the command, like an error of the action), and the previous results are kept. The error handler receives an `InvalidOperationException` which names the type of the error of the validator, but not its message, as it might contain user input (see [Diagnosing validation](#diagnosing-validation)).
 - The validator receives a `CancellationToken`, cancelled when the command is disposed. Honor it, and apply your own timeout to validators that might hang (e.g. a remote validation): the command remains executing until the validator completes.
 - An execution aborted by the validation completes like a successful one (`ExecutionCompleted` without error). If you react to the completion of the command (e.g. to close a dialog), do it in the action given to `Then` instead.
-- If the state is also validated by `Validate`, the last validation wins: executing the command replaces the results of `Validate`, and the next change of the state replaces the results of the command (as well as a validation of `Validate` which completes after the execution of the command).
+- If the state is also validated by `Validate`, the last validation started wins: executing the command replaces the results of `Validate`, and the next change of the state replaces the results of the command. Results of a validation which completes after newer results have been published (by `Validate`, `SetValidationAsync` or another execution) are dropped.
 - Configuring `Validation` multiple times on the same command replaces the previous validation (the last one wins).
 - With an `IValidator`, a `null` parameter has nothing to validate and is considered as valid.
-- The parameter must be a state to publish the results. If it is a feed (e.g. `Feed.Async` or `Feed.Combine`), or if it is provided by the view (no `Given`), the execution is still aborted when the parameter is not valid, but the results are only logged. The analyzer reports the warning [`FEED2003`](xref:Uno.Extensions.Reactive.Rules) in that case.
+- The parameter must be a state to publish the results. If it is a feed (e.g. `Feed.Async` or `Feed.Combine`), or if it is provided by the view (no `Given`), the execution is still aborted when the parameter is not valid, but the results cannot be displayed: only the number of errors and the members in error are logged (as a warning). The analyzer reports the warning [`FEED2003`](xref:Uno.Extensions.Reactive.Rules) in that case.
+
+### Diagnosing validation
+
+Validation never logs the messages of the results, nor the messages of the errors of validators, at a level above `Debug`, as they might contain user input. The relevant log categories are `Uno.Extensions.Reactive.Core.StateImpl` (validators of states) and `Uno.Extensions.Reactive.Commands.AsyncCommand` (validation of commands):
+
+| Level | Logged when |
+| --- | --- |
+| `Error` | A validator of a state throws (with the validator and the type of the error), or the results cannot be published on the state. |
+| `Warning` | A command is aborted by its validation, but its parameter is not a state (with the number of errors and the members in error). |
+| `Information` | A command is aborted by its validation (with the number of errors). |
+| `Debug` | The details of the errors of validators (including their message). |
 
 ## Consuming errors in the view
 
