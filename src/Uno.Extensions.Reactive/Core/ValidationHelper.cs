@@ -73,7 +73,6 @@ internal static class ValidationHelper
 	/// </summary>
 	/// <remarks>A null value (e.g. a null command parameter provided by the view) has nothing to validate: it is considered as valid.</remarks>
 	public static AsyncFunc<T, IEnumerable<ValidationResult>> FromValidator<T>(IValidator validator)
-		where T : notnull
 		=> (value, ct) => value is null
 			? new(Array.Empty<ValidationResult>())
 			: validator.ValidateAsync(value, null, ct);

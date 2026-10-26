@@ -488,12 +488,12 @@ partial class State
 	/// <param name="localizer">An optional localizer: when provided, the <see cref="ValidationResult.ErrorMessage"/> of the results are resource keys resolved through it.</param>
 	/// <returns>The given <paramref name="state"/>, so it can be used to chain other operations.</returns>
 	/// <remarks>
-	/// This has the same behavior as <see cref="Validate{T}(IState{T}, AsyncFunc{T, IEnumerable{ValidationResult}}, IStringLocalizer)"/>.
+	/// This has the same behavior as <see cref="Validate{T}(IState{T}, AsyncFunc{T, IEnumerable{ValidationResult}}, IStringLocalizer)"/>,
+	/// except for a null value: it has nothing to validate, so the <paramref name="validator"/> is not invoked and the value is considered as valid (i.e. the results are cleared).
 	/// </remarks>
 	/// <exception cref="ArgumentNullException">If the <paramref name="state"/> or the <paramref name="validator"/> is null.</exception>
 	/// <exception cref="NotSupportedException">If the <paramref name="state"/> has not been created using the MVUX State factories.</exception>
 	public static IState<T> Validate<T>(this IState<T> state, IValidator validator, IStringLocalizer? localizer = null)
-		where T : notnull
 	{
 		ArgumentNullException.ThrowIfNull(validator);
 

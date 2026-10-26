@@ -109,7 +109,6 @@ public static class CommandBuilderExtensions
 	/// </remarks>
 	/// <exception cref="NotSupportedException">If the <paramref name="builder"/> has not been created using the <see cref="Command"/> factories.</exception>
 	public static IConditionalCommandBuilder<T> Validation<T>(this ICommandBuilder<T> builder, IValidator validator, IStringLocalizer? localizer = null)
-		where T : notnull
 	{
 		ArgumentNullException.ThrowIfNull(validator);
 
@@ -146,7 +145,6 @@ public static class CommandBuilderExtensions
 
 	/// <inheritdoc cref="Validation{T}(ICommandBuilder{T}, IValidator, IStringLocalizer)"/>
 	public static IConditionalCommandBuilder<T> Validation<T>(this IConditionalCommandBuilder<T> builder, IValidator validator, IStringLocalizer? localizer = null)
-		where T : notnull
 	{
 		ArgumentNullException.ThrowIfNull(validator);
 

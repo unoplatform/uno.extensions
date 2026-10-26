@@ -72,6 +72,8 @@ public partial record PersonModel(IValidator Validator)
 }
 ```
 
+A `null` value has nothing to validate: the `IValidator` is not invoked and the value is considered as valid (the results are cleared). This differs from a delegate validator, which is invoked with `null`.
+
 > [!NOTE]
 > `IValidator` is declared in `Uno.Extensions.Core` (in the `Uno.Extensions.Validation` namespace), so MVUX can use it without a dependency on `Uno.Extensions.Validation`, which registers the implementation (`UseValidation`).
 
