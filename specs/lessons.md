@@ -285,3 +285,22 @@ for client-side negative caching before looking at the fake server.
 **Apply to:** `StubEntra` and any future fake IdP or token endpoint used across tests; also any
 test that deliberately drives an `invalid_grant`/`interaction_required` response — follow it by
 checking the next silent call still reaches the server.
+
+## Running the hot-reload runtime lane on Windows
+
+**Problem:** running `Uno.Extensions.RuntimeTests.dll` (desktop, `_HotReload` filter) on Windows after a plain `dotnet build -f net10.0-desktop` fails every HR test with `Timeout while waiting for metadata update`. The dev-server log (secondary-app output, `DEV_SERVER` prefix) shows `Failed to initialize compilation workspace, hot-reload is disabled`, for two reasons. `src/Directory.Build.props` hard-links `bin` outputs to their `obj` twins, so the running head pins the files the dev-server must re-emit (`The process cannot access the file '...\obj\...\Uno.Extensions.RuntimeTests.dll'`; a Restart Manager probe named the test app itself as the only locker). And the HR workspace loads the head for both `net10.0-desktop` and `net10.0`, so an unbuilt `net10.0` output makes the workspace compilation fail. Linux CI hits neither: an open file does not block a rewrite there, and the CI stage builds the whole `.slnf`.
+
+**Correct pattern:** with a gitignored `DebugPlatforms.props` restricting to Desktop (the same content `build/ci/stage-build-runtimetests-skia-hotreload.yml` writes), build the head for **all** its target frameworks with hard links disabled through global properties (the props set them unconditionally, so `DebugPlatforms.props` cannot override them), then run from the desktop output:
+
+```bash
+dotnet build src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests.csproj -c Debug -nodeReuse:false \
+  -p:GeneratePackageOnBuild=false -p:CreateHardLinksForCopyFilesToOutputDirectoryIfPossible=false \
+  -p:CreateHardLinksForCopyLocalIfPossible=false -p:CreateHardLinksForAdditionalFilesIfPossible=false \
+  -p:CreateHardLinksForPublishFilesIfPossible=false
+cd src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin/Uno.Extensions.RuntimeTests/Debug/net10.0-desktop
+UNO_RUNTIME_TESTS_RUN_TESTS='{"Filter": {"Value": "<test name>"}, "Attempts": 1}' UNO_RUNTIME_TESTS_OUTPUT_PATH=<results.xml> DOTNET_MODIFIABLE_ASSEMBLIES=debug dotnet Uno.Extensions.RuntimeTests.dll
+```
+
+Pass `"Attempts": 1` when diagnosing. The engine retries a failed test up to 3 times and reports only the last attempt; for an HR test the revert of attempt 1 is itself a delta, so retries fail earlier and for a different reason, hiding the real failure.
+
+**Apply to:** any HR-sensitive change (`*HotReload*` tests under `src/**/*.UI.Tests/`). Also: unit-level HR repros (`Reactive.Tests/IntegrationTests/Given_HotReload.cs`, hand-written `_v1` shadow types + `HotReloadService.UpdateApplication`) cannot reproduce Edit-and-Continue semantics, such as an EnC-updated constructor running a different getter than reflection on the original type. For #3226 the unit repro was green while the runtime test on a recreated view model was still red; only the runtime test exposed the second root cause (spec 015). Cover the "view model created after the delta" path in the runtime test, not just the live view model.
