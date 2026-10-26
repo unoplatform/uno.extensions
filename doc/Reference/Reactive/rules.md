@@ -50,6 +50,8 @@ the execution of the command is still aborted when the parameter is not valid, b
 
 Use an `IState<T>` as parameter of the command (`.Given(MyState)`).
 
+Only the runtime type of the parameter matters: a property declared as a feed but returning a state (e.g. `public IFeed<Person> Person => State.Value(...)`) is not reported. The analyzer follows the expression body or initializer of a property, field or local declared in the same file; if it cannot determine the value, it does not report anything.
+
 ## Mock0001
 
 **No mock is generated for a model whose view-model has no public constructor.**

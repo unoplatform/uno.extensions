@@ -1,4 +1,4 @@
-extern alias ReactiveGenerator;
+﻿extern alias ReactiveGenerator;
 
 using System;
 using System.Collections.Immutable;
@@ -74,6 +74,48 @@ public class Given_CommandValidationDiagnostic
 			""");
 
 		diagnostics.Should().BeEmpty();
+	}
+
+	[TestMethod]
+	public async Task When_GivenStateDeclaredAsFeed_Then_NoDiagnostic()
+	{
+		var diagnostics = await Run("""
+			public IFeed<string> NameAsFeed => State.Value(this, () => "");
+			public IFeed<string> NameAsFeedWithGetter { get => State.Value(this, () => ""); }
+			public IFeed<string> NameAlias => NameAsFeed;
+
+			public IAsyncCommand Submit => Command.Create(b => b
+				.Given(NameAsFeed)
+				.Validation(async (name, ct) => name.Length > 0, "required")
+				.Then(async (name, ct) => { }));
+
+			public IAsyncCommand Submit2 => Command.Create(b => b
+				.Given(NameAsFeedWithGetter)
+				.Validation(async (name, ct) => name.Length > 0, "required")
+				.Then(async (name, ct) => { }));
+
+			public IAsyncCommand Submit3 => Command.Create(b => b
+				.Given(NameAlias)
+				.Validation(async (name, ct) => name.Length > 0, "required")
+				.Then(async (name, ct) => { }));
+			""");
+
+		diagnostics.Should().BeEmpty("a feed property which returns a state is a state at runtime");
+	}
+
+	[TestMethod]
+	public async Task When_GivenFeedOfUnknownImplementation_Then_NoDiagnostic()
+	{
+		var diagnostics = await Run("""
+			public IFeed<string> External { get { return Uno.Extensions.Reactive.Feed.Async(async ct => ""); } }
+
+			public IAsyncCommand Submit => Command.Create(b => b
+				.Given(External)
+				.Validation(async (name, ct) => name.Length > 0, "required")
+				.Then(async (name, ct) => { }));
+			""");
+
+		diagnostics.Should().BeEmpty("the runtime type of the parameter cannot be determined");
 	}
 
 	[TestMethod]
