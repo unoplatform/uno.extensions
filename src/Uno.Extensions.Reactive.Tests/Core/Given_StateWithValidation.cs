@@ -923,8 +923,8 @@ public class Given_StateWithValidation : FeedTests
 	public async Task When_ResultsOfEarlierVersionCompleteLast_Then_Discarded()
 	{
 		var state = new StateImpl<string>(Context, Option.Some("initial"));
-		var earlier = StateImpl<string>.NextValidationVersion();
-		var later = StateImpl<string>.NextValidationVersion();
+		var earlier = ValidationHelper.NextVersion();
+		var later = ValidationHelper.NextVersion();
 
 		await state.PublishValidationAsync(ImmutableList.Create(new ValidationResult("later")), isCurrent: null, later, CT);
 		await state.PublishValidationAsync(ImmutableList.Create(new ValidationResult("earlier")), isCurrent: null, earlier, CT);

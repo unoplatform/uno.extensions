@@ -116,9 +116,9 @@ public class Given_CommandValidation : FeedUITests
 		sut.Executions.Should().BeEmpty();
 		sut.Errors.Should().ContainSingle()
 			.Which.InnerException.Should().BeOfType<InvalidOperationException>()
-			.Which.InnerException.Should().BeOfType<TestException>();
+			.Which.InnerException.Should().BeNull("the message of the error of the validator might contain user input");
 		sut.Completions.Last().Error.Should().BeOfType<InvalidOperationException>()
-			.Which.Message.Should().Contain("validation").And.NotContain("updated"); // No user input in the error
+			.Which.Message.Should().Contain("validation").And.Contain(nameof(TestException)).And.NotContain("updated"); // No user input in the error
 		Validation(state).Should().Equal("invalid");
 	}
 
@@ -142,6 +142,33 @@ public class Given_CommandValidation : FeedUITests
 		await WaitFor(() => sut.Completions.Count == 1);
 
 		sut.Executions.Should().Equal("value");
+	}
+
+	[TestMethod]
+	public async Task When_ResultsPublishedWhileValidating_Then_ResultsOfExecutionDiscarded()
+	{
+		var state = new StateImpl<string>(Context, Option.Some("value"));
+		var validating = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+		var validation = new TaskCompletionSource<IEnumerable<ValidationResult>>(TaskCreationOptions.RunContinuationsAsynchronously);
+		var sut = Create(b => b
+			.Given(state)
+			.Validation((value, ct) =>
+			{
+				validating.TrySetResult();
+				return new ValueTask<IEnumerable<ValidationResult>>(validation.Task);
+			})
+			.Then(Execute));
+		await sut.WaitForCanExecute();
+		sut.Command.Execute(null);
+		await validating.Task;
+
+		await state.SetValidationAsync(Error("manual"), CT);
+		validation.SetResult(Error("invalid"));
+		await WaitFor(() => sut.Completions.Count == 1);
+
+		// The results published after the validation started win: the last validation started wins, not the last one to complete.
+		Validation(state).Should().Equal("manual");
+		sut.Executions.Should().BeEmpty();
 	}
 
 	[TestMethod]
@@ -440,7 +467,7 @@ public class Given_CommandValidation : FeedUITests
 		sut.Executions.Should().BeEmpty();
 		sut.Errors.Should().ContainSingle()
 			.Which.InnerException.Should().BeOfType<InvalidOperationException>()
-			.Which.InnerException.Should().BeOfType<TaskCanceledException>();
+			.Which.Message.Should().Contain(nameof(TaskCanceledException));
 	}
 
 	[TestMethod]
