@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
@@ -16,6 +16,30 @@ namespace Uno.Extensions.Reactive.Core;
 /// </summary>
 internal static class ValidationHelper
 {
+	private static long _version;
+
+	/// <summary>
+	/// Gets the version to use to publish validation results, taken when a validation starts (cf. <see cref="IValidationTarget.PublishValidationAsync"/>).
+	/// </summary>
+	/// <remarks>Global (not per state nor per type of value), so versions remain comparable no matter the type through which a state is seen.</remarks>
+	public static long NextVersion()
+		=> Interlocked.Increment(ref _version);
+
+	/// <summary>
+	/// Gets the method to publish validation results on the given parameter of a command or a state, if it is a state.
+	/// </summary>
+	/// <remarks>
+	/// A state created by the State factories publishes through its single entry point (cf. <see cref="IValidationTarget"/>), no matter the type through which it is seen (covariance).
+	/// Any other state publishes using <see cref="IState{T}.UpdateMessageAsync"/>, so results follow the update rules of that state (the version is then ignored).
+	/// </remarks>
+	public static Func<IImmutableList<ValidationResult>, long, CancellationToken, ValueTask>? GetPublisher<T>(IFeed<T>? feed)
+		=> feed switch
+		{
+			IValidationTarget target => target.PublishValidationAsync,
+			IState<T> state => (results, _, ct) => state.UpdateMessageAsync(msg => msg.Validation(results), ct),
+			_ => null,
+		};
+
 	/// <summary>
 	/// Materializes validation results, ignoring null results (i.e. <see cref="ValidationResult.Success"/>).
 	/// </summary>

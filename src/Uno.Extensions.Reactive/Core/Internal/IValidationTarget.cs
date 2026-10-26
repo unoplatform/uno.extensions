@@ -16,6 +16,7 @@ internal interface IValidationTarget
 	/// Publishes validation results on the <see cref="MessageAxis.Validation"/> of this state.
 	/// </summary>
 	/// <param name="results">The results to publish (empty to clear).</param>
+	/// <param name="version">The version of the results (cf. <see cref="ValidationHelper.NextVersion"/>), taken when the validation started: results older than the ones already published are dropped.</param>
 	/// <param name="ct">A cancellation token: the results are not published if already cancelled, and the wait for the publication is aborted when cancelled.</param>
-	ValueTask PublishValidationAsync(IImmutableList<ValidationResult> results, CancellationToken ct);
+	ValueTask PublishValidationAsync(IImmutableList<ValidationResult> results, long version, CancellationToken ct);
 }

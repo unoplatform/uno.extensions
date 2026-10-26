@@ -29,7 +29,6 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	private ValidationLoop? _validation;
 	private ValidationUpdate? _validationResults;
 	private object? _failedValidator; // The source of the validator whose failure has been logged at the error level, cf. LogFailure.
-	private static long _validationVersion; // Shared by the states (not per instance), so versions remain comparable when results are redirected to the state that replaced this one.
 
 	/// <summary>
 	/// Gets the context to which this state belongs.
@@ -204,7 +203,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		}
 
 		// The version is taken before running the validator: if results are published (e.g. using SetValidationAsync) while it runs, they win.
-		var version = NextValidationVersion();
+		var version = ValidationHelper.NextVersion();
 
 		// Note: Some(null) is a value (unlike None): the validator is invoked with null.
 		var hasValue = data.IsSome(out var value);
@@ -303,8 +302,8 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	}
 
 	/// <inheritdoc />
-	ValueTask IValidationTarget.PublishValidationAsync(IImmutableList<ValidationResult> results, CancellationToken ct)
-		=> PublishValidationAsync(results, isCurrent: null, NextValidationVersion(), ct);
+	ValueTask IValidationTarget.PublishValidationAsync(IImmutableList<ValidationResult> results, long version, CancellationToken ct)
+		=> PublishValidationAsync(results, isCurrent: null, version, ct);
 
 	/// <summary>
 	/// Publishes validation results on the <see cref="MessageAxis.Validation"/> of this state, replacing the results previously published.
@@ -317,7 +316,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	/// so this check is atomic with other updates of the state and results are not shown for another value.
 	/// </param>
 	/// <param name="version">
-	/// The version of the results (cf. <see cref="NextValidationVersion"/>), taken when the validation started:
+	/// The version of the results (cf. <see cref="ValidationHelper.NextVersion"/>), taken when the validation started:
 	/// results are not published if results of a later version have already been published, so the last validation started wins (not the last one to complete).
 	/// </param>
 	/// <param name="ct">A cancellation token: the results are not published if already cancelled, and the wait for the publication is aborted when cancelled.</param>
@@ -367,12 +366,6 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 			await applied.WaitAsync(cts.Token).ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
 		}
 	}
-
-	/// <summary>
-	/// Gets the version to use to publish validation results (cf. <see cref="PublishValidationAsync"/>).
-	/// </summary>
-	internal static long NextValidationVersion()
-		=> Interlocked.Increment(ref _validationVersion);
 
 	private void StopValidation()
 	{

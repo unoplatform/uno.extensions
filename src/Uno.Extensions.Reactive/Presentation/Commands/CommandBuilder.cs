@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
@@ -106,17 +106,12 @@ public readonly struct CommandBuilder<T> : ICommandBuilder, ICommandBuilder<T>, 
 		IFeed<T>? parameter,
 		Func<object?, CancellationToken, ValueTask<IEnumerable<ValidationResult>>> validator)
 	{
-		// Note: A state created by the State factories is an IValidationTarget no matter the type of the parameter,
-		//		 so results can be published even if the parameter is a state of a derived type (covariance).
-		Func<IImmutableList<ValidationResult>, CancellationToken, ValueTask>? publish = parameter switch
-		{
-			IValidationTarget target => target.PublishValidationAsync,
-			IState<T> state => (results, ct) => state.UpdateMessageAsync(msg => msg.Validation(results), ct),
-			_ => null,
-		};
+		var publish = ValidationHelper.GetPublisher(parameter);
 
 		return async (value, ct) =>
 		{
+			// The version is taken before running the validator: if another execution starts while it runs, its results win.
+			var version = ValidationHelper.NextVersion();
 			IImmutableList<ValidationResult> results;
 			try
 			{
@@ -128,16 +123,24 @@ public readonly struct CommandBuilder<T> : ICommandBuilder, ICommandBuilder<T>, 
 			}
 			catch (Exception error)
 			{
-				// Wrapped to give context (without the value which might contain user input),
-				// but also to make sure that a cancellation which is not ours (e.g. the timeout of an HttpClient) faults the execution instead of silently cancelling it.
-				throw new InvalidOperationException($"The validation of the parameter of the command '{name}' failed.", error);
+				// The error is reported to the error handler of the command, which logs it at the error level by default:
+				// like for the validator of a state, its message (which might contain user input) is logged only at the debug level.
+				var errorLog = LogExtensions.Log<AsyncCommand>();
+				if (errorLog.IsEnabled(LogLevel.Debug))
+				{
+					errorLog.LogDebug(error, "Validation failure details for the command '{Command}'.", name);
+				}
+
+				// Wrapped (without the original error) to give context, but also to make sure that a cancellation which is not ours
+				// (e.g. the timeout of an HttpClient) faults the execution instead of silently cancelling it.
+				throw new InvalidOperationException($"The validation of the parameter of the command '{name}' failed with an '{error.GetType().Name}' (details are logged at the debug level).");
 			}
 
 			if (publish is not null)
 			{
-				// Results are published unconditionally (no matter if the state has changed since the execution started),
-				// as they describe the submitted value and are expected to remain until the next execution.
-				await publish(results, ct).ConfigureAwait(false);
+				// Results are published no matter if the state has changed since the execution started, as they describe the submitted value
+				// and are expected to remain until the next execution (but they are dropped if another execution started in the meantime).
+				await publish(results, version, ct).ConfigureAwait(false);
 			}
 
 			if (results.Count is 0)
@@ -152,15 +155,17 @@ public readonly struct CommandBuilder<T> : ICommandBuilder, ICommandBuilder<T>, 
 				if (log.IsEnabled(LogLevel.Warning))
 				{
 					log.LogWarning(
-						"The execution of the command '{Command}' has been aborted as its parameter is not valid ({Count} validation errors), "
+						"The execution of the command '{Command}' has been aborted as its parameter is not valid ({Count} validation errors, on members: {Members}), "
 						+ "but the validation results cannot be published as the parameter of the command is not a state (cf. FEED2003).",
 						name,
-						results.Count);
+						results.Count,
+						string.Join(", ", results.SelectMany(result => result.MemberNames).Distinct()));
 				}
 			}
-			else if (log.IsEnabled(LogLevel.Debug))
+			else if (log.IsEnabled(LogLevel.Information))
 			{
-				log.LogDebug("The execution of the command '{Command}' has been aborted as its parameter is not valid ({Count} validation errors).", name, results.Count);
+				// Information (not debug): WinUI controls do not render validation errors by themselves, so the app might show nothing.
+				log.LogInformation("The execution of the command '{Command}' has been aborted as its parameter is not valid ({Count} validation errors).", name, results.Count);
 			}
 
 			return false;
