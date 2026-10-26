@@ -642,8 +642,8 @@ public class Given_StateWithValidation : FeedTests
 	public void When_NoMessageResolved_Then_ResultsNotCopied()
 	{
 		var localizer = new ValidationLocalizer(new TestLocalizer());
-		IEnumerable<ValidationResult> none = Array.Empty<ValidationResult>();
-		IEnumerable<ValidationResult> notFound = [new ValidationResult("Not a key.")];
+		var none = ImmutableList<ValidationResult>.Empty;
+		var notFound = ImmutableList.Create(new ValidationResult("Not a key."));
 
 		localizer.Localize<string>(none).Should().BeSameAs(none);
 		localizer.Localize<string>(notFound).Should().BeSameAs(notFound);

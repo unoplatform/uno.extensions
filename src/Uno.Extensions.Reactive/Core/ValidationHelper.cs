@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
@@ -56,11 +56,14 @@ internal static class ValidationHelper
 	/// <summary>
 	/// Adapts a validator which returns the error message of an invalid value (null or empty when valid).
 	/// </summary>
-	/// <remarks>The error is reported for the validated value itself (its <see cref="ValidationResult.MemberNames"/> is empty).</remarks>
+	/// <remarks>
+	/// The error is reported for the validated value itself (its <see cref="ValidationResult.MemberNames"/> is empty).
+	/// Results are produced as an immutable list, so they are published as is (cf. <see cref="ToResults"/>).
+	/// </remarks>
 	public static AsyncFunc<T, IEnumerable<ValidationResult>> FromErrorMessage<T>(AsyncFunc<T, string?> getErrorMessage)
 		=> async (value, ct) => await getErrorMessage(value, ct).ConfigureAwait(false) is { Length: > 0 } message
-			? [new ValidationResult(message)]
-			: Array.Empty<ValidationResult>();
+			? ImmutableList.Create(new ValidationResult(message))
+			: ImmutableList<ValidationResult>.Empty;
 
 	/// <summary>
 	/// Adapts a predicate (true when the value is valid) and the error to report when the value is not valid.
@@ -74,7 +77,7 @@ internal static class ValidationHelper
 	/// <remarks>A null value (e.g. a null command parameter provided by the view) has nothing to validate: it is considered as valid.</remarks>
 	public static AsyncFunc<T, IEnumerable<ValidationResult>> FromValidator<T>(IValidator validator)
 		=> (value, ct) => value is null
-			? new(Array.Empty<ValidationResult>())
+			? new(ImmutableList<ValidationResult>.Empty)
 			: validator.ValidateAsync(value, null, ct);
 
 	/// <summary>
