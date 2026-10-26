@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -29,6 +29,7 @@ internal sealed class BindableValidationErrors
 
 	private readonly Action<string> _onErrorsChanged;
 	private readonly Action _onHasErrorsChanged;
+	private readonly Func<string, bool>? _isMember;
 
 	private Dictionary<string, IImmutableList<ValidationResult>>? _errors;
 	private Dictionary<string, SubBindable>? _subBindables;
@@ -41,10 +42,15 @@ internal sealed class BindableValidationErrors
 	/// </summary>
 	/// <param name="onErrorsChanged">Callback invoked when errors of a given member (or empty for the entity-level errors) changed.</param>
 	/// <param name="onHasErrorsChanged">Callback invoked when the <see cref="HasErrors"/> changed.</param>
-	public BindableValidationErrors(Action<string> onErrorsChanged, Action onHasErrorsChanged)
+	/// <param name="isMember">
+	/// Optional callback which determines if a name is a member of the owner: a result targeting a member which is not (e.g. a typo in its <see cref="ValidationResult.MemberNames"/>)
+	/// is reported as an entity-level error, as no binding would ever query it.
+	/// </param>
+	public BindableValidationErrors(Action<string> onErrorsChanged, Action onHasErrorsChanged, Func<string, bool>? isMember = null)
 	{
 		_onErrorsChanged = onErrorsChanged;
 		_onHasErrorsChanged = onHasErrorsChanged;
+		_isMember = isMember;
 	}
 
 	/// <summary>
@@ -183,6 +189,10 @@ internal sealed class BindableValidationErrors
 				}
 				Add(ref updatedSubResults, key, new BindableValidationResult(result, subMember));
 			}
+			else if (key.Length > 0 && _isMember?.Invoke(key) is false)
+			{
+				Add(ref updatedErrors, string.Empty, result);
+			}
 			else
 			{
 				// No sub-bindable for this member (e.g. a leaf value), so the owner is the one queried by bindings.
@@ -193,32 +203,33 @@ internal sealed class BindableValidationErrors
 		var hadErrors = HasErrors;
 		List<string>? changedMembers = null;
 
-		// Update the local errors
-		var keys = scope is not null
-			? new[] { scope }
-			: (_errors?.Keys ?? Enumerable.Empty<string>()).Concat(updatedErrors?.Keys ?? Enumerable.Empty<string>()).Distinct().ToArray();
-		foreach (var key in keys)
+		if (scope is not null)
 		{
-			var previous = _errors is not null && _errors.TryGetValue(key, out var p) ? p : _noErrors;
-			var updated = updatedErrors is not null && updatedErrors.TryGetValue(key, out var u) ? u.ToImmutableList() : _noErrors;
-
-			if (ValidationAxis.AreEquals(previous, updated))
+			UpdateErrors(scope, updatedErrors, ref changedMembers);
+		}
+		else
+		{
+			if (_errors is { Count: > 0 })
 			{
-				continue;
+				// Members which had errors and might not have any anymore (snapshot of the keys, as UpdateErrors removes them).
+				foreach (var key in _errors.Keys.ToArray())
+				{
+					if (updatedErrors?.ContainsKey(key) is not true)
+					{
+						UpdateErrors(key, updatedErrors, ref changedMembers);
+					}
+				}
 			}
 
-			if (updated.Count is 0)
+			if (updatedErrors is not null)
 			{
-				_errors!.Remove(key);
+				foreach (var key in updatedErrors.Keys)
+				{
+					UpdateErrors(key, updatedErrors, ref changedMembers);
+				}
 			}
-			else
-			{
-				(_errors ??= new(StringComparer.Ordinal))[key] = updated;
-			}
-			(changedMembers ??= new()).Add(key);
 		}
 
-		// Forward to sub-bindables
 		if (_subBindables is not null)
 		{
 			foreach (var subBindable in _subBindables)
@@ -233,7 +244,6 @@ internal sealed class BindableValidationErrors
 			}
 		}
 
-		// Finally raise events
 		if (changedMembers is not null)
 		{
 			foreach (var member in changedMembers)
@@ -245,6 +255,27 @@ internal sealed class BindableValidationErrors
 		{
 			_onHasErrorsChanged();
 		}
+	}
+
+	private void UpdateErrors(string key, Dictionary<string, List<ValidationResult>>? updatedErrors, ref List<string>? changedMembers)
+	{
+		var previous = _errors is not null && _errors.TryGetValue(key, out var p) ? p : _noErrors;
+		var updated = updatedErrors is not null && updatedErrors.TryGetValue(key, out var u) ? u : null;
+
+		if (ValidationAxis.AreEquals(previous, updated))
+		{
+			return;
+		}
+
+		if (updated is null or { Count: 0 })
+		{
+			_errors!.Remove(key);
+		}
+		else
+		{
+			(_errors ??= new(StringComparer.Ordinal))[key] = updated.ToImmutableList();
+		}
+		(changedMembers ??= new()).Add(key);
 	}
 
 	private static void Add<T>(ref Dictionary<string, List<T>>? dictionary, string key, T item)

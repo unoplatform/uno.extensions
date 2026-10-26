@@ -84,6 +84,7 @@ The generated view model, and the generated bindable of each record, implement `
 | `["FirstName"]` | `GetErrors("FirstName")` on the `Person` bindable, i.e. the source object of `{Binding Person.FirstName}` |
 | `["Address.Street"]` | `GetErrors("Street")` on the `Person.Address` bindable |
 | `["Address"]` | `GetErrors("Address")` on the `Person` bindable, and entity-level errors of the `Person.Address` bindable |
+| `["Nmae"]` (not a property of `Person`) | entity-level errors (`GetErrors(null)`) of the `Person` bindable, so they are not lost |
 
 For a state of a type that has no generated bindable (such as `IState<string> Name`), every result is exposed as `GetErrors("Name")` on the view model.
 

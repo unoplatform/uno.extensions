@@ -79,7 +79,8 @@ public class Bindable<
 	/// <remarks>This is not thread safe and is expected to be used only from the UI thread.</remarks>
 	private BindableValidationErrors Validation => _validation ??= new(
 		propertyName => _errorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName)),
-		() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasErrors))));
+		() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasErrors))),
+		static memberName => typeof(T).GetProperty(memberName) is not null);
 
 	/// <summary>
 	/// Creates a new instance.

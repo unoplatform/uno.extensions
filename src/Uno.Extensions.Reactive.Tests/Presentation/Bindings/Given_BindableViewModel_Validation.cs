@@ -12,13 +12,14 @@ using Uno.Extensions.Reactive.Testing;
 
 namespace Uno.Extensions.Reactive.Tests.Presentation.Bindings;
 
+/// <remarks>View models are created on the UI thread, so their dispatcher is resolved.</remarks>
 [TestClass]
 public partial class Given_BindableViewModel_Validation : FeedUITests
 {
 	[TestMethod]
 	public async Task When_PrimitiveStateValidated_Then_ErrorsChanged_And_HasErrors()
 	{
-		await using var sut = await ExecuteOnDispatcher(() => new When_Primitive_ViewModel()); // Created on the UI thread, so the dispatcher of the VM is resolved
+		await using var sut = await ExecuteOnDispatcher(() => new When_Primitive_ViewModel());
 		var errorsChanged = new List<string?>();
 		var hasErrorsChanged = 0;
 		var result = new ValidationResult("Required", new[] { "Name" });
@@ -49,7 +50,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 	[TestMethod]
 	public async Task When_PrimitiveStateValidatedWithoutMemberNames_Then_PropertyLevelErrors()
 	{
-		await using var sut = await ExecuteOnDispatcher(() => new When_Primitive_ViewModel()); // Created on the UI thread, so the dispatcher of the VM is resolved
+		await using var sut = await ExecuteOnDispatcher(() => new When_Primitive_ViewModel());
 		var result = new ValidationResult("Required");
 
 		await sut.Model.Name.UpdateMessageAsync(msg => msg.Validation(new[] { result }), CT);
@@ -63,7 +64,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 	[TestMethod]
 	public async Task When_IdenticalResults_Then_NoErrorsChanged()
 	{
-		await using var sut = await ExecuteOnDispatcher(() => new When_Primitive_ViewModel()); // Created on the UI thread, so the dispatcher of the VM is resolved
+		await using var sut = await ExecuteOnDispatcher(() => new When_Primitive_ViewModel());
 		var errorsChanged = 0;
 		await ExecuteOnDispatcher(() => ((INotifyDataErrorInfo)sut).ErrorsChanged += (snd, e) => errorsChanged++);
 
@@ -79,7 +80,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 	[TestMethod]
 	public async Task When_ValueSetFromView_Then_ValidationStillDelivered()
 	{
-		await using var sut = await ExecuteOnDispatcher(() => new When_Validated_ViewModel()); // Created on the UI thread, so the dispatcher of the VM is resolved
+		await using var sut = await ExecuteOnDispatcher(() => new When_Validated_ViewModel());
 		await WaitFor(async () => (await GetErrors(sut, "Name")).Any()); // Initial value is empty, so it's invalid
 
 		await ExecuteOnDispatcher(() => sut.Name = "valid");
@@ -95,7 +96,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 	[TestMethod]
 	public async Task When_RecordMemberValidated_Then_ErrorsRoutedToBindableRecord()
 	{
-		await using var sut = await ExecuteOnDispatcher(() => new When_Record_ViewModel()); // Created on the UI thread, so the dispatcher of the VM is resolved
+		await using var sut = await ExecuteOnDispatcher(() => new When_Record_ViewModel());
 		var person = (INotifyDataErrorInfo)sut.Person;
 		var personErrorsChanged = new List<string?>();
 		var personHasErrorsChanged = 0;
@@ -126,9 +127,23 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 	}
 
 	[TestMethod]
+	public async Task When_ResultTargetsUnknownMember_Then_EntityLevelErrorOfBindableRecord()
+	{
+		await using var sut = await ExecuteOnDispatcher(() => new When_Record_ViewModel());
+		var result = new ValidationResult("First name is required", new[] { "FristName" }); // Typo: no binding would ever query it
+
+		await sut.Model.Person.UpdateMessageAsync(msg => msg.Validation(new[] { result }), CT);
+		await WaitFor(async () => (await GetErrors(sut.Person, null)).Any());
+
+		(await GetErrors(sut.Person, null)).Should().Equal(result);
+		(await GetErrors(sut.Person, "FristName")).Should().BeEmpty();
+		(await ExecuteOnDispatcher(() => sut.Person.HasErrors)).Should().BeTrue();
+	}
+
+	[TestMethod]
 	public async Task When_NestedRecordMemberValidated_Then_ErrorsRoutedToNestedBindableRecord()
 	{
-		await using var sut = await ExecuteOnDispatcher(() => new When_Record_ViewModel()); // Created on the UI thread, so the dispatcher of the VM is resolved
+		await using var sut = await ExecuteOnDispatcher(() => new When_Record_ViewModel());
 		var result = new ValidationResult("Street is required", new[] { "Address.Street" });
 
 		await sut.Model.Person.UpdateMessageAsync(msg => msg.Validation(new[] { result }), CT);
@@ -144,7 +159,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 	[TestMethod]
 	public async Task When_RecordMemberOfRecordTypeValidated_Then_ErrorOnMember_And_EntityLevelOnNested()
 	{
-		await using var sut = await ExecuteOnDispatcher(() => new When_Record_ViewModel()); // Created on the UI thread, so the dispatcher of the VM is resolved
+		await using var sut = await ExecuteOnDispatcher(() => new When_Record_ViewModel());
 		var result = new ValidationResult("Address is invalid", new[] { "Address" });
 
 		await sut.Model.Person.UpdateMessageAsync(msg => msg.Validation(new[] { result }), CT);
@@ -158,7 +173,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 	[TestMethod]
 	public async Task When_RecordValidatedWithoutMemberNames_Then_PropertyLevel_And_EntityLevel()
 	{
-		await using var sut = await ExecuteOnDispatcher(() => new When_Record_ViewModel()); // Created on the UI thread, so the dispatcher of the VM is resolved
+		await using var sut = await ExecuteOnDispatcher(() => new When_Record_ViewModel());
 		var result = new ValidationResult("Person is invalid");
 
 		await sut.Model.Person.UpdateMessageAsync(msg => msg.Validation(new[] { result }), CT);
@@ -175,7 +190,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 		var initialized = false;
 		await using var sut = await ExecuteOnDispatcher(() =>
 		{
-			var vm = new When_ValidatedRecord_ViewModel(); // Created on the UI thread, so the dispatcher of the VM is resolved
+			var vm = new When_ValidatedRecord_ViewModel();
 			vm.PropertyChanged += (snd, e) => initialized |= e.PropertyName == nameof(vm.Person);
 			return vm;
 		});
@@ -195,7 +210,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 	[TestMethod]
 	public async Task When_RecordDeclaresHasErrors_Then_INotifyDataErrorInfoStillValid()
 	{
-		await using var sut = await ExecuteOnDispatcher(() => new When_RecordWithHasErrors_ViewModel()); // Created on the UI thread, so the dispatcher of the VM is resolved
+		await using var sut = await ExecuteOnDispatcher(() => new When_RecordWithHasErrors_ViewModel());
 		var result = new ValidationResult("Name is required", new[] { "Name" });
 
 		await sut.Model.Form.UpdateMessageAsync(msg => msg.Validation(new[] { result }), CT);
@@ -208,7 +223,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 	[TestMethod]
 	public async Task When_NoValidation_Then_NoErrorsChanged_And_NoStoreAllocated()
 	{
-		await using var sut = await ExecuteOnDispatcher(() => new When_Primitive_ViewModel()); // Created on the UI thread, so the dispatcher of the VM is resolved
+		await using var sut = await ExecuteOnDispatcher(() => new When_Primitive_ViewModel());
 		var errorsChanged = 0;
 		await ExecuteOnDispatcher(() => ((INotifyDataErrorInfo)sut).ErrorsChanged += (snd, e) => errorsChanged++);
 
@@ -227,7 +242,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 	[TestMethod]
 	public async Task When_PropertyWithoutValidation_Then_NoStoreAllocatedForSubBindables()
 	{
-		await using var owner = await ExecuteOnDispatcher(() => new When_Primitive_ViewModel()); // Created on the UI thread, so the dispatcher of the VM is resolved
+		await using var owner = await ExecuteOnDispatcher(() => new When_Primitive_ViewModel());
 
 		// Like an item of a list (cf. BindableEnumerable), the property does not provide any validation result.
 		var item = await ExecuteOnDispatcher(() =>

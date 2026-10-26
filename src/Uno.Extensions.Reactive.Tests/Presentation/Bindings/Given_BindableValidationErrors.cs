@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
@@ -51,6 +51,27 @@ public class Given_BindableValidationErrors
 
 		forwarded.Should().ContainSingle().Which.Should().Equal(new BindableValidationResult(firstName, "FirstName"));
 		sut.GetErrors("Person").Cast<ValidationResult>().Should().BeEmpty();
+	}
+
+	[TestMethod]
+	public void When_ResultTargetsUnknownMember_Then_EntityLevelError()
+	{
+		var changed = new List<string>();
+		var sut = new BindableValidationErrors(changed.Add, () => { }, isMember: name => name is "FirstName");
+		var known = new ValidationResult("First name is required", new[] { "FirstName" });
+		var unknown = new ValidationResult("Typo", new[] { "FristName" });
+
+		sut.Update(ImmutableList.Create(new BindableValidationResult(known, "FirstName"), new BindableValidationResult(unknown, "FristName")));
+
+		sut.GetErrors("FirstName").Cast<ValidationResult>().Should().Equal(known);
+		sut.GetErrors(null).Cast<ValidationResult>().Should().Equal(unknown);
+		sut.GetErrors("FristName").Cast<ValidationResult>().Should().BeEmpty();
+		changed.Should().BeEquivalentTo("FirstName", "");
+
+		sut.Update(ImmutableList<BindableValidationResult>.Empty);
+
+		sut.HasErrors.Should().BeFalse();
+		changed.Should().BeEquivalentTo("FirstName", "", "FirstName", "");
 	}
 
 	[TestMethod]
