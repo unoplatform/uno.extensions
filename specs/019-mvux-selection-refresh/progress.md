@@ -55,4 +55,3 @@ On a collection `Reset`, `Selector.ResetIndexIfNeeded()` sets `SelectedIndex = -
 - Reactive runtime slice (`Uno.Extensions.Reactive.WinUI.Tests & !HotReload`): 21 passed, 5 failed. The 5 also fail with `main`'s product code: the 3 ComboBox tests, `When_PreselectedItem_SelectedItems_ListView`, and `When_SelectSingleFromView_ListView` (pointer setup finds fewer than 2 realized items).
 - Reactive unit tests: 1492 passed, 0 failed, 19 skipped (one earlier run had a timeout in `Given_PaginatedListFeed.When_Async_Then_FlagIsLoading`, 5/5 in isolation).
 - `Uno.Extensions.Reactive.WinUI.csproj` Release (MSBuild, all TFMs): 0 warnings, 0 errors.
-
