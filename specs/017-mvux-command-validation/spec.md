@@ -71,7 +71,7 @@ Consequences:
 - Validation errors do not affect `CanExecute`: the user can always retry, which is what re-validates.
 - A validator exception faults the execution (reported to the error handler of the command like any `Then` failure); previous results are kept.
 - A successful validation clears the results (empty list).
-- The results are a (volatile) update of the state: like the edits of the user, they are dropped when the source of the state produces a new value (e.g. refresh of a `State.Async`, re-emission of `State.FromFeed`, hot-reload). Documented and tested.
+- The results are published through the single entry point of the state (the validation update of spec 015, replaced on each publication): they are kept when the source of the state produces a new value (e.g. refresh of a `State.Async`), until the next execution. Documented and tested.
 - Errors reported by commands no longer include the value of the parameter (the `ToString` of a form record exposed passwords in logs), only its type. This applies to all commands.
 
 ### 4.3 Coexistence with `State.Validate` — last writer wins
@@ -97,7 +97,7 @@ Under `TreatWarningsAsErrors` this is an error, which is intended for a misuse.
 ## 6. Performance / platform
 - No `.Validation`: one null check per execution.
 - With `.Validation`: one validator run + one state update (and message rebuild) per execution, on the background task of the command; no UI-thread work, no locks (WASM-safe). When the update pipeline is busy, one forced yield before the action.
-- Each execution adds a volatile update to the `UpdateFeed` of the state. They are compacted when the source of the state completes (e.g. `State.Value`); with a source which never completes (hot-reload `HotSwapFeed`, `State.FromFeed` over an infinite feed) they accumulate until the source emits, like the edits of a two-way binding.
+- Each execution replaces the single validation update of the state (no accumulation, whatever the source of the state).
 
 ## 7. Tests
 - `Given_CommandValidation` (`Uno.Extensions.Reactive.Tests`): invalid → not executed, results on the state, completed without error; valid → executed, results cleared; data change after a failed execution keeps the results; re-execution replaces them; validator throws → error handler, previous results kept; `IsExecuting` during validation; disposal cancels the validation; `When` false → not validated; single-rule/predicate/`IValidator` overloads; localization; guards; non-state `Given` → aborts, nothing published; last writer wins with `State.Validate`.

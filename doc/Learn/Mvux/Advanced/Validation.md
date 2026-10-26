@@ -156,7 +156,7 @@ On each execution, the command:
 2. publishes the results on the state given as parameter (`Given`), so they reach the view like the results of `Validate` (see [Consuming errors in the view](#consuming-errors-in-the-view));
 3. if there is any error, aborts the execution: the action given to `Then` is not invoked, and the execution completes without error.
 
-The results are **not** cleared when the value of the state is changed (e.g. by the user): they remain until the next execution of the command, which validates the value again (and clears them if it is valid). Like any change made on a state, they are however dropped if the source of the state produces a new value, for instance when a `State.Async` is refreshed.
+The results are **not** cleared when the value of the state is changed (e.g. by the user): they remain until the next execution of the command, which validates the value again (and clears them if it is valid), even if the source of the state produces a new value, for instance when a `State.Async` is refreshed.
 
 - `Validation` accepts the same validators as `Validate`: an `IValidator`, a delegate returning a list of `ValidationResult`, a delegate returning the error message, or a predicate and its error. Each takes an optional localizer as last argument (see [Localizing messages](#localizing-messages)).
 - Validation errors don't change `CanExecute`, so the user can always retry.
