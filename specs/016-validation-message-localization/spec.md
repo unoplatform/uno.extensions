@@ -50,7 +50,7 @@ Every overload takes an optional localizer as its **last** parameter:
 ```csharp
 // 1. Base (spec 015 §4.2): the only place where localization is handled.
 IState<T> Validate<T>(this IState<T> state,
-    Func<T, CancellationToken, ValueTask<IEnumerable<ValidationResult>>> validator,
+    AsyncFunc<T, IEnumerable<ValidationResult>> validator,
     IStringLocalizer? localizer = null);
 // 2. Single rule: returns the error (message, or key when localized); null/empty = valid.
 IState<T> Validate<T>(this IState<T> state, AsyncFunc<T, string?> validator, IStringLocalizer? localizer = null);
