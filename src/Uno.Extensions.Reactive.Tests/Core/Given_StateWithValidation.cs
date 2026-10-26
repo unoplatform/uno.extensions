@@ -735,6 +735,33 @@ public class Given_StateWithValidation : FeedTests
 
 
 	[TestMethod]
+	public async Task When_IValidatorOnNullableState_And_NullValue_Then_Valid_WithoutInvokingValidator()
+	{
+		var validator = new CountingValidator();
+		var state = new StateImpl<ValidatedPerson?>(Context, Option.Some<ValidatedPerson?>(new ValidatedPerson()));
+		_ = state.Validate(validator); // Compiles for a state of a nullable type (no notnull constraint)
+		await WaitFor(() => state.Current.Current.Validation.Count == 1);
+
+		await state.UpdateMessageAsync(msg => msg.Data(Option.Some<ValidatedPerson?>(null)), CT);
+
+		await WaitFor(() => state.Current.Current.Validation.Count == 0);
+		validator.Calls.Should().Be(1, "a null value has nothing to validate");
+	}
+
+	private sealed class CountingValidator : IValidator
+	{
+		private int _calls;
+
+		public int Calls => Volatile.Read(ref _calls);
+
+		public ValueTask<IEnumerable<ValidationResult>> ValidateAsync(object instance, ValidationContext? context = null, CancellationToken cancellationToken = default)
+		{
+			Interlocked.Increment(ref _calls);
+			return new(new[] { new ValidationResult("invalid") });
+		}
+	}
+
+	[TestMethod]
 	public void When_NullIValidator_Then_Throws()
 	{
 		var state = new StateImpl<ValidatedPerson>(Context, Option.Some(new ValidatedPerson()));
