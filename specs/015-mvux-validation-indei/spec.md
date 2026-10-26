@@ -47,11 +47,11 @@ MVUX has no validation story. `Uno.Extensions.Validation` (`IValidator.ValidateA
 
 ### 4.2 Producer — how results get onto the state (MVUX side)
 
-Two entry points, both writing the axis through the existing `StateImpl.UpdateMessageAsync` pipeline:
+Two entry points, both writing the axis through the update pipeline of the `StateImpl` (`PublishValidationAsync`):
 
 1. **Manual (always available):**
    ```csharp
-   await Person.SetValidationAsync(results, ct); // Shortcut for UpdateMessageAsync(m => m.Validation(results), ct)
+   await Person.SetValidationAsync(results, ct); // For a state not created by the State factories: UpdateMessageAsync(m => m.Validation(results), ct)
    ```
 2. **Declarative validator hook on the state (recommended surface):**
    ```csharp
@@ -61,6 +61,8 @@ Two entry points, both writing the axis through the existing `StateImpl.UpdateMe
    - Registers a validator **on the `StateImpl` itself** and returns the same instance (the VM requires a `StateImpl<T>` — `BindableViewModelBase.Property(string, IState<T>)` throws for custom implementations, so a wrapping state is not an option).
    - Idempotent: model property getters are re-evaluated, so re-registration replaces, never stacks.
    - After every `Data` change: cancel the in-flight validation, run the validator off the UI thread, then write `Validation` **only if the data is still the version that was validated** (reference/version check) — stale results are discarded.
+   - *Implemented (review panel, 20261020):* results are held by a single update per state, replaced on each publication (never stacked). Unlike a volatile data update, it is not dropped when the source of the state produces a new message: it is re-applied on each message, as long as the data equals the validated value. So a refresh producing an equal value (no `Data` change, no re-validation) keeps the results, and a new value does not show the results of the previous one.
+   - Each publication carries a version taken when its validation starts: results older than the published ones are dropped, so the last validation started wins (e.g. `SetValidationAsync` over a validator still running).
    - Validator exceptions are logged and do not fault the state (not surfaced as `Error` axis). Previous results are kept.
    - The validator runs only when the state has a value: `None` clears the results, `Undefined` keeps them. `Some(null)` is a value: the validator is invoked with `null`.
    - `IValidator` fits the delegate directly (`_validator.ValidateAsync`), so no bridge package is required. A convenience `Validate(this IState<T>, IValidator)` overload is an open question (§7 Q3).

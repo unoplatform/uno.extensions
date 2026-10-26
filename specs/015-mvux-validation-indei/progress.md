@@ -5,7 +5,7 @@
 | Q | Decision |
 | --- | --- |
 | 1 Producer surface | `State.Validate(IState<T>, validator)` registers on the `StateImpl` and returns it (mutating, idempotent: last registration wins, loop started once). |
-| 2 When to validate | Every `Data` change of the state, including the initial value. Explicit/"touched" triggers are a follow-up; the manual `SetValidationAsync(results)` (shortcut for `UpdateMessageAsync(m => m.Validation(...))`) covers explicit validation today. |
+| 2 When to validate | Every `Data` change of the state, including the initial value. Explicit/"touched" triggers are a follow-up; the manual `SetValidationAsync(results)` covers explicit validation today. |
 | 3 `IValidator` convenience | Not added (`_validator.ValidateAsync` fits the delegate directly). |
 | 4 Name collisions | INDEI members implemented explicitly on both bases + a public `HasErrors` for bindings, so only `HasErrors` can collide. A model/record member named `HasErrors` hides the public one (generated code already suppresses CS0108); new `FEED1001` (Info, so it does not break `TreatWarningsAsErrors` apps) reports it. |
 | 5 Read-only feeds | States only. The axis is `IsLocal`: operators never forward it. |
@@ -60,3 +60,32 @@ Additional behaviour choices:
 | Code quality: empty `catch` for the cancellation | Commented: expected when the value changes or the validation stops. |
 | Code quality: generic `catch` in `Validate` | Kept: the validator is user code and must never fault the state; `OperationCanceledException` is caught first, `Exception` is the logged fallback (AGENTS.md §8). |
 | Code quality: `__reactiveBindableViewModel` can be `readonly` (test) | Kept: hand-written stand-in of the generated code, where the bindable assigns the field (`ViewModelGenTool_2`), like the other `Given_HotReload` stubs. |
+
+## Review panel (20261020)
+
+Seven-agent panel on the whole stack (#3203, #3204, #3222). Findings that belong to this PR:
+
+| Finding | Resolution |
+| --- | --- |
+| H1 Results lost for good when the source re-emits an equal value (volatile update dropped, no `Data` change so no re-validation) | One validation update per state, replaced on each publication, kept across source messages and re-applied while the data matches (`When_SourceProducesSameValue_Then_ResultsKept`, red before). |
+| H2 Runtime tests required by §9 missing | `Reactive.UI.Tests`: `Given_Validation` (two-way `TextBox`, record member) and `Given_HotReload.When_UpdateValidatorInModel_Then_ErrorsFromUpdatedValidator`; run on desktop, mutation-checked. |
+| M1 `When_RecordMemberSetFromView_Then_ValidationDelivered` flaky | The first push of the state to the view model is asynchronous and overwrote the edit of the test (reproduced by delaying it). The test waits for it. The race itself is pre-existing on `main` (an edit from the view right after load is reverted): to fix in its own PR. |
+| M4 One validation update per keystroke kept over a never-completing source | Single replaced update (cf. H1). |
+| M5 "Last writer wins" was "last to complete wins" | Version taken when the validation starts; older results dropped (`When_ResultsOfEarlierVersionCompleteLast_Then_Discarded`). |
+| M6 Stale-value check never exercised | `When_SourceProducesNewValue_Then_ResultsOfPreviousValueNotShown` (the check now runs on each source message). |
+| M8 Different rules for custom `IState` | Documented: `Validate` needs a factory state (`NotSupportedException`), `SetValidationAsync` falls back to `UpdateMessageAsync` for other states. |
+| M10 Validator failures logged without identity | Logs name the validator (user type + method) and the value type, message still at Debug only. |
+| M11 `HasErrors` in a user partial → `CS0108` | Already listed in the PR breaking-change note and `Validation.md`. |
+| M12 Validation stores allocated for list items | A sub-property provides validation only if its owner does (`When_PropertyWithoutValidation_Then_NoStoreAllocatedForSubBindables`). |
+| L2 Base `Validate` took a `Func<…>` | Now `AsyncFunc<T, IEnumerable<ValidationResult>>`, like the other overloads (API reviewed). |
+| L5 / L6 / L12 / L13 | Threading and cancellation documented; publish failures logged apart; validator + token swapped atomically; fewer allocations. |
+| L9 Sub-bindable handlers never unsubscribed | Not changed: sub-bindables subscribe once, from the constructors of the generated bindables, so handlers cannot pile up. |
+| L10 `ErrorsChanged` handler exception escapes | Not changed: same behavior as a throwing `PropertyChanged` handler. |
+| L11 Results for an unknown member never displayed | Reported as entity-level errors of the bindable of the record. |
+| L16 Narrating comments | Removed. |
+| L17 Tests of the internal `BindableValidationErrors` | Kept: routing unit tests, the behavior is also covered end to end. |
+
+Follow-ups (design, M14):
+
+- "Local" axis forwarding is decided per operator (`MessageManager(forwardLocalAxes)` opted in by `UpdateFeed` only, `CombineFeedHelper`): model it once (e.g. on the identity-preserving feeds) so new operators don't have to decide.
+- `StateImpl` holds the whole validation loop: extract it (e.g. a `StateValidation<T>` attached like `StateForEach`), keeping only the publication and the hot-swap stop in the state.
