@@ -74,7 +74,34 @@ public class Given_DesktopWebAuthenticationBroker
 	}
 
 	/// <summary>
-	/// <c>response_mode=form_post</c>: the identity provider's auto-submitting form POSTs the
+	/// The Web provider matches the result against its configured callback string with
+	/// <c>StartsWith</c>, so the result must keep the callback as written - not the normalized
+	/// form <see cref="Uri"/> produces (lowercased host, default port dropped).
+	/// </summary>
+	[TestMethod]
+	public async Task When_CallbackNotNormalized_Then_ResultKeepsCallbackAsWritten()
+	{
+		var broker = new TestBroker();
+		var port = broker.GetCurrentApplicationCallbackUri().Port;
+		var configured = $"http://LocalHost:{port}/Authentication-Callback";
+		using var http = new HttpClient();
+		Task<HttpResponseMessage>? browser = null;
+		broker.OnLaunch = (request, ct) =>
+		{
+			browser = http.GetAsync($"http://localhost:{port}/authentication-callback?code=stub-code", ct);
+			return Task.CompletedTask;
+		};
+		using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+
+		var result = await broker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, new Uri(configured), cts.Token);
+
+		(await browser!).EnsureSuccessStatusCode();
+		result.ResponseStatus.Should().Be(WebAuthenticationStatus.Success);
+		result.ResponseData.Should().Be($"{configured}?code=stub-code");
+	}
+
+	/// <summary>
+	/// <c>response_mode=form_post</c>:the identity provider's auto-submitting form POSTs the
 	/// response to the callback instead of redirecting with a query. Same result shape.
 	/// </summary>
 	[TestMethod]

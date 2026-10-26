@@ -192,6 +192,26 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 		return port;
 	}
 
+	/// <summary>
+	/// Forgets <paramref name="port"/> as the default port when it is the current one.
+	/// </summary>
+	/// <returns><see langword="true"/> when <paramref name="port"/> was the default port.</returns>
+	private static bool TryForgetDefaultPort(int port) =>
+		Interlocked.CompareExchange(ref _defaultPort, 0, port) == port;
+
+	/// <summary>
+	/// The callback URI as the caller wrote it, without its query or fragment. The Web provider
+	/// matches the result against its configured string with <c>StartsWith</c>, which the
+	/// normalized form (<see cref="Uri.GetLeftPart"/>: host lowercased, default port dropped)
+	/// would fail without an error.
+	/// </summary>
+	private static string CallbackBase(Uri callbackUri)
+	{
+		var original = callbackUri.OriginalString.Trim();
+		var end = original.IndexOfAny(['?', '#']);
+		return end < 0 ? original : original[..end];
+	}
+
 	private static bool IsFreeOn(IPAddress address, int port)
 	{
 		try
@@ -257,6 +277,17 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 		ApiExtensibility.Register(
 			typeof(IWebAuthenticationBrokerProvider),
 			_ => new DesktopWebAuthenticationBrokerProvider());
+
+		// Register is a silent no-op when another provider got in between the check above and
+		// this call, so resolve the registration to see which one won. The registry, not the
+		// static broker, so nothing is pinned. The owner is null because that is what the broker
+		// passes: a factory registered by someone else sees the same call it will in production.
+		if (!ApiExtensibility.CreateInstance<IWebAuthenticationBrokerProvider>(null!, out var winner) ||
+			winner?.GetType() != typeof(DesktopWebAuthenticationBrokerProvider))
+		{
+			return DesktopWebAuthenticationBrokerRegistration.OtherProviderRegistered;
+		}
+
 		Volatile.Write(ref _registered, 1);
 		return DesktopWebAuthenticationBrokerRegistration.Registered;
 	}
@@ -337,7 +368,7 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 		{
 			// Forget a default port that would not bind, so the next flow probes for another rather
 			// than failing on this one until the app restarts. A pinned port is the app's to fix.
-			var wasDefault = Interlocked.CompareExchange(ref _defaultPort, 0, callbackUri.Port) == callbackUri.Port;
+			var wasDefault = TryForgetDefaultPort(callbackUri.Port);
 			if (Logger.IsEnabled(LogLevel.Error))
 			{
 				Logger.LogError(ex, "Unable to listen on {Prefix} for the sign-in redirect: the port is in use, or this user may not bind it. {Remedy}", prefix, wasDefault ? "The next sign-in attempt picks a new port (restart the app if the redirect URI was captured at startup)" : "Pin a different port through the callback URI, or free the port");
@@ -451,7 +482,7 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 				// Rebuild from the configured callback rather than echoing the raw request URL, so
 				// the result matches what the caller registered. Relayed fragments are restored to
 				// their original response shape; the sentinel means the redirect was genuinely bare.
-				var callbackBase = callbackUri.GetLeftPart(UriPartial.Path);
+				var callbackBase = CallbackBase(callbackUri);
 				var (responseData, shape) = query switch
 				{
 					NoFragmentSentinelQuery => (callbackBase, "bare redirect"),
