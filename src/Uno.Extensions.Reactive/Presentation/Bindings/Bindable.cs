@@ -177,7 +177,8 @@ public class Bindable<
 			_property.CanWrite && set is not null
 				? (update, isLeafPropertyChanged, ct) => OnSubPropertyUpdated(propertyName, get, set, update, isLeafPropertyChanged, ct)
 				: default,
-			onValidationUpdated => Validation.Subscribe(propertyName, onValidationUpdated));
+			// If our own property does not provide validation results, our sub-properties cannot have any either: we don't allocate the store of errors.
+			_property.CanProvideValidation ? onValidationUpdated => Validation.Subscribe(propertyName, onValidationUpdated) : null);
 
 	/// <summary>
 	/// Gets the current value.

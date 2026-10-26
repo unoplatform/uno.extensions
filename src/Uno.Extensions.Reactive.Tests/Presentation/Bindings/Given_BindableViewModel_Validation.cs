@@ -224,6 +224,27 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 			.BeNull();
 	}
 
+	[TestMethod]
+	public async Task When_PropertyWithoutValidation_Then_NoStoreAllocatedForSubBindables()
+	{
+		await using var owner = await ExecuteOnDispatcher(() => new When_Primitive_ViewModel()); // Created on the UI thread, so the dispatcher of the VM is resolved
+
+		// Like an item of a list (cf. BindableEnumerable), the property does not provide any validation result.
+		var item = await ExecuteOnDispatcher(() =>
+		{
+			var person = new ValidationPerson("John", new ValidationAddress("Main street"));
+			return new BindableValidationPersonViewModel(new BindablePropertyInfo<ValidationPerson>(
+				owner,
+				"Item",
+				(Feed.Async(async ct => person), onUpdated => onUpdated(person)),
+				setter: null));
+		});
+
+		var validationField = typeof(Bindable<ValidationPerson>).GetField("_validation", BindingFlags.Instance | BindingFlags.NonPublic)!;
+		validationField.GetValue(item).Should().BeNull("the sub-bindables of the item cannot receive any validation result");
+		typeof(Bindable<ValidationAddress>).GetField("_validation", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(item.Address).Should().BeNull();
+	}
+
 	private async Task<ValidationResult[]> GetErrors(object bindable, string? propertyName)
 		=> await ExecuteOnDispatcher(() => ((INotifyDataErrorInfo)bindable).GetErrors(propertyName).Cast<ValidationResult>().ToArray());
 
