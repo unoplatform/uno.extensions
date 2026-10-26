@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -16,6 +16,8 @@ namespace Uno.Extensions.Reactive.Generator.Commands;
 /// <remarks>
 /// This follows the fluent configuration of the command (`.Given(x).When(...).Validation(...)`) back to its parameter.
 /// Configurations that cannot be followed (e.g. a builder stored in a local) are not reported, to avoid false positives.
+/// Likewise, a parameter declared as a feed is reported only if it is known to not be a state at runtime
+/// (e.g. `IFeed&lt;T&gt; Person => State.Value(...)` is a state, so it is not reported).
 /// </remarks>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed class CommandValidationAnalyzer : DiagnosticAnalyzer
@@ -72,9 +74,8 @@ public sealed class CommandValidationAnalyzer : DiagnosticAnalyzer
 
 				case IInvocationOperation { TargetMethod.Name: "Given", Arguments.Length: 1 } given
 					when SymbolEqualityComparer.Default.Equals(given.TargetMethod.ContainingType, symbols.Builder):
-					// Note: We also unwrap explicit conversions (e.g. `Given((IFeed<T>)MyState)`), as only the runtime type matters to publish the results.
-					var parameter = Unwrap(given.Arguments[0].Value, includeExplicit: true);
-					if (parameter?.Type is { } type and not IErrorTypeSymbol && !IsState(type, symbols.State))
+					var parameter = given.Arguments[0].Value;
+					if (IsKnownNotAState(parameter, symbols, depth: 0) && Unwrap(parameter, includeExplicit: true)?.Type is { } type)
 					{
 						context.ReportDiagnostic(Rules.FEED2003.GetNotAStateDiagnostic(GetLocation(validation), parameter.Syntax.ToString(), type));
 					}
@@ -100,6 +101,61 @@ public sealed class CommandValidationAnalyzer : DiagnosticAnalyzer
 
 		return operation;
 	}
+
+	/// <summary>
+	/// Determines if the value given as parameter of the command is known to not be a state at runtime (only the runtime type matters to publish the results).
+	/// </summary>
+	/// <remarks>
+	/// A property, a field or a local declared as a feed is followed to its expression body or initializer (if declared in the same file),
+	/// as it might be a state (e.g. `IFeed&lt;T&gt; Person => State.Value(...)`). If it cannot be followed, it is not reported.
+	/// </remarks>
+	private static bool IsKnownNotAState(IOperation? operation, Symbols symbols, int depth)
+	{
+		// Note: We also unwrap explicit conversions (e.g. `Given((IFeed<T>)MyState)`), as only the runtime type matters to publish the results.
+		operation = Unwrap(operation, includeExplicit: true);
+		if (operation?.Type is not { } type || type is IErrorTypeSymbol || IsState(type, symbols.State))
+		{
+			return false;
+		}
+
+		var symbol = operation switch
+		{
+			IPropertyReferenceOperation property => property.Property,
+			IFieldReferenceOperation field => field.Field,
+			ILocalReferenceOperation local => (ISymbol)local.Local,
+			_ => null,
+		};
+		if (symbol is null)
+		{
+			return true; // The expression itself produces the value (e.g. Feed.Async(...)): its type is the one of the value.
+		}
+
+		const int maxDepth = 3; // Indirections followed (e.g. a property returning another property)
+		if (depth >= maxDepth
+			|| symbol.DeclaringSyntaxReferences is not { Length: 1 } references
+			|| GetValueSyntax(references[0].GetSyntax()) is not { } value
+			|| value.SyntaxTree != operation.Syntax.SyntaxTree
+			|| operation.SemanticModel?.GetOperation(value) is not { } valueOperation)
+		{
+			return false;
+		}
+
+		return IsKnownNotAState(valueOperation, symbols, depth + 1);
+	}
+
+	private static ExpressionSyntax? GetValueSyntax(SyntaxNode declaration)
+		=> declaration switch
+		{
+			PropertyDeclarationSyntax { ExpressionBody.Expression: var body } => body,
+			PropertyDeclarationSyntax { Initializer.Value: var initializer, AccessorList: { } accessors }
+				when accessors.Accessors.All(accessor => accessor.Body is null && accessor.ExpressionBody is null) => initializer, // Auto-property
+			PropertyDeclarationSyntax { AccessorList.Accessors: var accessors }
+				when accessors.SingleOrDefault(accessor => accessor.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.GetAccessorDeclaration)) is { ExpressionBody.Expression: var getter } => getter,
+			VariableDeclaratorSyntax { Initializer.Value: var initializer, Parent: VariableDeclarationSyntax { Parent: FieldDeclarationSyntax { Modifiers: var modifiers } } }
+				when modifiers.Any(modifier => modifier.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.ReadOnlyKeyword)) => initializer,
+			VariableDeclaratorSyntax { Initializer.Value: var initializer, Parent: VariableDeclarationSyntax { Parent: LocalDeclarationStatementSyntax } } => initializer,
+			_ => null,
+		};
 
 	private static bool IsMemberOf(IMethodSymbol method, INamedTypeSymbol type)
 		=> SymbolEqualityComparer.Default.Equals(method.ContainingType.OriginalDefinition, type);
