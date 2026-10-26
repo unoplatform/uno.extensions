@@ -81,6 +81,56 @@ public class Given_OidcAuthenticationProvider
 			.And.Contain("id_token_hint=stub-id-token", "without the hint the identity provider does not redirect back after sign-out");
 	}
 
+	/// <summary>
+	/// Without a cached id_token (the Web provider's tokens, or a cache a failed refresh emptied)
+	/// the end-session request must carry no hint at all: a blank one is rejected by the identity
+	/// provider where a missing one is tolerated.
+	/// </summary>
+	[TestMethod]
+	[DataRow(null)]
+	[DataRow("")]
+	[DataRow("  ")]
+	public async Task When_LogoutWithoutIdToken_Then_NoHintSent(string? idToken)
+	{
+		StaticBrokerRegistration.EnsureRegistered();
+		var browser = new RecordingBrowser();
+		var tokens = new InMemoryTokenCache();
+		var cached = new Dictionary<string, string> { [TokenCacheExtensions.AccessTokenKey] = "stub-access-token" };
+		if (idToken is not null)
+		{
+			cached[TokenCacheExtensions.IdTokenKey] = idToken;
+		}
+		await tokens.SaveAsync(OidcAuthenticationProvider.DefaultName, cached, CancellationToken.None);
+		var provider = CreateProvider(browser, tokens);
+		provider.Build();
+		using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+
+		await provider.LogoutAsync(dispatcher: null, cts.Token);
+
+		browser.StartUrls.Should().ContainSingle()
+			.Which.Should().StartWith(EndSessionEndpoint)
+			.And.NotContain("id_token_hint", "a missing id_token must not be sent as an empty hint");
+	}
+
+	/// <summary>
+	/// A sign-out the caller cancels mid-browser must surface as cancellation, not as a completed
+	/// sign-out: the authentication service clears the tokens on the exception path with a live
+	/// token, whereas a <c>true</c> would clear them with the cancelled one.
+	/// </summary>
+	[TestMethod]
+	public async Task When_LogoutCancelled_Then_CancellationPropagates()
+	{
+		StaticBrokerRegistration.EnsureRegistered();
+		var provider = CreateProvider(new CancellingBrowser(), new InMemoryTokenCache());
+		provider.Build();
+		using var cts = new CancellationTokenSource();
+		cts.Cancel();
+
+		Func<Task> act = async () => await provider.LogoutAsync(dispatcher: null, cts.Token);
+
+		await act.Should().ThrowAsync<OperationCanceledException>("the OIDC client must not turn the caller's cancellation into a logout result");
+	}
+
 	private const string EndSessionEndpoint = "https://stub-idp.example/endsession";
 
 	private static OidcAuthenticationProvider CreateProvider(IBrowser browser, ITokenCache tokens)
@@ -122,6 +172,13 @@ public class Given_OidcAuthenticationProvider
 			EndUrls.Add(options.EndUrl);
 			return Task.FromResult(new BrowserResult { ResultType = BrowserResultType.UserCancel });
 		}
+	}
+
+	/// <summary>A browser whose flow the caller's token has already cancelled.</summary>
+	private sealed class CancellingBrowser : IBrowser
+	{
+		public Task<BrowserResult> InvokeAsync(BrowserOptions options, CancellationToken cancellationToken = default)
+			=> Task.FromCanceled<BrowserResult>(cancellationToken);
 	}
 
 	/// <summary>No configured section: the settings' Options are what the provider builds from.</summary>

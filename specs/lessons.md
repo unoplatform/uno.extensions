@@ -328,3 +328,11 @@ Pass `"Attempts": 1` when diagnosing. The engine retries a failed test up to 3 t
 **Correct pattern:** types built outside DI (Uno's extensibility registry, static helpers) take an optional `ILogger` through a protected constructor and fall back to `this.Log()` lazily; the test double passes a capturing logger whose `IsEnabled` is always `true`, and the leak test asserts the capture saw the type's own lines before asserting what it did not see. `typeof(T).Log()` (the `Type` overload) does not cache and is the right call for a one-off line from a static method.
 
 **Apply to:** any `this.Log()` user that a test needs to observe, and any assertion on log *absence* - it is vacuous unless the same test proves the logger was wired.
+
+## `Process.Start` failures carry the command line in the exception message; never log one raw when it is a URL
+
+**Problem:** on Windows, `Process.Start(new ProcessStartInfo(url) { UseShellExecute = true })` that fails (no browser association, AppLocker, kiosk) throws a `Win32Exception` whose message is formatted from `startInfo.FileName` - the whole request URL, with `state`, `nonce`, `login_hint` and, for an end-session request, the `id_token_hint` JWT. The desktop broker logged that exception at Error and rethrew it, and the OIDC provider logged the exception text again as `LoginResult.Error`. The token-leak guard did not see it because the test double overrides the launcher. `open`/`xdg-open` with `ArgumentList` are not affected (the argument is not in the message).
+
+**Correct pattern:** treat a launcher exception as token-bearing. Log the `NativeErrorCode` and the launcher's name, not the exception; rethrow a new `Win32Exception(ex.NativeErrorCode, fixedMessage)` with **no inner exception** (`ToString()` prints inner exceptions too). Cover it with a test whose fake launcher throws a `Win32Exception` carrying the request URL and asserts neither the log nor the thrown exception's `ToString()` contains it (`When_BrowserLaunchFails_Then_RequestUriNotLoggedAndNextFlowRuns`).
+
+**Apply to:** every place a URL, a connection string or a command line with secrets is handed to `Process.Start`, `ShellExecute` or any API that echoes its input into an exception; also to catch blocks that log `ex` from a user-overridable seam, since the override's exception is not ours to trust.

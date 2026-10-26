@@ -46,4 +46,14 @@ internal sealed class CapturingLogger : ILogger
 		}
 	}
 }
+
+/// <summary>Hands one <see cref="CapturingLogger"/> to every category, for a host's logging.</summary>
+internal sealed class CapturingLoggerProvider(CapturingLogger logger) : ILoggerProvider
+{
+	public ILogger CreateLogger(string categoryName) => logger;
+
+	public void Dispose()
+	{
+	}
+}
 #endif
