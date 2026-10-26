@@ -51,7 +51,7 @@ public static class HostBuilderExtensions
 #if !WINDOWS
 		// A builder without a host registers nothing, so neither does the broker. No-op off
 		// Skia Desktop, and first registration wins - see TryRegister.
-		DesktopWebAuthenticationBrokerProvider.TryRegister();
+		hostBuilder.RegisterDesktopWebAuthenticationBroker();
 #endif
 
 		hostBuilder = hostBuilder

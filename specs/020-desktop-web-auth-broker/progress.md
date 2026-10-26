@@ -54,6 +54,38 @@ returned **fix-first**; this note records each finding and what was done about i
 | 21 | low | Test hardcodes relay markers; `options` unused (contract, architect) | Not changed: the markers are the served page's protocol; `options` is the interface parameter. |
 | 22 | info | net9.0 comment, `Cache-Control: no-store`, OIDC sample pointer, relay drops the callback's own query, `__MACCATALYST__` dead | Comment fixed; `no-store` added and asserted; sample pointer added. The relay/query edge case and the dead symbol are left as is. |
 
+## Second review-panel round (fix-first)
+
+The panel re-ran on the branch with the first round's fixes in place and returned **fix-first**
+(security `fix-before-merge`, skeptic `fix-first`, the other five `approve-with-changes`). The
+agreed fix set and what was done:
+
+| # | Severity | Finding (reviewers) | Status |
+| --- | --- | --- | --- |
+| H1 | high | On Windows Skia Desktop a failed `Process.Start(url) { UseShellExecute = true }` throws a `Win32Exception` whose message is the request URL (`login_hint`, and `id_token_hint` on sign-out); logged at Error by the broker and again as `LoginResult.Error` by the OIDC provider (security) | Fixed at the broker's one catch: the log carries the launcher's name and `NativeErrorCode` only, and a fresh `Win32Exception(code, fixed message)` without inner exception is rethrown. Red/green: `When_BrowserLaunchFails_Then_RequestUriNotLoggedAndNextFlowRuns` (also proves the one-flow guard is released). Lesson added. |
+| H2 | high | `WebAuthenticatorBrowser` collapsed every exception into `UnknownError`; with both timeouts at five minutes the OIDC client's fires first, so the broker's `Timeout` mapping never ran in production; a caller cancel read as a failed sign-in; CTSs never disposed; `Debug.WriteLine` (skeptic, operability, performance) | Fixed: the caller's cancellation propagates as `OperationCanceledException` (so a cancelled sign-out takes `AuthenticationService`'s exception path, which clears tokens with a live token); the client's own timeout maps to `Timeout`; both CTSs disposed; `ILogger<WebAuthenticatorBrowser>` injected (parameterless ctor kept, public type); `Error = ex.Message`. Red/green: `When_OidcTimeoutElapsesFirst_Then_TimeoutResult`, `When_CallerCancels_Then_CancellationPropagates`; `When_LogoutCancelled_Then_CancellationPropagates` proves the OIDC client does not swallow it. |
+| M1 | medium | Pooled form-post buffer returned uncleared (performance, security) | `Return(buffer, clearArray: true)`. |
+| M2 | medium | The "another provider is already registered" line ran at builder time, before any logger exists, so it reached `NullLogger` in every real app (operability, architect) | Fixed without moving the registration later (it must stay ahead of any static-broker touch; MSAL's `WithWebRedirectUri` runs at provider-build time, so builder time is safe): `RegisterDesktopWebAuthenticationBroker` registers at builder time and adds an `IServiceInitialize` that logs the outcome through the host's `ILogger` once built (Debug when registered, Information when another provider won). One line per host. The architect's "move into `ConfigureServices`" was not taken for that reason. Covered by `Given_DesktopWebAuthenticationBrokerRegistration.When_AnotherProviderRegisteredFirst_Then_LoggedOnceThroughHostLogger`, which builds a real host with `AddOidc().AddWeb()` and a capturing logging provider. |
+| M3 | medium | `TryRegister` returns `true` after an early static-broker touch pinned Uno's stub; the test helper's assertion had the same gap (operability, skeptic) | `WebAuthenticatorBrowser` maps `NotImplementedException` to an error naming `TryRegister` and `AddOidc`; `TryRegister`'s `<returns>` states the limit; both HowTo pages name the symptom; `EnsureRegistered` asserts the static broker's callback is the double's. Red/green: `When_BrokerNotImplemented_Then_ErrorNamesRegistrationOrder`. |
+| M7 | medium | No guard for the no-id_token branch of the logout hint (quality) | `When_LogoutWithoutIdToken_Then_NoHintSent` (`null`, empty, whitespace). |
+| L6 | low | `Rent(MaxFormPostLength + 1)` = 32769 chars landed in the 65536-char bucket, on the LOH (performance) | `MaxFormPostLength = 32 * 1024 - 1`; comment corrected. |
+| L7 | low | Public parameterless ctor with no external caller (contract) | One `protected DesktopWebAuthenticationBrokerProvider(ILogger? logger = null)`. |
+| L8 | low | `WebAuthenticatorBrowser` had no XML docs (contract, quality) | Added. |
+| L10 | low | Negative platform list dead beside the positive allow-list (quality) | Removed. |
+| M6 | medium | `UpdatingExtensions.md` covered only the desktop broker (contract) | The cross-platform OIDC changes (result types, cancellation propagation, `id_token_hint`) added to the Authentication bullet. |
+
+Left for follow-up, as agreed: M4 (Web provider ignores the token and `ResponseStatus`; #3169), M5 (an
+opt-out once Uno ships its own desktop broker), L1-L5, L9, L11-L15 and the info items.
+
+### Verification
+
+- [x] Red run (tests written first, product untouched): 28 pass, 4 fail - H1, H2 (two), M3 - for
+      the predicted reasons; M7 and the cancellation-propagation guard already pass.
+- [x] Green run after the fixes: 33/33 in the desktop head (macOS, `net10.0-desktop`,
+      `Authentication.UI.Tests` filter), the registration-announcer case included.
+- [x] Release build of `Uno.Extensions.Authentication.Oidc.WinUI` (with `Authentication.WinUI`):
+      no warnings in the touched files.
+
 ## Also in this branch
 
 - Docs validation on `main` is red (`specs/018` unknown words, MD012 double blank lines in

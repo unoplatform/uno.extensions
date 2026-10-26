@@ -97,9 +97,10 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 	/// <summary>
 	/// The largest <c>response_mode=form_post</c> body read, in characters. Any page in the system
 	/// browser can POST to the loopback port, so the read is bounded; an authorization response is
-	/// a code, a state and at most an id_token - a few KB. Small enough to stay off the LOH.
+	/// a code, a state and at most an id_token - a few KB. One short of a pool bucket, so the
+	/// limit-plus-one buffer the read rents is a 64 KB array and stays off the LOH.
 	/// </summary>
-	private const int MaxFormPostLength = 32 * 1024;
+	private const int MaxFormPostLength = 32 * 1024 - 1;
 
 	/// <summary>
 	/// How long the "sign-in complete" page may take to write. The response has already arrived by
@@ -134,18 +135,12 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 	private int _announced;
 
 	/// <summary>
-	/// Creates the broker Uno's extensibility registry instantiates on the broker's first use.
-	/// </summary>
-	public DesktopWebAuthenticationBrokerProvider()
-	{
-	}
-
-	/// <summary>
-	/// Creates a broker that logs through <paramref name="logger"/>: for a derived broker that
-	/// carries a DI-provided logger instead of the ambient one.
+	/// Creates the broker. Uno's extensibility registry instantiates it through
+	/// <see cref="TryRegister"/>; a derived broker can carry a DI-provided <paramref name="logger"/>
+	/// instead of the ambient one.
 	/// </summary>
 	/// <param name="logger">The logger to use, or <see langword="null"/> for the ambient logger.</param>
-	protected DesktopWebAuthenticationBrokerProvider(ILogger? logger)
+	protected DesktopWebAuthenticationBrokerProvider(ILogger? logger = null)
 	{
 		_logger = logger;
 	}
@@ -229,43 +224,41 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 	/// <returns>
 	/// <see langword="true"/> when this broker is the registered provider (registered now or by an
 	/// earlier call); <see langword="false"/> on the platforms that keep their native broker, or
-	/// when another provider was registered first and keeps winning.
+	/// when another provider was registered first and keeps winning. <see langword="true"/> does
+	/// not prove the static <see cref="WebAuthenticationBroker"/> uses it: one touched before this
+	/// call keeps Uno's built-in provider, which throws <see cref="NotImplementedException"/> on
+	/// Skia Desktop.
 	/// </returns>
-	public static bool TryRegister()
-	{
-		if (OperatingSystem.IsAndroid() || OperatingSystem.IsIOS() || OperatingSystem.IsMacCatalyst() || OperatingSystem.IsBrowser())
-		{
-			return false;
-		}
+	public static bool TryRegister() =>
+		Register() == DesktopWebAuthenticationBrokerRegistration.Registered;
 
+	/// <summary>
+	/// <see cref="TryRegister"/>, telling the two negative outcomes apart for the line
+	/// <c>AddWeb</c>/<c>AddOidc</c> log once the host (and its logger) exists.
+	/// </summary>
+	internal static DesktopWebAuthenticationBrokerRegistration Register()
+	{
 		if (!(OperatingSystem.IsWindows() || OperatingSystem.IsLinux() || OperatingSystem.IsMacOS()))
 		{
-			return false;
+			return DesktopWebAuthenticationBrokerRegistration.NotDesktop;
 		}
 
 		if (Volatile.Read(ref _registered) == 1)
 		{
-			return true;
+			return DesktopWebAuthenticationBrokerRegistration.Registered;
 		}
 
 		if (ApiExtensibility.IsRegistered<IWebAuthenticationBrokerProvider>())
 		{
-			// The registry keeps the first registration; the app's provider handles sign-in. Said
-			// once at Information so a missing loopback broker is explainable from the log.
-			var logger = typeof(DesktopWebAuthenticationBrokerProvider).Log();
-			if (logger.IsEnabled(LogLevel.Information))
-			{
-				logger.LogInformation("An IWebAuthenticationBrokerProvider is already registered; the desktop loopback broker is not used");
-			}
-
-			return false;
+			// The registry keeps the first registration; the app's provider handles sign-in.
+			return DesktopWebAuthenticationBrokerRegistration.OtherProviderRegistered;
 		}
 
 		ApiExtensibility.Register(
 			typeof(IWebAuthenticationBrokerProvider),
 			_ => new DesktopWebAuthenticationBrokerProvider());
 		Volatile.Write(ref _registered, 1);
-		return true;
+		return DesktopWebAuthenticationBrokerRegistration.Registered;
 	}
 
 	/// <inheritdoc />
@@ -363,13 +356,18 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 			}
 			catch (Win32Exception ex)
 			{
-				// Process.Start's "No such file or directory" names nothing; say which launcher.
+				// Process.Start reports a failed launch with the command line in the message - on
+				// Windows that is the request URL, with the login hint and, on sign-out, the
+				// id_token hint - so neither the exception nor its message may reach the log or
+				// the caller (the OIDC provider logs the exception text). The native error code
+				// and the launcher's name say what went wrong without it; no inner exception,
+				// since ToString() would print it.
 				if (Logger.IsEnabled(LogLevel.Error))
 				{
-					Logger.LogError(ex, "The system browser could not be opened for the sign-in request: {Launcher} failed to start", BrowserLauncherName);
+					Logger.LogError("The system browser could not be opened for the sign-in request: {Launcher} failed to start (native error {ErrorCode})", BrowserLauncherName, ex.NativeErrorCode);
 				}
 
-				throw;
+				throw new Win32Exception(ex.NativeErrorCode, $"The system browser could not be opened for the sign-in request: {BrowserLauncherName} failed to start (native error {ex.NativeErrorCode}).");
 			}
 
 			if (Logger.IsEnabled(LogLevel.Debug))
@@ -537,7 +535,9 @@ public class DesktopWebAuthenticationBrokerProvider : IWebAuthenticationBrokerPr
 		}
 		finally
 		{
-			ArrayPool<char>.Shared.Return(buffer);
+			// The body was a code, a state and possibly an id_token: cleared before the array
+			// goes back to the process-wide pool for anything else to rent.
+			ArrayPool<char>.Shared.Return(buffer, clearArray: true);
 		}
 	}
 

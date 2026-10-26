@@ -62,9 +62,11 @@ internal static class StaticBrokerRegistration
 	public static TestBroker Shared { get; } = new();
 
 	/// <summary>
-	/// Registers <see cref="Shared"/> (once) and proves it is what the registry hands out. Fails
-	/// loudly otherwise: a stray earlier registration would pin the real broker, and driving a
-	/// flow through it would open a real browser on the test agent.
+	/// Registers <see cref="Shared"/> (once) and proves it is what the registry hands out and what
+	/// the static broker bound to. Fails loudly otherwise: a stray earlier registration would pin
+	/// the real broker, and driving a flow through it would open a real browser on the test agent;
+	/// an earlier touch of the static broker on an empty registry pins Uno's throwing stub, and
+	/// every flow would fail as <see cref="NotImplementedException"/> with nothing naming the cause.
 	/// </summary>
 	public static TestBroker EnsureRegistered()
 	{
@@ -77,6 +79,11 @@ internal static class StaticBrokerRegistration
 			.Should().BeTrue("the test double must be the registered broker provider");
 		ReferenceEquals(registered, Shared)
 			.Should().BeTrue("another IWebAuthenticationBrokerProvider was registered before this suite; the static broker would open a real browser");
+
+		// The registry holding Shared does not prove the static broker uses it: it resolves its
+		// provider once, in its static constructor. Same instant, same default port on both sides.
+		Windows.Security.Authentication.Web.WebAuthenticationBroker.GetCurrentApplicationCallbackUri()
+			.Should().Be(Shared.GetCurrentApplicationCallbackUri(), "the static WebAuthenticationBroker was touched before this suite registered its double and kept Uno's built-in provider");
 
 		Shared.Reset();
 		return Shared;

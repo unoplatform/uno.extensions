@@ -312,7 +312,7 @@ public class Given_DesktopWebAuthenticationBroker
 	}
 
 	[TestMethod]
-	public async Task When_Cancelled_Then_CancellationPropagates()
+	public async Task When_Cancelled_Then_CancellationPropagatesAndNextFlowRuns()
 	{
 		var broker = new TestBroker();
 		var callback = broker.GetCurrentApplicationCallbackUri();
@@ -322,6 +322,36 @@ public class Given_DesktopWebAuthenticationBroker
 		Func<Task> act = () => broker.AuthenticateAsync(WebAuthenticationOptions.None, RequestUri, callback, cts.Token);
 
 		await act.Should().ThrowAsync<OperationCanceledException>();
+		using var http = new HttpClient();
+		await CompleteAsync(broker, callback, (request, ct) => http.GetAsync($"{callback}?code=stub-code", ct), CancellationToken.None);
+	}
+
+	/// <summary>
+	/// <c>Process.Start</c> reports a failed launch with the command line in the exception
+	/// message - on Windows that is the request URL, with the login hint and, on sign-out, the
+	/// id_token hint. Nothing of the launcher's exception may reach the log or the exception the
+	/// caller sees; the native error code and the launcher's name are what an operator needs. The
+	/// failed flow must also release the one-flow guard.
+	/// </summary>
+	[TestMethod]
+	public async Task When_BrowserLaunchFails_Then_RequestUriNotLoggedAndNextFlowRuns()
+	{
+		var broker = new TestBroker();
+		var callback = broker.GetCurrentApplicationCallbackUri();
+		var request = new Uri($"{RequestUri}&login_hint=secret-hint");
+		broker.OnLaunch = (uri, ct) => throw new System.ComponentModel.Win32Exception(2, $"An error occurred trying to start process '{uri.AbsoluteUri}' with working directory '/'. The system cannot find the file specified.");
+		using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+
+		Func<Task> act = () => broker.AuthenticateAsync(WebAuthenticationOptions.None, request, callback, cts.Token);
+
+		var thrown = (await act.Should().ThrowAsync<System.ComponentModel.Win32Exception>()).Which;
+		thrown.NativeErrorCode.Should().Be(2, "the launcher's error code is what tells a missing browser from a denied one");
+		thrown.ToString().Should().NotContain("secret", "the launcher's message carries the request URL, and the OIDC provider logs the exception text");
+		broker.Logs.Text.Should().Contain("Error:", "the failed launch must be logged");
+		broker.Logs.Text.Should().NotContain("secret", "no request parameter may appear in the log");
+
+		using var http = new HttpClient();
+		await CompleteAsync(broker, callback, (uri, ct) => http.GetAsync($"{callback}?code=stub-code", ct), cts.Token);
 	}
 
 	/// <summary>
