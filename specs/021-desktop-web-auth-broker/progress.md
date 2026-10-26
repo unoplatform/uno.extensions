@@ -1,4 +1,4 @@
-# 020 - Desktop WebAuthenticationBroker: review-panel follow-up
+# 021 - Desktop WebAuthenticationBroker: review-panel follow-up
 
 Branch `dev/sb/desktop-web-auth-broker`, PR #3261. The feature commit adds
 `DesktopWebAuthenticationBrokerProvider` (system browser + loopback `HttpListener`) and registers
@@ -86,6 +86,23 @@ opt-out once Uno ships its own desktop broker), L1-L5, L9, L11-L15 and the info 
 - [x] Release build of `Uno.Extensions.Authentication.Oidc.WinUI` (with `Authentication.WinUI`):
       no warnings in the touched files.
 
+## PR review (Xiaoy312, code-quality bot)
+
+Approved with inline comments; the branch was rebased onto `main` first, which renumbered this
+folder from `020` to `021` (`main` now has `020-uno-ui-lottie-reference`).
+
+| # | Comment | Status |
+| --- | --- | --- |
+| R1 | The cancellation change alters behavior on every platform (WinAppSDK included): a cancelled `LoginAsync` now throws instead of returning `false`, and no longer clears the stored tokens | Kept here, as the reviewer accepted it: called out as a behavior change in the PR description, and `UpdatingExtensions.md` now states both effects. |
+| R2 | `GetLeftPart` normalizes the callback (host lowercased, default port dropped), so the Web provider's `StartsWith(loginCallbackUri)` misses and the token is lost silently | Fixed: the result is rebuilt from `OriginalString` without its query or fragment. Red/green: `When_CallbackNotNormalized_Then_ResultKeepsCallbackAsWritten` (red: `http://localhost:...` vs the configured `http://LocalHost:...`). |
+| R3 | `IsRegistered` then `Register` is not atomic: a provider registered in between wins, yet `Registered` is returned | Fixed: after `Register`, the registry is resolved (`CreateInstance`, null owner, as the static broker does) and `Registered` is returned only when the instance is exactly this type. Re-checking `IsRegistered` would not close the gap (it is true either way). No deterministic repro for the window; the existing registration tests cover both outcomes of the early check. |
+| R4 | Only the Uno host runs `IServiceInitialize`, so the registration line is never written in other hosts | Both How-To pages say so, point at the broker's first-flow Information line as the host-independent signal, and note both lines need `CoreLogLevel` at `Information` or lower. |
+| R5 | Spec numbering, missing `spec.md`, "spec 017 F11" clashing with `main`'s 017 | Renumbered to `021`, `spec.md` added, the reference now names #3169's own spec. |
+| R6 | Static field written from an instance method (bot, twice) | `TryForgetDefaultPort(int)` static helper; behavior unchanged. |
+
+Verification: 34/34 in the desktop head (macOS, `net10.0-desktop`, `Authentication.UI.Tests`
+filter, `Attempts: 1`); red run before the R2 fix: 20 passed, 1 failed for the predicted reason.
+
 ## Also in this branch
 
 - Docs validation on `main` is red (`specs/018` unknown words, MD012 double blank lines in
@@ -99,8 +116,8 @@ opt-out once Uno ships its own desktop broker), L1-L5, L9, L11-L15 and the info 
   back, and the loopback broker waited out its five-minute timeout before the app cleared its tokens.
   Fixed: the cached id_token is passed as `IdTokenHint`, and the caller's `CancellationToken` reaches
   `LogoutAsync`. Red/green: `Given_OidcAuthenticationProvider.When_Logout_Then_CachedIdTokenSentAsHint`.
-  The same change is in #3169 (spec 017 F11), which also honors `LogoutResult.IsError` (F2); that
-  behavior change stays there.
+  The same change is in #3169 (finding F11 of the spec that PR adds), which also honors
+  `LogoutResult.IsError` (its F2); that behavior change stays there.
 - Live check: the sample app on macOS desktop, built against packages packed from this branch.
   Before the fix sign-out returned after 5:00.38; after it, the demo's signed-out page carries the
   "return to the application" link to the loopback callback, and following it (bare redirect, then
