@@ -401,6 +401,7 @@ partial class State
 	/// This is useful to validate on demand, for instance the whole form when the user clicks Save.
 	/// The results are kept until they are replaced: by another call to this method, or, if a validator has been set using <c>Validate</c>, by its results on the next data change of the state.
 	/// Unlike an update of the data, they are not dropped when the source of the state produces a new value.
+	/// They also win over the results of a validation which was already running when this method is invoked.
 	/// This works with any <see cref="IState{T}"/>: for a state which has not been created using the MVUX State factories, the results are set using <see cref="IState{T}.UpdateMessageAsync"/>
 	/// (so they follow the update rules of that state).
 	/// </remarks>
@@ -413,7 +414,7 @@ partial class State
 		var validation = results?.ToImmutableList();
 
 		return state is StateImpl<T> impl
-			? impl.PublishValidationAsync(validation, isCurrent: null, ct)
+			? impl.PublishValidationAsync(validation, isCurrent: null, StateImpl<T>.NextValidationVersion(), ct)
 			: state.UpdateMessageAsync(msg => msg.Validation(validation), ct);
 	}
 }
