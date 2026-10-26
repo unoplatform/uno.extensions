@@ -1,5 +1,7 @@
 #if DEBUG // Hot-reload tests are only relevant in debug configuration
 using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
@@ -187,6 +189,69 @@ public class Given_HotReload
 		await TestHelper.TryWaitFor(() => text2.Text == "2", 5000, ct);
 		Assert.AreEqual("2", text2.Text, "Commands of a view model created after the delta must update the state the view is bound to.");
 	}
+
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_UpdateValidatorInModel_Then_ErrorsFromUpdatedValidator(CancellationToken ct)
+	{
+		var timeout = TimeSpan.FromSeconds(5);
+		await using var vm = new MvuxHotReloadValidationViewModel();
+		var textBox = CreateTwoWayTextBox("Name");
+		var ui = new StackPanel { DataContext = vm, Children = { textBox } };
+		var history = new List<string[]>();
+		((INotifyDataErrorInfo)vm).ErrorsChanged += (snd, e) => history.Add(GetValidationErrors(vm, "Name"));
+
+		await UIHelper.Load(ui, ct);
+		await TestHelper.WaitFor(() => GetValidationErrors(vm, "Name") is ["original:initial"], timeout, ct);
+
+		textBox.Text = "edited";
+		await TestHelper.WaitFor(() => GetValidationErrors(vm, "Name") is ["original:edited"], timeout, ct);
+
+		// HR: change the error message produced by the validator of the state
+		await using var delta = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadValidationModel.cs",
+			"""new ValidationResult($"original:""",
+			"""new ValidationResult($"updated:""",
+			ct);
+
+		// The live VM can be hot-patched onto the state of the updated model (which is then validated on its own), let it settle before editing.
+		await TestHelper.TryWaitFor(() => GetValidationErrors(vm, "Name") is [var error] && error.StartsWith("updated:", StringComparison.Ordinal), timeout, ct);
+		var historyBeforeEdits = history.Count;
+
+		textBox.Text = "after";
+		await TestHelper.WaitFor(() => GetValidationErrors(vm, "Name") is ["updated:after"], timeout, ct);
+		textBox.Text = "after2"; // Marker: the 'after' value has been processed by all the subscribers of the state.
+		await TestHelper.WaitFor(() => GetValidationErrors(vm, "Name") is ["updated:after2"], timeout, ct);
+
+		Assert.AreEqual("after2", vm.Name);
+		var errorsAfterEdits = history.Skip(historyBeforeEdits).SelectMany(errors => errors).ToArray();
+		Assert.IsFalse(
+			errorsAfterEdits.Any(error => error.StartsWith("original:", StringComparison.Ordinal)),
+			$"The validator of the previous version of the model must no longer publish results (got [{string.Join(", ", errorsAfterEdits)}]).");
+
+		// A view model created after the delta (e.g. a recreated page) must use the updated validator from the start.
+		await using var vm2 = new MvuxHotReloadValidationViewModel();
+		var textBox2 = CreateTwoWayTextBox("Name");
+		var ui2 = new StackPanel { DataContext = vm2, Children = { textBox2 } };
+
+		await UIHelper.Load(ui2, ct);
+		await TestHelper.TryWaitFor(() => GetValidationErrors(vm2, "Name") is ["updated:initial"], timeout, ct);
+		CollectionAssert.AreEqual(new[] { "updated:initial" }, GetValidationErrors(vm2, "Name"), "A view model created after the delta must be validated by the updated validator.");
+
+		textBox2.Text = "edited";
+		await TestHelper.TryWaitFor(() => GetValidationErrors(vm2, "Name") is ["updated:edited"], timeout, ct);
+		CollectionAssert.AreEqual(new[] { "updated:edited" }, GetValidationErrors(vm2, "Name"), "A view model created after the delta must be validated by the updated validator on value change.");
+	}
+
+	private static TextBox CreateTwoWayTextBox(string path)
+	{
+		var textBox = new TextBox();
+		textBox.SetBinding(TextBox.TextProperty, new Binding { Path = new PropertyPath(path), Mode = BindingMode.TwoWay, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged });
+		return textBox;
+	}
+
+	private static string[] GetValidationErrors(object bindable, string propertyName)
+		=> ((INotifyDataErrorInfo)bindable).GetErrors(propertyName).Cast<ValidationResult>().Select(result => result.ErrorMessage ?? "").ToArray();
 
 	[TestMethod]
 	[RunsOnUIThread]
