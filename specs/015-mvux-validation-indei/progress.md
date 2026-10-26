@@ -34,7 +34,10 @@ Additional behaviour choices:
 - [x] Full `Uno.Extensions.Reactive.Tests` run green.
 - [ ] Release build of `Uno.Extensions-packageonly.slnf` warning-free — **not verified locally**: solution restore fails on `Uno.Extensions.Maui.WinUI.Runtime.Skia` with `NETSDK1241: The TargetFramework property is empty` (the local `DebugPlatforms.props` disables every platform this project targets), before any build. Built instead in Release, 0 warnings: `Reactive`, `Reactive.WinUI`, `Reactive.WinUI.Markup`, `Reactive.Messaging`, `Reactive.Generator`, `Reactive.Tests`, `HotTesting.Reactive.Tests` (`Uno.Extensions.Reactive` is `net10.0` only by design — `tfms-non-ui.props`).
 - [x] Hot-reload: `Given_HotReload.When_UpdateValidatorInModel_Then_OnlyUpdatedValidatorUsed` (unit-test HR harness). Red without the `StopValidation()` on hot-swap (5/5 runs), green with it.
-- [ ] UI / runtime tests (two-way `TextBox` in a real Uno host) — not written/run: needs an Uno runtime-test head. Binding behaviour is covered with `FeedUITests` (test dispatcher).
+- [x] UI / runtime tests (two-way `TextBox` in a real Uno host), run on Windows desktop with the recipe in `specs/lessons.md`:
+  - `Reactive.UI.Tests/Given_Validation` (2): `ErrorsChanged` / `HasErrors` raised on the UI thread for a validated string state, and errors of a record member reported by the generated bindable of the record. 2/2 passed (5 runs).
+  - `Reactive.UI.Tests/Given_HotReload.When_UpdateValidatorInModel_Then_ErrorsFromUpdatedValidator`: only the updated validator publishes results, on the live view model and on one created after the delta. The whole `Given_HotReload` class passed (15/15).
+  - Mutation checks: with `BindableValidationErrors.Update` as a no-op all 3 tests fail; without the `StopValidation()` on hot-swap the hot-reload test fails.
 
 ## Review
 
@@ -43,7 +46,7 @@ Additional behaviour choices:
 - Mutation check: with `IsLocal = false`, the 5 "not propagated" tests fail.
 - `Uno.Extensions.Reactive.Tests`: all passed except the 19 pre-existing skipped. `Uno.HotTesting.Reactive.Tests`: 34 passed.
 - Known gap in "no breaking change": a hand-written `HasErrors` member in a user's `partial` of a generated view model now hides `BindableViewModelBase.HasErrors` → `CS0108` in user code (an error with `TreatWarningsAsErrors`). `FEED1001` only covers members mirrored from the model/record. Documented in `Validation.md`.
-- Follow-ups: explicit / "touched" validation trigger (Q2), `IValidator` bridge (Q3), `IListState` items (Q6), `CanExecute` gating, hot-reload runtime test, rendering verification on Windows / Skia / WASM.
+- Follow-ups: explicit / "touched" validation trigger (Q2), `IValidator` bridge (Q3), `IListState` items (Q6), `CanExecute` gating, rendering verification on Windows / Skia / WASM.
 
 ## PR review (#3203)
 
