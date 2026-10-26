@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
@@ -26,18 +27,18 @@ internal sealed class ValidationLocalizer(IStringLocalizer localizer)
 	/// </summary>
 	/// <remarks>
 	/// This is materialized (not lazy) so the localizer is invoked once per result, on the validator thread, and not each time the results are enumerated.
-	/// Null results (i.e. <see cref="ValidationResult.Success"/>) are dropped.
+	/// Null results (i.e. <see cref="ValidationResult.Success"/>) are dropped, so the list is published as is (cf. <see cref="ValidationHelper.ToResults"/>).
 	/// The results are returned as is when no message is resolved, so a validator which reports no error (e.g. on each keystroke) does not allocate.
 	/// </remarks>
-	public IEnumerable<ValidationResult> Localize<T>(IEnumerable<ValidationResult?>? results)
+	public IImmutableList<ValidationResult> Localize<T>(IEnumerable<ValidationResult?>? results)
 	{
 		if (results is null)
 		{
-			return Array.Empty<ValidationResult>();
+			return ImmutableList<ValidationResult>.Empty;
 		}
 
 		var source = results as IReadOnlyList<ValidationResult?> ?? results.ToList();
-		List<ValidationResult>? localized = null;
+		ImmutableList<ValidationResult>.Builder? localized = null;
 		for (var i = 0; i < source.Count; i++)
 		{
 			var result = source[i];
@@ -52,7 +53,8 @@ internal sealed class ValidationLocalizer(IStringLocalizer localizer)
 				}
 
 				// Allocated only once a result has to be replaced or dropped, with the results kept so far.
-				localized = [.. source.Take(i).OfType<ValidationResult>()];
+				localized = ImmutableList.CreateBuilder<ValidationResult>();
+				localized.AddRange(source.Take(i).OfType<ValidationResult>());
 			}
 
 			if (resolved is not null)
@@ -61,7 +63,7 @@ internal sealed class ValidationLocalizer(IStringLocalizer localizer)
 			}
 		}
 
-		return localized ?? (IEnumerable<ValidationResult>)source;
+		return localized?.ToImmutable() ?? ValidationHelper.ToResults(source);
 	}
 
 	private string? Resolve<T>(string key)
