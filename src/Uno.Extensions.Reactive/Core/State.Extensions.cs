@@ -366,7 +366,9 @@ partial class State
 	/// <returns>The given <paramref name="state"/>, so it can be used to chain other operations.</returns>
 	/// <remarks>
 	/// Validation never blocks a value: invalid values are still set on the state, validation results only annotate them.
-	/// The validator runs on a background thread each time the data changes (including the initial value) and the previous pending validation is cancelled.
+	/// The validator is started on the thread pool each time the data changes (including the initial value) and the previous pending validation is cancelled.
+	/// On single-threaded WebAssembly, the thread pool is the UI thread: avoid long synchronous work in the validator.
+	/// The validator should honor its cancellation token: a validator which ignores it keeps running (its results are then discarded), so a slow validator (e.g. a remote call) should also apply its own timeout.
 	/// Results produced for a value that is no longer the current value of the state are discarded.
 	/// Results are kept until the next validation: they are not dropped when the source of the state produces the same value again, and they are not reported for another value.
 	/// When the state has no value (None), the validation results are cleared. A null value is still a value: the validator is invoked with null.
