@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -24,7 +24,7 @@ namespace Uno.Extensions.Reactive;
 /// <para>
 /// The results are not cleared when the value of the state is changed: they are replaced on the next execution of the command
 /// (which also replaces the results of a validator configured on the state itself using State.Validate, and vice versa).
-/// Like any update of a state, they are however cleared if the source of the state produces a new value (e.g. a refresh of a State.Async).
+/// Unlike an update of the data, they are not dropped when the source of the state produces a new value (e.g. a refresh of a State.Async).
 /// </para>
 /// <para>
 /// If the parameter is not a state (e.g. a feed, or a parameter provided by the view), the execution is still aborted, but the results are only logged.

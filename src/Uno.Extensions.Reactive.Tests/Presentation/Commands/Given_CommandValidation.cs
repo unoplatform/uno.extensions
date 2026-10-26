@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -404,10 +404,12 @@ public class Given_CommandValidation : FeedUITests
 	}
 
 	[TestMethod]
-	public async Task When_SourceOfStateProducesNewValue_Then_ResultsCleared()
+	public async Task When_SourceOfStateProducesSameValue_Then_ResultsKept()
 	{
 		var refresh = new Signal();
-		var state = new StateImpl<string>(Context, Feed<string>.Async(async ct => "value", refresh));
+		var reload = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
+		var loads = 0;
+		var state = new StateImpl<string>(Context, Feed<string>.Async(async ct => Interlocked.Increment(ref loads) is 1 ? "value" : await reload.Task, refresh));
 		var sut = Create(b => b
 			.Given(state)
 			.Validation(async (value, ct) => Error("invalid"))
@@ -415,10 +417,13 @@ public class Given_CommandValidation : FeedUITests
 		await sut.ExecuteAndWait();
 		Validation(state).Should().Equal("invalid");
 
-		// Like any (volatile) update of a state, the results are dropped when its source produces a new value.
 		refresh.Raise();
+		await WaitFor(() => loads is 2 && state.Current.Current.IsTransient);
+		reload.SetResult("value");
+		await WaitFor(() => !state.Current.Current.IsTransient);
 
-		await WaitFor(() => Validation(state).Length == 0);
+		// Results are kept until the next execution, even when the source of the state produces a new message.
+		Validation(state).Should().Equal("invalid");
 	}
 
 	[TestMethod]
