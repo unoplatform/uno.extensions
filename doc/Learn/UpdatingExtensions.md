@@ -61,6 +61,10 @@ below cover only what changes in Extensions.
   `IsDefault` route): navigating to that route creates a second instance of the page inside the first, and
   a warning is logged when the initial navigation does so.
 
+### Validation
+
+- `FluentValidator` (`Uno.Extensions.Validation.Fluent`) now reports the property name of each failure in `ValidationResult.MemberNames` (it was always empty). Code that treats results with empty `MemberNames` as form-level errors sees FluentValidation errors as field errors. Failures without a property name still have empty `MemberNames`.
+
 ### Storage
 
 - Android and iOS heads that ran with `UnoFeatures=SkiaRenderer` on Uno Platform 6.x used unencrypted
