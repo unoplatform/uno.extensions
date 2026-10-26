@@ -368,6 +368,7 @@ partial class State
 	/// Validation never blocks a value: invalid values are still set on the state, validation results only annotate them.
 	/// The validator runs on a background thread each time the data changes (including the initial value) and the previous pending validation is cancelled.
 	/// Results produced for a value that is no longer the current value of the state are discarded.
+	/// Results are kept until the next validation: they are not dropped when the source of the state produces the same value again, and they are not reported for another value.
 	/// When the state has no value (None), the validation results are cleared. A null value is still a value: the validator is invoked with null.
 	/// If the validator throws, the error is logged and the previous results are kept (the state is not set in error).
 	/// This is idempotent: invoking this method multiple times on the same state replaces the validator (starting at the next data change).
@@ -398,7 +399,10 @@ partial class State
 	/// <param name="ct">A token to abort the async operation.</param>
 	/// <remarks>
 	/// This is useful to validate on demand, for instance the whole form when the user clicks Save.
-	/// If a validator has been set using <c>Validate</c>, it replaces those results on the next data change of the state.
+	/// The results are kept until they are replaced: by another call to this method, or, if a validator has been set using <c>Validate</c>, by its results on the next data change of the state.
+	/// Unlike an update of the data, they are not dropped when the source of the state produces a new value.
+	/// This works with any <see cref="IState{T}"/>: for a state which has not been created using the MVUX State factories, the results are set using <see cref="IState{T}.UpdateMessageAsync"/>
+	/// (so they follow the update rules of that state).
 	/// </remarks>
 	public static ValueTask SetValidationAsync<T>(this IState<T> state, IEnumerable<ValidationResult>? results, CancellationToken ct = default)
 	{
@@ -408,6 +412,8 @@ partial class State
 		// Materialize the results here, so the update pipeline of the state does not enumerate the caller's sequence.
 		var validation = results?.ToImmutableList();
 
-		return state.UpdateMessageAsync(msg => msg.Validation(validation), ct);
+		return state is StateImpl<T> impl
+			? impl.PublishValidationAsync(validation, isCurrent: null, ct)
+			: state.UpdateMessageAsync(msg => msg.Validation(validation), ct);
 	}
 }

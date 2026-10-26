@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
@@ -26,6 +27,8 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 
 	private Func<T, CancellationToken, ValueTask<IEnumerable<ValidationResult>>>? _validator;
 	private CancellationTokenSource? _validation;
+	private readonly object _validationResultsGate = new();
+	private ValidationUpdate? _validationResults;
 
 	/// <summary>
 	/// Gets the context to which this state belongs.
@@ -113,8 +116,9 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		_updatesTarget = replacement;
 
 		// The replacement now owns the validation (if any, its results are forwarded to us through the source),
-		// so we stop our own validation so the previous validator cannot overwrite results of the updated one.
+		// so we stop our own validation and drop our results, so the previous validator cannot overwrite results of the updated one.
 		StopValidation();
+		ClearValidationResults();
 	}
 
 	/// <summary>
@@ -198,19 +202,12 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 				return;
 			}
 
-			await UpdateMessageAsync(
-					msg =>
-					{
-						// Makes sure to not publish results for a stale version of the data.
-						// As this is invoked by the update pipeline of the state, this check is atomic with other updates of the state.
-						var isSameData = msg.CurrentData.IsSome(out var currentValue)
-							? hasValue && EqualityComparer<T>.Default.Equals(currentValue, value)
-							: !hasValue;
-						if (isSameData)
-						{
-							msg.Validation(results);
-						}
-					},
+			// Makes sure to not publish results for a stale version of the data.
+			await PublishValidationAsync(
+					results?.ToImmutableList(),
+					currentData => currentData.IsSome(out var currentValue)
+						? hasValue && EqualityComparer<T>.Default.Equals(currentValue, value)
+						: !hasValue,
 					ct)
 				.ConfigureAwait(false);
 		}
@@ -234,6 +231,56 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		}
 	}
 
+	/// <summary>
+	/// Publishes validation results on the <see cref="MessageAxis.Validation"/> of this state, replacing the results previously published.
+	/// </summary>
+	/// <param name="results">The validation results, null or empty to clear them.</param>
+	/// <param name="isCurrent">
+	/// An optional predicate to determine if the results are relevant for the current data of the state.
+	/// It is invoked by the update pipeline of the state each time the message is rebuilt (e.g. when the source of the state produces a new message),
+	/// so this check is atomic with other updates of the state and results are not shown for another value.
+	/// </param>
+	/// <param name="ct">A cancellation token: the results are not published if already cancelled, and the wait for the publication is aborted when cancelled.</param>
+	/// <remarks>
+	/// Results are kept in a single update of the state, which is replaced on each publication (results of a state are not merged and are not stacked),
+	/// and which is not dropped when the source of the state produces a new message (unlike updates of the data of a <see cref="StateUpdateKind.Volatile"/> state).
+	/// </remarks>
+	internal async ValueTask PublishValidationAsync(IImmutableList<ValidationResult>? results, Func<Option<T>, bool>? isCurrent, CancellationToken ct)
+	{
+		ct.ThrowIfCancellationRequested();
+
+		// Like UpdateMessageAsync, the results go to the state that replaced this one (if any), and we make sure its UpdateFeed is active.
+		var target = UpdatesTarget;
+		target.Enable();
+		target._subscription.Enable();
+
+		var update = new ValidationUpdate(results, isCurrent);
+		lock (target._validationResultsGate)
+		{
+			// Note: Replacing under the lock makes sure that the UpdateFeed receives the replacements in the same order as the _validationResults.
+			if (target._validationResults is { } previous)
+			{
+				target._inner.Replace(previous, update);
+			}
+			else
+			{
+				target._inner.Add(update);
+			}
+			target._validationResults = update;
+		}
+
+		var applied = update.HasBeenApplied;
+		if (applied.IsCompleted)
+		{
+			await applied.ConfigureAwait(false); // Propagates the error (if any).
+		}
+		else
+		{
+			using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct, target.Context.Token);
+			await applied.WaitAsync(cts.Token).ConfigureAwait(false);
+		}
+	}
+
 	private void StopValidation()
 	{
 		if (Interlocked.Exchange(ref _validation, null) is { } validation)
@@ -242,6 +289,18 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 			validation.Dispose();
 		}
 		_validator = null;
+	}
+
+	private void ClearValidationResults()
+	{
+		lock (_validationResultsGate)
+		{
+			if (_validationResults is { } results)
+			{
+				_inner.Remove(results);
+				_validationResults = null;
+			}
+		}
 	}
 
 	[MemberNotNull(nameof(_subscription))]
@@ -296,6 +355,49 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 			try
 			{
 				Method(new(message.Get, ((IMessageBuilder)message).Set));
+				_firstResult.TrySetResult(null);
+			}
+			catch (Exception error) when (!_firstResult.Task.IsCompleted) // Otherwise let the exception bubble up.
+			{
+				_firstResult.TrySetException(error);
+			}
+		}
+	}
+
+	/// <summary>
+	/// The validation results of a state (cf. <see cref="PublishValidationAsync"/>).
+	/// </summary>
+	/// <remarks>
+	/// Unlike an <see cref="Update"/>, this remains active when the source of the state produces a new message, until it is replaced by the next results:
+	/// results are re-applied on each new message, as long as they are relevant for its data.
+	/// </remarks>
+	private sealed class ValidationUpdate(IImmutableList<ValidationResult>? results, Func<Option<T>, bool>? isCurrent) : IFeedUpdate<T>
+	{
+		private readonly TaskCompletionSource<object?> _firstResult = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+		public Task HasBeenApplied => _firstResult.Task;
+
+		/// <inheritdoc />
+		public bool IsActive(Message<T>? parent, bool parentChanged, IMessageEntry<T> entry)
+			=> !_firstResult.Task.IsFaulted;
+
+		/// <inheritdoc />
+		/// <remarks>
+		/// Once the source of the state has completed, the results do not have to be re-applied anymore.
+		/// Like for the selection of a list state, a compacted instance which is then replaced is not rolled back: the next results are applied on top of it.
+		/// </remarks>
+		public bool IsCompactable()
+			=> _firstResult.Task.IsCompletedSuccessfully;
+
+		/// <inheritdoc />
+		public void Apply(bool _, MessageBuilder<T, T> message)
+		{
+			try
+			{
+				if (isCurrent?.Invoke(message.CurrentData) ?? true)
+				{
+					message.Validation(results);
+				}
 				_firstResult.TrySetResult(null);
 			}
 			catch (Exception error) when (!_firstResult.Task.IsCompleted) // Otherwise let the exception bubble up.

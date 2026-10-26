@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -354,6 +354,77 @@ public class Given_StateWithValidation : FeedTests
 		state.Current.Current.Validation.Should().ContainSingle().Which.ErrorMessage.Should().Be("updated");
 	}
 
+	[TestMethod]
+	public async Task When_SourceProducesSameValue_Then_ResultsKept()
+	{
+		var (state, source) = CreateRefreshableState("value");
+		_ = state.Validate(async (value, ct) => Error(value));
+		await WaitForValidation(state, "value");
+
+		await Reload(state, source, "value");
+
+		// The data did not change, so the value is not re-validated: its results must still be there.
+		state.Current.Current.Validation.Should().ContainSingle().Which.ErrorMessage.Should().Be("value");
+	}
+
+	[TestMethod]
+	public async Task When_SourceProducesNewValue_Then_ResultsOfPreviousValueNotShown()
+	{
+		var validator = new TestValidator();
+		var (state, source) = CreateRefreshableState("value");
+		_ = state.Validate(validator.Validate);
+		(await validator.WaitForCall(0)).Complete(Error("value"));
+		await WaitForValidation(state, "value");
+
+		await Reload(state, source, "other");
+
+		// The validation of the new value is pending: the results of the previous value must not be reported for it.
+		(await validator.WaitForCall(1)).Value.Should().Be("other");
+		state.Current.Current.Data.SomeOrDefault().Should().Be("other");
+		state.Current.Current.Validation.Should().BeEmpty();
+	}
+
+	[TestMethod]
+	public async Task When_SetValidation_And_SourceProducesSameValue_Then_ResultsKept()
+	{
+		var (state, source) = CreateRefreshableState("value");
+		await state.SetValidationAsync(Error("manual"), CT);
+
+		await Reload(state, source, "value");
+
+		state.Current.Current.Validation.Should().ContainSingle().Which.ErrorMessage.Should().Be("manual");
+	}
+
+	[TestMethod]
+	public async Task When_ResultsPublishedManyTimes_Then_LastResultsOnly()
+	{
+		var state = new StateImpl<string>(Context, Option.Some("initial"));
+
+		for (var i = 0; i < 10; i++)
+		{
+			await state.SetValidationAsync(Error($"manual-{i}"), CT);
+		}
+
+		// Results are replaced, not stacked.
+		state.Current.Current.Validation.Should().ContainSingle().Which.ErrorMessage.Should().Be("manual-9");
+	}
+
+	private (StateImpl<string> state, RefreshableSource source) CreateRefreshableState(string initial)
+	{
+		var source = new RefreshableSource(initial);
+		return (new StateImpl<string>(Context, Feed<string>.Async(source.Load, source.Refresh)), source);
+	}
+
+	private static async Task Reload(StateImpl<string> state, RefreshableSource source, string value)
+	{
+		var reloads = source.Reloads;
+		source.Refresh.Raise();
+		await WaitFor(() => source.Reloads > reloads && state.Current.Current.IsTransient);
+
+		source.Complete(value);
+		await WaitFor(() => !state.Current.Current.IsTransient);
+	}
+
 	private static ValidationResult[] Error(string message)
 		=> new[] { new ValidationResult(message) };
 
@@ -417,6 +488,39 @@ public class Given_StateWithValidation : FeedTests
 
 		public void Fail(Exception error)
 			=> Result.SetException(error);
+	}
+
+	/// <summary>
+	/// The source of a state which produces the given initial value, then waits for <see cref="Complete"/> on each refresh.
+	/// </summary>
+	private sealed class RefreshableSource(string initial)
+	{
+		private TaskCompletionSource<string>? _pending;
+		private int _loads;
+		private int _reloads;
+
+		public Signal Refresh { get; } = new();
+
+		/// <summary>
+		/// The number of reloads started, i.e. which are waiting for <see cref="Complete"/>.
+		/// </summary>
+		public int Reloads => Volatile.Read(ref _reloads);
+
+		public async ValueTask<string> Load(CancellationToken ct)
+		{
+			if (Interlocked.Increment(ref _loads) is 1)
+			{
+				return initial;
+			}
+
+			var pending = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
+			Volatile.Write(ref _pending, pending);
+			Interlocked.Increment(ref _reloads);
+			return await pending.Task;
+		}
+
+		public void Complete(string value)
+			=> Volatile.Read(ref _pending)!.SetResult(value);
 	}
 
 	private sealed class CustomState : IState<string>

@@ -33,6 +33,8 @@ The validator:
 - is not invoked when the state has no value (`None`). In that case the validation results are cleared. A `null` value is still a value, so the validator is invoked with `null`;
 - does not put the state in error if it throws. The exception is logged and the previous results are kept.
 
+The results of a value are kept until the next validation: they are not lost when the source of the state produces the same value again (e.g. a refresh of a `State.Async`), and they are not reported for another value while it is being validated.
+
 `Validate` returns the same state instance and can safely be invoked each time the property getter is evaluated: the last validator wins and validators are never stacked.
 
 ### Using the `IValidator` service
@@ -65,9 +67,9 @@ public async ValueTask Save(CancellationToken ct)
 }
 ```
 
-Passing `null` or an empty list clears the results. Setting results identical to the current ones (same `ErrorMessage` and `MemberNames`) does not raise any change. If a validator has been set with `Validate`, it replaces those results on the next change of the value.
+Passing `null` or an empty list clears the results. Setting results identical to the current ones (same `ErrorMessage` and `MemberNames`) does not raise any change. The results are kept until they are replaced, by another call or, if a validator has been set with `Validate`, by its results on the next change of the value. Like the results of a validator, they are not dropped when the source of the state produces a new value.
 
-`SetValidationAsync` is a shortcut for `UpdateMessageAsync(msg => msg.Validation(results), ct)`, which you can use to update the validation along with other axes of the message.
+You can also set the validation along with other axes of the message using `UpdateMessageAsync(msg => msg.Validation(results), ct)`. Results set this way follow the rules of the other updates of the state: they are dropped when the source of the state produces a new value. `SetValidationAsync` falls back to it for a state that has not been created by the `State` factories.
 
 > [!NOTE]
 > Validation results are local to the state that has them: they are **not** forwarded to feeds derived from it, such as `Select`, `Combine` or a `Feed.Async` that awaits the state. A derived `FullName` feed never shows the errors of the `Person` state.
