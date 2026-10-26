@@ -26,6 +26,11 @@ below cover only what changes in Extensions.
 ### Validation
 
 - `FluentValidator` (`Uno.Extensions.Validation.Fluent`) now reports the property name of each failure in `ValidationResult.MemberNames` (it was always empty). Code that treats results with empty `MemberNames` as form-level errors sees FluentValidation errors as field errors. Failures without a property name still have empty `MemberNames`.
+- **Breaking (mixed package versions):** `IValidator` moved from `Uno.Extensions.Validation` to `Uno.Extensions.Core`, in the same namespace (`Uno.Extensions.Validation`), so MVUX can use it without depending on `Uno.Extensions.Validation`. A type forward keeps binaries compiled against the previous location working. Upgrade all the `Uno.Extensions.*` packages together (the Uno.Sdk does): referencing an older `Uno.Extensions.Validation` with a newer `Uno.Extensions.Core` declares `IValidator` twice (`CS0433`).
+
+### MVUX commands
+
+- The error reported when a command fails no longer includes the value of its parameter (its `ToString`, which could expose the fields of a form, passwords included), only its type. Code that parses or displays that message sees a different text.
 
 ### Storage
 
