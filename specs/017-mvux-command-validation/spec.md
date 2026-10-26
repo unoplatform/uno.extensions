@@ -1,6 +1,6 @@
 # 017 — Validation of MVUX command parameters on execution
 
-**Status:** In progress — see [progress.md](progress.md)
+**Status:** Implemented (in review) — see [progress.md](progress.md)
 **Area:** `Uno.Extensions.Reactive` (command builder, `AsyncCommand`, `State.Validate`), `Uno.Extensions.Reactive.Generator` (analyzer), `Uno.Extensions.Core` / `Uno.Extensions.Validation` (`IValidator` location)
 **Related:** [spec 015](../015-mvux-validation-indei/spec.md) (validation axis, `State.Validate`, INDEI) — §7 Q2 "explicit trigger on submit"; [spec 016](../016-validation-message-localization/spec.md) (localized `Validate` overloads)
 

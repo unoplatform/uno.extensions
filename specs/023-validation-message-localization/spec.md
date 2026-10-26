@@ -59,7 +59,7 @@ Validation errors reach the view as `ValidationResult.ErrorMessage` strings (spe
 Every overload takes an optional localizer as its **last** parameter:
 
 ```csharp
-// 1. Base (spec 022 §4.2): the only place where localization is handled.
+// 1. Base (spec 022 §4.2): the only place of the state where localization is handled (spec 024 commands share it through ValidationHelper).
 IState<T> Validate<T>(this IState<T> state,
     AsyncFunc<T, IEnumerable<ValidationResult>> validator,
     IStringLocalizer? localizer = null);

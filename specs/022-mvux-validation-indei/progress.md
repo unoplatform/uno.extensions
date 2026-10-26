@@ -6,7 +6,7 @@
 | --- | --- |
 | 1 Producer surface | `State.Validate(IState<T>, validator)` registers on the `StateImpl` and returns it (mutating, idempotent: last registration wins, loop started once). |
 | 2 When to validate | Every `Data` change of the state, including the initial value. Explicit/"touched" triggers are a follow-up; the manual `SetValidationAsync(results)` covers explicit validation today. |
-| 3 `IValidator` convenience | Not added (`_validator.ValidateAsync` fits the delegate directly). |
+| 3 `IValidator` convenience | Not added here (`_validator.ValidateAsync` fits the delegate directly); `Validate(IValidator)` added by spec 017, with `IValidator` moved to `Uno.Extensions.Core`. |
 | 4 Name collisions | INDEI members implemented explicitly on both bases + a public `HasErrors` for bindings, so only `HasErrors` can collide. A model/record member named `HasErrors` hides the public one (generated code already suppresses CS0108); new `FEED1001` (Info, so it does not break `TreatWarningsAsErrors` apps) reports it. |
 | 5 Read-only feeds | States only. The axis is `IsLocal`: operators never forward it. |
 | 6 `IListState` items | Deferred. |
@@ -46,7 +46,7 @@ Additional behavior choices:
 - Mutation check: with `IsLocal = false`, the 5 "not propagated" tests fail.
 - `Uno.Extensions.Reactive.Tests`: all passed except the 19 pre-existing skipped. `Uno.HotTesting.Reactive.Tests`: 34 passed.
 - ~~Known gap in "no breaking change": a hand-written `HasErrors` member in a user's `partial` of a generated view model hides `BindableViewModelBase.HasErrors` → `CS0108`.~~ Fixed after the second panel: `BindableViewModelBase` implements only `INotifyDataErrorInfo.HasErrors`, and the generator (all tool versions) adds the public `HasErrors` only when the model and the user's partial declare none (otherwise `FEED1001`).
-- Follow-ups: explicit / "touched" validation trigger (Q2), `IValidator` bridge (Q3), `IListState` items (Q6), `CanExecute` gating, rendering verification on Windows / Skia / WASM.
+- Follow-ups: explicit / "touched" validation trigger (Q2, partly covered by the command validation of spec 017), `IListState` items (Q6), `CanExecute` gating, rendering verification on Windows / Skia / WASM.
 
 ## PR review (#3203)
 
