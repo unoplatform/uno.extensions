@@ -29,6 +29,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	private CancellationTokenSource? _validation;
 	private readonly object _validationResultsGate = new();
 	private ValidationUpdate? _validationResults;
+	private static long _validationVersion; // Shared by the states (not per instance), so versions remain comparable when results are redirected to the state that replaced this one.
 
 	/// <summary>
 	/// Gets the context to which this state belongs.
@@ -191,6 +192,9 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 				return; // Validation has been stopped.
 			}
 
+			// The version is taken before running the validator: if results are published (e.g. using SetValidationAsync) while it runs, they win.
+			var version = NextValidationVersion();
+
 			// Note: Some(null) is a value (unlike None): the validator is invoked with null.
 			var hasValue = data.IsSome(out var value);
 			var results = hasValue
@@ -208,6 +212,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 					currentData => currentData.IsSome(out var currentValue)
 						? hasValue && EqualityComparer<T>.Default.Equals(currentValue, value)
 						: !hasValue,
+					version,
 					ct)
 				.ConfigureAwait(false);
 		}
@@ -240,12 +245,16 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	/// It is invoked by the update pipeline of the state each time the message is rebuilt (e.g. when the source of the state produces a new message),
 	/// so this check is atomic with other updates of the state and results are not shown for another value.
 	/// </param>
+	/// <param name="version">
+	/// The version of the results (cf. <see cref="NextValidationVersion"/>), taken when the validation started:
+	/// results are not published if results of a later version have already been published, so the last validation started wins (not the last one to complete).
+	/// </param>
 	/// <param name="ct">A cancellation token: the results are not published if already cancelled, and the wait for the publication is aborted when cancelled.</param>
 	/// <remarks>
 	/// Results are kept in a single update of the state, which is replaced on each publication (results of a state are not merged and are not stacked),
 	/// and which is not dropped when the source of the state produces a new message (unlike updates of the data of a <see cref="StateUpdateKind.Volatile"/> state).
 	/// </remarks>
-	internal async ValueTask PublishValidationAsync(IImmutableList<ValidationResult>? results, Func<Option<T>, bool>? isCurrent, CancellationToken ct)
+	internal async ValueTask PublishValidationAsync(IImmutableList<ValidationResult>? results, Func<Option<T>, bool>? isCurrent, long version, CancellationToken ct)
 	{
 		ct.ThrowIfCancellationRequested();
 
@@ -254,9 +263,14 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		target.Enable();
 		target._subscription.Enable();
 
-		var update = new ValidationUpdate(results, isCurrent);
+		var update = new ValidationUpdate(results, isCurrent, version);
 		lock (target._validationResultsGate)
 		{
+			if (target._validationResults is { } current && current.Version > version)
+			{
+				return; // Results of a validation started later have already been published.
+			}
+
 			// Note: Replacing under the lock makes sure that the UpdateFeed receives the replacements in the same order as the _validationResults.
 			if (target._validationResults is { } previous)
 			{
@@ -280,6 +294,12 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 			await applied.WaitAsync(cts.Token).ConfigureAwait(false);
 		}
 	}
+
+	/// <summary>
+	/// Gets the version to use to publish validation results (cf. <see cref="PublishValidationAsync"/>).
+	/// </summary>
+	internal static long NextValidationVersion()
+		=> Interlocked.Increment(ref _validationVersion);
 
 	private void StopValidation()
 	{
@@ -371,9 +391,11 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	/// Unlike an <see cref="Update"/>, this remains active when the source of the state produces a new message, until it is replaced by the next results:
 	/// results are re-applied on each new message, as long as they are relevant for its data.
 	/// </remarks>
-	private sealed class ValidationUpdate(IImmutableList<ValidationResult>? results, Func<Option<T>, bool>? isCurrent) : IFeedUpdate<T>
+	private sealed class ValidationUpdate(IImmutableList<ValidationResult>? results, Func<Option<T>, bool>? isCurrent, long version) : IFeedUpdate<T>
 	{
 		private readonly TaskCompletionSource<object?> _firstResult = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+		public long Version => version;
 
 		public Task HasBeenApplied => _firstResult.Task;
 

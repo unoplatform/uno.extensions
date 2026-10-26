@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
@@ -407,6 +408,20 @@ public class Given_StateWithValidation : FeedTests
 
 		// Results are replaced, not stacked.
 		state.Current.Current.Validation.Should().ContainSingle().Which.ErrorMessage.Should().Be("manual-9");
+	}
+
+	[TestMethod]
+	public async Task When_ResultsOfEarlierVersionCompleteLast_Then_Discarded()
+	{
+		var state = new StateImpl<string>(Context, Option.Some("initial"));
+		var earlier = StateImpl<string>.NextValidationVersion();
+		var later = StateImpl<string>.NextValidationVersion();
+
+		await state.PublishValidationAsync(ImmutableList.Create(new ValidationResult("later")), isCurrent: null, later, CT);
+		await state.PublishValidationAsync(ImmutableList.Create(new ValidationResult("earlier")), isCurrent: null, earlier, CT);
+
+		// The last validation started wins, not the last one to complete.
+		state.Current.Current.Validation.Should().ContainSingle().Which.ErrorMessage.Should().Be("later");
 	}
 
 	private (StateImpl<string> state, RefreshableSource source) CreateRefreshableState(string initial)
