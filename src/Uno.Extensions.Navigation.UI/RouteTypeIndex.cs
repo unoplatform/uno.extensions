@@ -64,12 +64,9 @@ internal static class RouteTypeIndex
 			}
 
 			var asbTypes = asb.SafeGetTypes(out var error);
-			foreach (var t in asbTypes)
+			foreach (var t in asbTypes.Where(t => t.IsClass))
 			{
-				if (t.IsClass)
-				{
-					types.TryAdd(t.Name, t);
-				}
+				types.TryAdd(t.Name, t);
 			}
 
 			if (error is not null)
