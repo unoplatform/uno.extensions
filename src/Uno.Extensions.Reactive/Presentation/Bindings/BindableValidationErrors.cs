@@ -211,13 +211,11 @@ internal sealed class BindableValidationErrors
 		{
 			if (_errors is { Count: > 0 })
 			{
-				// Members which had errors and might not have any anymore (snapshot of the keys, as UpdateErrors removes them).
-				foreach (var key in _errors.Keys.ToArray())
+				// Members which had errors and do not have any anymore (snapshot of the keys, as UpdateErrors removes them).
+				var updated = updatedErrors; // Captured through a scoped copy, so the closure is allocated only on this path.
+				foreach (var key in _errors.Keys.Where(key => updated?.ContainsKey(key) is not true).ToArray())
 				{
-					if (updatedErrors?.ContainsKey(key) is not true)
-					{
-						UpdateErrors(key, updatedErrors, ref changedMembers);
-					}
+					UpdateErrors(key, updatedErrors, ref changedMembers);
 				}
 			}
 
