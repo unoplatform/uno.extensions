@@ -4,43 +4,6 @@ uid: Uno.Extensions.Migration
 
 # Upgrading Extensions Version
 
-<<<<<<< HEAD
-=======
-## Upgrading to Extensions 8.0
-
-Extensions 8.0 is the line for **Uno Platform 7.0**; use Extensions 7.x with Uno Platform 6.x. Follow the
-[Uno Platform 7.0 migration guide](xref:Uno.Development.MigratingToUno7) for the app itself — the notes
-below cover only what changes in Extensions.
-
-### Target frameworks
-
-- The packages target .NET 10 (`net10.0`, `net10.0-windows10.0.19041`, `net10.0-android`, `net10.0-ios`).
-  .NET 9 heads can't consume them.
-- Mac Catalyst is no longer supported, following Uno Platform 7.0. Retarget a `net*-maccatalyst` head
-  to `net10.0-desktop`.
-
-### Navigation
-
-- **Removed:** `NavigatorExtensions.ShowPickerAsync` (iOS only). It routed to the native UIKit picker,
-  which Uno Platform 7.0 removes, and no navigator had handled that route since the picker navigator
-  was dropped, so the call never completed. Show a `Flyout` or a dialog with a list instead.
-
-### Storage
-
-- Android and iOS heads that ran with `UnoFeatures=SkiaRenderer` on Uno Platform 6.x used unencrypted
-  `ApplicationData` settings as the default `IKeyValueStorage`. On 7.0 they get `KeyStore` / Keychain,
-  like native heads did. **Values those apps already stored are not migrated** — including the
-  access token `IAuthenticationService` keeps there, so signed-in users may have to sign in again
-  once after the upgrade.
-- Those iOS apps now need the Keychain [entitlements](xref:Uno.Extensions.Storage.HowToRequiredEntitlements)
-  for the default store.
-
-### Authentication
-
-- **Skia Desktop sign-in works out of the box for the Web and OIDC providers.** `AddWeb()` and `AddOidc()` now register `DesktopWebAuthenticationBrokerProvider`, a loopback `WebAuthenticationBroker` (system browser + `localhost` listener), on Windows, macOS and Linux. Previously Uno's broker threw `NotImplementedException` on that target and the interactive sign-in could not complete. The registration goes through `ApiExtensibility` and the first registration wins, so an app that already supplies its own `IWebAuthenticationBrokerProvider` keeps it as long as it registers before `AddWeb()`/`AddOidc()`. An app that registered its own provider *after* `AddWeb()`/`AddOidc()` now has it ignored on Skia Desktop: move that registration ahead of the `UseAuthentication` call. Broker diagnostics go to Uno's ambient logger, so pass `enableUnoLogging: true` to `UseLogging()` to see them. The redirect URI on this target must be a loopback HTTP address; see [Web Authentication](xref:Uno.Extensions.Authentication.HowToWebAuthentication) and [OIDC Authentication](xref:Uno.Extensions.Authentication.HowToOidcAuthentication).
-- **OIDC provider, every platform:** the browser flow now reports its outcome to the OIDC client as a `BrowserResultType` (`Timeout` for both the client's `BrowserOptions.Timeout` and the broker's own timeout, `UserCancel`, `HttpError`) instead of a `Success` result with no response or an `UnknownError`, so `LoginResult.Error` reads `Timeout`/`UserCancel` where it used to be an exception text. A `CancellationToken` the app cancels during `LoginAsync`/`LogoutAsync` now propagates as `OperationCanceledException` out of `IAuthenticationService` instead of a failed result: `LoginAsync` used to return `false`, so code that passes a cancellable token should now catch the exception. A cancelled sign-in also no longer clears the stored tokens (the failed result used to be saved as an empty token set, signing the user out); `IAuthenticationService.LogoutAsync` still clears them when cancelled. Sign-out sends the cached ID token as `id_token_hint`, which some identity providers require before redirecting back to `PostLogoutRedirectUri`.
-
->>>>>>> cd2135d (feat(auth): sign in on Skia Desktop with a loopback WebAuthenticationBroker for the Oidc and Web providers)
 ## Upgrading to Extensions 7.4
 
 ### Minimum Uno Platform version
@@ -151,6 +114,11 @@ These are binary-compatible but observable. Read them if your app calls `AddMsal
   `browserwasm` build of `Uno.Extensions.Authentication.MSAL.WinUI` used to carry. It was dead code
   — nothing in the package referenced it — and the browser cache now goes through
   `IKeyValueStorage` as described above.
+
+### Web and OIDC authentication
+
+- **Skia Desktop sign-in works out of the box for the Web and OIDC providers.** `AddWeb()` and `AddOidc()` now register `DesktopWebAuthenticationBrokerProvider`, a loopback `WebAuthenticationBroker` (system browser + `localhost` listener), on Windows, macOS and Linux. Previously Uno's broker threw `NotImplementedException` on that target and the interactive sign-in could not complete. The registration goes through `ApiExtensibility` and the first registration wins, so an app that already supplies its own `IWebAuthenticationBrokerProvider` keeps it as long as it registers before `AddWeb()`/`AddOidc()`. An app that registered its own provider *after* `AddWeb()`/`AddOidc()` now has it ignored on Skia Desktop: move that registration ahead of the `UseAuthentication` call. Broker diagnostics go to Uno's ambient logger, so pass `enableUnoLogging: true` to `UseLogging()` to see them. The redirect URI on this target must be a loopback HTTP address; see [Web Authentication](xref:Uno.Extensions.Authentication.HowToWebAuthentication) and [OIDC Authentication](xref:Uno.Extensions.Authentication.HowToOidcAuthentication).
+- **OIDC provider, every platform:** the browser flow now reports its outcome to the OIDC client as a `BrowserResultType` (`Timeout` for both the client's `BrowserOptions.Timeout` and the broker's own timeout, `UserCancel`, `HttpError`) instead of a `Success` result with no response or an `UnknownError`, so `LoginResult.Error` reads `Timeout`/`UserCancel` where it used to be an exception text. A `CancellationToken` the app cancels during `LoginAsync`/`LogoutAsync` now propagates as `OperationCanceledException` out of `IAuthenticationService` instead of a failed result: `LoginAsync` used to return `false`, so code that passes a cancellable token should now catch the exception. A cancelled sign-in also no longer clears the stored tokens (the failed result used to be saved as an empty token set, signing the user out); `IAuthenticationService.LogoutAsync` still clears them when cancelled. Sign-out sends the cached ID token as `id_token_hint`, which some identity providers require before redirecting back to `PostLogoutRedirectUri`.
 
 ### Storage
 

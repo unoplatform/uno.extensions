@@ -165,15 +165,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.HotTesting.Reactive.Gen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Reactive.Tests.MockingApp.SingleProject", "src\Uno.Extensions.Reactive.Tests.MockingApp.SingleProject\Uno.Extensions.Reactive.Tests.MockingApp.SingleProject.csproj", "{F834B158-A0A2-4E4E-BA74-6FB67D267CDB}"
 EndProject
-<<<<<<< HEAD
-=======
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Navigation.Tests", "src\Uno.Extensions.Navigation.Tests\Uno.Extensions.Navigation.Tests.csproj", "{CCD021D3-18EB-4823-9DC8-35FF94DD50CE}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Uno.Extensions.Authentication.UI.Tests", "Uno.Extensions.Authentication.UI.Tests", "{D479B7A9-4FA1-3A6D-7EDF-CF2D8A0BF3BA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Authentication.WinUI.Tests", "src\Uno.Extensions.Authentication.UI.Tests\Uno.Extensions.Authentication.WinUI.Tests.csproj", "{DFB28688-821E-4CB6-8213-7388A437DE23}"
 EndProject
->>>>>>> cd2135d (feat(auth): sign in on Skia Desktop with a loopback WebAuthenticationBroker for the Oidc and Web providers)
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -978,24 +973,6 @@ Global
 		{F834B158-A0A2-4E4E-BA74-6FB67D267CDB}.Release|x64.Build.0 = Release|Any CPU
 		{F834B158-A0A2-4E4E-BA74-6FB67D267CDB}.Release|x86.ActiveCfg = Release|Any CPU
 		{F834B158-A0A2-4E4E-BA74-6FB67D267CDB}.Release|x86.Build.0 = Release|Any CPU
-<<<<<<< HEAD
-=======
-		{CCD021D3-18EB-4823-9DC8-35FF94DD50CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CCD021D3-18EB-4823-9DC8-35FF94DD50CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CCD021D3-18EB-4823-9DC8-35FF94DD50CE}.Debug|arm64.ActiveCfg = Debug|Any CPU
-		{CCD021D3-18EB-4823-9DC8-35FF94DD50CE}.Debug|arm64.Build.0 = Debug|Any CPU
-		{CCD021D3-18EB-4823-9DC8-35FF94DD50CE}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{CCD021D3-18EB-4823-9DC8-35FF94DD50CE}.Debug|x64.Build.0 = Debug|Any CPU
-		{CCD021D3-18EB-4823-9DC8-35FF94DD50CE}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{CCD021D3-18EB-4823-9DC8-35FF94DD50CE}.Debug|x86.Build.0 = Debug|Any CPU
-		{CCD021D3-18EB-4823-9DC8-35FF94DD50CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CCD021D3-18EB-4823-9DC8-35FF94DD50CE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CCD021D3-18EB-4823-9DC8-35FF94DD50CE}.Release|arm64.ActiveCfg = Release|Any CPU
-		{CCD021D3-18EB-4823-9DC8-35FF94DD50CE}.Release|arm64.Build.0 = Release|Any CPU
-		{CCD021D3-18EB-4823-9DC8-35FF94DD50CE}.Release|x64.ActiveCfg = Release|Any CPU
-		{CCD021D3-18EB-4823-9DC8-35FF94DD50CE}.Release|x64.Build.0 = Release|Any CPU
-		{CCD021D3-18EB-4823-9DC8-35FF94DD50CE}.Release|x86.ActiveCfg = Release|Any CPU
-		{CCD021D3-18EB-4823-9DC8-35FF94DD50CE}.Release|x86.Build.0 = Release|Any CPU
 		{DFB28688-821E-4CB6-8213-7388A437DE23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DFB28688-821E-4CB6-8213-7388A437DE23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFB28688-821E-4CB6-8213-7388A437DE23}.Debug|arm64.ActiveCfg = Debug|Any CPU
@@ -1012,7 +989,6 @@ Global
 		{DFB28688-821E-4CB6-8213-7388A437DE23}.Release|x64.Build.0 = Release|Any CPU
 		{DFB28688-821E-4CB6-8213-7388A437DE23}.Release|x86.ActiveCfg = Release|Any CPU
 		{DFB28688-821E-4CB6-8213-7388A437DE23}.Release|x86.Build.0 = Release|Any CPU
->>>>>>> cd2135d (feat(auth): sign in on Skia Desktop with a loopback WebAuthenticationBroker for the Oidc and Web providers)
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1072,11 +1048,7 @@ Global
 		{C16D5143-8353-400D-BE40-9CEEEB2A5404} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{94FC36D9-81B5-4347-8EBE-1DF99DB55981} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{F834B158-A0A2-4E4E-BA74-6FB67D267CDB} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
-<<<<<<< HEAD
-=======
-		{CCD021D3-18EB-4823-9DC8-35FF94DD50CE} = {2B4C9E46-EA70-4ADE-B301-E2BB8CC31365}
 		{DFB28688-821E-4CB6-8213-7388A437DE23} = {D479B7A9-4FA1-3A6D-7EDF-CF2D8A0BF3BA}
->>>>>>> cd2135d (feat(auth): sign in on Skia Desktop with a loopback WebAuthenticationBroker for the Oidc and Web providers)
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6E7B035D-9A64-4D95-89AA-9D4653F17C42}

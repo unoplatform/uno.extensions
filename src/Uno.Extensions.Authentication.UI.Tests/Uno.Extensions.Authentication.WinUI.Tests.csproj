@@ -1,5 +1,5 @@
 <Project Sdk="Uno.Sdk.Private">
-	<Import Project="..\tfms-ui-winui-apps.props" />
+	<Import Project="..\tfms-ui-winui.props" />
 
 	<!--
 		Uno.Sdk no longer defines __WASM__ (see Uno.Extensions.RuntimeTests.Core.csproj). The desktop
