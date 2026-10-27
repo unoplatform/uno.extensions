@@ -16,12 +16,15 @@ internal static class RouteTypeIndex
 	/// Indexes the classes of the load context that loaded <paramref name="anchor"/>, then those of the default context.
 	/// </summary>
 	/// <param name="anchor">The assembly whose load context is searched first.</param>
+	/// <param name="onTypeLoadFailure">Called for each assembly whose types could not all be loaded.</param>
 	/// <returns>The load context searched first, and the index.</returns>
 	[RequiresUnreferencedCode("From Assembly.GetTypes(): Types might be removed")]
-	internal static (AssemblyLoadContext OwnContext, IDictionary<string, Type> Types) For(Assembly anchor)
+	internal static (AssemblyLoadContext OwnContext, IDictionary<string, Type> Types) For(
+		Assembly anchor,
+		Action<Assembly, Exception>? onTypeLoadFailure = null)
 	{
 		var ownContext = AssemblyLoadContext.GetLoadContext(anchor) ?? AssemblyLoadContext.Default;
-		return (ownContext, Build(OwnAndDefaultContextAssemblies(ownContext)));
+		return (ownContext, Build(OwnAndDefaultContextAssemblies(ownContext), onTypeLoadFailure));
 	}
 
 	/// <summary>
@@ -50,7 +53,7 @@ internal static class RouteTypeIndex
 	/// Maps each class name in <paramref name="assemblies"/> to its type, keeping the first type found for a name.
 	/// </summary>
 	[RequiresUnreferencedCode("From Assembly.GetTypes(): Types might be removed")]
-	private static IDictionary<string, Type> Build(IEnumerable<Assembly> assemblies)
+	private static IDictionary<string, Type> Build(IEnumerable<Assembly> assemblies, Action<Assembly, Exception>? onTypeLoadFailure)
 	{
 		var types = new Dictionary<string, Type>();
 		foreach (var asb in assemblies)
@@ -60,12 +63,18 @@ internal static class RouteTypeIndex
 				continue;
 			}
 
-			foreach (var t in asb.SafeGetTypes())
+			var asbTypes = asb.SafeGetTypes(out var error);
+			foreach (var t in asbTypes)
 			{
 				if (t.IsClass)
 				{
 					types.TryAdd(t.Name, t);
 				}
+			}
+
+			if (error is not null)
+			{
+				onTypeLoadFailure?.Invoke(asb, error);
 			}
 		}
 

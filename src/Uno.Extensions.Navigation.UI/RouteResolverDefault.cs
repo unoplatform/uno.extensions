@@ -274,7 +274,11 @@ public class RouteResolverDefault : RouteResolver
 	[RequiresUnreferencedCode("From Assembly.GetTypes(): Types might be removed")]
 	private IDictionary<string, Type> IndexLoadedTypes()
 	{
-		var (ownContext, types) = RouteTypeIndex.For(typeof(RouteResolverDefault).Assembly);
+		var (ownContext, types) = RouteTypeIndex.For(typeof(RouteResolverDefault).Assembly, (assembly, error) =>
+		{
+			if (Logger.IsEnabled(LogLevel.Warning))
+				Logger.LogWarning(error, "Auto-resolve: Types of assembly {Assembly} could not all be loaded; those that failed are not searched for implicit routes", assembly.FullName);
+		});
 
 		if (Logger.IsEnabled(LogLevel.Debug))
 		{

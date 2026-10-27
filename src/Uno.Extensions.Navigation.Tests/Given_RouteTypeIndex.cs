@@ -129,6 +129,32 @@ public class Given_RouteTypeIndex
 		}
 	}
 
+	[TestMethod]
+	public void When_SomeTypesFailToLoad_Then_LoadableTypesIndexed()
+	{
+		var appContext = new AssemblyLoadContext("AppLoadContextWithBrokenType", isCollectible: true);
+		try
+		{
+			var id = Guid.NewGuid().ToString("N");
+			var appAssembly = LoadEmittedAssemblyWithMissingBase(appContext, $"PartlyLoadableApp{id}", $"Loadable{id}Model", $"Broken{id}Model");
+			var failures = new List<(Assembly Assembly, Exception Error)>();
+
+			var (_, index) = RouteTypeIndex.For(appAssembly, (assembly, error) => failures.Add((assembly, error)));
+
+			index[$"Loadable{id}Model"].Assembly.Should().BeSameAs(appAssembly,
+				"one type with a missing dependency must not hide the rest of its assembly");
+			index.Should().NotContainKey($"Broken{id}Model");
+			failures.Should().ContainSingle().Which.Assembly.Should().BeSameAs(appAssembly);
+			failures[0].Error.Should().BeOfType<ReflectionTypeLoadException>();
+			AssemblyExtensions.Excludes.Should().NotContain(appAssembly.FullName,
+				"an assembly whose types partly load must still be searched by later lookups");
+		}
+		finally
+		{
+			appContext.Unload();
+		}
+	}
+
 	private static IDictionary<string, Type> IndexFor(Assembly anchor)
 		=> RouteTypeIndex.For(anchor).Types;
 
@@ -138,6 +164,31 @@ public class Given_RouteTypeIndex
 		var module = builder.DefineDynamicModule(assemblyName);
 		module.DefineType($"{assemblyName}.{typeName}", TypeAttributes.Public | TypeAttributes.Class).CreateType();
 
+		return Load(context, builder);
+	}
+
+	/// <summary>
+	/// Emits an assembly with a loadable type and a type whose base class lives in an assembly that is never loaded,
+	/// so <see cref="Assembly.GetTypes"/> throws a <see cref="ReflectionTypeLoadException"/>.
+	/// </summary>
+	private static Assembly LoadEmittedAssemblyWithMissingBase(AssemblyLoadContext context, string assemblyName, string loadableTypeName, string brokenTypeName)
+	{
+		var missingName = $"{assemblyName}.Missing";
+		var missingBuilder = new PersistedAssemblyBuilder(new AssemblyName(missingName), typeof(object).Assembly);
+		var missingBase = missingBuilder.DefineDynamicModule(missingName)
+			.DefineType($"{missingName}.MissingBase", TypeAttributes.Public | TypeAttributes.Class);
+		missingBase.CreateType();
+
+		var builder = new PersistedAssemblyBuilder(new AssemblyName(assemblyName), typeof(object).Assembly);
+		var module = builder.DefineDynamicModule(assemblyName);
+		module.DefineType($"{assemblyName}.{loadableTypeName}", TypeAttributes.Public | TypeAttributes.Class).CreateType();
+		module.DefineType($"{assemblyName}.{brokenTypeName}", TypeAttributes.Public | TypeAttributes.Class, missingBase).CreateType();
+
+		return Load(context, builder);
+	}
+
+	private static Assembly Load(AssemblyLoadContext context, PersistedAssemblyBuilder builder)
+	{
 		using var stream = new MemoryStream();
 		builder.Save(stream);
 		stream.Position = 0;
