@@ -270,17 +270,16 @@ public class RouteResolverDefault : RouteResolver
 		{
 			if (loadedTypes is null)
 			{
-				var ownContext = RouteTypeIndex.OwnContextOf(typeof(RouteResolverDefault).Assembly);
-				var assemblies = RouteTypeIndex.OwnAndDefaultContextAssemblies(ownContext);
+				var (ownContext, types) = RouteTypeIndex.For(typeof(RouteResolverDefault).Assembly);
 				if (Logger.IsEnabled(LogLevel.Debug))
 				{
 					var scope = ownContext == AssemblyLoadContext.Default
 						? "the default load context"
 						: $"load context '{ownContext.Name}' and the default one";
-					Logger.LogDebugMessage($"Auto-resolve: Indexing types from {assemblies.Length} assemblies in {scope}");
+					Logger.LogDebugMessage($"Auto-resolve: Indexed {types.Count} types from {scope}");
 				}
 
-				loadedTypes = RouteTypeIndex.Build(assemblies);
+				loadedTypes = types;
 			}
 
 			return loadedTypes;

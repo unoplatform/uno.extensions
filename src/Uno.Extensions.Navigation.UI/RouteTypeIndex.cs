@@ -8,16 +8,21 @@ namespace Uno.Extensions.Navigation;
 /// Builds the by-name type index that <see cref="RouteResolverDefault"/> searches for implicit routes.
 /// </summary>
 /// <remarks>
-/// Kept free of UI types so the unit tests can compile it in directly; Uno.Extensions.Navigation.WinUI itself cannot be
-/// loaded in a plain test host.
+/// Must stay UI-free: Uno.Extensions.Navigation.Tests compiles this file in directly.
 /// </remarks>
 internal static class RouteTypeIndex
 {
 	/// <summary>
-	/// The load context that loaded <paramref name="anchor"/>, or the default context for an assembly that has none.
+	/// Indexes the classes of the load context that loaded <paramref name="anchor"/>, then those of the default context.
 	/// </summary>
-	internal static AssemblyLoadContext OwnContextOf(Assembly anchor)
-		=> AssemblyLoadContext.GetLoadContext(anchor) ?? AssemblyLoadContext.Default;
+	/// <param name="anchor">The assembly whose load context is searched first.</param>
+	/// <returns>The load context searched first, and the index.</returns>
+	[RequiresUnreferencedCode("From Assembly.GetTypes(): Types might be removed")]
+	internal static (AssemblyLoadContext OwnContext, IDictionary<string, Type> Types) For(Assembly anchor)
+	{
+		var ownContext = AssemblyLoadContext.GetLoadContext(anchor) ?? AssemblyLoadContext.Default;
+		return (ownContext, Build(OwnAndDefaultContextAssemblies(ownContext)));
+	}
 
 	/// <summary>
 	/// The assemblies of <paramref name="ownContext"/>, followed by those of the default context.
@@ -27,7 +32,7 @@ internal static class RouteTypeIndex
 	/// same-named type in the default one. A default-context assembly whose simple name the own context also has is
 	/// skipped: code in the own context binds to its own copy, never to the default one.
 	/// </remarks>
-	internal static Assembly[] OwnAndDefaultContextAssemblies(AssemblyLoadContext ownContext)
+	private static Assembly[] OwnAndDefaultContextAssemblies(AssemblyLoadContext ownContext)
 	{
 		var ownAssemblies = ownContext.Assemblies.ToArray();
 		if (ownContext == AssemblyLoadContext.Default)
@@ -45,10 +50,25 @@ internal static class RouteTypeIndex
 	/// Maps each class name in <paramref name="assemblies"/> to its type, keeping the first type found for a name.
 	/// </summary>
 	[RequiresUnreferencedCode("From Assembly.GetTypes(): Types might be removed")]
-	internal static IDictionary<string, Type> Build(IEnumerable<Assembly> assemblies)
-		=> (from asb in assemblies
-			where (!(asb.FullName ?? string.Empty).StartsWith("_") && !AssemblyExtensions.Excludes.Contains(asb.FullName ?? string.Empty))
-			from t in asb.SafeGetTypes()
-			where t.IsClass
-			select new { t.Name, Type = t }).ToDictionaryDistinct(x => x.Name, x => x.Type);
+	private static IDictionary<string, Type> Build(IEnumerable<Assembly> assemblies)
+	{
+		var types = new Dictionary<string, Type>();
+		foreach (var asb in assemblies)
+		{
+			if ((asb.FullName ?? string.Empty).StartsWith("_") || AssemblyExtensions.Excludes.Contains(asb.FullName ?? string.Empty))
+			{
+				continue;
+			}
+
+			foreach (var t in asb.SafeGetTypes())
+			{
+				if (t.IsClass)
+				{
+					types.TryAdd(t.Name, t);
+				}
+			}
+		}
+
+		return types;
+	}
 }

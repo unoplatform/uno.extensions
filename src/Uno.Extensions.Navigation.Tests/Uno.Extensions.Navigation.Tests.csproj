@@ -14,14 +14,13 @@
 		<PackageReference Include="MSTest.TestFramework" />
 		<PackageReference Include="coverlet.collector" />
 		<PackageReference Include="Moq" />
-		<!-- ToDictionaryDistinct, used by the linked RouteTypeIndex.cs. -->
-		<PackageReference Include="Uno.Core.Extensions.Collections" />
 	</ItemGroup>
 
 	<!--
 		Uno.Extensions.Navigation.WinUI cannot be loaded in a plain test host (its Uno.WinUI-injected module
 		initializer requires a runtime Uno.UI), so the UI-free route type index is compiled into this project
-		instead of referencing the assembly.
+		instead of referencing the assembly. Don't add a reference to it, even a transitive one: the linked public
+		AssemblyExtensions would then be defined twice (CS0436, an error here).
 	-->
 	<ItemGroup>
 		<Compile Include="..\Uno.Extensions.Navigation.UI\RouteTypeIndex.cs" Link="RouteTypeIndex.cs" />

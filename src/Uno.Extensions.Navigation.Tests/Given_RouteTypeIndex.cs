@@ -111,8 +111,8 @@ public class Given_RouteTypeIndex
 		var appContext = new AssemblyLoadContext("AppLoadContextWithOwnCopyOtherCasing", isCollectible: true);
 		try
 		{
-			// Simple names are compared case-insensitively by the loader, so a copy whose name differs only in casing is
-			// still the same assembly.
+			// The runtime's binder matches simple names case-insensitively, so a copy whose name differs only in casing
+			// stands for the same assembly. LoadFromStream bypasses the binder, which is what lets both copies load here.
 			var id = Guid.NewGuid().ToString("N");
 			LoadEmittedAssembly(AssemblyLoadContext.Default, $"samesimplenamelib{id}", $"DefaultCopyOnly{id}Model");
 			var ownCopy = LoadEmittedAssembly(appContext, $"SameSimpleNameLib{id}", $"OwnCopyOnly{id}Model");
@@ -129,12 +129,8 @@ public class Given_RouteTypeIndex
 		}
 	}
 
-	/// <summary>
-	/// Builds the index the way <see cref="RouteResolverDefault"/> does, with <paramref name="anchor"/> standing in for
-	/// the Uno.Extensions.Navigation.UI assembly.
-	/// </summary>
 	private static IDictionary<string, Type> IndexFor(Assembly anchor)
-		=> RouteTypeIndex.Build(RouteTypeIndex.OwnAndDefaultContextAssemblies(RouteTypeIndex.OwnContextOf(anchor)));
+		=> RouteTypeIndex.For(anchor).Types;
 
 	private static Assembly LoadEmittedAssembly(AssemblyLoadContext context, string assemblyName, string typeName)
 	{
