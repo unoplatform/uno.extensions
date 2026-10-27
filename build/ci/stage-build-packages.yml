@@ -71,7 +71,17 @@ jobs:
       vsTestVersion: toolsInstaller
       testSelector: testAssemblies
       runSettingsFile: build/tests.runsettings
-      
+
+  # Trimming only happens on publish, so this one is not a VSTest assembly: publish the app trimmed
+  # (partial mode, as iOS and Android Release builds do) and run it; a non-zero exit code fails.
+  - powershell: |
+      $out = "$(Agent.TempDirectory)/http-trimming-tests"
+      dotnet publish src/Uno.Extensions.Http.TrimmingTests/Uno.Extensions.Http.TrimmingTests.csproj -c Release -o $out
+      if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      & "$out/Uno.Extensions.Http.TrimmingTests.exe"
+      exit $LASTEXITCODE
+    displayName: Trimming tests (Uno.Extensions.Http)
+
 
   - task: PowerShell@2
     displayName: Authenticode Sign Packages
