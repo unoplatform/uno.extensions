@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Refit;
@@ -22,7 +23,10 @@ public static class ServiceCollectionExtensions
 	/// <param name="settingsBuilder">[optional]Callback for overriding Refit settings</param>
 	/// <param name="configure">[optional]Callback for configuring the endpoint</param>
 	/// <returns></returns>
-	public static IServiceCollection AddRefitClient<TInterface>(
+	public static IServiceCollection AddRefitClient<
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+		TInterface
+	>(
 		   this IServiceCollection services,
 		   HostBuilderContext context,
 		   EndpointOptions? options = null,
@@ -45,7 +49,12 @@ public static class ServiceCollectionExtensions
 	/// <param name="settingsBuilder">[optional]Callback for overriding Refit settings</param>
 	/// <param name="configure">[optional]Callback for configuring the endpoint</param>
 	/// <returns></returns>
-	public static IServiceCollection AddRefitClientWithEndpoint<TInterface, TEndpoint>(
+	public static IServiceCollection AddRefitClientWithEndpoint<
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+		TInterface,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
+		TEndpoint
+	>(
 		   this IServiceCollection services,
 		   HostBuilderContext context,
 		   TEndpoint? options = null,

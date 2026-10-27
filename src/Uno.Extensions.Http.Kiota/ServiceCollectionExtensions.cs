@@ -58,6 +58,7 @@ public static class ServiceCollectionExtensions
 	public static IServiceCollection AddKiotaClientWithEndpoint<
 		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
 		TClient,
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
 		TEndpoint
 	>(
 	this IServiceCollection services,
