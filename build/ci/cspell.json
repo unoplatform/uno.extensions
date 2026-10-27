@@ -2,7 +2,9 @@
 	"version": "0.2",
 	"language": "en",
 	"words": [
+		"bindables",
 		"binlogs",
+		"INDEI",
 		"browserwasm",
 		"DPAPI",
 		"cref",

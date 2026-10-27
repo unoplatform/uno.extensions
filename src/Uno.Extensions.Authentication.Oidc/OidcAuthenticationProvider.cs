@@ -17,14 +17,24 @@ internal record OidcAuthenticationProvider(
 	{
 		var config = Settings?.Options ?? Configuration.Get(Name) ?? new OidcClientOptions();
 
-		if (Settings is { AutoRedirectUri: true })
-		{
-			config.RedirectUri = config.PostLogoutRedirectUri = WebAuthenticationBroker
-				.GetCurrentApplicationCallbackUri().OriginalString;
-		}
-
 		config.Browser = Browser;
 		_client = new OidcClient(config);
+		ApplyAutoRedirectUri();
+	}
+
+	/// <summary>
+	/// With <see cref="OidcAuthenticationSettings.AutoRedirectUri"/>, the redirect follows the broker's
+	/// current callback URI. Re-read before every flow rather than captured once in <see cref="Build"/>:
+	/// the desktop loopback broker moves to another port when its default one could not be bound,
+	/// and a redirect captured at startup would keep sending the identity provider to the dead one.
+	/// </summary>
+	private void ApplyAutoRedirectUri()
+	{
+		if (_client is not null && Settings is { AutoRedirectUri: true })
+		{
+			_client.Options.RedirectUri = _client.Options.PostLogoutRedirectUri = WebAuthenticationBroker
+				.GetCurrentApplicationCallbackUri().OriginalString;
+		}
 	}
 
 	protected override async ValueTask<IDictionary<string, string>?> InternalLoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
@@ -35,6 +45,7 @@ internal record OidcAuthenticationProvider(
 			return default;
 		}
 
+		ApplyAutoRedirectUri();
 		var authenticationResult = await _client.LoginAsync(cancellationToken: cancellationToken);
 
 		if(authenticationResult.IsError)
@@ -72,7 +83,14 @@ internal record OidcAuthenticationProvider(
 			return true;
 		}
 
-		await _client.LogoutAsync();
+		ApplyAutoRedirectUri();
+		// Pass the cached id_token as the end-session hint: without it the identity provider
+		// cannot trust the post-logout redirect, so it stops on its own signed-out page and never
+		// redirects back to the app - on desktop the loopback broker then waits out its timeout.
+		var idToken = await Tokens.TokenAsync(TokenCacheExtensions.IdTokenKey, cancellationToken);
+		await _client.LogoutAsync(
+			new LogoutRequest { IdTokenHint = string.IsNullOrWhiteSpace(idToken) ? null : idToken },
+			cancellationToken);
 		return true;
 	}
 
