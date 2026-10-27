@@ -18,9 +18,20 @@ public static class AssemblyExtensions
 		{
 			if (assembly.FullName is not null)
 			{
-				Excludes.Add(assembly.FullName);
+				lock (Excludes)
+				{
+					Excludes.Add(assembly.FullName);
+				}
 			}
 			return new Type[] { };
+		}
+	}
+
+	internal static bool IsExcluded(Assembly assembly)
+	{
+		lock (Excludes)
+		{
+			return Excludes.Contains(assembly.FullName ?? string.Empty);
 		}
 	}
 }

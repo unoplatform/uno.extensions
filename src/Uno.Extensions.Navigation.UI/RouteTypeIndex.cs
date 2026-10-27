@@ -55,7 +55,7 @@ internal static class RouteTypeIndex
 		var types = new Dictionary<string, Type>();
 		foreach (var asb in assemblies)
 		{
-			if ((asb.FullName ?? string.Empty).StartsWith("_") || AssemblyExtensions.Excludes.Contains(asb.FullName ?? string.Empty))
+			if ((asb.FullName ?? string.Empty).StartsWith("_") || AssemblyExtensions.IsExcluded(asb))
 			{
 				continue;
 			}

@@ -13,6 +13,8 @@ public class RouteResolverDefault : RouteResolver
 
 	private IDictionary<string, Type>? loadedTypes;
 
+	private object? loadedTypesLock;
+
 	public RouteResolverDefault(
 		ILogger<RouteResolverDefault> logger,
 		IRouteRegistry routes,
@@ -266,23 +268,22 @@ public class RouteResolverDefault : RouteResolver
 	public IDictionary<string, Type> LoadedTypes
 	{
 		[RequiresUnreferencedCode("From Assembly.GetTypes(): Types might be removed")]
-		get
+		get => LazyInitializer.EnsureInitialized(ref loadedTypes, ref loadedTypesLock, IndexLoadedTypes);
+	}
+
+	[RequiresUnreferencedCode("From Assembly.GetTypes(): Types might be removed")]
+	private IDictionary<string, Type> IndexLoadedTypes()
+	{
+		var (ownContext, types) = RouteTypeIndex.For(typeof(RouteResolverDefault).Assembly);
+
+		if (Logger.IsEnabled(LogLevel.Debug))
 		{
-			if (loadedTypes is null)
-			{
-				var (ownContext, types) = RouteTypeIndex.For(typeof(RouteResolverDefault).Assembly);
-				if (Logger.IsEnabled(LogLevel.Debug))
-				{
-					var scope = ownContext == AssemblyLoadContext.Default
-						? "the default load context"
-						: $"load context '{ownContext.Name}' and the default one";
-					Logger.LogDebugMessage($"Auto-resolve: Indexed {types.Count} types from {scope}");
-				}
-
-				loadedTypes = types;
-			}
-
-			return loadedTypes;
+			var scope = ownContext == AssemblyLoadContext.Default
+				? "the default load context"
+				: $"load context '{ownContext.Name}' and the default one";
+			Logger.LogDebugMessage($"Auto-resolve: Indexed {types.Count} types from {scope}");
 		}
+
+		return types;
 	}
 }
