@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using System.Runtime.Loader;
 
 namespace Uno.Extensions.Navigation;
@@ -13,6 +12,10 @@ public class RouteResolverDefault : RouteResolver
 	public string[] ViewModelSuffixes { get; set; } = new[] { "Model", "ViewModel", "VM" };
 
 	private IDictionary<string, Type>? loadedTypes;
+
+	private object? loadedTypesLock;
+
+	private string loadedTypesScope = string.Empty;
 
 	public RouteResolverDefault(
 		ILogger<RouteResolverDefault> logger,
@@ -198,7 +201,7 @@ public class RouteResolverDefault : RouteResolver
 			}
 		}
 		if (Logger.IsEnabled(LogLevel.Warning))
-			Logger.LogWarningMessage($"Navigation failed: Could not resolve type for path '{path}'.");
+			Logger.LogWarningMessage($"Navigation failed: Could not resolve type for path '{path}'. Searched {loadedTypesScope}; types in any other load context need an explicit ViewMap/RouteMap.");
 
 		return null;
 
@@ -267,72 +270,24 @@ public class RouteResolverDefault : RouteResolver
 	public IDictionary<string, Type> LoadedTypes
 	{
 		[RequiresUnreferencedCode("From Assembly.GetTypes(): Types might be removed")]
-		get
-		{
-			if (loadedTypes is null)
-			{
-				var ownContext = AssemblyLoadContext.GetLoadContext(typeof(RouteResolverDefault).Assembly) ?? AssemblyLoadContext.Default;
-				var assemblies = OwnAndDefaultContextAssemblies(ownContext);
-				if (Logger.IsEnabled(LogLevel.Debug))
-				{
-					var scope = ownContext == AssemblyLoadContext.Default
-						? "the default load context"
-						: $"load context '{ownContext.Name}' and the default one";
-					Logger.LogDebugMessage($"Auto-resolve: Indexing types from {assemblies.Length} assemblies in {scope}");
-				}
-
-				loadedTypes = (from asb in assemblies
-							   where (!(asb.FullName ?? string.Empty).StartsWith("_") && !AssemblyExtensions.Excludes.Contains(asb.FullName ?? string.Empty))
-							   from t in asb.SafeGetTypes()
-							   where t.IsClass
-							   select new { t.Name, Type = t }).ToDictionaryDistinct(x => x.Name, x => x.Type);
-			}
-
-			return loadedTypes;
-		}
+		get => LazyInitializer.EnsureInitialized(ref loadedTypes, ref loadedTypesLock, IndexLoadedTypes);
 	}
-
-	/// <summary>
-	/// The assemblies of the resolver's own load context, followed by those of the default context.
-	/// </summary>
-	/// <remarks>
-	/// The own context comes first, and <c>ToDictionaryDistinct</c> keeps the first type per name, so the resolver's own
-	/// context wins over a same-named type in the default one. A default-context assembly whose simple name the own context
-	/// also has is skipped: code in the own context binds to its own copy, never to the default one.
-	/// </remarks>
-	private static Assembly[] OwnAndDefaultContextAssemblies(AssemblyLoadContext ownContext)
-	{
-		var ownAssemblies = ownContext.Assemblies.ToArray();
-		if (ownContext == AssemblyLoadContext.Default)
-		{
-			return ownAssemblies;
-		}
-
-		var ownNames = new HashSet<string?>(ownAssemblies.Select(asb => asb.GetName().Name), StringComparer.Ordinal);
-		return ownAssemblies
-			.Concat(AssemblyLoadContext.Default.Assemblies.Where(asb => !ownNames.Contains(asb.GetName().Name)))
-			.ToArray();
-	}
-}
-
-public static class AssemblyExtensions
-{
-	public static IList<string> Excludes { get; } = new List<string>();
 
 	[RequiresUnreferencedCode("From Assembly.GetTypes(): Types might be removed")]
-	public static Type[] SafeGetTypes(this Assembly assembly)
+	private IDictionary<string, Type> IndexLoadedTypes()
 	{
-		try
+		var (ownContext, types) = RouteTypeIndex.For(typeof(RouteResolverDefault).Assembly, (assembly, error) =>
 		{
-			return assembly.GetTypes();
-		}
-		catch
-		{
-			if (assembly.FullName is not null)
-			{
-				Excludes.Add(assembly.FullName);
-			}
-			return new Type[] { };
-		}
+			if (Logger.IsEnabled(LogLevel.Warning))
+				Logger.LogWarning(error, "Auto-resolve: Types of assembly {Assembly} could not all be loaded; those that failed are not searched for implicit routes", assembly.FullName);
+		});
+
+		loadedTypesScope = ownContext == AssemblyLoadContext.Default
+			? "the default load context"
+			: $"load context '{ownContext.Name}' and the default one";
+		if (Logger.IsEnabled(LogLevel.Debug))
+			Logger.LogDebugMessage($"Auto-resolve: Indexed {types.Count} types from {loadedTypesScope}");
+
+		return types;
 	}
 }
