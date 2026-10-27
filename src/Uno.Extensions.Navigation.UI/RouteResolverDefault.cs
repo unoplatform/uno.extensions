@@ -15,6 +15,8 @@ public class RouteResolverDefault : RouteResolver
 
 	private object? loadedTypesLock;
 
+	private string loadedTypesScope = string.Empty;
+
 	public RouteResolverDefault(
 		ILogger<RouteResolverDefault> logger,
 		IRouteRegistry routes,
@@ -199,7 +201,7 @@ public class RouteResolverDefault : RouteResolver
 			}
 		}
 		if (Logger.IsEnabled(LogLevel.Warning))
-			Logger.LogWarningMessage($"Navigation failed: Could not resolve type for path '{path}'.");
+			Logger.LogWarningMessage($"Navigation failed: Could not resolve type for path '{path}'. Searched {loadedTypesScope}; types in any other load context need an explicit ViewMap/RouteMap.");
 
 		return null;
 
@@ -280,13 +282,11 @@ public class RouteResolverDefault : RouteResolver
 				Logger.LogWarning(error, "Auto-resolve: Types of assembly {Assembly} could not all be loaded; those that failed are not searched for implicit routes", assembly.FullName);
 		});
 
+		loadedTypesScope = ownContext == AssemblyLoadContext.Default
+			? "the default load context"
+			: $"load context '{ownContext.Name}' and the default one";
 		if (Logger.IsEnabled(LogLevel.Debug))
-		{
-			var scope = ownContext == AssemblyLoadContext.Default
-				? "the default load context"
-				: $"load context '{ownContext.Name}' and the default one";
-			Logger.LogDebugMessage($"Auto-resolve: Indexed {types.Count} types from {scope}");
-		}
+			Logger.LogDebugMessage($"Auto-resolve: Indexed {types.Count} types from {loadedTypesScope}");
 
 		return types;
 	}
