@@ -312,7 +312,7 @@ The skeleton is provided by the `SkeletonFeedViewStyle` style. It requires the U
 | No data | The `NoneTemplate`, as usual. |
 | Error | The `ErrorTemplate`, shown over the content, as usual. |
 
-The style does not use the `ProgressTemplate`: setting one has no effect with this style. Likewise, `utu:Skeleton.IsEnabled` and `utu:Skeleton.PlaceholderTemplate` are not needed and have no effect: the skeleton is always derived from the `ValueTemplate`.
+The style does not use the `ProgressTemplate`: setting one has no effect with this style. The skeleton is always derived from the `ValueTemplate`.
 
 ### Properties
 
