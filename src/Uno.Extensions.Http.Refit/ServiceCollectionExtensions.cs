@@ -12,6 +12,9 @@ namespace Uno.Extensions;
 /// </summary>
 public static class ServiceCollectionExtensions
 {
+	internal const string RequiresDynamicCodeMessage = "Binding strongly typed objects to configuration values may require generating dynamic code at runtime. [From Array.CreateInstance() and others.]";
+	internal const string RequiresUnreferencedCodeMessage = "Cannot statically analyze the type of instance so its members may be trimmed. [From TypeDescriptor.GetConverter() and others.]";
+
 	/// <summary>
 	/// Registers a Refit client with the specified <paramref name="name"/>.
 	/// </summary>
@@ -23,6 +26,8 @@ public static class ServiceCollectionExtensions
 	/// <param name="settingsBuilder">[optional]Callback for overriding Refit settings</param>
 	/// <param name="configure">[optional]Callback for configuring the endpoint</param>
 	/// <returns></returns>
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static IServiceCollection AddRefitClient<
 		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
 		TInterface
@@ -49,6 +54,8 @@ public static class ServiceCollectionExtensions
 	/// <param name="settingsBuilder">[optional]Callback for overriding Refit settings</param>
 	/// <param name="configure">[optional]Callback for configuring the endpoint</param>
 	/// <returns></returns>
+	[RequiresDynamicCode(RequiresDynamicCodeMessage)]
+	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static IServiceCollection AddRefitClientWithEndpoint<
 		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
 		TInterface,
