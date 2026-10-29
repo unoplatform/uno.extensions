@@ -255,6 +255,24 @@ public class Given_CommandValidation : FeedUITests
 	}
 
 	[TestMethod]
+	public async Task When_PublicationCancelledByState_Then_ExecutionFails()
+	{
+		var state = new CancelledUpdatesState<string>(new StateImpl<string>(Context, Option.Some("value")));
+		var sut = Create(b => b
+			.Given(state)
+			.Validation(async (value, ct) => Error("invalid"))
+			.Then(Execute));
+
+		await sut.ExecuteAndWait();
+
+		// The results cannot be published (e.g. the context of the state has been disposed while the update was pending),
+		// so the execution fails instead of being silently cancelled.
+		sut.Executions.Should().BeEmpty();
+		sut.Errors.Should().ContainSingle().Which.Should().BeOfType<InvalidOperationException>();
+		sut.Completions.Should().ContainSingle().Which.Error.Should().NotBeNull();
+	}
+
+	[TestMethod]
 	public async Task When_CannotExecute_Then_NotValidated()
 	{
 		var state = new StateImpl<string>(Context, Option.Some("value"));
@@ -624,6 +642,25 @@ public class Given_CommandValidation : FeedUITests
 
 	private static IEnumerable<ValidationResult> Valid()
 		=> Array.Empty<ValidationResult>();
+
+	/// <summary>
+	/// A state whose updates are cancelled, like the ones of a state whose context is disposed while they are pending.
+	/// </summary>
+	private sealed class CancelledUpdatesState<T>(IState<T> inner) : IState<T>
+	{
+		SourceContext IState.Context => inner.Context;
+
+		IRequestSource IState.Requests => inner.Requests;
+
+		public IAsyncEnumerable<Message<T>> GetSource(SourceContext context, CancellationToken ct = default)
+			=> inner.GetSource(context, ct);
+
+		public ValueTask UpdateMessageAsync(Action<MessageBuilder<T>> updater, CancellationToken ct)
+			=> ValueTask.FromException(new TaskCanceledException());
+
+		public ValueTask DisposeAsync()
+			=> inner.DisposeAsync();
+	}
 
 	private sealed class SutCommand
 	{
