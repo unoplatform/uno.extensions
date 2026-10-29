@@ -17,12 +17,21 @@ public class Given_IValidatorLocation
 			.Should().BeSameAs(typeof(IValidator));
 
 	[TestMethod]
-	public void When_ResolvedFromServices_Then_ImplementedByValidationPackage()
+	public async Task When_ResolvedFromServices_Then_Validates()
 	{
 		using var host = TestHost.Create();
 
-		var validator = host.GetValidator();
+		// The IValidator of Core is the one registered by UseValidation.
+		var results = await host.Services.GetRequiredService<IValidator>().ValidateAsync(new Model());
 
-		validator.GetType().Assembly.GetName().Name.Should().Be("Uno.Extensions.Validation");
+		var result = results.Should().ContainSingle().Subject;
+		result.ErrorMessage.Should().Be("required");
+		result.MemberNames.Should().Equal(nameof(Model.Value));
+	}
+
+	private sealed class Model
+	{
+		[Required(ErrorMessage = "required")]
+		public string? Value { get; set; }
 	}
 }
