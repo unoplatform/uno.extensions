@@ -53,7 +53,7 @@ Additional behavior choices:
 | Finding | Resolution |
 | --- | --- |
 | `With` prefix not used in MVUX naming (`WithValidation`) | Renamed `Validate` (earlier revision of the PR). |
-| `.Validation(() => Validator)` convenience | `Validate(IValidator)` overload added by spec 017 (#3222), with `IValidator` moved to `Uno.Extensions.Core`. |
+| `.Validation(() => Validator)` convenience | `Validate(IValidator)` overload added by spec 024 (#3222), with `IValidator` moved to `Uno.Extensions.Core`. |
 | Provide `SetValidationAsync` like `ClearSelectionAsync` | `State.SetValidationAsync(results, ct)`; docs and spec use it for on-demand validation. |
 | `Some(null)` treated as `None` (validator skipped, results cleared) | `Some(null)` is a value: the validator is invoked with `null` (`When_SomeNull_Then_ValidatorInvokedWithNull`). |
 | `Validate(customState, null)` throws `NotSupportedException` | Arguments checked first: `ArgumentNullException` (`When_NullValidator_Then_ThrowsArgumentNull`, `When_NullState_Then_ThrowsArgumentNull`). |
