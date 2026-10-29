@@ -1,17 +1,19 @@
-# 017 — Progress
+# 024 — Progress
 
-Stacked PR: `main` ← #3203 (spec 015) ← #3204 (spec 016) ← this branch (`dev/xygu/20261007/spec-017-command-validation`).
+Stacked PR: `main` ← #3203 (spec 022) ← #3204 (spec 023) ← this branch (`dev/xygu/20261007/spec-017-command-validation`).
 
 ## Decisions
+
 | Topic | Decision |
 | --- | --- |
-| Validator type | `IValidator` moved to Core (type forward in Validation); delegate overloads mirror spec 016. |
+| Validator type | `IValidator` moved to Core (type forward in Validation); delegate overloads mirror spec 023. |
 | Naming | `State.Validate` / builder `.Validation`. |
-| Coexistence with `State.Validate` | Last validation started wins (documented; versioned publications, spec 015 review panel). |
+| Coexistence with `State.Validate` | Last validation started wins (documented; versioned publications, spec 022 review panel). |
 | `Given` not a state / no `Given` | Validate + abort, results not published (logged), `FEED2003` warning at build. |
 | Scope | Builder only, single `Given`. |
 
 ## Plan
+
 - [x] Spec (this folder)
 - [x] Move `IValidator` to Core + type forward
 - [x] Shared validation helpers + `State.Validate(IValidator)`
@@ -23,11 +25,13 @@ Stacked PR: `main` ← #3203 (spec 015) ← #3204 (spec 016) ← this branch (`d
 - [x] Address review panel findings (below)
 
 ## Verification
+
 - Release build of every project of `Uno.Extensions-packageonly.slnf`, built one by one (the solution-level restore fails with `MSB4181` on SDK 11 preview, also on the base commit): 51/52 clean, no warnings. `Uno.Extensions.Maui.WinUI.Runtime.Skia` has no target framework locally (iOS/Android disabled by `DebugPlatforms.props`).
 - `Uno.Extensions.Reactive.Tests` (`Given_CommandValidation`, `Given_CommandValidationDiagnostic`, `Given_StateWithValidation`, `Given_AsyncCommand`, `Given_CompositeCommand`, `Given_ValidationDiagnostic`): 76 passed. `Uno.Extensions.Validation.Tests`: 8 passed.
 - `FEED2003` verified end-to-end: it fired on the test project itself (which loads the generator as analyzer) for the two intentional non-state cases.
 
 ## Review panel (7 lenses)
+
 Verdict: fix-first (security fix-before-merge, skeptic fix-first, others approve-with-changes). Addressed:
 
 | Finding | Resolution |
@@ -40,8 +44,8 @@ Verdict: fix-first (security fix-before-merge, skeptic fix-first, others approve
 | Medium: an `OperationCanceledException` of the validator itself silently aborted | Validator errors wrapped (`InvalidOperationException`, no value) so the execution faults; test |
 | Medium: no trace of an aborted execution | Logged (count only), at Information since the 20261020 panel |
 | Medium: `CommandConfig.Validate` hook not needed | Validation composed in the builder; `CommandConfig` / `AsyncCommand.SubCommand` unchanged vs base |
-| Medium: two writers of the axis through different doors | Single internal entry point `StateImpl.PublishValidationAsync` (`IValidationTarget`), used by the state validator, commands and the public `SetValidationAsync` (spec 015 review) |
-| Medium: results dropped when the source of the state emits | Fixed by the spec 015 validation update (20261020 panel): results kept until the next execution, tested (`State.Async` refresh) |
+| Medium: two writers of the axis through different doors | Single internal entry point `StateImpl.PublishValidationAsync` (`IValidationTarget`), used by the state validator, commands and the public `SetValidationAsync` (spec 022 review) |
+| Medium: results dropped when the source of the state emits | Fixed by the spec 022 validation update (20261020 panel): results kept until the next execution, tested (`State.Async` refresh) |
 | Medium: lockstep upgrade (`CS0433`) | Spec §3 + Validation overview; to be called out in the PR |
 | Medium: `Task.Delay(50)` negative assertions | Replaced with synchronous checks (`ExecutionStarted` count, `IsExecuting`) or synchronous continuations |
 | Medium: missing tests | Added: `Validation` twice, covariant builder, view parameter at runtime, null view parameter with `IValidator` |
@@ -53,7 +57,7 @@ Verdict: fix-first (security fix-before-merge, skeptic fix-first, others approve
 
 ## Review panel (20261020)
 
-Seven-agent panel on the whole stack (#3203, #3204, #3222). Findings that belong to this PR (see spec 015 progress for the others):
+Seven-agent panel on the whole stack (#3203, #3204, #3222). Findings that belong to this PR (see spec 022 progress for the others):
 
 | Finding | Resolution |
 | --- | --- |
@@ -71,5 +75,4 @@ Seven-agent panel on the whole stack (#3203, #3204, #3222). Findings that belong
 | L15 Duplicated poll loop | Shared `WaitForAsync`. |
 | L17 Tests build `StateImpl` directly | Kept: same pattern as the rest of `Reactive.Tests`, behavior asserted through the public API of commands. |
 | L19 "Only place" of localization | Specs and lessons reworded. |
-| Command results after a source refresh | Kept until the next execution (consequence of the spec 015 fix), test updated. |
-
+| Command results after a source refresh | Kept until the next execution (consequence of the spec 022 fix), test updated. |
