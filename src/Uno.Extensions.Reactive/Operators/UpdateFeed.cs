@@ -111,6 +111,7 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 		private readonly MessageManager<T, T> _message;
 
 		private ImmutableList<IFeedUpdate<T>> _activeUpdates;
+		private ImmutableList<IFeedUpdate<T>> _activeLastUpdates; // The active updates which depend on the others (cf. IFeedUpdate.IsAppliedLast), applied after them
 		private ImmutableDictionary<IFeedUpdate<T>, IFeedRollbackableUpdate<T>> _compactedUpdates;
 		private bool _isInError;
 		private bool _isParentReady;
@@ -125,6 +126,7 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 			// so local axes (like validation) are forwarded.
 			_message = new MessageManager<T, T>(_subject.SetNext, forwardLocalAxes: true);
 			_activeUpdates = ImmutableList<IFeedUpdate<T>>.Empty;
+			_activeLastUpdates = ImmutableList<IFeedUpdate<T>>.Empty;
 			_compactedUpdates = ImmutableDictionary<IFeedUpdate<T>, IFeedRollbackableUpdate<T>>.Empty;
 			_isParentReady = owner._waitForParent is null;
 
@@ -166,20 +168,23 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 						rollbackable.Rollback(_message);
 					}
 
-					needsUpdate = !_activeUpdates.IsEmpty || !_compactedUpdates.IsEmpty;
+					needsUpdate = !_activeUpdates.IsEmpty || !_activeLastUpdates.IsEmpty || !_compactedUpdates.IsEmpty;
 					canDoIncrementalUpdate = false;
 					_activeUpdates = ImmutableList<IFeedUpdate<T>>.Empty;
+					_activeLastUpdates = ImmutableList<IFeedUpdate<T>>.Empty;
 					_compactedUpdates = ImmutableDictionary<IFeedUpdate<T>, IFeedRollbackableUpdate<T>>.Empty;
 				}
 
 				if (args.removed is { Length: > 0 } removed)
 				{
 					var updates = _activeUpdates.RemoveRange(removed);
-					if (_activeUpdates != updates)
+					var lastUpdates = _activeLastUpdates.RemoveRange(removed);
+					if (_activeUpdates != updates || _activeLastUpdates != lastUpdates)
 					{
 						needsUpdate = true;
 						canDoIncrementalUpdate = false;
 						_activeUpdates = updates;
+						_activeLastUpdates = lastUpdates;
 					}
 
 					// Handle Remove of previously compacted updates
@@ -197,11 +202,25 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 
 				if (args.added is { Length: > 0 } added)
 				{
-					var updates = _activeUpdates.AddRange(added);
-					if (_activeUpdates != updates)
+					var updates = _activeUpdates;
+					var lastUpdates = _activeLastUpdates;
+					foreach (var update in added)
+					{
+						if (update.IsAppliedLast)
+						{
+							lastUpdates = lastUpdates.Add(update);
+						}
+						else
+						{
+							updates = updates.Add(update);
+						}
+					}
+
+					if (_activeUpdates != updates || _activeLastUpdates != lastUpdates)
 					{
 						needsUpdate = true;
 						_activeUpdates = updates;
+						_activeLastUpdates = lastUpdates;
 
 						if (canDoIncrementalUpdate)
 						{
@@ -249,12 +268,17 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 							}
 						}
 
-						// The updates which depend on the others are re-applied on top of the added ones (which are already in the active updates).
-						foreach (var update in _activeUpdates)
+						// The updates which depend on the others are re-applied on top of the added ones (the added ones are already active),
+						// and the ones which are no longer active are removed (they would otherwise remain until the next rebuild).
+						foreach (var update in _activeLastUpdates)
 						{
-							if (update.IsAppliedLast)
+							if (update.IsActive(msg.Parent, false, msg))
 							{
 								update.Apply(false, msg);
+							}
+							else
+							{
+								_activeLastUpdates = _activeLastUpdates.Remove(update);
 							}
 						}
 						return msg;
@@ -278,28 +302,39 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 		/// </summary>
 		private void TryCompact()
 		{
-			if (!_isParentCompleted || _activeUpdates.IsEmpty)
+			if (!_isParentCompleted)
 			{
 				return;
 			}
 
-			var remainingUpdates = _activeUpdates.ToBuilder();
-			foreach (var update in _activeUpdates)
-			{
-				if (update.IsCompactable())
-				{
-					remainingUpdates.Remove(update);
+			Compact(ref _activeUpdates);
+			Compact(ref _activeLastUpdates);
 
-					if (update is IFeedRollbackableUpdate<T> rollbackable)
+			void Compact(ref ImmutableList<IFeedUpdate<T>> updates)
+			{
+				if (updates.IsEmpty)
+				{
+					return;
+				}
+
+				var remainingUpdates = updates.ToBuilder();
+				foreach (var update in updates)
+				{
+					if (update.IsCompactable())
 					{
-						_compactedUpdates = _compactedUpdates.Add(update, rollbackable);
+						remainingUpdates.Remove(update);
+
+						if (update is IFeedRollbackableUpdate<T> rollbackable)
+						{
+							_compactedUpdates = _compactedUpdates.Add(update, rollbackable);
+						}
 					}
 				}
-			}
 
-			if (remainingUpdates.Count != _activeUpdates.Count)
-			{
-				_activeUpdates = remainingUpdates.ToImmutable();
+				if (remainingUpdates.Count != updates.Count)
+				{
+					updates = remainingUpdates.ToImmutable();
+				}
 			}
 		}
 
@@ -313,8 +348,8 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 					{
 						var parentChanged = parent is not null;
 						var msg = current.WithParentOnly(parent);
-						ApplyActiveUpdates(msg, parentChanged, appliedLast: false);
-						ApplyActiveUpdates(msg, parentChanged, appliedLast: true);
+						ApplyActiveUpdates(ref _activeUpdates, msg, parentChanged);
+						ApplyActiveUpdates(ref _activeLastUpdates, msg, parentChanged); // Applied after the others, cf. IFeedUpdate.IsAppliedLast
 
 						return msg;
 					}
@@ -330,22 +365,17 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 				parentMsg,
 				_ct);
 
-			void ApplyActiveUpdates(MessageBuilder<T, T> msg, bool parentChanged, bool appliedLast)
+			static void ApplyActiveUpdates(ref ImmutableList<IFeedUpdate<T>> updates, MessageBuilder<T, T> msg, bool parentChanged)
 			{
-				foreach (var update in _activeUpdates)
+				foreach (var update in updates)
 				{
-					if (update.IsAppliedLast != appliedLast)
-					{
-						continue;
-					}
-
 					if (update.IsActive(msg.Parent, parentChanged, msg))
 					{
 						update.Apply(parentChanged, msg);
 					}
 					else
 					{
-						_activeUpdates = _activeUpdates.Remove(update);
+						updates = updates.Remove(update);
 					}
 				}
 			}
