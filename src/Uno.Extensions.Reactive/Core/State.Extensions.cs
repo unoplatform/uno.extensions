@@ -372,7 +372,7 @@ partial class State
 	/// Results produced for a value that is no longer the current value of the state are discarded.
 	/// Results are kept until the next validation: they are not dropped when the source of the state produces the same value again, and they are not reported for another value.
 	/// When the state has no value (None), the validation results are cleared. A null value is still a value: the validator is invoked with null.
-	/// If the validator throws, the error is logged and the previous results are kept (the state is not set in error).
+	/// If the validator throws, the error is logged and the state is not set in error: the value has no results (the results of a previous value are not kept for it).
 	/// This is idempotent: invoking this method multiple times on the same state replaces the validator (starting at the next data change).
 	/// </remarks>
 	/// <exception cref="ArgumentNullException">If the <paramref name="state"/> or the <paramref name="validator"/> is null.</exception>

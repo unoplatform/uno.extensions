@@ -25,6 +25,12 @@ internal interface IFeedUpdate<T>
 	/// </summary>
 	/// <returns>True if this update does not need to be retained for replay.</returns>
 	bool IsCompactable() => false;
+
+	/// <summary>
+	/// Indicates that this update depends on the result of the other updates (e.g. validation results which are relevant only for a given data),
+	/// so it is applied after them, and re-applied each time another update is applied.
+	/// </summary>
+	bool IsAppliedLast => false;
 }
 
 /// <summary>
@@ -237,7 +243,19 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 						var msg = current.With();
 						foreach (var update in u)
 						{
-							update.Apply(false, msg);
+							if (!update.IsAppliedLast)
+							{
+								update.Apply(false, msg);
+							}
+						}
+
+						// The updates which depend on the others are re-applied on top of the added ones (which are already in the active updates).
+						foreach (var update in _activeUpdates)
+						{
+							if (update.IsAppliedLast)
+							{
+								update.Apply(false, msg);
+							}
 						}
 						return msg;
 					}
@@ -295,17 +313,8 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 					{
 						var parentChanged = parent is not null;
 						var msg = current.WithParentOnly(parent);
-						foreach (var update in _activeUpdates)
-						{
-							if (update.IsActive(msg.Parent, parentChanged, msg))
-							{
-								update.Apply(parentChanged, msg);
-							}
-							else
-							{
-								_activeUpdates = _activeUpdates.Remove(update);
-							}
-						}
+						ApplyActiveUpdates(msg, parentChanged, appliedLast: false);
+						ApplyActiveUpdates(msg, parentChanged, appliedLast: true);
 
 						return msg;
 					}
@@ -320,6 +329,26 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 				},
 				parentMsg,
 				_ct);
+
+			void ApplyActiveUpdates(MessageBuilder<T, T> msg, bool parentChanged, bool appliedLast)
+			{
+				foreach (var update in _activeUpdates)
+				{
+					if (update.IsAppliedLast != appliedLast)
+					{
+						continue;
+					}
+
+					if (update.IsActive(msg.Parent, parentChanged, msg))
+					{
+						update.Apply(parentChanged, msg);
+					}
+					else
+					{
+						_activeUpdates = _activeUpdates.Remove(update);
+					}
+				}
+			}
 		}
 	}
 }

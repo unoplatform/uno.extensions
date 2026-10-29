@@ -221,7 +221,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		}
 		catch (Exception error)
 		{
-			// Validation must never fault the state: we only log the error and keep the previous results.
+			// Validation must never fault the state: we only log the error (results of a previous value are not reported for this one, cf. ValidationUpdate).
 			LogFailure(error, loop, isPublishing: false);
 			return;
 		}
@@ -267,7 +267,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 			}
 			else
 			{
-				log.LogError("The validator '{Validator}' of a state of '{ValueType}' failed with an '{ErrorType}'. Previous validation results are kept.", Describe(loop.Source), typeof(T).Name, error.GetType().Name);
+				log.LogError("The validator '{Validator}' of a state of '{ValueType}' failed with an '{ErrorType}'. The value has not been validated.", Describe(loop.Source), typeof(T).Name, error.GetType().Name);
 			}
 		}
 		if (log.IsEnabled(LogLevel.Debug))
@@ -320,7 +320,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		target.Enable();
 		target._subscription.Enable();
 
-		var update = new ValidationUpdate(results, isCurrent, version);
+		var update = new ValidationUpdate(target, results, isCurrent, version);
 		lock (target._validationResultsGate)
 		{
 			if (target._validationResults is { } current && current.Version > version)
@@ -328,16 +328,9 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 				return; // Results of a validation started later have already been published.
 			}
 
-			// Note: Replacing under the lock makes sure that the UpdateFeed receives the replacements in the same order as the _validationResults.
-			if (target._validationResults is { } previous)
-			{
-				target._inner.Replace(previous, update);
-			}
-			else
-			{
-				target._inner.Add(update);
-			}
+			// Note: The previous results are not removed from the UpdateFeed (which would rebuild the message), they are superseded (cf. ValidationUpdate.IsLatest).
 			target._validationResults = update;
+			target._inner.Add(update);
 		}
 
 		var applied = update.HasBeenApplied;
@@ -450,10 +443,10 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	/// The validation results of a state (cf. <see cref="PublishValidationAsync"/>).
 	/// </summary>
 	/// <remarks>
-	/// Unlike an <see cref="Update"/>, this remains active when the source of the state produces a new message, until it is replaced by the next results:
-	/// results are re-applied on each new message, as long as they are relevant for its data.
+	/// Unlike an <see cref="Update"/>, this remains active when the source of the state produces a new message, until it is superseded by the next results:
+	/// results are re-applied on each new message and after each update of the data, as long as they are relevant for its data.
 	/// </remarks>
-	private sealed class ValidationUpdate(IImmutableList<ValidationResult>? results, Func<Option<T>, bool>? isCurrent, long version) : IFeedUpdate<T>
+	private sealed class ValidationUpdate(StateImpl<T> owner, IImmutableList<ValidationResult>? results, Func<Option<T>, bool>? isCurrent, long version) : IFeedUpdate<T>
 	{
 		private readonly TaskCompletionSource<object?> _firstResult = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
@@ -461,26 +454,39 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 
 		public Task HasBeenApplied => _firstResult.Task;
 
+		/// <summary>
+		/// Gets a boolean indicating if these are the last results published on the state.
+		/// </summary>
+		/// <remarks>
+		/// Results are published by adding a new update (removing the previous one would rebuild the message, which drops the updates of a state whose source completed).
+		/// So previous results remain in the active updates of the state, but are no longer applied, until they are removed.
+		/// </remarks>
+		private bool IsLatest => ReferenceEquals(Volatile.Read(ref owner._validationResults), this);
+
+		/// <inheritdoc />
+		/// <remarks>Results are relevant only for a given data, so they are checked after the updates of the data.</remarks>
+		public bool IsAppliedLast => true;
+
 		/// <inheritdoc />
 		public bool IsActive(Message<T>? parent, bool parentChanged, IMessageEntry<T> entry)
-			=> !_firstResult.Task.IsFaulted;
+			=> !_firstResult.Task.IsFaulted && IsLatest;
 
 		/// <inheritdoc />
 		/// <remarks>
-		/// Once the source of the state has completed, the results do not have to be re-applied anymore.
-		/// Like for the selection of a list state, a compacted instance which is then replaced is not rolled back: the next results are applied on top of it.
+		/// Even once the source of the state has completed, the last results have to be re-applied on each update of the data, to remove them if no longer relevant.
 		/// </remarks>
 		public bool IsCompactable()
-			=> _firstResult.Task.IsCompletedSuccessfully;
+			=> _firstResult.Task.IsCompletedSuccessfully && !IsLatest;
 
 		/// <inheritdoc />
 		public void Apply(bool _, MessageBuilder<T, T> message)
 		{
 			try
 			{
-				if (isCurrent?.Invoke(message.CurrentData) ?? true)
+				if (IsLatest)
 				{
-					message.Validation(results);
+					// Results which are not relevant for the current data are removed (they would remain when an update of the data is applied incrementally).
+					message.Validation(isCurrent?.Invoke(message.CurrentData) ?? true ? results : null);
 				}
 				_firstResult.TrySetResult(null);
 			}

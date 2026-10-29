@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -89,6 +90,7 @@ public class Given_StateWithValidation : FeedTests
 	{
 		var validator = new TestValidator();
 		var state = new StateImpl<string>(Context, Option.Some("initial"));
+		using var messages = state.Record();
 		_ = state.Validate(validator.Validate);
 		var first = await validator.WaitForCall(0);
 
@@ -101,13 +103,62 @@ public class Given_StateWithValidation : FeedTests
 		first.Complete(Error("initial"));
 
 		await state.SetAsync("updated2", CT); // Marker
-		var third = await validator.WaitForCall(2);
-		state.Current.Current.Validation.Should().ContainSingle().Which.ErrorMessage.Should().Be("updated");
-		third.Value.Should().Be("updated2");
+		(await validator.WaitForCall(2)).Complete(Error("updated2"));
+		await WaitForValidation(state, "updated2");
+
+		// The error of each result is the value it has been produced for: no message must report the results of another value.
+		messages.Should().NotContain(msg => msg.Current.Validation.Any(result => result.ErrorMessage != msg.Current.Data.SomeOrDefault()));
 	}
 
 	[TestMethod]
 	public async Task When_ResultsForValueNoLongerCurrent_Then_Discarded()
+	{
+		var validator = new TestValidator();
+		var state = new StateImpl<string>(Context, Option.Some("initial"));
+		using var messages = state.Record();
+		_ = state.Validate(validator.Validate);
+		var first = await validator.WaitForCall(0);
+
+		await state.SetAsync("updated", CT);
+		var second = await validator.WaitForCall(1);
+
+		// The results of the first value complete while the second value is being validated: they must not be reported for the second value.
+		first.Complete(Error("initial"));
+		second.Complete(Error("updated"));
+		await WaitForValidation(state, "updated");
+
+		messages.Should().NotContain(msg => msg.Current.Validation.Any(result => result.ErrorMessage != msg.Current.Data.SomeOrDefault()));
+	}
+
+	[TestMethod]
+	public async Task When_SourceCompletes_Then_ResultsKept_And_NotRevalidated()
+	{
+		var validator = new TestValidator();
+		var complete = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+		var completed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+		var state = new StateImpl<string>(Context, Feed.Create(Source));
+		_ = state.Validate(validator.Validate);
+		(await validator.WaitForCall(0)).Complete(Error("value"));
+		await WaitForValidation(state, "value");
+
+		complete.SetResult();
+		await completed.Task;
+		await state.UpdateMessageAsync(_ => { }, CT); // Marker, applies the active updates of the state on top of its current message
+
+		state.Current.Current.Data.SomeOrDefault().Should().Be("value");
+		state.Current.Current.Validation.Should().ContainSingle().Which.ErrorMessage.Should().Be("value");
+		validator.Calls.Should().HaveCount(1);
+
+		async IAsyncEnumerable<Message<string>> Source([EnumeratorCancellation] CancellationToken ct)
+		{
+			yield return Message<string>.Initial.With().Data("value");
+			await complete.Task;
+			completed.SetResult();
+		}
+	}
+
+	[TestMethod]
+	public async Task When_DataChangedLocally_Then_ResultsOfPreviousValueNotShown()
 	{
 		var validator = new TestValidator();
 		var state = new StateImpl<string>(Context, Option.Some("initial"));
@@ -116,15 +167,35 @@ public class Given_StateWithValidation : FeedTests
 		await WaitForValidation(state, "initial");
 
 		await state.SetAsync("updated", CT);
-		var second = await validator.WaitForCall(1);
-		second.Complete(Error("updated"));
-		await WaitForValidation(state, "updated");
 
-		state.Current.Current.Validation.Should().ContainSingle().Which.ErrorMessage.Should().Be("updated");
+		// The validation of the new value is pending: the results of the previous value must not be reported for it.
+		(await validator.WaitForCall(1)).Value.Should().Be("updated");
+		state.Current.Current.Data.SomeOrDefault().Should().Be("updated");
+		state.Current.Current.Validation.Should().BeEmpty();
 	}
 
 	[TestMethod]
-	public async Task When_ValidatorThrows_Then_StateNotInError_And_PreviousResultsKept()
+	public async Task When_ValidatorThrowsForNewValue_Then_ResultsOfPreviousValueNotShown()
+	{
+		var validator = new TestValidator();
+		var state = new StateImpl<string>(Context, Option.Some("initial"));
+		_ = state.Validate(validator.Validate);
+		(await validator.WaitForCall(0)).Complete(Error("initial"));
+		await WaitForValidation(state, "initial");
+
+		await state.SetAsync("updated", CT);
+		(await validator.WaitForCall(1)).Fail(new InvalidOperationException("validator failed"));
+
+		// The new value has not been validated: it has no results (and not the ones of the previous value).
+		await state.SetAsync("updated2", CT); // Marker, makes sure the failure has been processed
+		var marker = await validator.WaitForCall(2);
+		state.Current.Current.Data.SomeOrDefault().Should().Be("updated2");
+		state.Current.Current.Validation.Should().BeEmpty();
+		marker.Fail(new InvalidOperationException("validator failed"));
+	}
+
+	[TestMethod]
+	public async Task When_ValidatorThrows_Then_StateNotInError()
 	{
 		var validator = new TestValidator();
 		var state = new StateImpl<string>(Context, Option.Some("initial"));

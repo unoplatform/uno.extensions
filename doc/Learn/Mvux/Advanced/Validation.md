@@ -31,7 +31,7 @@ The validator:
 - runs on the thread pool for the initial value and then after every data change, including changes made from the UI through two-way bindings. On WebAssembly, where there is a single thread, it runs on the UI thread, so avoid long synchronous work in it;
 - is cancelled (through its `CancellationToken`) when the value changes again before it completes. Results produced for a value that is no longer the current value of the state are discarded. A validator that ignores its token keeps running until it completes, so a slow validator (e.g. calling a server) should honor the token and apply its own timeout;
 - is not invoked when the state has no value (`None`). In that case the validation results are cleared. A `null` value is still a value, so the validator is invoked with `null`;
-- does not put the state in error if it throws. The exception is logged and the previous results are kept.
+- does not put the state in error if it throws. The exception is logged and the value has no results: the results of a previous value are not kept for it, so `HasErrors` being `false` does not mean that the value has been validated.
 
 The results of a value are kept until the next validation: they are not lost when the source of the state produces the same value again (e.g. a refresh of a `State.Async`), and they are not reported for another value while it is being validated.
 
