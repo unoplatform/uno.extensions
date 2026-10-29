@@ -39,6 +39,19 @@ but the property _property_name_ is not of type `IFeed<T>` (nor `IState<T>`).
 > If your property is synchronous (i.e. not a `Feed` nor a `State`), you don't need to use the `[FeedParameter]` attribute.
 > Remove the parameter from the method and get your value from the property directly.
 
+## Feed2003
+
+**The parameter of a command validated on execution is not a State.**
+
+You configured a command with `Validation` (see [validating when a command is executed](xref:Uno.Extensions.Mvux.Advanced.Validation#validating-when-a-command-is-executed)),
+but its parameter is not a `State`: it's a feed given to `Given` (e.g. `Feed.Async` or `Feed.Combine`), or the parameter is provided by the view (no `Given`).
+The validation results are published on the state given as parameter, so they cannot be displayed:
+the execution of the command is still aborted when the parameter is not valid, but the errors are only logged.
+
+Use an `IState<T>` as parameter of the command (`.Given(MyState)`).
+
+Only the runtime type of the parameter matters, so the analyzer reports only a feed known to not be a state: one created by a factory or an operator of `Feed` or `ListFeed` (e.g. `Feed.Async(...)`, `Feed.Combine(...)` or `state.Select(...)`). It follows the expression body or initializer of a property, readonly field or local declared in the same file, so a property declared as a feed but returning a state (e.g. `public IFeed<Person> Person => State.Value(...)`) is not reported. If it cannot determine the value (e.g. a parameter of a method, or the result of another method), it does not report anything.
+
 ## Mock0001
 
 **No mock is generated for a model whose view-model has no public constructor.**

@@ -7,6 +7,7 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Testing;
+using static Uno.Extensions.Reactive.Tests.ValidationTestHelper;
 
 namespace Uno.Extensions.Reactive.Tests.Core.Axes;
 
@@ -57,6 +58,24 @@ public class Given_ValidationAxis : FeedTests
 		msg.Changes.Contains(MessageAxis.Validation).Should().BeTrue();
 		msg.Current.Validation.Should().BeEmpty();
 		msg.Current.Values.ContainsKey(MessageAxis.Validation).Should().BeFalse();
+	}
+
+	[TestMethod]
+	public async Task When_SetResultsWithNull_Then_NullIgnored()
+	{
+		var result = new ValidationResult("Required", new[] { "Name" });
+		var (recorder, sut) = new StateImpl<string>(Context, Option.Some("value")).Record();
+
+		await sut.UpdateMessageAsync(msg => msg.Validation(new[] { null!, result, ValidationResult.Success! }), CT);
+		await sut.UpdateMessageAsync(msg => msg.Validation(new[] { result, null! }), CT); // Compared with the previous results
+		await sut.UpdateMessageAsync(msg => msg.Data("updated"), CT); // Used as a marker, so we know that the previous update has been processed.
+		await recorder.WaitForMessages(3);
+		await Task.Yield();
+
+		recorder.Count.Should().Be(3);
+		recorder[1].Current.Validation.Should().Equal(result);
+		recorder[2].Changes.Contains(MessageAxis.Validation).Should().BeFalse();
+		recorder[2].Current.Validation.Should().Equal(result);
 	}
 
 	[TestMethod]
@@ -203,20 +222,5 @@ public class Given_ValidationAxis : FeedTests
 		await WaitFor(() => recorder.LastOrDefault()?.Current.Validation.Contains(localResult) ?? false);
 
 		recorder.Last().Current.Validation.Should().Equal(localResult);
-	}
-
-	private static async Task WaitFor(Func<bool> predicate)
-	{
-		for (var i = 0; i < 500; i++)
-		{
-			if (predicate())
-			{
-				return;
-			}
-
-			await Task.Delay(10);
-		}
-
-		throw new TimeoutException();
 	}
 }

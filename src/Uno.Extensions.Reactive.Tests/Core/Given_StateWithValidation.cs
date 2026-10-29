@@ -18,6 +18,7 @@ using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Logging;
 using Uno.Extensions.Reactive.Testing;
 using Uno.Extensions.Validation;
+using static Uno.Extensions.Reactive.Tests.ValidationTestHelper;
 
 namespace Uno.Extensions.Reactive.Tests.Core;
 
@@ -641,22 +642,22 @@ public class Given_StateWithValidation : FeedTests
 	public void When_NoMessageResolved_Then_ResultsNotCopied()
 	{
 		var localizer = new ValidationLocalizer(new TestLocalizer());
-		IEnumerable<ValidationResult> none = Array.Empty<ValidationResult>();
-		IEnumerable<ValidationResult> notFound = [new ValidationResult("Not a key.")];
+		var none = ImmutableList<ValidationResult>.Empty;
+		var notFound = ImmutableList.Create(new ValidationResult("Not a key."));
 
 		localizer.Localize<string>(none).Should().BeSameAs(none);
 		localizer.Localize<string>(notFound).Should().BeSameAs(notFound);
 	}
 
 	[TestMethod]
-	public void When_ResultIsNull_Then_KeptAsIs()
+	public void When_ResultIsNull_Then_Dropped()
 	{
 		var localizer = new ValidationLocalizer(new TestLocalizer { { "Validation_Found", "localized" } });
 
-		localizer.Localize<string>([null!, new ValidationResult("Validation_Found")])
-			.Select(result => result?.ErrorMessage)
+		localizer.Localize<string>([new ValidationResult("Not a key."), null, new ValidationResult("Validation_Found")])
+			.Select(result => result.ErrorMessage)
 			.Should()
-			.Equal(null, "localized");
+			.Equal("Not a key.", "localized");
 	}
 
 	[TestMethod]
@@ -695,60 +696,77 @@ public class Given_StateWithValidation : FeedTests
 			.Build();
 		var validator = host.Services.GetRequiredService<IValidator>();
 		var localizer = new TestLocalizer { { "Validation_NameRequired", "Le nom est requis" } };
-		var state = new StateImpl<Person>(Context, Option.Some(new Person()));
+		var state = new StateImpl<ValidatedPerson>(Context, Option.Some(new ValidatedPerson()));
 
-		_ = state.Validate((person, ct) => validator.ValidateAsync(person, null, ct), localizer);
+		_ = state.Validate(validator, localizer);
 
 		await WaitFor(() => state.Current.Current.Validation.Any(result => result.ErrorMessage == "Le nom est requis"));
-		state.Current.Current.Validation.Should().ContainSingle().Which.MemberNames.Should().Equal(nameof(Person.Name));
+		state.Current.Current.Validation.Should().ContainSingle().Which.MemberNames.Should().Equal(nameof(ValidatedPerson.Name));
 	}
 
-	public sealed class Person
+	[TestMethod]
+	public async Task When_ValidatorReturnsSuccess_Then_Ignored()
 	{
-		[Required(ErrorMessage = "Validation_NameRequired")]
-		public string? Name { get; set; }
+		var state = new StateImpl<string>(Context, Option.Some("initial"));
+
+		_ = state.Validate(async (value, ct) => new[] { ValidationResult.Success!, new ValidationResult("error") });
+
+		await WaitForValidation(state, "error");
+		state.Current.Current.Validation.Should().ContainSingle().Which.ErrorMessage.Should().Be("error");
 	}
 
-	private sealed class TestLocalizer : IStringLocalizer, IEnumerable<KeyValuePair<string, string>>
+	[TestMethod]
+	public async Task When_IValidator_Then_ResultsPublished()
 	{
-		private readonly ConcurrentDictionary<string, string> _resources = new();
-		private int _lookups;
+		using var host = new HostBuilder()
+			.UseValidation()
+			.Build();
+		var validator = host.Services.GetRequiredService<IValidator>();
+		var state = new StateImpl<ValidatedPerson>(Context, Option.Some(new ValidatedPerson()));
 
-		public int Lookups => _lookups;
+		_ = state.Validate(validator).Should().BeSameAs(state);
 
-		public string? ThrowingKey { get; init; }
+		await WaitFor(() => state.Current.Current.Validation.Any(result => result.ErrorMessage == "Validation_NameRequired"));
+		state.Current.Current.Validation.Should().ContainSingle().Which.MemberNames.Should().Equal(nameof(ValidatedPerson.Name));
 
-		public void Add(string name, string value)
-			=> _resources[name] = value;
+		await state.UpdateAsync(_ => new ValidatedPerson { Name = "John" }, CT);
+		await WaitFor(() => state.Current.Current.Validation.Count == 0);
+	}
 
-		public LocalizedString this[string name]
+
+	[TestMethod]
+	public async Task When_IValidatorOnNullableState_And_NullValue_Then_Valid_WithoutInvokingValidator()
+	{
+		var validator = new CountingValidator();
+		var state = new StateImpl<ValidatedPerson?>(Context, Option.Some<ValidatedPerson?>(new ValidatedPerson()));
+		_ = state.Validate(validator); // Compiles for a state of a nullable type (no notnull constraint)
+		await WaitFor(() => state.Current.Current.Validation.Count == 1);
+
+		await state.UpdateMessageAsync(msg => msg.Data(Option.Some<ValidatedPerson?>(null)), CT);
+
+		await WaitFor(() => state.Current.Current.Validation.Count == 0);
+		validator.Calls.Should().Be(1, "a null value has nothing to validate");
+	}
+
+	private sealed class CountingValidator : IValidator
+	{
+		private int _calls;
+
+		public int Calls => Volatile.Read(ref _calls);
+
+		public ValueTask<IEnumerable<ValidationResult>> ValidateAsync(object instance, ValidationContext? context = null, CancellationToken cancellationToken = default)
 		{
-			get
-			{
-				Interlocked.Increment(ref _lookups);
-				if (name == ThrowingKey)
-				{
-					throw new InvalidOperationException("localizer failed");
-				}
-
-				// Like the ResourceLoaderStringLocalizer, the value of a not found string is not the key.
-				return _resources.TryGetValue(name, out var value)
-					? new LocalizedString(name, value)
-					: new LocalizedString(name, name.Replace('.', '/'), resourceNotFound: true);
-			}
+			Interlocked.Increment(ref _calls);
+			return new(new[] { new ValidationResult("invalid") });
 		}
+	}
 
-		IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator()
-			=> _resources.GetEnumerator();
+	[TestMethod]
+	public void When_NullIValidator_Then_Throws()
+	{
+		var state = new StateImpl<ValidatedPerson>(Context, Option.Some(new ValidatedPerson()));
 
-		global::System.Collections.IEnumerator global::System.Collections.IEnumerable.GetEnumerator()
-			=> _resources.GetEnumerator();
-
-		public LocalizedString this[string name, params object[] arguments]
-			=> new(name, string.Format(CultureInfo.CurrentCulture, this[name].Value, arguments));
-
-		public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
-			=> _resources.Select(kvp => new LocalizedString(kvp.Key, kvp.Value));
+		state.Invoking(s => s.Validate(default(IValidator)!)).Should().Throw<ArgumentNullException>();
 	}
 
 	[TestMethod]
@@ -768,6 +786,10 @@ public class Given_StateWithValidation : FeedTests
 			.Should()
 			.Throw<ArgumentNullException>()
 			.WithParameterName("isValid");
+		state.Invoking(s => s.Validate(default(IValidator)!))
+			.Should()
+			.Throw<ArgumentNullException>()
+			.WithParameterName("validator");
 	}
 
 	[TestMethod]
@@ -826,6 +848,28 @@ public class Given_StateWithValidation : FeedTests
 			.ThrowAsync<OperationCanceledException>();
 
 		state.Current.Current.Validation.Should().BeEmpty();
+	}
+
+	[TestMethod]
+	public async Task When_SetValidationWithNullResults_Then_Ignored()
+	{
+		var state = new StateImpl<string>(Context, Option.Some("initial"));
+
+		await state.SetValidationAsync([null!, new ValidationResult("manual"), null!], CT);
+
+		state.Current.Current.Validation.Should().ContainSingle().Which.ErrorMessage.Should().Be("manual");
+	}
+
+	[TestMethod]
+	public async Task When_SetValidationOnCustomState_Then_PublishedThroughUpdateMessage()
+	{
+		var state = new RecordingState();
+
+		await state.SetValidationAsync(Error("manual"), CT);
+
+		state.Updates.Should().ContainSingle()
+			.Which.Current.Validation.Should().ContainSingle()
+			.Which.ErrorMessage.Should().Be("manual");
 	}
 
 	[TestMethod]
@@ -906,8 +950,8 @@ public class Given_StateWithValidation : FeedTests
 	public async Task When_ResultsOfEarlierVersionCompleteLast_Then_Discarded()
 	{
 		var state = new StateImpl<string>(Context, Option.Some("initial"));
-		var earlier = StateImpl<string>.NextValidationVersion();
-		var later = StateImpl<string>.NextValidationVersion();
+		var earlier = ValidationHelper.NextVersion();
+		var later = ValidationHelper.NextVersion();
 
 		await state.PublishValidationAsync(ImmutableList.Create(new ValidationResult("later")), isCurrent: null, later, CT);
 		await state.PublishValidationAsync(ImmutableList.Create(new ValidationResult("earlier")), isCurrent: null, earlier, CT);
@@ -937,21 +981,6 @@ public class Given_StateWithValidation : FeedTests
 
 	private async Task WaitForValidation(StateImpl<string> state, string errorMessage)
 		=> await WaitFor(() => state.Current.Current.Validation.Any(result => result.ErrorMessage == errorMessage));
-
-	private static async Task WaitFor(Func<bool> predicate)
-	{
-		for (var i = 0; i < 500; i++)
-		{
-			if (predicate())
-			{
-				return;
-			}
-
-			await Task.Delay(10);
-		}
-
-		throw new TimeoutException();
-	}
 
 	private sealed class TestValidator
 	{
@@ -997,41 +1026,6 @@ public class Given_StateWithValidation : FeedTests
 			=> Result.SetException(error);
 	}
 
-	private sealed class RecordingLogProvider : ILoggerProvider
-	{
-		private readonly List<(LogLevel Level, string Message)> _entries = new();
-
-		public IReadOnlyList<(LogLevel Level, string Message)> Entries
-		{
-			get
-			{
-				lock (_entries)
-				{
-					return _entries.ToList();
-				}
-			}
-		}
-
-		public ILogger CreateLogger(string categoryName) => new Logger(this);
-
-		public void Dispose() { }
-
-		private sealed class Logger(RecordingLogProvider owner) : ILogger
-		{
-			public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
-
-			public bool IsEnabled(LogLevel logLevel) => true;
-
-			public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
-			{
-				lock (owner._entries)
-				{
-					owner._entries.Add((logLevel, formatter(state, exception)));
-				}
-			}
-		}
-	}
-
 	/// <summary>
 	/// The source of a state which produces the given initial value, then waits for <see cref="Complete"/> on each refresh.
 	/// </summary>
@@ -1063,6 +1057,30 @@ public class Given_StateWithValidation : FeedTests
 
 		public void Complete(string value)
 			=> Volatile.Read(ref _pending)!.SetResult(value);
+	}
+
+	private sealed class RecordingState : IState<string>
+	{
+		public List<Message<string>> Updates { get; } = new();
+
+		public SourceContext Context => SourceContext.None;
+
+		IRequestSource IState.Requests => throw new NotSupportedException();
+
+		public IAsyncEnumerable<Message<string>> GetSource(SourceContext context, CancellationToken ct = default)
+			=> throw new NotSupportedException();
+
+		public ValueTask UpdateMessageAsync(Action<MessageBuilder<string>> updater, CancellationToken ct)
+		{
+			var builder = Message<string>.Initial.With();
+			updater(builder);
+			Updates.Add(builder.Build());
+
+			return default;
+		}
+
+		public ValueTask DisposeAsync()
+			=> default;
 	}
 
 	private sealed class CustomState : IState<string>

@@ -90,4 +90,26 @@ internal static partial class Rules
 				@class.Name,
 				method.Name);
 	}
+
+	public static class FEED2003
+	{
+		private const string message = "The validation results of this command cannot be published, as {0}. "
+			+ "The execution is still aborted when the parameter is not valid, but the errors are only logged. "
+			+ "Use a State as parameter of the command (Given) so the errors are published on it.";
+
+		public static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+			nameof(FEED2003),
+			"The parameter of a command validated on execution is not a State",
+			message,
+			Category.Usage,
+			DiagnosticSeverity.Warning,
+			helpLinkUri: "https://platform.uno/docs/articles/external/uno.extensions/doc/Overview/Reactive/rules.html#Feed2003",
+			isEnabledByDefault: true);
+
+		public static Diagnostic GetNotAStateDiagnostic(Location location, string parameter, ITypeSymbol type)
+			=> Diagnostic.Create(Descriptor, location, $"its parameter '{parameter}' is not a State (it is a '{type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)}')");
+
+		public static Diagnostic GetFromViewDiagnostic(Location location)
+			=> Diagnostic.Create(Descriptor, location, "its parameter is provided by the view (no Given)");
+	}
 }

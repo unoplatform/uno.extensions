@@ -151,6 +151,23 @@ public class Given_AsyncCommand : FeedUITests
 		(await isOnUIThread.Task).Should().BeFalse();
 	}
 
+	[TestMethod]
+	public async Task When_ExecuteThrow_Then_ParameterValueNotInReportedError()
+	{
+		var reported = new TaskCompletionSource<Exception>();
+		var config = new CommandConfig { Execute = async (p, ct) => throw new TestException() };
+		var sut = new AsyncCommand("sut", config, error => reported.TrySetResult(error), Context);
+
+		sut.Execute(new Credentials("john", "secret-password"));
+		var error = await reported.Task;
+
+		// The parameter is commonly a form (record), whose ToString would expose user input (e.g. passwords) in logs.
+		error.Message.Should().NotContain("secret-password").And.Contain(nameof(Credentials));
+		error.InnerException.Should().BeOfType<TestException>();
+	}
+
+	private record Credentials(string User, string Password);
+
 	private async Task WaitFor(Func<bool> predicate)
 	{
 		for (var i = 0; i < 100; i++)
