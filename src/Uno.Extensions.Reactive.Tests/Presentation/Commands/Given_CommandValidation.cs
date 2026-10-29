@@ -10,9 +10,11 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Commands;
 using Uno.Extensions.Reactive.Core;
+using Uno.Extensions.Reactive.Logging;
 using Uno.Extensions.Reactive.Testing;
 using Uno.Extensions.Validation;
 using static Uno.Extensions.Reactive.Tests.ValidationTestHelper;
@@ -37,6 +39,32 @@ public class Given_CommandValidation : FeedUITests
 		sut.Errors.Should().BeEmpty();
 		sut.Completions.Should().ContainSingle().Which.Error.Should().BeNull();
 		Validation(state).Should().Equal("invalid");
+	}
+
+	[TestMethod]
+	[DoNotParallelize] // Sets the global log provider
+	public async Task When_Invalid_Then_AbortLoggedWithMembers_And_WithoutMessages()
+	{
+		var logs = new RecordingLogProvider();
+		LogExtensions.SetProvider(logs);
+		try
+		{
+			var state = new StateImpl<string>(Context, Option.Some("value"));
+			var sut = Create(b => b
+				.Given(state)
+				.Validation(async (value, ct) => new[] { new ValidationResult("secret 1", ["Name"]), new ValidationResult("secret 2", ["Name", "Email"]) })
+				.Then(Execute));
+
+			await sut.ExecuteAndWait();
+
+			var entry = logs.Entries.Should().ContainSingle(entry => entry.Message.Contains("has been aborted")).Subject;
+			entry.Level.Should().Be(LogLevel.Information);
+			entry.Message.Should().Contain("2 validation errors").And.Contain("on members: Name, Email").And.NotContain("secret");
+		}
+		finally
+		{
+			LogExtensions.Reset();
+		}
 	}
 
 	[TestMethod]
