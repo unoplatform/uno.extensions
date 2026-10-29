@@ -576,6 +576,90 @@ public class Given_StateWithValidation : FeedTests
 	}
 
 	[TestMethod]
+	[DoNotParallelize] // Sets the global log provider
+	public async Task When_LocalizerThrows_Then_ResultKeptAsIs_And_LoggedAsErrorOnlyOnce()
+	{
+		var logs = new RecordingLogProvider();
+		LogExtensions.SetProvider(logs);
+		try
+		{
+			var localizer = new TestLocalizer { ThrowingKey = "Validation_Throws" };
+			localizer.Add("Validation_Found", "localized");
+			var state = new StateImpl<string>(Context, Option.Some("initial"));
+
+			_ = state.Validate(
+				async (value, ct) => [new ValidationResult("Validation_Throws", ["First"]), new ValidationResult("Validation_Found", ["Second"])],
+				localizer);
+
+			await WaitFor(() => state.Current.Current.Validation.Count is 2);
+			state.Current.Current.Validation.Select(result => result.ErrorMessage).Should().Equal("Validation_Throws", "localized");
+
+			await state.SetAsync("updated", CT);
+			await WaitFor(() => logs.Entries.Count(entry => entry.Message.StartsWith("The localizer")) is 2);
+
+			logs.Entries.Where(entry => entry.Message.StartsWith("The localizer")).Select(entry => entry.Level)
+				.Should().Equal(LogLevel.Error, LogLevel.Debug);
+			logs.Entries.Should().NotContain(entry => entry.Message.StartsWith("The validator"));
+		}
+		finally
+		{
+			LogExtensions.Reset();
+		}
+	}
+
+	[TestMethod]
+	public async Task When_LocalizedResultsHaveNoMessage_Then_KeptAsIs()
+	{
+		var localizer = new TestLocalizer();
+		var noMessage = new ValidationResult(null, ["First"]);
+		var emptyMessage = new ValidationResult("", ["Second"]);
+		var state = new StateImpl<string>(Context, Option.Some("value"));
+
+		_ = state.Validate(async (value, ct) => [noMessage, emptyMessage], localizer);
+
+		await WaitFor(() => state.Current.Current.Validation.Count is 2);
+		state.Current.Current.Validation.Should().Equal(noMessage, emptyMessage);
+		localizer.Lookups.Should().Be(0);
+	}
+
+	[TestMethod]
+	public async Task When_LocalizedValidatorReturnsNull_Then_NoResults()
+	{
+		var localizer = new TestLocalizer { { "Validation_Required", "requis" } };
+		var state = new StateImpl<string>(Context, Option.Some(""));
+		_ = state.Validate(
+			(value, ct) => new(string.IsNullOrEmpty(value) ? [new ValidationResult("Validation_Required")] : default(IEnumerable<ValidationResult>)!),
+			localizer);
+		await WaitForValidation(state, "requis");
+
+		await state.SetAsync("value", CT);
+
+		await WaitFor(() => state.Current.Current.Validation.Count is 0);
+	}
+
+	[TestMethod]
+	public void When_NoMessageResolved_Then_ResultsNotCopied()
+	{
+		var localizer = new ValidationLocalizer(new TestLocalizer());
+		IEnumerable<ValidationResult> none = Array.Empty<ValidationResult>();
+		IEnumerable<ValidationResult> notFound = [new ValidationResult("Not a key.")];
+
+		localizer.Localize<string>(none).Should().BeSameAs(none);
+		localizer.Localize<string>(notFound).Should().BeSameAs(notFound);
+	}
+
+	[TestMethod]
+	public void When_ResultIsNull_Then_KeptAsIs()
+	{
+		var localizer = new ValidationLocalizer(new TestLocalizer { { "Validation_Found", "localized" } });
+
+		localizer.Localize<string>([null!, new ValidationResult("Validation_Found")])
+			.Select(result => result?.ErrorMessage)
+			.Should()
+			.Equal(null, "localized");
+	}
+
+	[TestMethod]
 	public async Task When_OverloadRegisteredAfterValidator_Then_Replaced()
 	{
 		var validator = new TestValidator();
@@ -632,6 +716,8 @@ public class Given_StateWithValidation : FeedTests
 
 		public int Lookups => _lookups;
 
+		public string? ThrowingKey { get; init; }
+
 		public void Add(string name, string value)
 			=> _resources[name] = value;
 
@@ -640,9 +726,15 @@ public class Given_StateWithValidation : FeedTests
 			get
 			{
 				Interlocked.Increment(ref _lookups);
+				if (name == ThrowingKey)
+				{
+					throw new InvalidOperationException("localizer failed");
+				}
+
+				// Like the ResourceLoaderStringLocalizer, the value of a not found string is not the key.
 				return _resources.TryGetValue(name, out var value)
 					? new LocalizedString(name, value)
-					: new LocalizedString(name, name, resourceNotFound: true);
+					: new LocalizedString(name, name.Replace('.', '/'), resourceNotFound: true);
 			}
 		}
 

@@ -377,7 +377,9 @@ partial class State
 	/// If the validator throws, the error is logged and the state is not set in error: the value has no results (the results of a previous value are not kept for it).
 	/// This is idempotent: invoking this method multiple times on the same state replaces the validator (starting at the next data change).
 	/// When a <paramref name="localizer"/> is provided, messages are resolved each time the validator produces results (i.e. using the culture at that time).
-	/// A key which is not found keeps the result as produced by the validator. Resolved messages are not formatted.
+	/// A resolved result is a new <see cref="ValidationResult"/> with the resolved message and the same <see cref="ValidationResult.MemberNames"/> (a result of a type derived from <see cref="ValidationResult"/> is not kept as is).
+	/// A key which is not found, or for which the localizer throws (the error is logged), keeps the result as produced by the validator. Resolved messages are not formatted.
+	/// A lambda which only throws, or which only returns null or default, also matches <see cref="Validate{T}(IState{T}, AsyncFunc{T, string}, IStringLocalizer)"/> (CS0121): give it an explicit return type.
 	/// </remarks>
 	/// <exception cref="ArgumentNullException">If the <paramref name="state"/> or the <paramref name="validator"/> is null.</exception>
 	/// <exception cref="NotSupportedException">If the <paramref name="state"/> has not been created using the MVUX State factories.</exception>
@@ -401,7 +403,7 @@ partial class State
 		impl.SetValidator(
 			localizer is null
 				? validator
-				: async (value, ct) => Localize(await validator(value, ct).ConfigureAwait(false), localizer),
+				: Localized(validator, new ValidationLocalizer(localizer)),
 			source);
 
 		return state;
@@ -446,6 +448,7 @@ partial class State
 	/// <remarks>
 	/// The error is reported for the state itself (its <see cref="ValidationResult.MemberNames"/> is empty).
 	/// This has the same behavior as <see cref="Validate{T}(IState{T}, AsyncFunc{T, IEnumerable{ValidationResult}}, IStringLocalizer)"/>.
+	/// A lambda which only throws, or which only returns null or default, also matches that overload (CS0121): give it an explicit return type.
 	/// </remarks>
 	/// <exception cref="ArgumentNullException">If the <paramref name="state"/> or the <paramref name="validator"/> is null.</exception>
 	/// <exception cref="NotSupportedException">If the <paramref name="state"/> has not been created using the MVUX State factories.</exception>
@@ -485,28 +488,6 @@ partial class State
 			? [new ValidationResult(message)]
 			: Array.Empty<ValidationResult>();
 
-	/// <summary>
-	/// Resolves the error message of each result as a resource key.
-	/// </summary>
-	/// <remarks>
-	/// This is materialized (not lazy) so the localizer is invoked once per result, on the validator thread, and not each time the results are enumerated.
-	/// Results whose key is not found are kept as is: the value of a not found string is not reliable (e.g. the ResourceLoaderStringLocalizer replaces '.' by '/' in keys).
-	/// </remarks>
-	private static IEnumerable<ValidationResult> Localize(IEnumerable<ValidationResult>? results, IStringLocalizer localizer)
-	{
-		if (results is null)
-		{
-			return Array.Empty<ValidationResult>();
-		}
-
-		var localized = new List<ValidationResult>();
-		foreach (var result in results)
-		{
-			localized.Add(result is { ErrorMessage: { Length: > 0 } key } && localizer[key] is { ResourceNotFound: false } message
-				? new ValidationResult(message.Value, result.MemberNames)
-				: result);
-		}
-
-		return localized;
-	}
+	private static AsyncFunc<T, IEnumerable<ValidationResult>> Localized<T>(AsyncFunc<T, IEnumerable<ValidationResult>> validator, ValidationLocalizer localizer)
+		=> async (value, ct) => localizer.Localize<T>(await validator(value, ct).ConfigureAwait(false));
 }
