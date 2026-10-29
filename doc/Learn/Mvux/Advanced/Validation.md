@@ -39,7 +39,7 @@ The results of a value are kept until the next validation: they are not lost whe
 
 ### Using the `IValidator` service
 
-The `IValidator` service of [Uno.Extensions.Validation](xref:Uno.Extensions.Validation.Overview) matches the shape of the validator delegate, so it can be used as is:
+The `IValidator` service of [Uno.Extensions.Validation](xref:Uno.Extensions.Validation.Overview) plugs in with a one-line lambda:
 
 ```csharp
 public partial record PersonModel(IValidator Validator)
