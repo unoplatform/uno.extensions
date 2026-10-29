@@ -90,7 +90,7 @@ public class Given_ValidationAxis : FeedTests
 	}
 
 	[TestMethod]
-	public void When_Aggregate_Then_Concat()
+	public void When_Aggregate_Then_LastValueWins()
 	{
 		var r1 = new ValidationResult("1");
 		var r2 = new ValidationResult("2");
@@ -103,7 +103,8 @@ public class Given_ValidationAxis : FeedTests
 			MessageAxis.Validation.ToMessageValue(ImmutableList.Create(r3)),
 		});
 
-		MessageAxis.Validation.FromMessageValue(aggregated).Should().Equal(r1, r2, r3);
+		// The axis is local, so values are never merged (like a local value replaces the parent one).
+		MessageAxis.Validation.FromMessageValue(aggregated).Should().Equal(r3);
 	}
 
 	[TestMethod]

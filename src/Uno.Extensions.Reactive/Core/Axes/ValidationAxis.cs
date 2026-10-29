@@ -18,7 +18,7 @@ internal sealed class ValidationAxis : MessageAxis<IImmutableList<ValidationResu
 	internal static ValidationAxis Instance { get; } = new();
 
 	private ValidationAxis()
-		: base(MessageAxes.Validation, Concat)
+		: base(MessageAxes.Validation, Last)
 	{
 		IsLocal = true;
 	}
@@ -70,6 +70,8 @@ internal sealed class ValidationAxis : MessageAxis<IImmutableList<ValidationResu
 			|| (string.Equals(left.ErrorMessage, right.ErrorMessage, StringComparison.Ordinal)
 				&& left.MemberNames.SequenceEqual(right.MemberNames, StringComparer.Ordinal));
 
-	private static IImmutableList<ValidationResult> Concat(IReadOnlyCollection<IImmutableList<ValidationResult>> values)
-		=> values.SelectMany(results => results).ToImmutableList();
+	// Note: Values of this axis are never aggregated: as the axis IsLocal, operators which combine feeds do not forward it (cf. CombineFeedHelper),
+	//		 and a local value replaces the parent one (cf. GetLocalValue). If they were, like for GetLocalValue, the last value would win.
+	private static IImmutableList<ValidationResult> Last(IReadOnlyCollection<IImmutableList<ValidationResult>> values)
+		=> values.LastOrDefault() ?? ImmutableList<ValidationResult>.Empty;
 }
