@@ -86,11 +86,7 @@ internal partial class ViewModelGenTool_3 : ICodeGenTool
 			: $"{NS.Bindings}.BindableViewModelBase";
 
 		var members = GetMembers(model).ToList();
-		if (members.Any(member => member.Name == N.HasErrors)
-			&& model.GetMembers(N.HasErrors).FirstOrDefault(member => member.IsAccessible() && !member.IsStatic) is { } hasErrors)
-		{
-			_ctx.Context.ReportDiagnostic(Rules.FEED1001.GetDiagnostic(model, hasErrors, vmName));
-		}
+		var validationState = ValidationStateMember.Generate(_ctx, model, vmName, hasBaseType, members.Select(member => member.Name));
 
 		var vm = this.InSameNamespaceOf(
 			model,
@@ -229,6 +225,8 @@ internal partial class ViewModelGenTool_3 : ICodeGenTool
 					public {(hasBaseType ? "new ":"")}{model.ToFullString()} {N.Model} => global::System.Runtime.CompilerServices.Unsafe.As<{model.ToFullString()}>(__reactiveModel!);
 
 					{members.Select(member => member.GetDeclaration()).Align(5)}
+
+					{validationState.Align(5)}
 
 					{GenerateVmMockingSeam(members).Align(5)}
 				}}",

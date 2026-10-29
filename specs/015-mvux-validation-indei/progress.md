@@ -45,7 +45,7 @@ Additional behaviour choices:
 - Stability: the 45 `~Validation` tests run 15× in a row.
 - Mutation check: with `IsLocal = false`, the 5 "not propagated" tests fail.
 - `Uno.Extensions.Reactive.Tests`: all passed except the 19 pre-existing skipped. `Uno.HotTesting.Reactive.Tests`: 34 passed.
-- Known gap in "no breaking change": a hand-written `HasErrors` member in a user's `partial` of a generated view model now hides `BindableViewModelBase.HasErrors` → `CS0108` in user code (an error with `TreatWarningsAsErrors`). `FEED1001` only covers members mirrored from the model/record. Documented in `Validation.md`.
+- ~~Known gap in "no breaking change": a hand-written `HasErrors` member in a user's `partial` of a generated view model hides `BindableViewModelBase.HasErrors` → `CS0108`.~~ Fixed after the second panel: `BindableViewModelBase` implements only `INotifyDataErrorInfo.HasErrors`, and the generator (all tool versions) adds the public `HasErrors` only when the model and the user's partial declare none (otherwise `FEED1001`).
 - Follow-ups: explicit / "touched" validation trigger (Q2), `IValidator` bridge (Q3), `IListState` items (Q6), `CanExecute` gating, rendering verification on Windows / Skia / WASM.
 
 ## PR review (#3203)
