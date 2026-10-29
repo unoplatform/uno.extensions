@@ -50,7 +50,7 @@ the execution of the command is still aborted when the parameter is not valid, b
 
 Use an `IState<T>` as parameter of the command (`.Given(MyState)`).
 
-Only the runtime type of the parameter matters: a property declared as a feed but returning a state (e.g. `public IFeed<Person> Person => State.Value(...)`) is not reported. The analyzer follows the expression body or initializer of a property, field or local declared in the same file; if it cannot determine the value, it does not report anything.
+Only the runtime type of the parameter matters, so the analyzer reports only a feed known to not be a state: one created by a factory or an operator of `Feed` or `ListFeed` (e.g. `Feed.Async(...)`, `Feed.Combine(...)` or `state.Select(...)`). It follows the expression body or initializer of a property, readonly field or local declared in the same file, so a property declared as a feed but returning a state (e.g. `public IFeed<Person> Person => State.Value(...)`) is not reported. If it cannot determine the value (e.g. a parameter of a method, or the result of another method), it does not report anything.
 
 ## Mock0001
 

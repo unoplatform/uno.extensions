@@ -119,6 +119,136 @@ public class Given_CommandValidationDiagnostic
 	}
 
 	[TestMethod]
+	public async Task When_GivenParameter_Then_NoDiagnostic()
+	{
+		var diagnostics = await Run("""
+			public static IAsyncCommand SubmitFor<T>(IFeed<T> form)
+				=> Command.Create(b => b
+					.Given(form)
+					.Validation(async (value, ct) => value is not null, "required")
+					.Then(async (value, ct) => { }));
+			""");
+
+		diagnostics.Should().BeEmpty("the runtime type of the parameter cannot be determined");
+	}
+
+	[TestMethod]
+	public async Task When_GivenMethodCall_Then_NoDiagnostic()
+	{
+		var diagnostics = await Run("""
+			private IFeed<string> GetForm() => Name;
+
+			public IAsyncCommand Submit => Command.Create(b => b
+				.Given(GetForm())
+				.Validation(async (name, ct) => name.Length > 0, "required")
+				.Then(async (name, ct) => { }));
+			""");
+
+		diagnostics.Should().BeEmpty("the runtime type of the parameter cannot be determined");
+	}
+
+	[TestMethod]
+	public async Task When_GivenConditional_Then_NoDiagnostic()
+	{
+		var diagnostics = await Run("""
+			public bool UseFeed { get; set; }
+
+			public IAsyncCommand Submit => Command.Create(b => b
+				.Given(UseFeed ? Feed : Name)
+				.Validation(async (name, ct) => name.Length > 0, "required")
+				.Then(async (name, ct) => { }));
+			""");
+
+		diagnostics.Should().BeEmpty("the runtime type of the parameter cannot be determined");
+	}
+
+	[TestMethod]
+	public async Task When_GivenReadonlyFieldOfUnknownValue_Then_NoDiagnostic()
+	{
+		var diagnostics = await Run("""
+			private static IFeed<string> Create() => State.Value(new object(), () => "");
+			private readonly IFeed<string> _form = Create();
+
+			public IAsyncCommand Submit => Command.Create(b => b
+				.Given(_form)
+				.Validation(async (name, ct) => name.Length > 0, "required")
+				.Then(async (name, ct) => { }));
+			""");
+
+		diagnostics.Should().BeEmpty("the runtime type of the parameter cannot be determined");
+	}
+
+	[TestMethod]
+	public async Task When_GivenReadonlyFieldOfFeed_Then_Diagnostic()
+	{
+		var diagnostics = await Run("""
+			private readonly IFeed<string> _form = Uno.Extensions.Reactive.Feed.Async(async ct => "");
+
+			public IAsyncCommand Submit => Command.Create(b => b
+				.Given(_form)
+				.Validation(async (name, ct) => name.Length > 0, "required")
+				.Then(async (name, ct) => { }));
+			""");
+
+		diagnostics.Should().ContainSingle(d => d.Id == "FEED2003");
+	}
+
+	[TestMethod]
+	public async Task When_GivenLocalOfUnknownValue_Then_NoDiagnostic()
+	{
+		var diagnostics = await Run("""
+			private IFeed<string> GetForm() => Name;
+
+			public IAsyncCommand Submit
+			{
+				get
+				{
+					var form = GetForm();
+					return Command.Create(b => b
+						.Given(form)
+						.Validation(async (name, ct) => name.Length > 0, "required")
+						.Then(async (name, ct) => { }));
+				}
+			}
+			""");
+
+		diagnostics.Should().BeEmpty("the runtime type of the parameter cannot be determined");
+	}
+
+	[TestMethod]
+	public async Task When_GivenLocalOfFeed_Then_Diagnostic()
+	{
+		var diagnostics = await Run("""
+			public IAsyncCommand Submit
+			{
+				get
+				{
+					var form = Uno.Extensions.Reactive.Feed.Async(async ct => "");
+					return Command.Create(b => b
+						.Given(form)
+						.Validation(async (name, ct) => name.Length > 0, "required")
+						.Then(async (name, ct) => { }));
+				}
+			}
+			""");
+
+		diagnostics.Should().ContainSingle(d => d.Id == "FEED2003");
+	}
+
+	[TestMethod]
+	public async Task When_GivenOperatorOfState_Then_Diagnostic()
+	{
+		var diagnostics = await Run("""
+			public IAsyncCommand Submit => Command.Create(b => b
+				.Given(Name.Select(name => name.Trim()))
+				.Validation(async (name, ct) => name.Length > 0, "required")
+				.Then(async (name, ct) => { }));
+			""");
+
+		diagnostics.Should().ContainSingle(d => d.Id == "FEED2003", "an operator produces a feed, even when applied on a state");
+	}
+
+	[TestMethod]
 	public async Task When_GivenFeed_Then_Diagnostic()
 	{
 		var diagnostics = await Run("""
