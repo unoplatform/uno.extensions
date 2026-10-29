@@ -3,6 +3,18 @@ uid: Uno.Extensions.Reactive.Rules
 ---
 # Feeds code analyzers
 
+## Feed1001
+
+**A member of a model, record or view model hides the HasErrors property (validation state) of the generated bindable.**
+
+The generated view models and record bindables implement `INotifyDataErrorInfo` to expose [validation results](xref:Uno.Extensions.Mvux.Advanced.Validation), and add a public `HasErrors` property so you can bind to the validation state.
+Your model or record, or your own `partial` of the generated view model, already declares a member named `HasErrors`, so the bindable uses it instead of adding its own.
+
+Validation still works through the `INotifyDataErrorInfo` interface, but `{Binding HasErrors}` resolves to your member instead of the validation state.
+Rename your member if you want to bind to the validation state.
+
+This one is reported at information level, so that an existing `HasErrors` member cannot fail a build treating warnings as errors.
+
 ## Feed2001
 
 **Unable to resolve the feed that is configured to be used as command parameter.**

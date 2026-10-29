@@ -91,6 +91,7 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 			: $"{NS.Bindings}.BindableViewModelBase";
 
 		var members = GetMembers(model).ToList();
+		var validationState = ValidationStateMember.Generate(_ctx, model, vmName, hasBaseType, members.Select(member => member.Name));
 		var vm = this.InSameNamespaceOf(
 			model,
 			$@"
@@ -211,6 +212,8 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 					}}
 
 					{members.Select(member => member.GetDeclaration()).Align(5)}
+
+					{validationState.Align(5)}
 				}}",
 			CommandFromMethod.GetAwaiterImports(members));
 

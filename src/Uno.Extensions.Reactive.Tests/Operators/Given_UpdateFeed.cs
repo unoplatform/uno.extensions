@@ -519,6 +519,67 @@ public class Given_UpdateFeed : FeedTests
 	}
 	#endregion
 
+	#region Updates applied last
+	[TestMethod]
+	public async Task When_UpdateAppliedLast_Then_ReappliedAfterIncrementalUpdates()
+	{
+		var source = Feed.Async(async ct => 1); // Feed.Async does not complete: updates are never compacted
+		var sut = new UpdateFeed<int>(source);
+		var result = sut.Record();
+		var doubled = new LastFeedUpdate<int>(msg => msg.Data(Option.Some(msg.CurrentData.SomeOrDefault() * 2)));
+
+		sut.Add(doubled);
+		await result.WaitForMessages(2, CT);
+		sut.Add(SetData(5));
+		await result.WaitForMessages(3, CT);
+
+		// Even if added before, the update applied last applies on top of the one added after it.
+		result.Last().Current.Data.SomeOrDefault().Should().Be(10);
+	}
+
+	[TestMethod]
+	public async Task When_UpdateAppliedLastNoLongerActive_Then_RemovedOnNextIncrementalUpdate()
+	{
+		var source = Feed.Async(async ct => 1); // Feed.Async does not complete: updates are never compacted
+		var sut = new UpdateFeed<int>(source);
+		var result = sut.Record();
+		var superseded = new LastFeedUpdate<int>(_ => { });
+
+		sut.Add(superseded); // Does not change the message
+		superseded.IsActiveValue = false;
+		sut.Add(SetData(10));
+		await result.WaitForMessages(2, CT);
+		var applied = superseded.ApplyCalls;
+
+		for (var i = 1; i < 10; i++)
+		{
+			sut.Add(SetData(10 + i));
+			await result.WaitForMessages(2 + i, CT);
+		}
+
+		// Inactive updates are not kept (and re-applied) on each update made while the source does not produce any new message (e.g. each keystroke).
+		superseded.ApplyCalls.Should().Be(applied);
+	}
+
+	private sealed class LastFeedUpdate<T>(Action<MessageBuilder<T, T>> apply) : IFeedUpdate<T>
+	{
+		public bool IsActiveValue { get; set; } = true;
+
+		public int ApplyCalls { get; private set; }
+
+		public bool IsAppliedLast => true;
+
+		public bool IsActive(Message<T>? parent, bool parentChanged, IMessageEntry<T> message)
+			=> IsActiveValue;
+
+		public void Apply(bool parentChanged, MessageBuilder<T, T> message)
+		{
+			ApplyCalls++;
+			apply(message);
+		}
+	}
+	#endregion
+
 	#region Helpers
 	private static IFeedUpdate<T> SetData<T>(T value)
 		=> new FeedUpdate<T>(

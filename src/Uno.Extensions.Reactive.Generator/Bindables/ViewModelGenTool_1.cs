@@ -99,6 +99,12 @@ internal class ViewModelGenTool_1 : ICodeGenTool
 			.Select(member => $"// {member.Name} is not mapped from the Model as it would conflict with another member.")
 			.ToList();
 		mappedMembers = mappedMembers.Except(mappedMembersConflictingWithInputs).ToList();
+		var validationState = ValidationStateMember.Generate(
+			_ctx,
+			model,
+			vmName,
+			hasBaseType,
+			mappedMembers.Select(member => member.Name).Concat(inputs.Select(input => input.Property?.Name).OfType<string>()));
 
 		var bindableVmCode = $@"
 			{this.GetCodeGenAttribute()}
@@ -182,6 +188,8 @@ internal class ViewModelGenTool_1 : ICodeGenTool
 
 				{mappedMembersErrors.Align(4)}
 				{mappedMembers.Select(member => member.GetDeclaration()).Align(4)}
+
+				{validationState.Align(4)}
 			}}";
 
 		var fileCode = this.AsPartialOf(
