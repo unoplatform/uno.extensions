@@ -341,9 +341,9 @@ Pass `"Attempts": 1` when diagnosing. The engine retries a failed test up to 3 t
 
 **Apply to:** every place a URL, a connection string or a command line with secrets is handed to `Process.Start`, `ShellExecute` or any API that echoes its input into an exception; also to catch blocks that log `ex` from a user-overridable seam, since the override's exception is not ours to trust.
 
-## Localize at one consumer entry point, not in each producer (spec 016)
+## Localize at one consumer entry point, not in each producer (spec 023)
 
-**Problem:** spec 016 v1 localized validation messages in the producer layer: `Uno.Extensions.Validation` got `UseLocalizedDataAnnotations` (an attribute-by-attribute re-implementation of `TryValidateObject` with localized messages, display names and format arguments) and a `Microsoft.Extensions.Localization.Abstractions` dependency, while MVUX `Validate` grew its own localized overloads. Two localization paths for the same messages, a localization dependency in a layer that has nothing to do with UI text, and a BCL re-implementation to keep in parity. It was walked back (v1 kept on branch `dev/xygu/20261005/spec-016-validation-localization-v1`).
+**Problem:** spec 023 (then numbered 016) v1 localized validation messages in the producer layer: `Uno.Extensions.Validation` got `UseLocalizedDataAnnotations` (an attribute-by-attribute re-implementation of `TryValidateObject` with localized messages, display names and format arguments) and a `Microsoft.Extensions.Localization.Abstractions` dependency, while MVUX `Validate` grew its own localized overloads. Two localization paths for the same messages, a localization dependency in a layer that has nothing to do with UI text, and a BCL re-implementation to keep in parity. It was walked back (v1 kept on branch `dev/xygu/20261005/spec-016-validation-localization-v1`).
 
 **Correct pattern:** producers (`IValidator`, DataAnnotations, FluentValidation) report messages as written, so a resource key comes out as-is. The consumer that turns results into UI state, the MVUX `State.Validate`, is the single place where keys are resolved, through an optional trailing `IStringLocalizer? localizer = null` handled only in the base overload. Accept the trade-off explicitly (no format arguments / display names) rather than duplicating the path.
 
@@ -351,7 +351,7 @@ Pass `"Attempts": 1` when diagnosing. The engine retries a failed test up to 3 t
 
 ## Local vs remote divergence: check the reflog before calling either side stale
 
-**Problem:** while rewriting the spec 016 branch, the local branch and its base (`Validate`) differed from origin (`WithValidation`). The local side was taken for an out-of-date checkout, and the work was rebuilt on origin's base with the old name and force-pushed. In fact the local branches carried a newer, unpushed rewrite (`rename WithValidation to Validate`, visible in `git reflog`), so the "fix" reverted the user's latest decision on the PR.
+**Problem:** while rewriting the spec 023 (then 016) branch, the local branch and its base (`Validate`) differed from origin (`WithValidation`). The local side was taken for an out-of-date checkout, and the work was rebuilt on origin's base with the old name and force-pushed. In fact the local branches carried a newer, unpushed rewrite (`rename WithValidation to Validate`, visible in `git reflog`), so the "fix" reverted the user's latest decision on the PR.
 
 **Correct pattern:** when local and `origin/<branch>` have diverged (`ahead N, behind N`), find out which side is newer before choosing one: `git reflog <branch>` (look for rebase/amend/rename entries), and compare the **committer** dates of both tips (author dates survive a rebase, committer dates don't). If the local side is newer, it is unpushed work: build on it and ask before force-pushing it (and its base branch, if stacked). Never resolve the divergence silently in either direction.
 
