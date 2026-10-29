@@ -148,7 +148,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 		var result = new ValidationResult("Code is invalid", new[] { nameof(ValidationDerived.Code) }); // Declared by the record and, with another type, by its base
 
 		await sut.Model.Value.UpdateMessageAsync(msg => msg.Validation(new[] { result }), CT);
-		await WaitFor(async () => await ExecuteOnDispatcher(() => sut.Value.HasErrors));
+		await WaitForAsync(async () => await ExecuteOnDispatcher(() => sut.Value.HasErrors));
 
 		(await GetErrors(sut.Value, nameof(ValidationDerived.Code))).Should().Equal(result);
 	}
@@ -254,7 +254,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 		await using var sut = await ExecuteOnDispatcher(() => new When_Record_ViewModel());
 
 		await sut.Model.Person.UpdateAsync(_ => new ValidationPerson("Jane", new ValidationAddress("Second street")), CT);
-		await WaitFor(async () => await ExecuteOnDispatcher(() => sut.Person.FirstName) == "Jane");
+		await WaitForAsync(async () => await ExecuteOnDispatcher(() => sut.Person.FirstName) == "Jane");
 
 		// The bindable records subscribe to the validation of their owner, but the store must be allocated only once results are received.
 		GetStore<BindableViewModelBase>(sut).Should().BeNull();
@@ -270,7 +270,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 		var result = new ValidationResult("Street is required", new[] { "Address.Street" });
 
 		await sut.Model.Person.UpdateMessageAsync(msg => msg.Validation(new[] { result }), CT);
-		await WaitFor(async () => (await GetErrors(sut.Person.Address, "Street")).Any());
+		await WaitForAsync(async () => (await GetErrors(sut.Person.Address, "Street")).Any());
 
 		(await GetErrors(sut.Person.Address, "Street")).Should().Equal(result);
 		(await ExecuteOnDispatcher(() => sut.HasErrors)).Should().BeTrue();
