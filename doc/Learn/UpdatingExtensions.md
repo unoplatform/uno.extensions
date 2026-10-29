@@ -22,6 +22,31 @@ below cover only what changes in Extensions.
 - **Removed:** `NavigatorExtensions.ShowPickerAsync` (iOS only). It routed to the native UIKit picker,
   which Uno Platform 7.0 removes, and no navigator had handled that route since the picker navigator
   was dropped, so the call never completed. Show a `Flyout` or a dialog with a list instead.
+- **`NavigateAsync<TShell>()` requires a `ContentControl` shell.** On Uno Platform 7.0, `Page` and
+  `UserControl` derive from `Control`, not `ContentControl`, so a shell such as `MainPage : Page` no
+  longer hosts navigation: it used to leave a blank screen, and now throws `InvalidOperationException`.
+  Make the shell implement `IContentControlProvider` and return the `ContentControl` that hosts
+  navigation, as the `unoapp` template's `Shell` does. If the page is also a route (for example the
+  `IsDefault` route), don't make the page itself the provider, or it gets navigated into itself: wrap it
+  instead, and keep the page as a route.
+
+  ```csharp
+  public sealed partial class Shell : UserControl, IContentControlProvider
+  {
+    private readonly ContentControl _content = new()
+    {
+      HorizontalContentAlignment = HorizontalAlignment.Stretch,
+      VerticalContentAlignment = VerticalAlignment.Stretch,
+    };
+
+    public Shell() => Content = _content;
+
+    public ContentControl ContentControl => _content;
+  }
+
+  // App.xaml.cs
+  Host = await builder.NavigateAsync<Shell>();
+  ```
 
 ### Storage
 
