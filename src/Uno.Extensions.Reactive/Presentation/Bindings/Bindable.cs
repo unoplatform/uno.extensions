@@ -80,7 +80,10 @@ public class Bindable<
 	private BindableValidationErrors Validation => _validation ??= new(
 		propertyName => _errorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName)),
 		() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasErrors))),
-		static memberName => typeof(T).GetProperty(memberName) is not null);
+		static memberName => (_memberNames ??= typeof(T).GetProperties().Select(property => property.Name).ToImmutableHashSet()).Contains(memberName));
+
+	// Note: GetProperty(name) would throw if T has multiple properties with that name (e.g. a property hidden by a derived record).
+	private static IImmutableSet<string>? _memberNames; // Cached per type T (benign race on init)
 
 	/// <summary>
 	/// Creates a new instance.
