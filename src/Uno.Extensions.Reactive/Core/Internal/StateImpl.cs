@@ -503,8 +503,9 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		public override bool IsAppliedLast => true;
 
 		/// <inheritdoc />
+		/// <remarks>Results superseded before having been applied are still applied once (as a no-op), so their publisher does not wait forever.</remarks>
 		public override bool IsActive(Message<T>? parent, bool parentChanged, IMessageEntry<T> entry)
-			=> !IsFaulted && IsLatest;
+			=> !IsFaulted && (IsLatest || !IsApplied);
 
 		/// <inheritdoc />
 		/// <remarks>
