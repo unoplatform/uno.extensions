@@ -1,4 +1,4 @@
-# 015 — Progress
+# 022 — Progress
 
 ## Decisions on §7 open questions (v1 — spec's proposed defaults)
 

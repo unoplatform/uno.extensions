@@ -242,7 +242,7 @@ Each scenario should:
 ### 4.14 Validator updated in a live model (implemented)
 
 - **ID**: `When_UpdateValidatorInModel_Then_ErrorsFromUpdatedValidator`
-- **Goal**: Prove that MVUX validation (spec 015) follows a hot-reload of
+- **Goal**: Prove that MVUX validation (spec 022) follows a hot-reload of
   the model: once the delta is applied, the errors exposed through
   `INotifyDataErrorInfo` come from the updated validator only, both for
   the view model that is live during the delta and for one created after it.
@@ -285,4 +285,4 @@ Each scenario should:
 | `MvuxHotReloadParentModel.cs` | Base model for inheritance scenario |
 | `MvuxHotReloadInheritedChildModel.cs` | Derived model for inheritance scenario |
 | `MvuxHotReloadAddDerivedFeedModel.cs` | Model for the add-derived-feed scenario (#3226) |
-| `MvuxHotReloadValidationModel.cs` | Model for the validator-update scenario (spec 015) |
+| `MvuxHotReloadValidationModel.cs` | Model for the validator-update scenario (spec 022) |

@@ -1,8 +1,10 @@
-# 015 — MVUX validation via `INotifyDataErrorInfo` on the generated ViewModel
+# 022 — MVUX validation via `INotifyDataErrorInfo` on the generated ViewModel
 
 **Status:** Implemented (v1) with the proposed defaults for §7, pending review — see [progress.md](progress.md)
 **Area:** `Uno.Extensions.Reactive` (message axis, state hook, `BindableViewModelBase` / `Bindable<T>`), `Uno.Extensions.Reactive.Generator` (collision diagnostics only)
 **Related:** `Uno.Extensions.Validation` (`IValidator`) — optional producer, no hard dependency; spec 013 (mocking can drive the new axis)
+**Numbering:** registered as 015 on its branch, renumbered 022 because 015 was taken on `main` meanwhile (older commits and reviews say "spec 015").
+**Architecture reference:** [spec 018](../018-mvux-mocking-and-validation/spec.md#validation-shape) (see its note on why live validation is held by the state).
 
 ## 1. Problem
 
