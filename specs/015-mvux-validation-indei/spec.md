@@ -35,7 +35,7 @@ MVUX has no validation story. `Uno.Extensions.Validation` (`IValidator.ValidateA
 
 ### 4.1 Core — `ValidationAxis`
 - `MessageAxes.Validation` (public const) and `MessageAxis.Validation` → `MessageAxis<IImmutableList<ValidationResult>>`, modelled on `MessageAxis.Error` (`Core/Axes/MessageAxis.cs:28`).
-  - `Aggregate`: concatenation (for combined sources).
+  - `Aggregate`: not used (the axis is local, see Propagation below, so combined sources never merge results); the last value wins.
   - Equality: sequence equality on (`ErrorMessage`, `MemberNames`) so identical re-validations don't raise `ErrorsChanged`.
   - Not transient: results stay until replaced.
 - Builder/entry helpers mirroring `Error(...)` in `MessageAxisExtensions.cs`:
