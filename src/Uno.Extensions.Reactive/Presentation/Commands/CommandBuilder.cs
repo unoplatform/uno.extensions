@@ -177,16 +177,24 @@ public readonly struct CommandBuilder<T> : ICommandBuilder, ICommandBuilder<T>, 
 						+ "but the validation results cannot be published as the parameter of the command is not a state (cf. FEED2003).",
 						name,
 						results.Count,
-						string.Join(", ", results.SelectMany(result => result.MemberNames).Distinct()));
+						GetMembers(results));
 				}
 			}
 			else if (log.IsEnabled(LogLevel.Information))
 			{
 				// Information (not debug): WinUI controls do not render validation errors by themselves, so the app might show nothing.
-				log.LogInformation("The execution of the command '{Command}' has been aborted as its parameter is not valid ({Count} validation errors).", name, results.Count);
+				log.LogInformation(
+					"The execution of the command '{Command}' has been aborted as its parameter is not valid ({Count} validation errors, on members: {Members}).",
+					name,
+					results.Count,
+					GetMembers(results));
 			}
 
 			return false;
 		};
 	}
+
+	// Note: Member names are the names of properties of the app (not user input), so they can be logged.
+	private static string GetMembers(IImmutableList<ValidationResult> results)
+		=> string.Join(", ", results.SelectMany(result => result.MemberNames).Distinct());
 }

@@ -178,7 +178,7 @@ Validation never logs the messages of the results, nor the messages of the error
 | --- | --- |
 | `Error` | A validator of a state throws (with the validator and the type of the error), or the results cannot be published on the state. |
 | `Warning` | A command is aborted by its validation, but its parameter is not a state (with the number of errors and the members in error). |
-| `Information` | A command is aborted by its validation (with the number of errors). |
+| `Information` | A command is aborted by its validation (with the number of errors and the members in error). |
 | `Debug` | The details of the errors of validators (including their message). |
 
 ## Consuming errors in the view
