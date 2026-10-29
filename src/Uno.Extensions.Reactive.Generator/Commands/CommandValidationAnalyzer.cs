@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -16,8 +17,8 @@ namespace Uno.Extensions.Reactive.Generator.Commands;
 /// <remarks>
 /// This follows the fluent configuration of the command (`.Given(x).When(...).Validation(...)`) back to its parameter.
 /// Configurations that cannot be followed (e.g. a builder stored in a local) are not reported, to avoid false positives.
-/// Likewise, a parameter declared as a feed is reported only if it is known to not be a state at runtime
-/// (e.g. `IFeed&lt;T&gt; Person => State.Value(...)` is a state, so it is not reported).
+/// Likewise, a parameter declared as a feed is reported only if it is known to not be a state at runtime, i.e. if it is produced by a factory or an operator of the Feed and ListFeed classes
+/// (e.g. `IFeed&lt;T&gt; Person => State.Value(...)` is a state, and the value of a parameter or of a method is unknown, so they are not reported).
 /// </remarks>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed class CommandValidationAnalyzer : DiagnosticAnalyzer
@@ -27,7 +28,8 @@ public sealed class CommandValidationAnalyzer : DiagnosticAnalyzer
 		INamedTypeSymbol Command,
 		INamedTypeSymbol Builder,
 		INamedTypeSymbol TypedBuilder,
-		INamedTypeSymbol State);
+		INamedTypeSymbol State,
+		ImmutableArray<INamedTypeSymbol> FeedFactories);
 
 	/// <inheritdoc />
 	public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Rules.FEED2003.Descriptor);
@@ -44,9 +46,13 @@ public sealed class CommandValidationAnalyzer : DiagnosticAnalyzer
 				&& compilation.GetTypeByMetadataName("Uno.Extensions.Reactive.Command") is { } command
 				&& compilation.GetTypeByMetadataName("Uno.Extensions.Reactive.ICommandBuilder") is { } builder
 				&& compilation.GetTypeByMetadataName("Uno.Extensions.Reactive.ICommandBuilder`1") is { } typedBuilder
-				&& compilation.GetTypeByMetadataName("Uno.Extensions.Reactive.IState`1") is { } state)
+				&& compilation.GetTypeByMetadataName("Uno.Extensions.Reactive.IState`1") is { } state
+				&& compilation.GetTypeByMetadataName("Uno.Extensions.Reactive.Feed") is { } feed
+				&& compilation.GetTypeByMetadataName("Uno.Extensions.Reactive.Feed`1") is { } typedFeed
+				&& compilation.GetTypeByMetadataName("Uno.Extensions.Reactive.ListFeed") is { } listFeed
+				&& compilation.GetTypeByMetadataName("Uno.Extensions.Reactive.ListFeed`1") is { } typedListFeed)
 			{
-				var symbols = new Symbols(extensions, command, builder, typedBuilder, state);
+				var symbols = new Symbols(extensions, command, builder, typedBuilder, state, ImmutableArray.Create(feed, typedFeed, listFeed, typedListFeed));
 				context.RegisterOperationAction(context => AnalyzeInvocation(context, symbols), OperationKind.Invocation);
 			}
 		});
@@ -75,7 +81,7 @@ public sealed class CommandValidationAnalyzer : DiagnosticAnalyzer
 				case IInvocationOperation { TargetMethod.Name: "Given", Arguments.Length: 1 } given
 					when SymbolEqualityComparer.Default.Equals(given.TargetMethod.ContainingType, symbols.Builder):
 					var parameter = given.Arguments[0].Value;
-					if (IsKnownNotAState(parameter, symbols, depth: 0) && Unwrap(parameter, includeExplicit: true)?.Type is { } type)
+					if (IsKnownNotAState(parameter, symbols, depth: 0, context.CancellationToken) && Unwrap(parameter, includeExplicit: true)?.Type is { } type)
 					{
 						context.ReportDiagnostic(Rules.FEED2003.GetNotAStateDiagnostic(GetLocation(validation), parameter.Syntax.ToString(), type));
 					}
@@ -106,10 +112,12 @@ public sealed class CommandValidationAnalyzer : DiagnosticAnalyzer
 	/// Determines if the value given as parameter of the command is known to not be a state at runtime (only the runtime type matters to publish the results).
 	/// </summary>
 	/// <remarks>
-	/// A property, a field or a local declared as a feed is followed to its expression body or initializer (if declared in the same file),
-	/// as it might be a state (e.g. `IFeed&lt;T&gt; Person => State.Value(...)`). If it cannot be followed, it is not reported.
+	/// Only the factories and operators of the Feed and ListFeed classes are known to produce a feed which is not a state.
+	/// A property, a (readonly) field or a local declared as a feed is followed to its expression body or initializer (if declared in the same file),
+	/// as it might be a state (e.g. `IFeed&lt;T&gt; Person => State.Value(...)`).
+	/// Any other value (e.g. a parameter, a method call or a conditional) cannot be determined, so it is not reported.
 	/// </remarks>
-	private static bool IsKnownNotAState(IOperation? operation, Symbols symbols, int depth)
+	private static bool IsKnownNotAState(IOperation? operation, Symbols symbols, int depth, CancellationToken ct)
 	{
 		// Note: We also unwrap explicit conversions (e.g. `Given((IFeed<T>)MyState)`), as only the runtime type matters to publish the results.
 		operation = Unwrap(operation, includeExplicit: true);
@@ -127,20 +135,22 @@ public sealed class CommandValidationAnalyzer : DiagnosticAnalyzer
 		};
 		if (symbol is null)
 		{
-			return true; // The expression itself produces the value (e.g. Feed.Async(...)): its type is the one of the value.
+			// A factory or an operator of feeds (e.g. Feed.Async(...), state.Select(...)) creates a new feed, which is not a state.
+			return operation is IInvocationOperation { TargetMethod.ContainingType.OriginalDefinition: var declaringType }
+				&& symbols.FeedFactories.Contains(declaringType, SymbolEqualityComparer.Default);
 		}
 
 		const int maxDepth = 3; // Indirections followed (e.g. a property returning another property)
 		if (depth >= maxDepth
 			|| symbol.DeclaringSyntaxReferences is not { Length: 1 } references
-			|| GetValueSyntax(references[0].GetSyntax()) is not { } value
+			|| GetValueSyntax(references[0].GetSyntax(ct)) is not { } value
 			|| value.SyntaxTree != operation.Syntax.SyntaxTree
-			|| operation.SemanticModel?.GetOperation(value) is not { } valueOperation)
+			|| operation.SemanticModel?.GetOperation(value, ct) is not { } valueOperation)
 		{
 			return false;
 		}
 
-		return IsKnownNotAState(valueOperation, symbols, depth + 1);
+		return IsKnownNotAState(valueOperation, symbols, depth + 1, ct);
 	}
 
 	private static ExpressionSyntax? GetValueSyntax(SyntaxNode declaration)
