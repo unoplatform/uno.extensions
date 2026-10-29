@@ -319,20 +319,32 @@ public class Given_CommandValidation : FeedUITests
 	}
 
 	[TestMethod]
-	public async Task When_GivenStateDisposed_Then_ExecutionCompletes()
+	[DoNotParallelize] // Sets the global log provider
+	public async Task When_GivenStateDisposed_Then_ExecutionCompletes_And_AbortLogged()
 	{
-		var state = new StateImpl<string>(Context, Option.Some("value"));
-		var sut = Create(b => b
-			.Given(state)
-			.Validation(async (value, ct) => Error("invalid"))
-			.Then(Execute));
-		await sut.WaitForCanExecute();
+		var logs = new RecordingLogProvider();
+		LogExtensions.SetProvider(logs);
+		try
+		{
+			var state = new StateImpl<string>(Context, Option.Some("value"));
+			var sut = Create(b => b
+				.Given(state)
+				.Validation(async (value, ct) => Error("invalid"))
+				.Then(Execute));
+			await sut.WaitForCanExecute();
 
-		await state.DisposeAsync();
-		await sut.ExecuteAndWait();
+			await state.DisposeAsync();
+			await sut.ExecuteAndWait();
 
-		sut.Executions.Should().BeEmpty();
-		sut.Command.IsExecuting.Should().BeFalse();
+			// A disposed state accepts the results (nothing to show them anymore): the execution is aborted, which is logged (not silent).
+			sut.Executions.Should().BeEmpty();
+			sut.Command.IsExecuting.Should().BeFalse();
+			logs.Entries.Should().ContainSingle(entry => entry.Level == LogLevel.Information && entry.Message.Contains("has been aborted"));
+		}
+		finally
+		{
+			LogExtensions.Reset();
+		}
 	}
 
 	[TestMethod]
