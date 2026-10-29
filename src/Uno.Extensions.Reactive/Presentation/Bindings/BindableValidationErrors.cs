@@ -15,6 +15,64 @@ namespace Uno.Extensions.Reactive.Bindings;
 internal readonly record struct BindableValidationResult(ValidationResult Result, string Member);
 
 /// <summary>
+/// The <see cref="BindableValidationErrors"/> of a bindable object, which is allocated only once it receives some results.
+/// </summary>
+/// <remarks>
+/// Sub-bindables (e.g. of a record) subscribe to the validation of their owner as soon as they are created, no matter if the owner ever receives any result.
+/// Until then, their subscriptions are only kept in a list, so a bindable whose value is never validated does not allocate any store.
+/// This type is not thread safe and is expected to be manipulated only from the UI thread.
+/// </remarks>
+internal struct LazyBindableValidationErrors
+{
+	private BindableValidationErrors? _store;
+	private List<(string member, Action<IImmutableList<BindableValidationResult>> handler)>? _pendingSubscriptions;
+
+	/// <summary>
+	/// Gets the store, if any results have been received.
+	/// </summary>
+	public readonly BindableValidationErrors? Store => _store;
+
+	/// <inheritdoc cref="BindableValidationErrors.Subscribe" />
+	public void Subscribe(string memberName, Action<IImmutableList<BindableValidationResult>> onUpdated)
+	{
+		if (_store is { } store)
+		{
+			store.Subscribe(memberName, onUpdated);
+		}
+		else
+		{
+			(_pendingSubscriptions ??= new()).Add((memberName, onUpdated));
+		}
+	}
+
+	/// <summary>
+	/// Gets the store to update with the given results, or null if there is nothing to update (i.e. no results and no store yet).
+	/// </summary>
+	public BindableValidationErrors? GetForUpdate<TOwner>(int resultsCount, TOwner owner, Func<TOwner, BindableValidationErrors> factory)
+	{
+		if (_store is null)
+		{
+			if (resultsCount is 0)
+			{
+				return null; // Nothing to clear
+			}
+
+			_store = factory(owner);
+			if (_pendingSubscriptions is { } pending)
+			{
+				_pendingSubscriptions = null;
+				foreach (var (member, handler) in pending)
+				{
+					_store.Subscribe(member, handler);
+				}
+			}
+		}
+
+		return _store;
+	}
+}
+
+/// <summary>
 /// The validation errors store of a bindable object, used to implement <see cref="System.ComponentModel.INotifyDataErrorInfo"/>.
 /// </summary>
 /// <remarks>

@@ -244,12 +244,39 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 
 		(await ExecuteOnDispatcher(() => errorsChanged)).Should().Be(0);
 		(await ExecuteOnDispatcher(() => sut.HasErrors)).Should().BeFalse();
-		typeof(BindableViewModelBase)
-			.GetField("_validation", BindingFlags.Instance | BindingFlags.NonPublic)!
-			.GetValue(sut)
-			.Should()
-			.BeNull();
+		GetStore<BindableViewModelBase>(sut).Should().BeNull();
 	}
+
+	[TestMethod]
+	public async Task When_RecordStateWithoutValidation_Then_NoStoreAllocated()
+	{
+		await using var sut = await ExecuteOnDispatcher(() => new When_Record_ViewModel());
+
+		await sut.Model.Person.UpdateAsync(_ => new ValidationPerson("Jane", new ValidationAddress("Second street")), CT);
+		await WaitFor(async () => await ExecuteOnDispatcher(() => sut.Person.FirstName) == "Jane");
+
+		// The bindable records subscribe to the validation of their owner, but the store must be allocated only once results are received.
+		GetStore<BindableViewModelBase>(sut).Should().BeNull();
+		GetStore<Bindable<ValidationPerson>>(sut.Person).Should().BeNull();
+		GetStore<Bindable<ValidationAddress>>(sut.Person.Address).Should().BeNull();
+	}
+
+	[TestMethod]
+	public async Task When_RecordStateValidatedAfterSubBindablesCreated_Then_ErrorsRoutedToNestedBindableRecord()
+	{
+		await using var sut = await ExecuteOnDispatcher(() => new When_Record_ViewModel());
+		_ = await ExecuteOnDispatcher(() => sut.Person.Address); // Sub-bindables subscribe before any result is received
+		var result = new ValidationResult("Street is required", new[] { "Address.Street" });
+
+		await sut.Model.Person.UpdateMessageAsync(msg => msg.Validation(new[] { result }), CT);
+		await WaitFor(async () => (await GetErrors(sut.Person.Address, "Street")).Any());
+
+		(await GetErrors(sut.Person.Address, "Street")).Should().Equal(result);
+		(await ExecuteOnDispatcher(() => sut.HasErrors)).Should().BeTrue();
+	}
+
+	private static object? GetStore<TOwner>(object owner)
+		=> ((LazyBindableValidationErrors)typeof(TOwner).GetField("_validation", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(owner)!).Store;
 
 	[TestMethod]
 	public async Task When_PropertyWithoutValidation_Then_NoStoreAllocatedForSubBindables()
@@ -267,9 +294,8 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 				setter: null));
 		});
 
-		var validationField = typeof(Bindable<ValidationPerson>).GetField("_validation", BindingFlags.Instance | BindingFlags.NonPublic)!;
-		validationField.GetValue(item).Should().BeNull("the sub-bindables of the item cannot receive any validation result");
-		typeof(Bindable<ValidationAddress>).GetField("_validation", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(item.Address).Should().BeNull();
+		GetStore<Bindable<ValidationPerson>>(item).Should().BeNull("the sub-bindables of the item cannot receive any validation result");
+		GetStore<Bindable<ValidationAddress>>(item.Address).Should().BeNull();
 	}
 
 	private async Task<ValidationResult[]> GetErrors(object bindable, string? propertyName)
