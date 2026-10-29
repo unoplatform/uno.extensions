@@ -409,27 +409,36 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		_subscriptionMode?.Dispose();
 	}
 
-	private record Update(Action<MessageBuilder<T>> Method, StateUpdateKind Kind) : IFeedUpdate<T>
+	/// <summary>
+	/// An update made through this state, whose <see cref="HasBeenApplied"/> completes (or fails) the first time it is applied.
+	/// </summary>
+	private abstract class UpdateBase(TaskCreationOptions options = TaskCreationOptions.None) : IFeedUpdate<T>
 	{
-		private readonly TaskCompletionSource<object?> _firstResult = new();
+		private readonly TaskCompletionSource<object?> _firstResult = new(options);
 
 		public Task HasBeenApplied => _firstResult.Task;
 
-		/// <inheritdoc />
-		public bool IsActive(Message<T>? parent, bool parentChanged, IMessageEntry<T> entry)
-			=> !_firstResult.Task.IsFaulted
-				&& (Kind is StateUpdateKind.Persistent || !parentChanged || !_firstResult.Task.IsCompleted);
+		protected bool IsApplied => _firstResult.Task.IsCompleted;
+
+		protected bool IsFaulted => _firstResult.Task.IsFaulted;
+
+		protected bool IsAppliedSuccessfully => _firstResult.Task.IsCompletedSuccessfully;
 
 		/// <inheritdoc />
-		public bool IsCompactable()
-			=> _firstResult.Task.IsCompletedSuccessfully;
+		public virtual bool IsAppliedLast => false;
+
+		/// <inheritdoc />
+		public abstract bool IsActive(Message<T>? parent, bool parentChanged, IMessageEntry<T> entry);
+
+		/// <inheritdoc />
+		public abstract bool IsCompactable();
 
 		/// <inheritdoc />
 		public void Apply(bool _, MessageBuilder<T, T> message)
 		{
 			try
 			{
-				Method(new(message.Get, ((IMessageBuilder)message).Set));
+				Apply(new MessageBuilder<T>(message.Get, ((IMessageBuilder)message).Set));
 				_firstResult.TrySetResult(null);
 			}
 			catch (Exception error) when (!_firstResult.Task.IsCompleted) // Otherwise let the exception bubble up.
@@ -437,6 +446,23 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 				_firstResult.TrySetException(error);
 			}
 		}
+
+		protected abstract void Apply(MessageBuilder<T> message);
+	}
+
+	private sealed class Update(Action<MessageBuilder<T>> method, StateUpdateKind kind) : UpdateBase
+	{
+		/// <inheritdoc />
+		public override bool IsActive(Message<T>? parent, bool parentChanged, IMessageEntry<T> entry)
+			=> !IsFaulted && (kind is StateUpdateKind.Persistent || !parentChanged || !IsApplied);
+
+		/// <inheritdoc />
+		public override bool IsCompactable()
+			=> IsAppliedSuccessfully;
+
+		/// <inheritdoc />
+		protected override void Apply(MessageBuilder<T> message)
+			=> method(message);
 	}
 
 	/// <summary>
@@ -452,13 +478,10 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	/// Unlike an <see cref="Update"/>, this remains active when the source of the state produces a new message, until it is superseded by the next results:
 	/// results are re-applied on each new message and after each update of the data, as long as they are relevant for its data.
 	/// </remarks>
-	private sealed class ValidationUpdate(StateImpl<T> owner, IImmutableList<ValidationResult>? results, Func<Option<T>, bool>? isCurrent, long version) : IFeedUpdate<T>
+	private sealed class ValidationUpdate(StateImpl<T> owner, IImmutableList<ValidationResult>? results, Func<Option<T>, bool>? isCurrent, long version)
+		: UpdateBase(TaskCreationOptions.RunContinuationsAsynchronously) // The publisher does not resume under the lock of the UpdateFeed.
 	{
-		private readonly TaskCompletionSource<object?> _firstResult = new(TaskCreationOptions.RunContinuationsAsynchronously);
-
 		public long Version => version;
-
-		public Task HasBeenApplied => _firstResult.Task;
 
 		/// <summary>
 		/// Gets a boolean indicating if these are the last results published on the state.
@@ -471,34 +494,26 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 
 		/// <inheritdoc />
 		/// <remarks>Results are relevant only for a given data, so they are checked after the updates of the data.</remarks>
-		public bool IsAppliedLast => true;
+		public override bool IsAppliedLast => true;
 
 		/// <inheritdoc />
-		public bool IsActive(Message<T>? parent, bool parentChanged, IMessageEntry<T> entry)
-			=> !_firstResult.Task.IsFaulted && IsLatest;
+		public override bool IsActive(Message<T>? parent, bool parentChanged, IMessageEntry<T> entry)
+			=> !IsFaulted && IsLatest;
 
 		/// <inheritdoc />
 		/// <remarks>
 		/// Even once the source of the state has completed, the last results have to be re-applied on each update of the data, to remove them if no longer relevant.
 		/// </remarks>
-		public bool IsCompactable()
-			=> _firstResult.Task.IsCompletedSuccessfully && !IsLatest;
+		public override bool IsCompactable()
+			=> IsAppliedSuccessfully && !IsLatest;
 
 		/// <inheritdoc />
-		public void Apply(bool _, MessageBuilder<T, T> message)
+		protected override void Apply(MessageBuilder<T> message)
 		{
-			try
+			if (IsLatest)
 			{
-				if (IsLatest)
-				{
-					// Results which are not relevant for the current data are removed (they would remain when an update of the data is applied incrementally).
-					message.Validation(isCurrent?.Invoke(message.CurrentData) ?? true ? results : null);
-				}
-				_firstResult.TrySetResult(null);
-			}
-			catch (Exception error) when (!_firstResult.Task.IsCompleted) // Otherwise let the exception bubble up.
-			{
-				_firstResult.TrySetException(error);
+				// Results which are not relevant for the current data are removed (they would remain when an update of the data is applied incrementally).
+				message.Validation(isCurrent?.Invoke(message.CurrentData) ?? true ? results : null);
 			}
 		}
 	}
