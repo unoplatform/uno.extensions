@@ -1026,41 +1026,6 @@ public class Given_StateWithValidation : FeedTests
 			=> Result.SetException(error);
 	}
 
-	private sealed class RecordingLogProvider : ILoggerProvider
-	{
-		private readonly List<(LogLevel Level, string Message)> _entries = new();
-
-		public IReadOnlyList<(LogLevel Level, string Message)> Entries
-		{
-			get
-			{
-				lock (_entries)
-				{
-					return _entries.ToList();
-				}
-			}
-		}
-
-		public ILogger CreateLogger(string categoryName) => new Logger(this);
-
-		public void Dispose() { }
-
-		private sealed class Logger(RecordingLogProvider owner) : ILogger
-		{
-			public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
-
-			public bool IsEnabled(LogLevel logLevel) => true;
-
-			public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
-			{
-				lock (owner._entries)
-				{
-					owner._entries.Add((logLevel, formatter(state, exception)));
-				}
-			}
-		}
-	}
-
 	/// <summary>
 	/// The source of a state which produces the given initial value, then waits for <see cref="Complete"/> on each refresh.
 	/// </summary>
