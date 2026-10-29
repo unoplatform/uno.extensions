@@ -506,6 +506,40 @@ public class Given_CommandValidation : FeedUITests
 	}
 
 	[TestMethod]
+	public async Task When_OnChangeValidationCompletesAfterExecution_Then_ResultsOfCommandKept()
+	{
+		var state = new StateImpl<string>(Context, Option.Some("initial"));
+		var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+		// Note: Continuations are run synchronously, so the end of the on-change validation (including its publication) runs within the SetResult below.
+		var gate = new TaskCompletionSource();
+		_ = state.Validate(async (value, ct) =>
+		{
+			if (value is "updated")
+			{
+				started.TrySetResult();
+				await gate.Task;
+			}
+
+			return Error($"on change {value}");
+		});
+		await WaitFor(() => Validation(state).SequenceEqual(new[] { "on change initial" }));
+		var sut = Create(b => b
+			.Given(state)
+			.Validation(async (value, ct) => Error($"command {value}"))
+			.Then(Execute));
+
+		await state.SetAsync("updated", CT);
+		await started.Task; // The on-change validation of "updated" started before the execution...
+		await sut.ExecuteAndWait();
+		Validation(state).Should().Equal("command updated");
+
+		gate.SetResult(); // ... but completes after it.
+
+		// The last validation started wins, not the last one to complete.
+		Validation(state).Should().Equal("command updated");
+	}
+
+	[TestMethod]
 	public async Task When_SourceOfStateProducesSameValue_Then_ResultsKept()
 	{
 		var refresh = new Signal();
@@ -526,6 +560,30 @@ public class Given_CommandValidation : FeedUITests
 
 		// Results are kept until the next execution, even when the source of the state produces a new message.
 		Validation(state).Should().Equal("invalid");
+	}
+
+	[TestMethod]
+	public async Task When_SourceOfStateProducesOtherValue_Then_ResultsKept()
+	{
+		var refresh = new Signal();
+		var reload = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
+		var loads = 0;
+		var state = new StateImpl<string>(Context, Feed<string>.Async(async ct => Interlocked.Increment(ref loads) is 1 ? "value" : await reload.Task, refresh));
+		var sut = Create(b => b
+			.Given(state)
+			.Validation(async (value, ct) => Error($"invalid {value}"))
+			.Then(Execute));
+		await sut.ExecuteAndWait();
+		Validation(state).Should().Equal("invalid value");
+
+		refresh.Raise();
+		await WaitFor(() => loads is 2 && state.Current.Current.IsTransient);
+		reload.SetResult("other");
+		await WaitFor(() => !state.Current.Current.IsTransient);
+
+		// Results describe the submitted value: they are kept until the next execution, even if the source of the state produces another value.
+		state.Current.Current.Data.SomeOrDefault().Should().Be("other");
+		Validation(state).Should().Equal("invalid value");
 	}
 
 	[TestMethod]
