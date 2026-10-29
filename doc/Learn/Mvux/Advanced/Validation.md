@@ -172,11 +172,11 @@ The results are **not** cleared when the value of the state is changed (e.g. by 
 
 ### Diagnosing validation
 
-Validation never logs the messages of the results, nor the messages of the errors of validators, at a level above `Debug`, as they might contain user input. The relevant log categories are `Uno.Extensions.Reactive.Core.StateImpl` (validators of states) and `Uno.Extensions.Reactive.Commands.AsyncCommand` (validation of commands):
+Validation never logs the messages of the results, nor the messages of the errors of validators, at a level above `Debug`, as they might contain user input. The relevant log categories are `Uno.Extensions.Reactive.Core.StateImpl` (validators of states), `Uno.Extensions.Reactive.Commands.AsyncCommand` (validation of commands) and `Uno.Extensions.Reactive.Core.ValidationLocalizer` (localization of messages):
 
 | Level | Logged when |
 | --- | --- |
-| `Error` | A validator of a state throws (with the validator and the type of the error), or the results cannot be published on the state. |
+| `Error` | A validator of a state throws (with the validator and the type of the error), or the results cannot be published on the state. The first time a localizer throws (with the localizer and the type of the error); the next times are logged at `Debug`. |
 | `Warning` | A command is aborted by its validation, but its parameter is not a state (with the number of errors and the members in error). |
 | `Information` | A command is aborted by its validation (with the number of errors and the members in error). |
 | `Debug` | The details of the errors of validators (including their message). |
