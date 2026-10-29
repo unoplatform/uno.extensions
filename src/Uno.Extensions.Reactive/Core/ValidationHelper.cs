@@ -26,19 +26,29 @@ internal static class ValidationHelper
 		=> Interlocked.Increment(ref _version);
 
 	/// <summary>
-	/// Gets the method to publish validation results on the given parameter of a command or a state, if it is a state.
+	/// Gets the method to publish validation results on the given parameter of a command, if it is a state.
 	/// </summary>
-	/// <remarks>
-	/// A state created by the State factories publishes through its single entry point (cf. <see cref="IValidationTarget"/>), no matter the type through which it is seen (covariance).
-	/// Any other state publishes using <see cref="IState{T}.UpdateMessageAsync"/>, so results follow the update rules of that state (the version is then ignored).
-	/// </remarks>
+	/// <remarks>See <see cref="GetPublisher{T}(IState{T})"/>.</remarks>
 	public static Func<IImmutableList<ValidationResult>, long, CancellationToken, ValueTask>? GetPublisher<T>(IFeed<T>? feed)
 		=> feed switch
 		{
-			IValidationTarget target => target.PublishValidationAsync,
-			IState<T> state => (results, _, ct) => state.UpdateMessageAsync(msg => msg.Validation(results), ct),
+			IValidationTarget target => target.PublishValidationAsync, // Checked first, as the feed might be a state seen through a base type (covariance).
+			IState<T> state => GetPublisher(state),
 			_ => null,
 		};
+
+	/// <summary>
+	/// Gets the method to publish validation results on the given state.
+	/// </summary>
+	/// <remarks>
+	/// A state created by the State factories (or an input of a model which wraps it) publishes through its single entry point (cf. <see cref="IValidationTarget"/>),
+	/// no matter the type through which it is seen (covariance).
+	/// Any other state publishes using <see cref="IState{T}.UpdateMessageAsync"/>, so results follow the update rules of that state (the version is then ignored).
+	/// </remarks>
+	public static Func<IImmutableList<ValidationResult>, long, CancellationToken, ValueTask> GetPublisher<T>(IState<T> state)
+		=> state is IValidationTarget target
+			? target.PublishValidationAsync
+			: (results, _, ct) => state.UpdateMessageAsync(msg => msg.Validation(results), ct);
 
 	/// <summary>
 	/// Materializes validation results, ignoring null results (i.e. <see cref="ValidationResult.Success"/>).

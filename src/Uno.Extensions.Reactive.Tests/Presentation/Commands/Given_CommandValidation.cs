@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Uno.Extensions.Reactive.Bindings;
 using Uno.Extensions.Reactive.Commands;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Logging;
@@ -195,6 +196,34 @@ public class Given_CommandValidation : FeedUITests
 		await WaitFor(() => sut.Completions.Count == 1);
 
 		// The results published after the validation started win: the last validation started wins, not the last one to complete.
+		Validation(state).Should().Equal("manual");
+		sut.Executions.Should().BeEmpty();
+	}
+
+	[TestMethod]
+	public async Task When_GivenInputAndResultsPublishedWhileValidating_Then_ResultsOfExecutionDiscarded()
+	{
+		var state = new StateImpl<string>(Context, Option.Some("value"));
+		var input = new Input<string>("Name", state); // The parameter of a model typed IInput<T>
+		var validating = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+		var validation = new TaskCompletionSource<IEnumerable<ValidationResult>>(TaskCreationOptions.RunContinuationsAsynchronously);
+		var sut = Create(b => b
+			.Given(input)
+			.Validation((value, ct) =>
+			{
+				validating.TrySetResult();
+				return new ValueTask<IEnumerable<ValidationResult>>(validation.Task);
+			})
+			.Then(Execute));
+		await sut.WaitForCanExecute();
+		sut.Command.Execute(null);
+		await validating.Task;
+
+		await input.SetValidationAsync(Error("manual"), CT);
+		validation.SetResult(Error("invalid"));
+		await WaitFor(() => sut.Completions.Count == 1);
+
+		// Like for a state, the last validation started wins, not the last one to complete.
 		Validation(state).Should().Equal("manual");
 		sut.Executions.Should().BeEmpty();
 	}
