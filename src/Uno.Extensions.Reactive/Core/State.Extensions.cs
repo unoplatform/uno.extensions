@@ -430,7 +430,7 @@ partial class State
 		var validation = ValidationHelper.ToResults(results) ?? ImmutableList<ValidationResult>.Empty;
 
 		// A state created by the State factories publishes through its single entry point, like its validator and commands.
-		return ValidationHelper.GetPublisher(state)!(validation, ValidationHelper.NextVersion(), ct);
+		return ValidationHelper.GetPublisher(state)(validation, ValidationHelper.NextVersion(), ct);
 	}
 
 	/// <summary>
