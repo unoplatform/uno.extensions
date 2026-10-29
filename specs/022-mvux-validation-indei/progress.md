@@ -89,3 +89,24 @@ Follow-ups (design, M14):
 
 - "Local" axis forwarding is decided per operator (`MessageManager(forwardLocalAxes)` opted in by `UpdateFeed` only, `CombineFeedHelper`): model it once (e.g. on the identity-preserving feeds) so new operators don't have to decide.
 - `StateImpl` holds the whole validation loop: extract it (e.g. a `StateValidation<T>` attached like `StateForEach`), keeping only the publication and the hot-swap stop in the state.
+
+## Review panel on the PR (20261027, kazo0)
+
+| Finding | Resolution |
+| --- | --- |
+| [high] An edit from the view shows the previous value's results (`isCurrent` not evaluated on the incremental path) | Validation results are an update applied last (`IFeedUpdate.IsAppliedLast`): re-applied after each update of the data, and cleared if not relevant for it. A value whose validator throws has no results. `When_DataChangedLocally_Then_ResultsOfPreviousValueNotShown`, `When_ValidatorThrowsForNewValue_Then_ResultsOfPreviousValueNotShown`. |
+| [high] Lock-order inversion between `_validationResultsGate` and `lock(UpdateFeedSource)` | No gate anymore: the last results are swapped with a CAS, then added to the `UpdateFeed` outside of any lock; superseded results are no longer applied (`ValidationUpdate.IsLatest`). The validation of `None` also runs off the emitting thread. `When_ResultsPublishedConcurrentlyWithDataChanges_Then_NoDeadlock` (a guard: the fix makes the inversion impossible by construction). |
+| [high, design] Contradicts spec 018 | Kept the state-based design, recorded in spec 018 (note in "Validation shape", diagrams, decision 10-29): edits from the view are applied by the state, downstream of any operator on its source. |
+| [medium] Public `HasErrors` breaks a `HasErrors` of the user's partial (`CS0108`) | `BindableViewModelBase` implements only `INotifyDataErrorInfo.HasErrors`; the generator (all tool versions) adds the public `HasErrors` only if the model and the user's partial declare none, otherwise `FEED1001`. No breaking change left. |
+| [medium] Error stores allocated for record states without validation | `LazyBindableValidationErrors`: sub-bindable subscriptions are kept in a list until the first results. `When_RecordStateWithoutValidation_Then_NoStoreAllocated`. |
+| [medium] `GetProperty(memberName)` can throw on the UI thread | Cached set of the property names per type. `When_ResultTargetsAmbiguousMember_Then_DoesNotThrow` (crashed the test host before). |
+| [medium] A lazy validator's failure logged as a pipeline failure | Results materialized with the validator, off the UI thread. `When_LazyValidatorThrows_Then_LoggedAsValidatorFailure`. |
+| [medium] `ValidationUpdate` duplicates `Update` | Both derive from `UpdateBase` (first-apply task, error handling). |
+| [low] FEED1001 only for tool v3, no clean rebuild recorded | Shared `ValidationStateMember` for tool v1/v2/v3 (`When_ModelDeclaresHasErrors_Then_DiagnosticForAllToolVersions`). Clean rebuild (`--no-incremental`) of `Reactive.Tests`: see below. v1 view models do not compile against the current `BindableViewModelBase` (no `__Reactive_UpdateModel`), unrelated to validation. |
+| [low] Error log on every keystroke; `HasErrors == false` doesn't mean validated | First failure of a validator at Error, next ones at Debug (`When_ValidatorThrowsOnEachChange_Then_LoggedAsErrorOnlyOnce`). Documented in `Validation.md`. |
+| [low] Stale-result test never produces a stale result; no "completes with the state" case | `When_StaleResults_Then_Discarded` and `When_ResultsForValueNoLongerCurrent_Then_Discarded` check that no message reports the results of another value; `When_SourceCompletes_Then_ResultsKept_And_NotRevalidated`. With the stale check disabled, 4 tests fail. |
+| [low] Dead `Concat` aggregator | The aggregator keeps the last value, with a note that the local axis is never aggregated; spec §4.1 updated. |
+| [low] "can be used as is" is wrong for `IValidator` | Docs use "a one-line lambda" until `Validate(IValidator)` (spec 024). |
+| [low] Spec number 015 taken on `main` | Renumbered 022 (023 and 024 for the localization and command specs). |
+
+Clean rebuild after the generator change (20261029): `dotnet build src/Uno.Extensions.Reactive.Tests -c Release --no-incremental`, 0 errors, only the existing CS1591 of `Uno.Extensions.Core` and `Uno.Extensions.Reactive.Testing`; then `Uno.Extensions.Reactive.Tests` 1571 passed, 19 skipped.
