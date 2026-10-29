@@ -11,7 +11,7 @@
 | 5 Read-only feeds | States only. The axis is `IsLocal`: operators never forward it. |
 | 6 `IListState` items | Deferred. |
 
-Additional behaviour choices:
+Additional behavior choices:
 
 - Validator runs only when the state has a value (`Option.Some`, including `Some(null)`: the validator gets `null`). `None` clears the results; `Undefined` keeps the previous ones.
 - Validator exceptions are logged (type only, no message) and keep the previous results.
