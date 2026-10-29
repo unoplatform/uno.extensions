@@ -125,7 +125,9 @@
 		"retarget",
 		"MSIX",
 		"backported",
-		"swappable"
+		"swappable",
+		"reflog",
+		"resx"
 	],
 	"ignoreWords": [
 		"ADAL",
