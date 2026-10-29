@@ -33,7 +33,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	private readonly AsyncLazyDispatcherProvider _dispatcher = new();
 	private readonly EventManager<PropertyChangedEventHandler, PropertyChangedEventArgs> _propertyChanged;
 	private EventManager<EventHandler<DataErrorsChangedEventArgs>, DataErrorsChangedEventArgs>? _errorsChanged; // Lazy, validation is opt-in
-	private BindableValidationErrors? _validation; // Lazy, validation is opt-in
+	private LazyBindableValidationErrors _validation; // Lazy, validation is opt-in
 
 	/// <inheritdoc />
 	public event PropertyChangedEventHandler? PropertyChanged
@@ -49,14 +49,14 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	/// Validation errors are the validation results published on the <see cref="MessageAxis.Validation"/> of the backing states (e.g. using <see cref="State.Validate{T}"/>).
 	/// If the model already declares a member named HasErrors, it will hide this property, but the <see cref="INotifyDataErrorInfo"/> implementation remains valid.
 	/// </remarks>
-	public bool HasErrors => _validation?.HasErrors ?? false;
+	public bool HasErrors => _validation.Store?.HasErrors ?? false;
 
 	/// <inheritdoc />
 	bool INotifyDataErrorInfo.HasErrors => HasErrors;
 
 	/// <inheritdoc />
 	IEnumerable INotifyDataErrorInfo.GetErrors(string? propertyName)
-		=> _validation?.GetErrors(propertyName) ?? ImmutableList<ValidationResult>.Empty;
+		=> _validation.Store?.GetErrors(propertyName) ?? ImmutableList<ValidationResult>.Empty;
 
 	/// <inheritdoc />
 	event EventHandler<DataErrorsChangedEventArgs>? INotifyDataErrorInfo.ErrorsChanged
@@ -79,9 +79,10 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	}
 
 	/// <remarks>This is not thread safe and is expected to be used only from the UI thread.</remarks>
-	private BindableValidationErrors Validation => _validation ??= new(
-		propertyName => _errorsChanged?.Raise(new DataErrorsChangedEventArgs(propertyName)),
-		() => _propertyChanged.Raise(new PropertyChangedEventArgs(nameof(HasErrors))));
+	private static BindableValidationErrors CreateValidation(BindableViewModelBase owner)
+		=> new(
+			propertyName => owner._errorsChanged?.Raise(new DataErrorsChangedEventArgs(propertyName)),
+			() => owner._propertyChanged.Raise(new PropertyChangedEventArgs(nameof(HasErrors))));
 
 	/// <summary>
 	/// Creates a new instance of BindableViewModelBase
@@ -182,7 +183,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 			propertyName,
 			(stateImpl, ViewModelToView),
 			isReadOnly ? default : ViewToViewModel,
-			onValidationUpdated => Validation.Subscribe(propertyName, onValidationUpdated));
+			onValidationUpdated => _validation.Subscribe(propertyName, onValidationUpdated));
 
 		async void ViewModelToView(Action<TProperty> updated)
 		{
@@ -247,7 +248,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 				void UpdateValidation()
 				{
 					validationScheduled = 0;
-					Validation.UpdateProperty(propertyName, validation);
+					_validation.GetForUpdate(validation.Count, this, CreateValidation)?.UpdateProperty(propertyName, validation);
 				}
 			}
 			catch (Exception error)

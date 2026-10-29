@@ -35,7 +35,7 @@ public class Bindable<
 	public event PropertyChangedEventHandler? PropertyChanged;
 
 	private EventHandler<DataErrorsChangedEventArgs>? _errorsChanged;
-	private BindableValidationErrors? _validation; // Lazy, validation is opt-in
+	private LazyBindableValidationErrors _validation; // Lazy, validation is opt-in
 
 	private T _value = default!; // This is going to be init by property.Subscribe(OnOwnerUpdated);, and anyway with bindings we cannot ensure non-null!
 	private CancellationTokenSource? _asyncSetCt;
@@ -60,14 +60,14 @@ public class Bindable<
 	/// Validation errors are the validation results published on the <see cref="MessageAxis.Validation"/> of the backing state (e.g. using <see cref="State.Validate{T}"/>).
 	/// If the value type already declares a member named HasErrors, it will hide this property, but the <see cref="INotifyDataErrorInfo"/> implementation remains valid.
 	/// </remarks>
-	public bool HasErrors => _validation?.HasErrors ?? false;
+	public bool HasErrors => _validation.Store?.HasErrors ?? false;
 
 	/// <inheritdoc />
 	bool INotifyDataErrorInfo.HasErrors => HasErrors;
 
 	/// <inheritdoc />
 	IEnumerable INotifyDataErrorInfo.GetErrors(string? propertyName)
-		=> _validation?.GetErrors(propertyName) ?? ImmutableList<ValidationResult>.Empty;
+		=> _validation.Store?.GetErrors(propertyName) ?? ImmutableList<ValidationResult>.Empty;
 
 	/// <inheritdoc />
 	event EventHandler<DataErrorsChangedEventArgs>? INotifyDataErrorInfo.ErrorsChanged
@@ -77,10 +77,11 @@ public class Bindable<
 	}
 
 	/// <remarks>This is not thread safe and is expected to be used only from the UI thread.</remarks>
-	private BindableValidationErrors Validation => _validation ??= new(
-		propertyName => _errorsChanged?.Invoke(this, new DataErrorsChangedEventArgs(propertyName)),
-		() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasErrors))),
-		static memberName => (_memberNames ??= typeof(T).GetProperties().Select(property => property.Name).ToImmutableHashSet()).Contains(memberName));
+	private static BindableValidationErrors CreateValidation(Bindable<T> owner)
+		=> new(
+			propertyName => owner._errorsChanged?.Invoke(owner, new DataErrorsChangedEventArgs(propertyName)),
+			() => owner.PropertyChanged?.Invoke(owner, new PropertyChangedEventArgs(nameof(HasErrors))),
+			static memberName => (_memberNames ??= typeof(T).GetProperties().Select(property => property.Name).ToImmutableHashSet()).Contains(memberName));
 
 	// Note: GetProperty(name) would throw if T has multiple properties with that name (e.g. a property hidden by a derived record).
 	private static IImmutableSet<string>? _memberNames; // Cached per type T (benign race on init)
@@ -182,7 +183,7 @@ public class Bindable<
 				? (update, isLeafPropertyChanged, ct) => OnSubPropertyUpdated(propertyName, get, set, update, isLeafPropertyChanged, ct)
 				: default,
 			// If our own property does not provide validation results, our sub-properties cannot have any either: we don't allocate the store of errors.
-			_property.CanProvideValidation ? onValidationUpdated => Validation.Subscribe(propertyName, onValidationUpdated) : null);
+			_property.CanProvideValidation ? onValidationUpdated => _validation.Subscribe(propertyName, onValidationUpdated) : null);
 
 	/// <summary>
 	/// Gets the current value.
@@ -246,7 +247,7 @@ public class Bindable<
 
 	/// <remarks>This is not thread safe and is expected to be invoked from the UI thread.</remarks>
 	private void OnOwnerValidationUpdated(IImmutableList<BindableValidationResult> results)
-		=> Validation.Update(results);
+		=> _validation.GetForUpdate(results.Count, this, CreateValidation)?.Update(results);
 
 	/// <remarks>This is not thread safe and is expected to be invoked from the UI thread.</remarks>
 	private void OnOwnerUpdated(T value)
