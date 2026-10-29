@@ -57,7 +57,7 @@ public partial record PersonModel
 The error is reported for the state itself (empty `MemberNames`, cf. [Consuming errors in the view](#consuming-errors-in-the-view)). Use the overload returning a list of `ValidationResult` to report several errors, or errors targeting members of a record.
 
 > [!NOTE]
-> A validator lambda which only throws (no `return`) matches several overloads. Give it an explicit return type, for example `ValueTask<IEnumerable<ValidationResult>> (string name, CancellationToken ct) => throw ...`.
+> A validator lambda which only throws (no `return`), or which only returns `null` or `default` (e.g. an "always valid" stub), matches several overloads (`CS0121`). Give it an explicit return type, for example `ValueTask<IEnumerable<ValidationResult>> (string name, CancellationToken ct) => throw ...`.
 
 ### Using the `IValidator` service
 
@@ -94,8 +94,8 @@ public partial record PersonModel(IStringLocalizer Localizer, IValidator Validat
 
 - This is the only place where validation messages are localized: `Uno.Extensions.Validation` reports the `ErrorMessage` of DataAnnotations attributes and the `WithMessage` of FluentValidation as written, so use resource keys there (see [validation messages](xref:Uno.Extensions.Validation.Overview#validation-messages)).
 - Messages are resolved each time the validator produces results, using the current culture. As changing the culture [requires an app restart](xref:Uno.Extensions.Localization.Overview#ui-culture), messages already produced are not updated.
-- A key which is not found in the resources keeps the message as produced by the validator, so non-localized messages can be mixed with keys.
-- The `MemberNames` of the results are kept.
+- A key which is not found in the resources keeps the message as produced by the validator, so non-localized messages can be mixed with keys. So does a key for which the localizer throws: the error is logged, and the other messages are still resolved.
+- A resolved message is reported in a new `ValidationResult`, with the same `MemberNames`. If your validator produces results of a type derived from `ValidationResult` (e.g. with a severity), resolve their messages in the validator instead.
 - Resolved messages are not formatted: a `{0}` in a resource is displayed as is. For messages with arguments, don't pass the localizer to `Validate`, and use it in the validator instead:
 
   ```csharp

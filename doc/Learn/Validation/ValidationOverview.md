@@ -160,7 +160,14 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 
 The validation messages are reported as written: the `ErrorMessage` of DataAnnotations attributes (formatted by the attribute) and the messages of FluentValidation (e.g. `WithMessage`). `Uno.Extensions.Validation` does not localize them.
 
-To localize the messages, use resource keys as messages, and resolve them with the localizer given to the MVUX `Validate`. See [localizing messages](xref:Uno.Extensions.Mvux.Advanced.Validation#localizing-messages).
+To localize the messages, use resource keys as messages. Only the MVUX `Validate` resolves them, with the localizer it is given: see [localizing messages](xref:Uno.Extensions.Mvux.Advanced.Validation#localizing-messages). Anywhere else, for example in an MVVM view model, the keys are reported as is: resolve them yourself with the `IStringLocalizer`:
+
+```csharp
+var results = await _validator.ValidateAsync(Person);
+var errors = results.Select(result => result.ErrorMessage is { Length: > 0 } key && _localizer[key] is { ResourceNotFound: false } message
+    ? message.Value
+    : result.ErrorMessage);
+```
 
 ```csharp
 public class Person

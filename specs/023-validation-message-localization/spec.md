@@ -80,17 +80,19 @@ public partial record PersonModel(IStringLocalizer Localizer, IValidator Validat
 }
 ```
 
-- **Composition:** 2 and 3 only adapt their delegate into the base shape and forward `localizer`, so cancellation, stale-result discarding, exception handling (logged, previous results kept) and idempotent registration are inherited unchanged.
+- **Composition:** 2 and 3 only adapt their delegate into the base shape and forward `localizer`, so cancellation, stale-result discarding, exception handling (logged, the value has no results) and idempotent registration are inherited unchanged.
 - **Localization (base, `localizer` not null):** the validator is wrapped; the `ErrorMessage` of each result is a resource key.
-  - Found → `new ValidationResult(localized.Value, result.MemberNames)`.
+  - Found → `new ValidationResult(localized.Value, result.MemberNames)`: a plain result, so a result of a derived type (severity, codes) loses its type. Documented: resolve such messages in the validator.
   - Not found (`ResourceNotFound`), null/empty message, or null entry → the result as produced. The not-found value is not used: `ResourceLoaderStringLocalizer` returns the key with `.` replaced by `/` after its retry, which would alter plain (non-key) messages.
+  - The localizer throws → the result as produced, and the failure is logged (Error the first time, then Debug, naming the localizer). It is not reported as a failure of the validator, so the other results are kept.
+  - No message resolved → the results are returned as is (no copy, so no allocation per keystroke when the value is valid).
   - Results are materialized eagerly, so the localizer runs once per result, on the validator thread (current culture, §3) — not each time the axis is enumerated, possibly on the UI thread.
   - Resolved messages are **not** formatted: a `{0}` in a resource is displayed as-is. Messages with arguments: no localizer on `Validate`, `Localizer[key, args]` in the validator.
   - Not resolved at registration: model property getters can run before the culture is applied, and a cached string would never follow it.
 - **`localizer` null:** the validator is used unchanged (spec 022 behaviour).
 - **Result shape (2, 3):** valid → no results (shared empty array); invalid → one `ValidationResult` with empty `MemberNames`, i.e. property-level per spec 022 §4.3.
 - **Guards:** null delegate → `ArgumentNullException`; null/empty `error` → `ArgumentException`, thrown at registration. A null `localizer` is valid.
-- **Overload resolution caveat:** a lambda whose body only throws converts to both the base delegate and overload 2 (`CS0121`). Lambdas that return a value are unambiguous. Documented: give a throw-only lambda an explicit return type. `cref`s to `Validate` name the full signature (`CS0419`).
+- **Overload resolution caveat:** a lambda whose body only throws, or only returns `null`/`default`, converts to both the base delegate and overload 2 (`CS0121`). Lambdas that return a typed value are unambiguous. Documented (doc and XML remarks): give such a lambda an explicit return type. `cref`s to `Validate` name the full signature (`CS0419`).
 - **Compatibility:** spec 022 has not shipped, so adding the optional parameter to the base overload is not a break.
 - **Dependency:** `Uno.Extensions.Reactive` references `Microsoft.Extensions.Localization.Abstractions` (abstractions only; precedent: `Uno.Extensions.Navigation`). The localizer is passed explicitly (model ctor injection), as Reactive has no DI access.
 
@@ -116,7 +118,7 @@ public partial record PersonModel(IStringLocalizer Localizer, IValidator Validat
 - **`src/Uno.Extensions.Validation.Tests`** (new, net10.0 MSTest, discovered by `**/*.Tests.dll`):
   - `Given_Validator`: DataAnnotations keys passed as-is, including attributes with format arguments (`StringLength`, `Range`).
   - `Given_FluentValidator`: `MemberNames` contains `PropertyName` (red first); object-level failure keeps empty `MemberNames`; `WithMessage` key passed as-is.
-- **`Given_StateWithValidation`** (fake localizer): overloads 2/3 plain and localized; key not found keeps the message (key containing `.`); localizer read at validation time; list results localized with `MemberNames` kept and unfound keys untouched; localizer called once per result; braces not formatted; null localizer leaves messages unchanged; argument guards; re-registration replaces the base validator; `IValidator` + DataAnnotations keys localized on the axis (integration guard).
+- **`Given_StateWithValidation`** (fake localizer): overloads 2/3 plain and localized; key not found keeps the message (key containing `.`, the fake returning another value when not found, like `ResourceLoaderStringLocalizer`); a throwing localizer keeps the result and is logged once at Error; null/empty messages and null results pass through; results not copied when nothing resolves; localizer read at validation time; list results localized with `MemberNames` kept and unfound keys untouched; localizer called once per result; braces not formatted; null localizer leaves messages unchanged; argument guards; re-registration replaces the base validator; `IValidator` + DataAnnotations keys localized on the axis (integration guard).
 - **Runtime/manual:** TestHarness `Ext/Localization` page with a validated field, switch culture + restart, verify on Windows + Skia desktop + WASM (§7).
 - Release build of `Uno.Extensions-packageonly.slnf` warning-free.
 
