@@ -35,6 +35,11 @@ namespace Uno.Extensions.Reactive;
 /// as the command remains executing (and cannot be executed again with the same parameter) until the validator completes.
 /// </para>
 /// <para>
+/// The validation is configured after the condition of the command (When), right before Then,
+/// e.g. <c>.Given(state).When(predicate).Validation(validator).Then(action)</c>.
+/// The condition drives the CanExecute of the command, so it is evaluated before the validation.
+/// </para>
+/// <para>
 /// Configuring the validation multiple times on the same command replaces the previous validation (the last one wins).
 /// </para>
 /// </remarks>

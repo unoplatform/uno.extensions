@@ -60,7 +60,7 @@ IConditionalCommandBuilder<T> Validation<T>(this ICommandBuilder<T> builder, IVa
 
 - Guards when the command is built: null validator → `ArgumentNullException`; null/empty `error` → `ArgumentException`. A builder not created by `Command` → `NotSupportedException`.
 - Calling `Validation` twice on the same chain replaces the validation (the last one wins), like `State.Validate`. Documented in the XML docs.
-- Returning `IConditionalCommandBuilder<T>` (only `Then`) keeps the surface minimal, but permanently rules out `.Validation(...).When(...)` (that public interface cannot get new members).
+- Returning `IConditionalCommandBuilder<T>` (only `Then`) keeps the surface minimal, but permanently rules out `.Validation(...).When(...)` (that public interface cannot get new members). Kept by design (PR review): `When` drives the CanExecute and is evaluated before the validation, so it is configured first; the order is documented in the XML docs.
 - With an `IValidator`, a `null` parameter (e.g. a view parameter not bound yet) has nothing to validate and is considered as valid (documented publicly).
 - The builder interfaces are covariant: the extensions work on `object` internally (`IValidatingCommandBuilder`), so `ICommandBuilder<Base>` backed by a builder of a derived type is supported.
 - Localization, result shapes of the single-rule/predicate overloads: identical to spec 023 §4.3 (shared helper).
