@@ -5,10 +5,10 @@ uid: Uno.Extensions.Reactive.Rules
 
 ## Feed1001
 
-**A member of a model or record hides the HasErrors property (validation state) of the generated bindable.**
+**A member of a model, record or view model hides the HasErrors property (validation state) of the generated bindable.**
 
 The generated view models and record bindables implement `INotifyDataErrorInfo` to expose [validation results](xref:Uno.Extensions.Mvux.Advanced.Validation), and add a public `HasErrors` property so you can bind to the validation state.
-Your model or record already declares a member named `HasErrors`, so the generated member of the same name hides the one of the bindable.
+Your model or record, or your own `partial` of the generated view model, already declares a member named `HasErrors`, so the bindable uses it instead of adding its own.
 
 Validation still works through the `INotifyDataErrorInfo` interface, but `{Binding HasErrors}` resolves to your member instead of the validation state.
 Rename your member if you want to bind to the validation state.

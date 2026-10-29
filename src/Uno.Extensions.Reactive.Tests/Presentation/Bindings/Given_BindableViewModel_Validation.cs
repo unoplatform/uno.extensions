@@ -27,7 +27,7 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 		await ExecuteOnDispatcher(() =>
 		{
 			((INotifyDataErrorInfo)sut).ErrorsChanged += (snd, e) => errorsChanged.Add(e.PropertyName);
-			sut.PropertyChanged += (snd, e) => hasErrorsChanged += e.PropertyName == nameof(BindableViewModelBase.HasErrors) ? 1 : 0;
+			sut.PropertyChanged += (snd, e) => hasErrorsChanged += e.PropertyName == nameof(When_Validated_ViewModel.HasErrors) ? 1 : 0;
 		});
 
 		await sut.Model.Name.UpdateMessageAsync(msg => msg.Validation(new[] { result }), CT);

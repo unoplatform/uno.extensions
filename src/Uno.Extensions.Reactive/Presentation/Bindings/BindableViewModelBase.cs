@@ -42,17 +42,13 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 		remove => _propertyChanged.Remove(value!);
 	}
 
-	/// <summary>
-	/// Indicates if any of the properties of this view model has validation errors (cf. <see cref="INotifyDataErrorInfo"/>).
-	/// </summary>
+	/// <inheritdoc />
 	/// <remarks>
 	/// Validation errors are the validation results published on the <see cref="MessageAxis.Validation"/> of the backing states (e.g. using <see cref="State.Validate{T}"/>).
-	/// If the model already declares a member named HasErrors, it will hide this property, but the <see cref="INotifyDataErrorInfo"/> implementation remains valid.
+	/// This is implemented explicitly so it does not conflict with a HasErrors declared in a partial of the view model:
+	/// the generator adds a public HasErrors to the view model (for bindings) only if that name is not already used.
 	/// </remarks>
-	public bool HasErrors => _validation.Store?.HasErrors ?? false;
-
-	/// <inheritdoc />
-	bool INotifyDataErrorInfo.HasErrors => HasErrors;
+	bool INotifyDataErrorInfo.HasErrors => _validation.Store?.HasErrors ?? false;
 
 	/// <inheritdoc />
 	IEnumerable INotifyDataErrorInfo.GetErrors(string? propertyName)
@@ -82,7 +78,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	private static BindableValidationErrors CreateValidation(BindableViewModelBase owner)
 		=> new(
 			propertyName => owner._errorsChanged?.Raise(new DataErrorsChangedEventArgs(propertyName)),
-			() => owner._propertyChanged.Raise(new PropertyChangedEventArgs(nameof(HasErrors))));
+			() => owner._propertyChanged.Raise(new PropertyChangedEventArgs(nameof(INotifyDataErrorInfo.HasErrors))));
 
 	/// <summary>
 	/// Creates a new instance of BindableViewModelBase

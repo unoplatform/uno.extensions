@@ -103,7 +103,7 @@ For a state of a type that has no generated bindable (such as `IState<string> Na
 
 If a model or a record declares its own `HasErrors` member, the generated member of the same name hides the `HasErrors` property of the bindable, and the generator reports the informational diagnostic [`FEED1001`](xref:Uno.Extensions.Reactive.Rules). Validation still works through the `INotifyDataErrorInfo` interface, but you can't bind to `HasErrors` by name on that object.
 
-If you declare a `HasErrors` member yourself in a hand-written `partial` of a generated view model, the compiler reports `CS0108` (member hides inherited member). Add the `new` modifier to your member, or rename it.
+If you declare a `HasErrors` member yourself in a hand-written `partial` of a generated view model, the generator doesn't add its own `HasErrors` to that view model and reports `FEED1001` too: `{Binding HasErrors}` resolves to your member, while the `INotifyDataErrorInfo` implementation keeps working.
 
 ## Current limitations
 
