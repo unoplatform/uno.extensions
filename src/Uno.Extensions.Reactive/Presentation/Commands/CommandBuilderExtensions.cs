@@ -30,6 +30,7 @@ namespace Uno.Extensions.Reactive;
 /// If the parameter is not a state (e.g. a feed, or a parameter provided by the view), the execution is still aborted, but the results are only logged.
 /// The validation does not alter the CanExecute of the command, so the user can always retry.
 /// If the validator throws, the execution fails (the error is reported to the error handler of the command) and the previous results are kept.
+/// The execution also fails if the results cannot be published on the state (e.g. its context is disposed while the update is pending).
 /// The validator should honor its cancellation token (cancelled when the command is disposed) and apply its own timeout if it might hang (e.g. a remote validation),
 /// as the command remains executing (and cannot be executed again with the same parameter) until the validator completes.
 /// </para>

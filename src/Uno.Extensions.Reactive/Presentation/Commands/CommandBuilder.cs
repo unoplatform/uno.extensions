@@ -138,9 +138,27 @@ public readonly struct CommandBuilder<T> : ICommandBuilder, ICommandBuilder<T>, 
 
 			if (publish is not null)
 			{
-				// Results are published no matter if the state has changed since the execution started, as they describe the submitted value
-				// and are expected to remain until the next execution (but they are dropped if another execution started in the meantime).
-				await publish(results, version, ct).ConfigureAwait(false);
+				try
+				{
+					// Results are published no matter if the state has changed since the execution started, as they describe the submitted value
+					// and are expected to remain until the next execution (but they are dropped if another execution started in the meantime).
+					await publish(results, version, ct).ConfigureAwait(false);
+				}
+				catch (OperationCanceledException) when (ct.IsCancellationRequested)
+				{
+					throw;
+				}
+				catch (Exception error)
+				{
+					// E.g. the context of the state is disposed while the update is pending: like a failure of the validator, this faults the execution instead of silently cancelling it.
+					var errorLog = LogExtensions.Log<AsyncCommand>();
+					if (errorLog.IsEnabled(LogLevel.Debug))
+					{
+						errorLog.LogDebug(error, "Validation publication failure details for the command '{Command}'.", name);
+					}
+
+					throw new InvalidOperationException($"The validation results of the parameter of the command '{name}' cannot be published on its state, which failed with an '{error.GetType().Name}' (details are logged at the debug level).");
+				}
 			}
 
 			if (results.Count is 0)
