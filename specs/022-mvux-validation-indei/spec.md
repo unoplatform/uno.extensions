@@ -74,7 +74,7 @@ Two entry points, both writing the axis through the update pipeline of the `Stat
    - Each publication carries a version taken when its validation starts: results older than the published ones are dropped, so the last validation started wins (e.g. `SetValidationAsync` over a validator still running).
    - Validator exceptions are logged and do not fault the state (not surfaced as `Error` axis). The value has no results: results of a previous value are not kept for it, whether the data changed from the source or locally (e.g. from the view).
    - The validator runs only when the state has a value: `None` clears the results, `Undefined` keeps them. `Some(null)` is a value: the validator is invoked with `null`.
-   - `IValidator` fits the delegate directly (`_validator.ValidateAsync`), so no bridge package is required. *Resolved by spec 017:* `Validate(this IState<T>, IValidator)`, with `IValidator` moved to `Uno.Extensions.Core` (§7 Q3).
+   - `IValidator` fits the delegate directly (`_validator.ValidateAsync`), so no bridge package is required. *Resolved by spec 024:* `Validate(this IState<T>, IValidator)`, with `IValidator` moved to `Uno.Extensions.Core` (§7 Q3).
 
 ### 4.3 Consumer — the VM reroutes to INDEI
 
