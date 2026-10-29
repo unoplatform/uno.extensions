@@ -215,6 +215,59 @@ public class Given_StateWithValidation : FeedTests
 	}
 
 	[TestMethod]
+	[DoNotParallelize] // Sets the global log provider
+	public async Task When_LazyValidatorThrows_Then_LoggedAsValidatorFailure()
+	{
+		var logs = new RecordingLogProvider();
+		LogExtensions.SetProvider(logs);
+		try
+		{
+			var state = new StateImpl<string>(Context, Option.Some("initial"));
+			_ = state.Validate((_, _) => new(LazyResults()));
+
+			await WaitFor(() => logs.Entries.Any(entry => entry.Level is LogLevel.Error));
+
+			logs.Entries.First(entry => entry.Level is LogLevel.Error).Message.Should()
+				.StartWith("The validator", "the rules of a lazy validator run when the results are enumerated, which is a failure of the validator, not of the state");
+		}
+		finally
+		{
+			LogExtensions.Reset();
+		}
+
+		static IEnumerable<ValidationResult> LazyResults()
+		{
+			yield return new ValidationResult("first");
+			throw new InvalidOperationException("validator failed");
+		}
+	}
+
+	[TestMethod]
+	public async Task When_ResultsPublishedConcurrentlyWithDataChanges_Then_NoDeadlock()
+	{
+		var state = new StateImpl<string>(Context, Option.Some("initial"));
+		_ = state.Validate(async (value, ct) => Error(value));
+
+		// Publishes results from one thread while the data changes (including to None, which has no validator call) from another.
+		var publish = Task.Run(async () =>
+		{
+			for (var i = 0; i < 200; i++)
+			{
+				await state.SetValidationAsync(Error($"manual-{i}"), CT);
+			}
+		});
+		var update = Task.Run(async () =>
+		{
+			for (var i = 0; i < 200; i++)
+			{
+				await state.UpdateDataAsync(_ => i % 2 is 0 ? Option<string>.None() : Option.Some($"value-{i}"), CT);
+			}
+		});
+
+		await Task.WhenAll(publish, update).WaitAsync(TimeSpan.FromSeconds(30), CT);
+	}
+
+	[TestMethod]
 	public async Task When_ValidatorThrowsSync_Then_StateNotInError()
 	{
 		var calls = 0;

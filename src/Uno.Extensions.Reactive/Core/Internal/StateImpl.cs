@@ -27,7 +27,6 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	private IDisposable? _subscriptionMode;
 
 	private ValidationLoop? _validation;
-	private readonly object _validationResultsGate = new();
 	private ValidationUpdate? _validationResults;
 	private static long _validationVersion; // Shared by the states (not per instance), so versions remain comparable when results are redirected to the state that replaced this one.
 
@@ -208,12 +207,16 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 
 		// Note: Some(null) is a value (unlike None): the validator is invoked with null.
 		var hasValue = data.IsSome(out var value);
-		IEnumerable<ValidationResult>? results;
+		IImmutableList<ValidationResult>? results;
 		try
 		{
-			results = hasValue
-				? await Task.Run(() => loop.Validator(value!, ct).AsTask(), ct).ConfigureAwait(false)
-				: null; // No value to validate (None), clear the results.
+			// Note: This also runs for None, so results are never published inline, from the thread which is emitting the message of the state (under the lock of its UpdateFeed).
+			results = await Task.Run(
+					async () => hasValue
+						? (await loop.Validator(value!, ct).ConfigureAwait(false))?.ToImmutableList() // Materialized here, so a lazy validator fails as a validator.
+						: null, // No value to validate (None), clear the results.
+					ct)
+				.ConfigureAwait(false);
 		}
 		catch (OperationCanceledException) when (ct.IsCancellationRequested)
 		{
@@ -235,7 +238,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		{
 			// Makes sure to not publish results for a stale version of the data.
 			await PublishValidationAsync(
-					results?.ToImmutableList(),
+					results,
 					currentData => currentData.IsSome(out var currentValue)
 						? hasValue && EqualityComparer<T>.Default.Equals(currentValue, value)
 						: !hasValue,
@@ -321,17 +324,24 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		target._subscription.Enable();
 
 		var update = new ValidationUpdate(target, results, isCurrent, version);
-		lock (target._validationResultsGate)
+		while (true)
 		{
-			if (target._validationResults is { } current && current.Version > version)
+			var current = Volatile.Read(ref target._validationResults);
+			if (current?.Version > version)
 			{
 				return; // Results of a validation started later have already been published.
 			}
 
-			// Note: The previous results are not removed from the UpdateFeed (which would rebuild the message), they are superseded (cf. ValidationUpdate.IsLatest).
-			target._validationResults = update;
-			target._inner.Add(update);
+			if (Interlocked.CompareExchange(ref target._validationResults, update, current) == current)
+			{
+				break;
+			}
 		}
+
+		// Note: The previous results are not removed from the UpdateFeed (which would rebuild the message), they are superseded (cf. ValidationUpdate.IsLatest).
+		//		 This is not done under a lock: the UpdateFeed applies the update synchronously, under its own lock, which must not be taken while holding another one.
+		//		 Concurrent publications are ordered by the _validationResults: results that are not the latest are not applied, no matter the order they are added in.
+		target._inner.Add(update);
 
 		var applied = update.HasBeenApplied;
 		if (applied.IsCompleted)
@@ -362,13 +372,9 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 
 	private void ClearValidationResults()
 	{
-		lock (_validationResultsGate)
+		if (Interlocked.Exchange(ref _validationResults, null) is { } results)
 		{
-			if (_validationResults is { } results)
-			{
-				_inner.Remove(results);
-				_validationResults = null;
-			}
+			_inner.Remove(results); // Not under a lock, cf. PublishValidationAsync.
 		}
 	}
 
