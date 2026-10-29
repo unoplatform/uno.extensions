@@ -230,7 +230,8 @@ public class Given_StateWithValidation : FeedTests
 		{
 			var calls = 0;
 			var state = new StateImpl<string>(Context, Option.Some("initial"));
-			_ = state.Validate((_, _) =>
+			// Explicit return type: a throw-only lambda also converts to the AsyncFunc<T, string?> overload.
+			_ = state.Validate(ValueTask<IEnumerable<ValidationResult>> (string _, CancellationToken _) =>
 			{
 				Interlocked.Increment(ref calls);
 				throw new InvalidOperationException("validator failed");
