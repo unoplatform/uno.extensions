@@ -34,8 +34,8 @@ feature keeps its own state next to the flow.
 - **Split of work**: the generator produces typed building blocks; the domain helpers (plausible data,
   named variants such as `StepsLoading`) are expected from an LLM skill or a developer. Studio previews
   are the main client, owned by the Studio team.
-- **Validation**: a metadata axis on a feed's messages, filled by the fluent `.Validation(...)` operator
-  or by a command on invoke. Architecture proposed here, implemented by other team members (#3203,
+- **Validation**: a metadata axis on a feed's messages, filled live by the state (`.Validate(...)`,
+  see the note in [Validation shape](#validation-shape)) or by a command on invoke. Architecture proposed here, implemented by other team members (#3203,
   #3204, #3222, in review).
 
 ## Mocking architecture
@@ -181,8 +181,9 @@ public static partial class RecipeViewModelMock
 Validation is a **metadata axis** packed in the messages of a **feed**, next to the data, like progress
 or error. It is filled in two scenarios:
 
-- **Live**: the fluent operator **`.Validation(...)`** on a feed adds the validation to each data it
-  forwards. A data never leaves the operator without its validation.
+- **Live**: ~~the fluent operator **`.Validation(...)`** on a feed adds the validation to each data it
+  forwards~~. Implemented on the **state** instead (**`.Validate(...)`**, see the note below): the state
+  validates each of its data, including the edits from the view.
 - **On demand**: a **command**, when it is invoked, validates its parameter as a precondition declared
   with the command, sets the result by hand on the **state** the parameter comes from, then runs the
   user code only if the result is valid.
@@ -194,33 +195,53 @@ A validation is therefore a **projection**: an input, a value, one more axis on 
 stays stateless: no validation loop, no validator stored in a state. An asynchronous validator needs
 nothing more than the existing progress axis while it runs.
 
+> **Implementation diverges for live validation (spec 022, [#3203](https://github.com/unoplatform/uno.extensions/pull/3203)).**
+> Live validation is held by the **state**, `State.Value(...).Validate(validator)`, not by a feed
+> operator. The values worth validating live are the ones the user edits, and those edits are applied
+> by the state itself, downstream of its source: an operator on the source never sees them, and an
+> operator after the state would hand the view a feed it cannot write to. So the state runs the
+> validator after each change of its data (including the edits from the view), off the UI thread, and
+> keeps the last results as one update of its own messages.
+>
+> The principle above still holds where it matters: the results are an axis of the message, local to
+> the state (never forwarded to `Select`, `Combine`...), and tied to the data they validated. The state
+> checks them against its current data each time its message is rebuilt or its data is updated, so they
+> are never shown for another value, and they survive the source producing the same value again (a
+> refresh), which a projection would recompute. The command keeps the on-demand role described below,
+> and publishes through the same entry point of the state.
+
 ### Live validation
 
-Arrows follow the messages.
+Arrows follow the messages. As implemented (spec 022): the state holds the validator, and the edits
+from the view go through the state too.
 
 ```mermaid
 flowchart LR
-    SRC["Feed Person"] -->|"Data"| OP["Fluent operator<br/>.Validation(validator)"]
-    OP -->|"Data + Validation<br/>tied to the data id"| VM["Generated VM<br/>INotifyDataErrorInfo adapter"]
+    SRC["Source of Person"] -->|"Data"| ST["State Person<br/>.Validate(validator)"]
+    ST -->|"Data + Validation<br/>of that data"| VM["Generated VM<br/>INotifyDataErrorInfo adapter"]
     VM -->|"ErrorsChanged, HasErrors"| UI["UI"]
+    UI -.->|"edit (two-way binding)"| ST
 ```
 
-Over time: the operator adds the validation to each message, so the data comes out with it. The
-INDEI column shows only what the adapter exposes after each message.
+Over time: the state validates each data, then adds the results to its message. Until they arrive
+(the validator runs off the UI thread), the new data has no results: the ones of the previous data are
+never shown for it. The INDEI column shows only what the adapter exposes after each message.
 
 ```mermaid
 sequenceDiagram
-    participant S as Source<br/>feed Person
-    participant V as Validation<br/>.Validation(validator)
+    participant S as Source<br/>of Person
+    participant V as State Person<br/>.Validate(validator)
     participant UI as UI<br/>VM and bindings
     participant I as INDEI
 
     S-->>V: Data v1, FirstName empty
+    V-->>UI: Data v1
     V-->>UI: Data v1 + Validation(v1): FirstName required
     Note over I: HasErrors = true<br/>GetErrors(FirstName) = required
-    S-->>V: Data v2, FirstName Ana
-    V-->>UI: Data v2 + Validation(v2): none
+    UI->>V: edit: Data v2, FirstName Ana
+    V-->>UI: Data v2 (no results yet)
     Note over I: HasErrors = false
+    V-->>UI: Data v2 + Validation(v2): none
 ```
 
 ### On-demand validation
@@ -265,6 +286,7 @@ existing `IValidator`.
 | 09-29 | Validation is its own message axis; the result is tied to the id of the validated data, not tracked through operators |
 | 10-06 | Two producers: the fluent `.Validation(...)` operator, and the command on invoke, whose first step validates before any user code |
 | 10-16 | This document is the reference: if the implementation diverges, the diagrams are updated to say so, rather than left stale |
+| 10-29 | Live validation is held by the state (`Validate`), not a feed operator: edits from the view are applied by the state, downstream of any operator on its source (spec 022) |
 
 ## Code map
 
@@ -276,7 +298,7 @@ existing `IValidator`.
 | [Uno.HotTesting.Reactive/MockingService.cs](../../src/Uno.HotTesting.Reactive/MockingService.cs) | Scope (`AsyncLocal`), fail-hard swaps, `SwapStateSource` (v19) |
 | [Uno.HotTesting.Reactive.Generator/FeedsMockGenerator.cs](../../src/Uno.HotTesting.Reactive.Generator/FeedsMockGenerator.cs) | `{Model}Mock`, `{Vm}Mock.Create/SetMock`, `MOCK000x` |
 | [Core.Generators/Common/FeedDependencyAnalysis.cs](../../src/Uno.Extensions.Core.Generators/Common/FeedDependencyAnalysis.cs) | Feed classification shared by both generators (D13) |
-| [spec 015 (branch)](https://github.com/unoplatform/uno.extensions/blob/dev/xygu/20260929/mvux-validation/specs/015-mvux-validation-indei/spec.md) | Validation, implementation in progress by other team members |
+| [spec 022](../022-mvux-validation-indei/spec.md) | Validation: the axis, `State.Validate` and the INDEI adapter of the generated bindables |
 | [studio.live specs/085-preview-mocks](https://github.com/unoplatform/studio.live/tree/main/specs/085-preview-mocks) | Previews after the data-model upgrade: spec, architecture, progress |
 
 ## Known traps
@@ -304,7 +326,7 @@ existing `IValidator`.
 | [#3247](https://github.com/unoplatform/uno.extensions/pull/3247) mock a list with a selection | Draft | Review and merge, then backport to `servicing/7.4` |
 | [uno#25407](https://github.com/unoplatform/uno/pull/25407) Uno.Sdk bundling, 6.8 backport | Open, mergeable, review required | Review and merge for Studio 3.3 |
 | Skill that writes the domain helpers | Split asked at the 10-05 lead sync: a skills plugin in the Studio repo, mock generation in Hot Design; status unknown | Confirm the owner and where the skill lives |
-| Validation: [#3203](https://github.com/unoplatform/uno.extensions/pull/3203) (spec 015), [#3204](https://github.com/unoplatform/uno.extensions/pull/3204) (localization, spec 016), [#3222](https://github.com/unoplatform/uno.extensions/pull/3222) (commands, spec 017) | Draft, carried by other team members | Their owners. Raised at the handoff: check that a child's errors (`FirstName`) reach its parent (`Person`) and the view model |
+| Validation: [#3203](https://github.com/unoplatform/uno.extensions/pull/3203) (spec 022), [#3204](https://github.com/unoplatform/uno.extensions/pull/3204) (localization, spec 023), [#3222](https://github.com/unoplatform/uno.extensions/pull/3222) (commands, spec 024) | Draft, carried by other team members | Their owners. Raised at the handoff: check that a child's errors (`FirstName`) reach its parent (`Person`) and the view model |
 | [uno.extensions#2062](https://github.com/unoplatform/uno.extensions/pull/2062) MVUX overview doc | Approved in 2023, never merged, untouched since 2024-09 | Rebase and merge, or close |
 
 ## Next steps
