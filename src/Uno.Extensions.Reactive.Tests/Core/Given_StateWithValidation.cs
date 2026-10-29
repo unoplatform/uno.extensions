@@ -216,6 +216,35 @@ public class Given_StateWithValidation : FeedTests
 
 	[TestMethod]
 	[DoNotParallelize] // Sets the global log provider
+	public async Task When_ValidatorThrowsOnEachChange_Then_LoggedAsErrorOnlyOnce()
+	{
+		var logs = new RecordingLogProvider();
+		LogExtensions.SetProvider(logs);
+		try
+		{
+			var calls = 0;
+			var state = new StateImpl<string>(Context, Option.Some("initial"));
+			_ = state.Validate((_, _) =>
+			{
+				Interlocked.Increment(ref calls);
+				throw new InvalidOperationException("validator failed");
+			});
+			await WaitFor(() => logs.Entries.Any(entry => entry.Message.StartsWith("The validator")));
+
+			await state.SetAsync("updated", CT);
+			await WaitFor(() => logs.Entries.Count(entry => entry.Message.StartsWith("The validator")) is 2);
+
+			logs.Entries.Where(entry => entry.Message.StartsWith("The validator")).Select(entry => entry.Level)
+				.Should().Equal(LogLevel.Error, LogLevel.Debug);
+		}
+		finally
+		{
+			LogExtensions.Reset();
+		}
+	}
+
+	[TestMethod]
+	[DoNotParallelize] // Sets the global log provider
 	public async Task When_LazyValidatorThrows_Then_LoggedAsValidatorFailure()
 	{
 		var logs = new RecordingLogProvider();
