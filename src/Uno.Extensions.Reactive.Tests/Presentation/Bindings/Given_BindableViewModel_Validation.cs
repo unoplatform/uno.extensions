@@ -141,6 +141,18 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 	}
 
 	[TestMethod]
+	public async Task When_ResultTargetsAmbiguousMember_Then_DoesNotThrow()
+	{
+		await using var sut = await ExecuteOnDispatcher(() => new When_RecordWithHiddenMember_ViewModel());
+		var result = new ValidationResult("Code is invalid", new[] { nameof(ValidationDerived.Code) }); // Declared by the record and, with another type, by its base
+
+		await sut.Model.Value.UpdateMessageAsync(msg => msg.Validation(new[] { result }), CT);
+		await WaitFor(async () => await ExecuteOnDispatcher(() => sut.Value.HasErrors));
+
+		(await GetErrors(sut.Value, nameof(ValidationDerived.Code))).Should().Equal(result);
+	}
+
+	[TestMethod]
 	public async Task When_NestedRecordMemberValidated_Then_ErrorsRoutedToNestedBindableRecord()
 	{
 		await using var sut = await ExecuteOnDispatcher(() => new When_Record_ViewModel());
@@ -318,4 +330,19 @@ public partial class Given_BindableViewModel_Validation : FeedUITests
 	public partial record ValidationAddress(string Street);
 
 	public partial record ValidationForm(string Name, bool HasErrors);
+
+	public partial class When_RecordWithHiddenMember_Model
+	{
+		public IState<ValidationDerived> Value => State.Value(this, () => new ValidationDerived());
+	}
+
+	public record ValidationBase
+	{
+		public int Code { get; init; }
+	}
+
+	public partial record ValidationDerived : ValidationBase
+	{
+		public new string Code { get; init; } = "";
+	}
 }
