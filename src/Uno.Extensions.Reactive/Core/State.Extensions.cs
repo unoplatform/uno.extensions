@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Localization;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Utils;
 
@@ -363,6 +364,7 @@ partial class State
 	/// <typeparam name="T">The type of the state</typeparam>
 	/// <param name="state">The state to validate.</param>
 	/// <param name="validator">The async method which validates a value of the state.</param>
+	/// <param name="localizer">An optional localizer: when provided, the <see cref="ValidationResult.ErrorMessage"/> of the results are resource keys resolved through it.</param>
 	/// <returns>The given <paramref name="state"/>, so it can be used to chain other operations.</returns>
 	/// <remarks>
 	/// Validation never blocks a value: invalid values are still set on the state, validation results only annotate them.
@@ -374,20 +376,35 @@ partial class State
 	/// When the state has no value (None), the validation results are cleared. A null value is still a value: the validator is invoked with null.
 	/// If the validator throws, the error is logged and the state is not set in error: the value has no results (the results of a previous value are not kept for it).
 	/// This is idempotent: invoking this method multiple times on the same state replaces the validator (starting at the next data change).
+	/// When a <paramref name="localizer"/> is provided, messages are resolved each time the validator produces results (i.e. using the culture at that time).
+	/// A resolved result is a new <see cref="ValidationResult"/> with the resolved message and the same <see cref="ValidationResult.MemberNames"/> (a result of a type derived from <see cref="ValidationResult"/> is not kept as is).
+	/// A key which is not found, or for which the localizer throws (the error is logged), keeps the result as produced by the validator. Resolved messages are not formatted.
+	/// A lambda which only throws, or which only returns null or default, also matches <see cref="Validate{T}(IState{T}, AsyncFunc{T, string}, IStringLocalizer)"/> (CS0121): give it an explicit return type.
 	/// </remarks>
 	/// <exception cref="ArgumentNullException">If the <paramref name="state"/> or the <paramref name="validator"/> is null.</exception>
 	/// <exception cref="NotSupportedException">If the <paramref name="state"/> has not been created using the MVUX State factories.</exception>
-	public static IState<T> Validate<T>(this IState<T> state, AsyncFunc<T, IEnumerable<ValidationResult>> validator)
+	public static IState<T> Validate<T>(this IState<T> state, AsyncFunc<T, IEnumerable<ValidationResult>> validator, IStringLocalizer? localizer = null)
+	{
+		ArgumentNullException.ThrowIfNull(validator);
+
+		return Validate(state, validator, localizer, source: validator);
+	}
+
+	// The source is the user's validator from which the validator has been created, used to identify it in logs.
+	private static IState<T> Validate<T>(IState<T> state, AsyncFunc<T, IEnumerable<ValidationResult>> validator, IStringLocalizer? localizer, object source)
 	{
 		ArgumentNullException.ThrowIfNull(state);
-		ArgumentNullException.ThrowIfNull(validator);
 
 		if (state is not StateImpl<T> impl)
 		{
 			throw new NotSupportedException($"Validation is supported only on states created using the State factories (got '{state.GetType().Name}').");
 		}
 
-		impl.SetValidator(validator);
+		impl.SetValidator(
+			localizer is null
+				? validator
+				: Localized(validator, new ValidationLocalizer(localizer)),
+			source);
 
 		return state;
 	}
@@ -419,4 +436,58 @@ partial class State
 			? impl.PublishValidationAsync(validation, isCurrent: null, StateImpl<T>.NextValidationVersion(), ct)
 			: state.UpdateMessageAsync(msg => msg.Validation(validation), ct);
 	}
+
+	/// <summary>
+	/// Validates the value of a state each time it changes, using a validator which returns the error message of an invalid value.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to validate.</param>
+	/// <param name="validator">The async method which validates a value of the state, returning the error message (or its resource key when a <paramref name="localizer"/> is provided), or null (or empty) when the value is valid.</param>
+	/// <param name="localizer">An optional localizer: when provided, the value returned by the <paramref name="validator"/> is a resource key resolved through it.</param>
+	/// <returns>The given <paramref name="state"/>, so it can be used to chain other operations.</returns>
+	/// <remarks>
+	/// The error is reported for the state itself (its <see cref="ValidationResult.MemberNames"/> is empty).
+	/// This has the same behavior as <see cref="Validate{T}(IState{T}, AsyncFunc{T, IEnumerable{ValidationResult}}, IStringLocalizer)"/>.
+	/// A lambda which only throws, or which only returns null or default, also matches that overload (CS0121): give it an explicit return type.
+	/// </remarks>
+	/// <exception cref="ArgumentNullException">If the <paramref name="state"/> or the <paramref name="validator"/> is null.</exception>
+	/// <exception cref="NotSupportedException">If the <paramref name="state"/> has not been created using the MVUX State factories.</exception>
+	public static IState<T> Validate<T>(this IState<T> state, AsyncFunc<T, string?> validator, IStringLocalizer? localizer = null)
+	{
+		ArgumentNullException.ThrowIfNull(validator);
+
+		return Validate(state, ToValidator(validator), localizer, source: validator);
+	}
+
+	/// <summary>
+	/// Validates the value of a state each time it changes, using a predicate and a fixed error.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to validate.</param>
+	/// <param name="isValid">The async predicate which returns true when a value of the state is valid.</param>
+	/// <param name="error">The error message (or its resource key when a <paramref name="localizer"/> is provided) reported when the value is not valid.</param>
+	/// <param name="localizer">An optional localizer: when provided, <paramref name="error"/> is a resource key resolved through it.</param>
+	/// <returns>The given <paramref name="state"/>, so it can be used to chain other operations.</returns>
+	/// <remarks>
+	/// The error is reported for the state itself (its <see cref="ValidationResult.MemberNames"/> is empty).
+	/// This has the same behavior as <see cref="Validate{T}(IState{T}, AsyncFunc{T, IEnumerable{ValidationResult}}, IStringLocalizer)"/>.
+	/// </remarks>
+	/// <exception cref="ArgumentNullException">If the <paramref name="state"/> or <paramref name="isValid"/> is null.</exception>
+	/// <exception cref="ArgumentException">If <paramref name="error"/> is null or empty.</exception>
+	/// <exception cref="NotSupportedException">If the <paramref name="state"/> has not been created using the MVUX State factories.</exception>
+	public static IState<T> Validate<T>(this IState<T> state, AsyncFunc<T, bool> isValid, string error, IStringLocalizer? localizer = null)
+	{
+		ArgumentNullException.ThrowIfNull(isValid);
+		ArgumentException.ThrowIfNullOrEmpty(error);
+
+		return Validate(state, ToValidator<T>(async (value, ct) => await isValid(value, ct).ConfigureAwait(false) ? null : error), localizer, source: isValid);
+	}
+
+	private static AsyncFunc<T, IEnumerable<ValidationResult>> ToValidator<T>(AsyncFunc<T, string?> getErrorMessage)
+		=> async (value, ct) => await getErrorMessage(value, ct).ConfigureAwait(false) is { Length: > 0 } message
+			? [new ValidationResult(message)]
+			: Array.Empty<ValidationResult>();
+
+	private static AsyncFunc<T, IEnumerable<ValidationResult>> Localized<T>(AsyncFunc<T, IEnumerable<ValidationResult>> validator, ValidationLocalizer localizer)
+		=> async (value, ct) => localizer.Localize<T>(await validator(value, ct).ConfigureAwait(false));
 }

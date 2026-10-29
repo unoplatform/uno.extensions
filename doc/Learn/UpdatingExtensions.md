@@ -23,6 +23,10 @@ below cover only what changes in Extensions.
   which Uno Platform 7.0 removes, and no navigator had handled that route since the picker navigator
   was dropped, so the call never completed. Show a `Flyout` or a dialog with a list instead.
 
+### Validation
+
+- `FluentValidator` (`Uno.Extensions.Validation.Fluent`) now reports the property name of each failure in `ValidationResult.MemberNames` (it was always empty). Code that treats results with empty `MemberNames` as form-level errors sees FluentValidation errors as field errors. Failures without a property name still have empty `MemberNames`.
+
 ### Storage
 
 - Android and iOS heads that ran with `UnoFeatures=SkiaRenderer` on Uno Platform 6.x used unencrypted

@@ -1,17 +1,23 @@
-﻿using System;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Logging;
 using Uno.Extensions.Reactive.Testing;
+using Uno.Extensions.Validation;
 
 namespace Uno.Extensions.Reactive.Tests.Core;
 
@@ -224,7 +230,8 @@ public class Given_StateWithValidation : FeedTests
 		{
 			var calls = 0;
 			var state = new StateImpl<string>(Context, Option.Some("initial"));
-			_ = state.Validate((_, _) =>
+			// Explicit return type: a throw-only lambda also converts to the AsyncFunc<T, string?> overload.
+			_ = state.Validate(ValueTask<IEnumerable<ValidationResult>> (string _, CancellationToken _) =>
 			{
 				Interlocked.Increment(ref calls);
 				throw new InvalidOperationException("validator failed");
@@ -301,7 +308,8 @@ public class Given_StateWithValidation : FeedTests
 	{
 		var calls = 0;
 		var state = new StateImpl<string>(Context, Option.Some("initial"));
-		_ = state.Validate((_, _) =>
+		// Explicit return type: a throw-only lambda also converts to the AsyncFunc<T, string?> overload.
+		_ = state.Validate(ValueTask<IEnumerable<ValidationResult>> (string _, CancellationToken _) =>
 		{
 			Interlocked.Increment(ref calls);
 			throw new InvalidOperationException("validator failed");
@@ -451,14 +459,315 @@ public class Given_StateWithValidation : FeedTests
 	}
 
 	[TestMethod]
+	public async Task When_MessageValidator_Then_SingleStateLevelResult_And_ClearedWhenValid()
+	{
+		var state = new StateImpl<string>(Context, Option.Some(""));
+		_ = state.Validate(async (value, ct) => string.IsNullOrEmpty(value) ? "required" : null).Should().BeSameAs(state);
+
+		await WaitForValidation(state, "required");
+		state.Current.Current.Validation.Should().ContainSingle().Which.MemberNames.Should().BeEmpty();
+
+		await state.SetAsync("value", CT);
+		await WaitFor(() => state.Current.Current.Validation.Count is 0);
+	}
+
+	[TestMethod]
+	public async Task When_PredicateValidator_Then_FixedMessage_And_ClearedWhenValid()
+	{
+		var state = new StateImpl<string>(Context, Option.Some(""));
+		_ = state.Validate(async (value, ct) => !string.IsNullOrEmpty(value), "required").Should().BeSameAs(state);
+
+		await WaitForValidation(state, "required");
+		state.Current.Current.Validation.Should().ContainSingle().Which.MemberNames.Should().BeEmpty();
+
+		await state.SetAsync("value", CT);
+		await WaitFor(() => state.Current.Current.Validation.Count is 0);
+	}
+
+	[TestMethod]
+	public async Task When_KeyValidator_Then_Localized()
+	{
+		var localizer = new TestLocalizer { { "Validation_Required", "requis" } };
+		var state = new StateImpl<string>(Context, Option.Some(""));
+		_ = state.Validate(async (value, ct) => string.IsNullOrEmpty(value) ? "Validation_Required" : null, localizer).Should().BeSameAs(state);
+
+		await WaitForValidation(state, "requis");
+		state.Current.Current.Validation.Should().ContainSingle().Which.MemberNames.Should().BeEmpty();
+
+		await state.SetAsync("value", CT);
+		await WaitFor(() => state.Current.Current.Validation.Count is 0);
+	}
+
+	[TestMethod]
+	public async Task When_KeyNotFound_Then_KeyUsedAsMessage()
+	{
+		var state = new StateImpl<string>(Context, Option.Some(""));
+		_ = state.Validate(async (value, ct) => !string.IsNullOrEmpty(value), "Validation.Required", new TestLocalizer());
+
+		await WaitForValidation(state, "Validation.Required");
+	}
+
+	[TestMethod]
+	public async Task When_PredicateKeyValidator_Then_LocalizedAtValidationTime()
+	{
+		var localizer = new TestLocalizer { { "Validation_Required", "first" } };
+		var state = new StateImpl<string>(Context, Option.Some("invalid"));
+		_ = state.Validate(async (value, ct) => value is not "invalid", "Validation_Required", localizer).Should().BeSameAs(state);
+		await WaitForValidation(state, "first");
+
+		localizer.Add("Validation_Required", "second");
+		await state.SetAsync("valid", CT);
+		await WaitFor(() => state.Current.Current.Validation.Count is 0);
+		await state.SetAsync("invalid", CT);
+
+		await WaitForValidation(state, "second");
+	}
+
+	[TestMethod]
+	public async Task When_LocalizedListValidator_Then_KeysLocalized_MemberNamesKept()
+	{
+		var localizer = new TestLocalizer { { "Validation_Found", "localized" } };
+		var state = new StateImpl<string>(Context, Option.Some("value"));
+
+		_ = state.Validate(
+			async (value, ct) => [new ValidationResult("Validation_Found", ["First"]), new ValidationResult("Not a key.", ["Second"])],
+			localizer).Should().BeSameAs(state);
+
+		await WaitFor(() => state.Current.Current.Validation.Count is 2);
+		state.Current.Current.Validation.Select(result => (result.ErrorMessage, string.Join(",", result.MemberNames)))
+			.Should()
+			.Equal(("localized", "First"), ("Not a key.", "Second"));
+	}
+
+	[TestMethod]
+	public async Task When_LocalizedListValidator_Then_LocalizerCalledOncePerResult()
+	{
+		var localizer = new TestLocalizer { { "Validation_A", "a" }, { "Validation_B", "b" } };
+		var state = new StateImpl<string>(Context, Option.Some("value"));
+
+		_ = state.Validate(async (value, ct) => [new ValidationResult("Validation_A"), new ValidationResult("Validation_B")], localizer);
+
+		await WaitFor(() => state.Current.Current.Validation.Count is 2);
+		_ = state.Current.Current.Validation.Select(result => result.ErrorMessage).ToList();
+		_ = state.Current.Current.Validation.Select(result => result.ErrorMessage).ToList();
+
+		localizer.Lookups.Should().Be(2);
+	}
+
+	[TestMethod]
+	public async Task When_LocalizedValueHasBraces_Then_NotFormatted()
+	{
+		var localizer = new TestLocalizer { { "Validation_Required", "{0} est requis" } };
+		var state = new StateImpl<string>(Context, Option.Some(""));
+
+		_ = state.Validate(async (value, ct) => !string.IsNullOrEmpty(value), "Validation_Required", localizer);
+
+		await WaitForValidation(state, "{0} est requis");
+	}
+
+	[TestMethod]
+	public async Task When_NullLocalizer_Then_MessagesUnchanged()
+	{
+		var state = new StateImpl<string>(Context, Option.Some(""));
+
+		_ = state.Validate(async (value, ct) => !string.IsNullOrEmpty(value), "Validation_Required", localizer: null);
+
+		await WaitForValidation(state, "Validation_Required");
+	}
+
+	[TestMethod]
+	[DoNotParallelize] // Sets the global log provider
+	public async Task When_LocalizerThrows_Then_ResultKeptAsIs_And_LoggedAsErrorOnlyOnce()
+	{
+		var logs = new RecordingLogProvider();
+		LogExtensions.SetProvider(logs);
+		try
+		{
+			var localizer = new TestLocalizer { ThrowingKey = "Validation_Throws" };
+			localizer.Add("Validation_Found", "localized");
+			var state = new StateImpl<string>(Context, Option.Some("initial"));
+
+			_ = state.Validate(
+				async (value, ct) => [new ValidationResult("Validation_Throws", ["First"]), new ValidationResult("Validation_Found", ["Second"])],
+				localizer);
+
+			await WaitFor(() => state.Current.Current.Validation.Count is 2);
+			state.Current.Current.Validation.Select(result => result.ErrorMessage).Should().Equal("Validation_Throws", "localized");
+
+			await state.SetAsync("updated", CT);
+			await WaitFor(() => logs.Entries.Count(entry => entry.Message.StartsWith("The localizer")) is 2);
+
+			logs.Entries.Where(entry => entry.Message.StartsWith("The localizer")).Select(entry => entry.Level)
+				.Should().Equal(LogLevel.Error, LogLevel.Debug);
+			logs.Entries.Should().NotContain(entry => entry.Message.StartsWith("The validator"));
+		}
+		finally
+		{
+			LogExtensions.Reset();
+		}
+	}
+
+	[TestMethod]
+	public async Task When_LocalizedResultsHaveNoMessage_Then_KeptAsIs()
+	{
+		var localizer = new TestLocalizer();
+		var noMessage = new ValidationResult(null, ["First"]);
+		var emptyMessage = new ValidationResult("", ["Second"]);
+		var state = new StateImpl<string>(Context, Option.Some("value"));
+
+		_ = state.Validate(async (value, ct) => [noMessage, emptyMessage], localizer);
+
+		await WaitFor(() => state.Current.Current.Validation.Count is 2);
+		state.Current.Current.Validation.Should().Equal(noMessage, emptyMessage);
+		localizer.Lookups.Should().Be(0);
+	}
+
+	[TestMethod]
+	public async Task When_LocalizedValidatorReturnsNull_Then_NoResults()
+	{
+		var localizer = new TestLocalizer { { "Validation_Required", "requis" } };
+		var state = new StateImpl<string>(Context, Option.Some(""));
+		_ = state.Validate(
+			(value, ct) => new(string.IsNullOrEmpty(value) ? [new ValidationResult("Validation_Required")] : default(IEnumerable<ValidationResult>)!),
+			localizer);
+		await WaitForValidation(state, "requis");
+
+		await state.SetAsync("value", CT);
+
+		await WaitFor(() => state.Current.Current.Validation.Count is 0);
+	}
+
+	[TestMethod]
+	public void When_NoMessageResolved_Then_ResultsNotCopied()
+	{
+		var localizer = new ValidationLocalizer(new TestLocalizer());
+		IEnumerable<ValidationResult> none = Array.Empty<ValidationResult>();
+		IEnumerable<ValidationResult> notFound = [new ValidationResult("Not a key.")];
+
+		localizer.Localize<string>(none).Should().BeSameAs(none);
+		localizer.Localize<string>(notFound).Should().BeSameAs(notFound);
+	}
+
+	[TestMethod]
+	public void When_ResultIsNull_Then_KeptAsIs()
+	{
+		var localizer = new ValidationLocalizer(new TestLocalizer { { "Validation_Found", "localized" } });
+
+		localizer.Localize<string>([null!, new ValidationResult("Validation_Found")])
+			.Select(result => result?.ErrorMessage)
+			.Should()
+			.Equal(null, "localized");
+	}
+
+	[TestMethod]
+	public async Task When_OverloadRegisteredAfterValidator_Then_Replaced()
+	{
+		var validator = new TestValidator();
+		var state = new StateImpl<string>(Context, Option.Some("initial"));
+		_ = state.Validate(validator.Validate);
+		(await validator.WaitForCall(0)).Complete(Error("initial"));
+		await WaitForValidation(state, "initial");
+
+		_ = state.Validate(async (value, ct) => false, "overload");
+		await state.SetAsync("updated", CT);
+
+		await WaitForValidation(state, "overload");
+		validator.Calls.Should().HaveCount(1);
+	}
+
+	[TestMethod]
+	public void When_InvalidArguments_Then_Throws()
+	{
+		var state = new StateImpl<string>(Context, Option.Some("initial"));
+		var localizer = new TestLocalizer();
+
+		state.Invoking(s => s.Validate(default(AsyncFunc<string, IEnumerable<ValidationResult>>)!, localizer)).Should().Throw<ArgumentNullException>();
+		state.Invoking(s => s.Validate(default(AsyncFunc<string, string?>)!, localizer)).Should().Throw<ArgumentNullException>();
+		state.Invoking(s => s.Validate(default(AsyncFunc<string, bool>)!, "error", localizer)).Should().Throw<ArgumentNullException>();
+		state.Invoking(s => s.Validate(async (_, _) => true, "", localizer)).Should().Throw<ArgumentException>();
+	}
+
+	[TestMethod]
+	public async Task When_LocalizedIValidator_Then_DataAnnotationsKeysLocalized()
+	{
+		using var host = new HostBuilder()
+			.UseValidation()
+			.Build();
+		var validator = host.Services.GetRequiredService<IValidator>();
+		var localizer = new TestLocalizer { { "Validation_NameRequired", "Le nom est requis" } };
+		var state = new StateImpl<Person>(Context, Option.Some(new Person()));
+
+		_ = state.Validate((person, ct) => validator.ValidateAsync(person, null, ct), localizer);
+
+		await WaitFor(() => state.Current.Current.Validation.Any(result => result.ErrorMessage == "Le nom est requis"));
+		state.Current.Current.Validation.Should().ContainSingle().Which.MemberNames.Should().Equal(nameof(Person.Name));
+	}
+
+	public sealed class Person
+	{
+		[Required(ErrorMessage = "Validation_NameRequired")]
+		public string? Name { get; set; }
+	}
+
+	private sealed class TestLocalizer : IStringLocalizer, IEnumerable<KeyValuePair<string, string>>
+	{
+		private readonly ConcurrentDictionary<string, string> _resources = new();
+		private int _lookups;
+
+		public int Lookups => _lookups;
+
+		public string? ThrowingKey { get; init; }
+
+		public void Add(string name, string value)
+			=> _resources[name] = value;
+
+		public LocalizedString this[string name]
+		{
+			get
+			{
+				Interlocked.Increment(ref _lookups);
+				if (name == ThrowingKey)
+				{
+					throw new InvalidOperationException("localizer failed");
+				}
+
+				// Like the ResourceLoaderStringLocalizer, the value of a not found string is not the key.
+				return _resources.TryGetValue(name, out var value)
+					? new LocalizedString(name, value)
+					: new LocalizedString(name, name.Replace('.', '/'), resourceNotFound: true);
+			}
+		}
+
+		IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator()
+			=> _resources.GetEnumerator();
+
+		global::System.Collections.IEnumerator global::System.Collections.IEnumerable.GetEnumerator()
+			=> _resources.GetEnumerator();
+
+		public LocalizedString this[string name, params object[] arguments]
+			=> new(name, string.Format(CultureInfo.CurrentCulture, this[name].Value, arguments));
+
+		public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
+			=> _resources.Select(kvp => new LocalizedString(kvp.Key, kvp.Value));
+	}
+
+	[TestMethod]
 	public void When_NullValidator_Then_ThrowsArgumentNull()
 	{
 		var state = new CustomState();
 
-		state.Invoking(s => s.Validate(null!))
+		state.Invoking(s => s.Validate(default(AsyncFunc<string, IEnumerable<ValidationResult>>)!))
 			.Should()
 			.Throw<ArgumentNullException>()
 			.WithParameterName("validator");
+		state.Invoking(s => s.Validate(default(AsyncFunc<string, string?>)!))
+			.Should()
+			.Throw<ArgumentNullException>()
+			.WithParameterName("validator");
+		state.Invoking(s => s.Validate(default(AsyncFunc<string, bool>)!, "error"))
+			.Should()
+			.Throw<ArgumentNullException>()
+			.WithParameterName("isValid");
 	}
 
 	[TestMethod]

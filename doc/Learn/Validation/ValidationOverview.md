@@ -156,6 +156,31 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 
 ---
 
+## Validation messages
+
+The validation messages are reported as written: the `ErrorMessage` of DataAnnotations attributes (formatted by the attribute) and the messages of FluentValidation (e.g. `WithMessage`). `Uno.Extensions.Validation` does not localize them.
+
+To localize the messages, use resource keys as messages. Only the MVUX `Validate` resolves them, with the localizer it is given: see [localizing messages](xref:Uno.Extensions.Mvux.Advanced.Validation#localizing-messages). Anywhere else, for example in an MVVM view model, the keys are reported as is: resolve them yourself with the `IStringLocalizer`:
+
+```csharp
+var results = await _validator.ValidateAsync(Person);
+var errors = results.Select(result => result.ErrorMessage is { Length: > 0 } key && _localizer[key] is { ResourceNotFound: false } message
+    ? message.Value
+    : result.ErrorMessage);
+```
+
+```csharp
+public class Person
+{
+    [Required(ErrorMessage = "Validation_FirstNameRequired")]
+    [StringLength(20, ErrorMessage = "Validation_FirstNameLength")]
+    public string FirstName { get; set; }
+}
+```
+
+- DataAnnotations format the `ErrorMessage` with the display name and the attribute arguments (e.g. `{0}`, `{1}`), so a key must not contain `{` or `}`.
+- With FluentValidation, the name of the property is reported in the `MemberNames` of the results, so errors are attached to the right field.
+
 ## Using validation with MVUX
 
 In an MVUX model, call the `IValidator` from the validator given to `Validate` (e.g. `.Validate((person, ct) => Validator.ValidateAsync(person, null, ct))`) to validate a state each time it changes. The generated view model then exposes the results through `INotifyDataErrorInfo`. See [MVUX validation](xref:Uno.Extensions.Mvux.Advanced.Validation).
