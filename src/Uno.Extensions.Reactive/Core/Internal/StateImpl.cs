@@ -28,6 +28,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 
 	private ValidationLoop? _validation;
 	private ValidationUpdate? _validationResults;
+	private object? _failedValidator; // The source of the validator whose failure has been logged at the error level, cf. LogFailure.
 	private static long _validationVersion; // Shared by the states (not per instance), so versions remain comparable when results are redirected to the state that replaced this one.
 
 	/// <summary>
@@ -258,19 +259,24 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 
 	/// <remarks>
 	/// The message of the error is logged only at the debug level, as it might contain user input.
+	/// A validator runs on each change of the value (e.g. each keystroke), so only its first failure is logged at the error level, the next ones at the debug level.
 	/// </remarks>
 	private void LogFailure(Exception error, ValidationLoop loop, bool isPublishing)
 	{
 		var log = this.Log();
-		if (log.IsEnabled(LogLevel.Error))
+		if (isPublishing)
 		{
-			if (isPublishing)
+			if (log.IsEnabled(LogLevel.Error))
 			{
 				log.LogError("Failed to publish the results of the validator '{Validator}' on a state of '{ValueType}': its update pipeline failed with an '{ErrorType}'.", Describe(loop.Source), typeof(T).Name, error.GetType().Name);
 			}
-			else
+		}
+		else
+		{
+			var level = ReferenceEquals(Interlocked.Exchange(ref _failedValidator, loop.Source), loop.Source) ? LogLevel.Debug : LogLevel.Error;
+			if (log.IsEnabled(level))
 			{
-				log.LogError("The validator '{Validator}' of a state of '{ValueType}' failed with an '{ErrorType}'. The value has not been validated.", Describe(loop.Source), typeof(T).Name, error.GetType().Name);
+				log.Log(level, "The validator '{Validator}' of a state of '{ValueType}' failed with an '{ErrorType}'. The value has not been validated.", Describe(loop.Source), typeof(T).Name, error.GetType().Name);
 			}
 		}
 		if (log.IsEnabled(LogLevel.Debug))
