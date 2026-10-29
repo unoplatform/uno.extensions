@@ -61,6 +61,24 @@ public class Given_ValidationAxis : FeedTests
 	}
 
 	[TestMethod]
+	public async Task When_SetResultsWithNull_Then_NullIgnored()
+	{
+		var result = new ValidationResult("Required", new[] { "Name" });
+		var (recorder, sut) = new StateImpl<string>(Context, Option.Some("value")).Record();
+
+		await sut.UpdateMessageAsync(msg => msg.Validation(new[] { null!, result, ValidationResult.Success! }), CT);
+		await sut.UpdateMessageAsync(msg => msg.Validation(new[] { result, null! }), CT); // Compared with the previous results
+		await sut.UpdateMessageAsync(msg => msg.Data("updated"), CT); // Used as a marker, so we know that the previous update has been processed.
+		await recorder.WaitForMessages(3);
+		await Task.Yield();
+
+		recorder.Count.Should().Be(3);
+		recorder[1].Current.Validation.Should().Equal(result);
+		recorder[2].Changes.Contains(MessageAxis.Validation).Should().BeFalse();
+		recorder[2].Current.Validation.Should().Equal(result);
+	}
+
+	[TestMethod]
 	public async Task When_SetIdenticalResults_Then_NoChange()
 	{
 		var (recorder, sut) = new StateImpl<string>(Context, Option.Some("value")).Record();

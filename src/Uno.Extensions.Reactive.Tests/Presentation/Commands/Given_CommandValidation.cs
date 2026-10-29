@@ -104,6 +104,30 @@ public class Given_CommandValidation : FeedUITests
 	}
 
 	[TestMethod]
+	public async Task When_ValidatorReturnsNullResults_Then_Ignored()
+	{
+		var state = new StateImpl<string>(Context, Option.Some("invalid"));
+		var sut = Create(b => b
+			.Given(state)
+			.Validation(async (value, ct) => value is "invalid"
+				? new[] { null!, new ValidationResult("invalid"), ValidationResult.Success! }
+				: new ValidationResult[] { null! })
+			.Then(Execute));
+
+		await sut.ExecuteAndWait();
+		Validation(state).Should().Equal("invalid");
+		sut.Executions.Should().BeEmpty();
+
+		await state.SetAsync("valid", CT);
+		await sut.ExecuteAndWait();
+
+		// Null results (i.e. ValidationResult.Success) are not errors.
+		sut.Errors.Should().BeEmpty();
+		sut.Executions.Should().Equal("valid");
+		Validation(state).Should().BeEmpty();
+	}
+
+	[TestMethod]
 	public async Task When_ExecutedAgain_Then_Revalidated_And_ResultsReplaced()
 	{
 		var state = new StateImpl<string>(Context, Option.Some("initial"));
