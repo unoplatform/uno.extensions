@@ -158,7 +158,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 
 ## Using validation with MVUX
 
-In an MVUX model, pass the `IValidator` to `Validate` to validate a state each time it changes. The generated view model then exposes the results through `INotifyDataErrorInfo`. See [MVUX validation](xref:Uno.Extensions.Mvux.Advanced.Validation).
+In an MVUX model, call the `IValidator` from the validator given to `Validate` (e.g. `.Validate((person, ct) => Validator.ValidateAsync(person, null, ct))`) to validate a state each time it changes. The generated view model then exposes the results through `INotifyDataErrorInfo`. See [MVUX validation](xref:Uno.Extensions.Mvux.Advanced.Validation).
 
 ## See also
 
