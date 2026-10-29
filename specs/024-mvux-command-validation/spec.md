@@ -54,7 +54,7 @@ Extension methods (not new interface members, so implementers of the public buil
 IConditionalCommandBuilder<T> Validation<T>(this ICommandBuilder<T> builder, AsyncFunc<T, IEnumerable<ValidationResult>> validator, IStringLocalizer? localizer = null);
 IConditionalCommandBuilder<T> Validation<T>(this ICommandBuilder<T> builder, AsyncFunc<T, string?> validator, IStringLocalizer? localizer = null);  // single rule
 IConditionalCommandBuilder<T> Validation<T>(this ICommandBuilder<T> builder, AsyncFunc<T, bool> isValid, string error, IStringLocalizer? localizer = null); // predicate
-IConditionalCommandBuilder<T> Validation<T>(this ICommandBuilder<T> builder, IValidator validator, IStringLocalizer? localizer = null) where T : notnull;
+IConditionalCommandBuilder<T> Validation<T>(this ICommandBuilder<T> builder, IValidator validator, IStringLocalizer? localizer = null);
 // + the same 4 on IConditionalCommandBuilder<T>
 ```
 
@@ -64,7 +64,7 @@ IConditionalCommandBuilder<T> Validation<T>(this ICommandBuilder<T> builder, IVa
 - With an `IValidator`, a `null` parameter (e.g. a view parameter not bound yet) has nothing to validate and is considered as valid (documented publicly).
 - The builder interfaces are covariant: the extensions work on `object` internally (`IValidatingCommandBuilder`), so `ICommandBuilder<Base>` backed by a builder of a derived type is supported.
 - Localization, result shapes of the single-rule/predicate overloads: identical to spec 023 §4.3 (shared helper).
-- `State.Validate<T>(this IState<T>, IValidator, IStringLocalizer? = null) where T : notnull` is added with the same adaptation (`ValidateAsync(value, null, ct)`).
+- `State.Validate<T>(this IState<T>, IValidator, IStringLocalizer? = null)` is added with the same adaptation (`ValidateAsync(value, null, ct)`).
 - Naming: `State.Validate` (a state is validated continuously) vs builder `.Validation` (a step of the command).
 
 ### 4.2 Execution
@@ -74,16 +74,17 @@ IConditionalCommandBuilder<T> Validation<T>(this ICommandBuilder<T> builder, IVa
 1. Run the validator (command's cancellation token, i.e. cancelled when the command is disposed). Messages localized as in spec 023; null results (`ValidationResult.Success`) ignored.
    - A validator exception (including an `OperationCanceledException` which is not the command's cancellation, e.g. an `HttpClient` timeout) is wrapped in an `InvalidOperationException` (without the value) so the execution faults instead of being silently cancelled.
 2. Publish the results on the parameter, **unconditionally** (no stale check: on-demand results describe the submitted value and stay until the next execution even if the value is edited meanwhile):
-   - a state created by the State factories: through `IValidationTarget.PublishValidationAsync`, the single internal entry point of `StateImpl`, also used by its own validator. It does not publish if already cancelled, aborts the wait when cancelled (or when the context of the state is disposed), and when the update is applied asynchronously (busy update pipeline) resumes asynchronously, so the action never runs under the lock of the `UpdateFeed`. It is not generic, so it also works when the parameter is seen as a state of a base type (covariance);
+   - a state created by the State factories (or an `IInput<T>` of a model, which forwards to the state it wraps): through `IValidationTarget.PublishValidationAsync`, the single internal entry point of `StateImpl`, also used by its own validator. It does not publish if already cancelled, aborts the wait when cancelled (or when the context of the state is disposed), and when the update is applied asynchronously (busy update pipeline) resumes asynchronously, so the action never runs under the lock of the `UpdateFeed`. It is not generic, so it also works when the parameter is seen as a state of a base type (covariance);
    - another `IState<T>`: `UpdateMessageAsync(m => m.Validation(results))`.
-3. Any result: return without invoking `Then`; the execution completes **without error** (`ExecutionCompleted.Error == null`, indistinguishable from a successful execution, documented). Logged at Debug (count only).
+   - If the publication fails, including an `OperationCanceledException` which is not the command's cancellation (e.g. the context of the state disposed while the update is pending), it is wrapped like a validator exception, so the execution faults instead of being silently cancelled.
+3. Any result: return without invoking `Then`; the execution completes **without error** (`ExecutionCompleted.Error == null`, indistinguishable from a successful execution, documented). Logged at Information, with the count and the members in error (not the messages, which may contain user input): WinUI controls do not render validation errors by themselves, so "Submit does nothing" is the likely symptom.
 4. Check the cancellation token before invoking `Then`: a validator which ignores it must not start the action after the command has been disposed.
 
 Consequences:
 
 - `IsExecuting` is `true` while validating, so a double-submit is blocked like during the execution itself. A validator that hangs keeps the command executing for that parameter: documented (honor the token, apply a timeout).
 - Validation errors do not affect `CanExecute`: the user can always retry, which is what re-validates.
-- A validator exception faults the execution (reported to the error handler of the command like any `Then` failure); previous results are kept.
+- A validator exception, or a failure to publish the results, faults the execution (reported to the error handler of the command like any `Then` failure); previous results are kept.
 - A successful validation clears the results (empty list).
 - The results are published through the single entry point of the state (the validation update of spec 022, replaced on each publication): they are kept when the source of the state produces a new value (e.g. refresh of a `State.Async`), until the next execution. Documented and tested.
 - Errors reported by commands no longer include the value of the parameter (the `ToString` of a form record exposed passwords in logs), only its type. This applies to all commands.
@@ -94,13 +95,14 @@ Both write the same axis (through the same `StateImpl` entry point). A command v
 
 ### 4.4 `Given` is not a state — `FEED2003`
 
-With a `Given` feed which is not a state (e.g. `Feed.Async`, `Feed.Combine`), or without `Given` (parameter from the view), there is nowhere to publish the results: the command still validates and aborts on errors, the results are only logged at Warning (count, no message: messages may contain user input).
+With a `Given` feed which is not a state (e.g. `Feed.Async`, `Feed.Combine`), or without `Given` (parameter from the view), there is nowhere to publish the results: the command still validates and aborts on errors, the results are only logged at Warning (count and members in error, no message: messages may contain user input).
 The rule is the same at runtime and in the analyzer: the parameter is a state (runtime `IState<>`).
 A new analyzer reports **`FEED2003` (Warning)** on such `.Validation(...)` calls:
 
-- walks back the fluent chain (`When(...)` → `Given(arg)`) and reports if the type of `arg` is not an `IState<>`, or if the chain reaches the parameter of the lambda given to `Command.Create` without any `Given`;
-- conversions of `arg` are unwrapped, including explicit casts (`Given((IFeed<T>)MyState)` is not reported). A property typed `IFeed<T>` which returns a state cannot be known statically and is reported: type it as `IState<T>`;
-- receivers it cannot follow (builder stored in a local/field) are not reported (no false positives).
+- walks back the fluent chain (`When(...)` → `Given(arg)`) and reports if `arg` is known to not be a state, or if the chain reaches the parameter of the lambda given to `Command.Create` without any `Given`;
+- `arg` is known to not be a state only if it is produced by a factory or an operator of `Feed` / `ListFeed` (e.g. `Feed.Async`, `Feed.Combine`, `state.Select`), directly or through the expression body / initializer of a property, readonly field or local declared in the same file (so `IFeed<T> Person => State.Value(...)` is not reported);
+- conversions of `arg` are unwrapped, including explicit casts (`Given((IFeed<T>)MyState)` is not reported);
+- values it cannot determine (a parameter, the result of another method, a conditional) and receivers it cannot follow (builder stored in a local/field) are not reported (no false positives).
 Under `TreatWarningsAsErrors` this is an error, which is intended for a misuse.
 
 ## 5. Public API delta (additive)
@@ -109,7 +111,7 @@ Under `TreatWarningsAsErrors` this is an error, which is intended for a misuse.
 - `State.Validate<T>(IState<T>, IValidator, IStringLocalizer?)`.
 - `IValidator` moved to `Uno.Extensions.Core` (+ type forward in Validation).
 - Analyzer rule `FEED2003`.
-- Internal only: `IValidationTarget` (implemented by `StateImpl<T>`), `IValidatingCommandBuilder`.
+- Internal only: `IValidationTarget` (implemented by `StateImpl<T>`, and forwarded by `Input<T>`), `IValidatingCommandBuilder`.
 - Behavior: errors reported by commands contain the type of the parameter instead of its value; null validation results are ignored on the axis.
 
 ## 6. Performance / platform
@@ -120,10 +122,10 @@ Under `TreatWarningsAsErrors` this is an error, which is intended for a misuse.
 
 ## 7. Tests
 
-- `Given_CommandValidation` (`Uno.Extensions.Reactive.Tests`): invalid → not executed, results on the state, completed without error; valid → executed, results cleared; data change after a failed execution keeps the results; re-execution replaces them; validator throws → error handler, previous results kept; `IsExecuting` during validation; disposal cancels the validation; `When` false → not validated; single-rule/predicate/`IValidator` overloads; localization; guards; non-state `Given` → aborts, nothing published; last writer wins with `State.Validate`.
+- `Given_CommandValidation` (`Uno.Extensions.Reactive.Tests`): invalid → not executed, results on the state, completed without error; valid → executed, results cleared; data change after a failed execution keeps the results; re-execution replaces them; validator throws → error handler, previous results kept; publication cancelled by the state → error handler; aborted execution logged at Information with the members (no messages); `IsExecuting` during validation; disposal cancels the validation; `When` false → not validated; single-rule/predicate/`IValidator` overloads; localization; guards; non-state `Given` → aborts, nothing published; last writer wins with `State.Validate`, including an on-change validation started before the execution and completing after it; `IInput<T>` parameter ordered like its state; results kept on a refresh to the same or another value; null results ignored.
 - `Given_StateWithValidation`: `Validate(IValidator)` plain and localized.
-- `Uno.Extensions.Validation.Tests`: `IValidator` lives in Core and the forward from Validation resolves.
-- `Given_CommandValidationDiagnostic`: `FEED2003` reported for a feed / no `Given`, not for a state, also after `When`.
+- `Uno.Extensions.Validation.Tests`: `IValidator` lives in Core, the forward from Validation resolves, and the `IValidator` registered by `UseValidation` validates.
+- `Given_CommandValidationDiagnostic`: `FEED2003` reported for a feed (factory, operator, readonly field, local) / no `Given`, not for a state, also after `When`; not reported for a parameter, a method call, a conditional, or a field / local of unknown value.
 - Release build of `Uno.Extensions-packageonly.slnf` warning-free.
 
 ## 8. Docs

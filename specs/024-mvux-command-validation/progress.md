@@ -76,3 +76,20 @@ Seven-agent panel on the whole stack (#3203, #3204, #3222). Findings that belong
 | L17 Tests build `StateImpl` directly | Kept: same pattern as the rest of `Reactive.Tests`, behavior asserted through the public API of commands. |
 | L19 "Only place" of localization | Specs and lessons reworded. |
 | Command results after a source refresh | Kept until the next execution (consequence of the spec 022 fix), test updated. |
+
+## Review panel on the PR (20261027, kazo0)
+
+| Finding | Resolution |
+| --- | --- |
+| [medium] `FEED2003` false positives: any value which isn't a property / field / local was reported | Only a factory or an operator of `Feed` / `ListFeed` is known to produce a feed which is not a state; parameters, method calls and conditionals are not reported. Fixtures for a parameter, a method call, a conditional, readonly fields and locals (known and unknown values) and an operator applied on a state; red before the fix. The cancellation token of the analysis is given to `GetSyntax` / `GetOperation`. |
+| [medium] The spec no longer matched the code | `notnull` constraints removed, aborted executions logged at Information, §4.4 rewritten for the analyzer above. |
+| [low] A publication cancelled by the state silently cancelled the execution | Wrapped like a failure of the validator: the execution faults, reported to the error handler (`When_PublicationCancelledByState_Then_ExecutionFails`, red before the fix). The resolution of the first panel ("not reproduced") covered only a disposed state whose update is applied synchronously, which is accepted without error. |
+| [low] The Information log of an aborted execution didn't name the members in error | Added, like the Warning of a non-state parameter; "Diagnosing validation" table updated (`When_Invalid_Then_AbortLoggedWithMembers_And_WithoutMessages`). |
+| [low] Only `StateImpl<T>` got "last validation started wins", not `IInput<T>` | `Input<T>` forwards `IValidationTarget` to the state it wraps (`When_GivenInputAndResultsPublishedWhileValidating_Then_ResultsOfExecutionDiscarded`, red before the fix). `GetPublisher(IState<T>)` never returns null. |
+| [low] `Validation` returns `IConditionalCommandBuilder<T>` (only `Then`) | Open: decision pending. |
+| [low] The §4.3 race between the validator of the state and a command wasn't exercised | `When_OnChangeValidationCompletesAfterExecution_Then_ResultsOfCommandKept` (red with the version check of the state disabled); `When_SourceOfStateProducesOtherValue_Then_ResultsKept`. |
+| [low] `msg.Validation(...)` with null entries untested | `When_SetResultsWithNull_Then_NullIgnored` (axis) and `When_ValidatorReturnsNullResults_Then_Ignored` (command), both red without `ToResults`. |
+| [low] `Given_IValidatorLocation` asserted the assembly of the implementation | Asserts that the `IValidator` registered by `UseValidation` validates. |
+| [low] Spec number 017 taken on `main` | Renumbered 024. |
+
+Tests (20261029, Release): `Uno.Extensions.Reactive.Tests` 1650 passed, 19 skipped; `Uno.Extensions.Validation.Tests` 8/8; `Uno.HotTesting.Reactive.Tests` 40/40.
