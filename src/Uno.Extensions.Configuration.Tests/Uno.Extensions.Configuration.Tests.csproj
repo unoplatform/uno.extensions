@@ -18,14 +18,16 @@
 	</ItemGroup>
 
 	<!--
-		This test assembly embeds a single appsettings.json so that
-		EmbeddedAppConfigurationFile.AllFiles<TRootInThisAssembly>() returns exactly one file,
+		This test assembly embeds appsettings files so that
+		EmbeddedAppConfigurationFile.AllFiles<TRootInThisAssembly>() returns them,
 		while a type from another assembly (e.g. a framework type) returns none. That difference
 		is what proves the per-assembly cache no longer serves the first caller's files to a
-		second, unrelated assembly.
+		second, unrelated assembly. The appsettings.custom*.json files back Given_EmbeddedSource.
 	-->
 	<ItemGroup>
 		<EmbeddedResource Include="appsettings.json" />
+		<EmbeddedResource Include="appsettings.custom.json" />
+		<EmbeddedResource Include="appsettings.custom.development.json" />
 	</ItemGroup>
 
 </Project>
