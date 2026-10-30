@@ -21,15 +21,16 @@ labels: kind/consumer-experience, kind/documentation, triage/untriaged
 
 ## For which Platform
 
-- [ ] iOS
-- [ ] macOS (AppKit)
-- [ ] Mac Catalyst
-- [ ] Android
+- [ ] All platforms
 - [ ] WebAssembly
-- [ ] Windows
-- [ ] Skia (WPF)
-- [ ] Skia (GTK on Linux/macOS/Windows)
-- [ ] Skia (Linux Framebuffer)
+- [ ] Android
+- [ ] iOS
+- [ ] tvOS
+- [ ] Desktop (Windows)
+- [ ] Desktop (macOS)
+- [ ] Desktop (X11)
+- [ ] Desktop (Linux Framebuffer)
+- [ ] Windows App SDK
 - [ ] Build tasks
 
 ## Anything else we need to know?
