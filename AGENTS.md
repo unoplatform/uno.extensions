@@ -231,6 +231,19 @@ dotnet test src/Uno.Extensions.Serialization.Tests/Uno.Extensions.Serialization.
 dotnet test src/Uno.Extensions.Reactive.Tests/Uno.Extensions.Reactive.Tests.csproj --filter "FullyQualifiedName~Given_Feed.When_..."
 ```
 
+**On Windows**, `dotnet build` cannot build the `net10.0-windows` target of the WinUI libraries that contain XAML (`UNOB0008`), and the failure cascades into misleading `CS0246`/`CS0234` errors on other targets. (`Build_Windows` is only on for Windows hosts, so macOS/Linux are unaffected.) Either:
+
+- build with Visual Studio's MSBuild for full validation, which is what package CI does:
+
+  ```powershell
+  $msbuild = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -prerelease -requires Microsoft.Component.MSBuild -find "MSBuild\**\Bin\MSBuild.exe"
+  & $msbuild Uno.Extensions-packageonly.slnf -r -m -p:Configuration=Release
+  ```
+
+- or pass `-p:Build_Windows=false` to the `dotnet build` / `dotnet test` commands above for a quick loop that skips the Windows target.
+
+`dotnet test` over the slnf builds first, so it needs `-p:Build_Windows=false`, or `--no-build` after an MSBuild build. Individual test projects are unaffected. See `specs/014-uno-7-retarget/spec.md` ("Local build notes").
+
 CI test selector (`build/ci/stage-build-packages.yml`) targets `**/*.Tests.dll` + `**/*.AotTests.dll` and **excludes** `**/*UI.Tests.dll` — those run in dedicated runtime-test stages because they require a real Uno UI host. `build/tests.runsettings` pins net10.0 / x86 and `TreatNoTestsAsError=true` — keep new test projects discoverable or that filter will fail the build.
 
 ✅ Zero warnings in Release is mandatory (`TreatWarningsAsErrors=true`).
