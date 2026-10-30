@@ -25,29 +25,41 @@ below cover only what changes in Extensions.
 - **`NavigateAsync<TShell>()` requires a `ContentControl` shell.** On Uno Platform 7.0, `Page` and
   `UserControl` derive from `Control`, not `ContentControl`, so a shell such as `MainPage : Page` no
   longer hosts navigation: it used to leave a blank screen, and now throws `InvalidOperationException`.
-  Make the shell implement `IContentControlProvider` and return the `ContentControl` that hosts
-  navigation, as the `unoapp` template's `Shell` does. If the page is also a route (for example the
-  `IsDefault` route), don't make the page itself the provider: navigating to that route creates a second
-  instance of the page inside the first, and a warning is logged when the initial navigation does so.
-  Wrap the page in a separate `Shell` instead, and keep the page as a route.
+  Pick one of the setups the `unoapp` template uses:
+  - **No shell** (the template's default): drop `NavigateAsync<TShell>()` and start navigation on the
+    window, passing the page's route as the initial route. The page stays a route.
 
-  ```csharp
-  public sealed partial class Shell : UserControl, IContentControlProvider
-  {
-    private readonly ContentControl _content = new()
+    ```csharp
+    Host = await builder.Window.InitializeNavigationAsync(
+        () => Task.FromResult(builder.Build()),
+        initialRoute: "Main");
+    ```
+
+  - **A separate shell** (the template's `Shell` option), for example to host an `ExtendedSplashScreen`:
+    a `UserControl` that implements `IContentControlProvider` and returns the `ContentControl` that hosts
+    navigation. Keep the page as a route.
+
+    ```csharp
+    public sealed partial class Shell : UserControl, IContentControlProvider
     {
-      HorizontalContentAlignment = HorizontalAlignment.Stretch,
-      VerticalContentAlignment = VerticalAlignment.Stretch,
-    };
+        private readonly ContentControl _content = new()
+        {
+            HorizontalContentAlignment = HorizontalAlignment.Stretch,
+            VerticalContentAlignment = VerticalAlignment.Stretch,
+        };
 
-    public Shell() => Content = _content;
+        public Shell() => Content = _content;
 
-    public ContentControl ContentControl => _content;
-  }
+        public ContentControl ContentControl => _content;
+    }
 
-  // App.xaml.cs
-  Host = await builder.NavigateAsync<Shell>();
-  ```
+    // App.xaml.cs
+    Host = await builder.NavigateAsync<Shell>();
+    ```
+
+  Don't make the page itself implement `IContentControlProvider` when it is also a route (for example the
+  `IsDefault` route): navigating to that route creates a second instance of the page inside the first, and
+  a warning is logged when the initial navigation does so.
 
 ### Storage
 
