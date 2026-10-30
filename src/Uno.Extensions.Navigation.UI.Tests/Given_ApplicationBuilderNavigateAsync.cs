@@ -21,7 +21,7 @@ using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 namespace Uno.Extensions.Navigation.UI.Tests;
 
 /// <summary>
-/// <see cref="ApplicationBuilderExtensions.NavigateAsync{TShell}"/> needs a <see cref="ContentControl"/>
+/// <c>NavigateAsync&lt;TShell&gt;()</c> needs a <see cref="ContentControl"/>
 /// inside the shell to host navigation. Since Uno 7, <see cref="Page"/> and <see cref="UserControl"/> derive
 /// from <see cref="Control"/>, so a Page shell used to leave navigation on a detached root: the initial
 /// request parked forever behind a blank screen (issue #3225).
