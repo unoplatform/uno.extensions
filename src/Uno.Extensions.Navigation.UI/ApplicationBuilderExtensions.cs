@@ -51,11 +51,57 @@ public static class ApplicationBuilderExtensions
 
 		appBuilder.Window.Content = appRoot;
 
-		return await appBuilder.Window.InternalInitializeNavigationAsync(
+		var host = await appBuilder.Window.InternalInitializeNavigationAsync(
 			buildHost: () => Task.FromResult(appBuilder.Build()),
 			navigationRoot: navRoot,
 			initializeViewHost: initializeViewHost,
 			initialNavigate: initialNavigate
 		);
+
+		if (host.Services.GetService<ILogger<NavigationRegion>>() is { } logger && logger.IsEnabled(LogLevel.Warning))
+		{
+			WarnIfShellIsNested<TShell>(navRoot, logger);
+		}
+
+		return host;
 	}
+
+	/// <summary>
+	/// Navigators don't compare the view they create with the shell already on screen, so a route whose view
+	/// is the shell type (e.g. a Page shell that is its own <see cref="IContentControlProvider" />) nests a
+	/// second shell inside the first.
+	/// </summary>
+	private static void WarnIfShellIsNested<TShell>(ContentControl navRoot, ILogger logger)
+	{
+		switch (navRoot.Content)
+		{
+			case TShell:
+				LogNestedShell<TShell>(logger);
+				break;
+
+			// A Page is wrapped in a FrameView, whose Frame only navigates to it after startup completes.
+			case FrameView { Content: Frame frame } when frame.Content is TShell:
+				LogNestedShell<TShell>(logger);
+				break;
+
+			case FrameView { Content: Frame { Content: null } frame }:
+				void OnNavigated(object sender, NavigationEventArgs e)
+				{
+					frame.Navigated -= OnNavigated;
+					if (e.Content is TShell)
+					{
+						LogNestedShell<TShell>(logger);
+					}
+				}
+				frame.Navigated += OnNavigated;
+				break;
+		}
+	}
+
+	private static void LogNestedShell<TShell>(ILogger logger) =>
+		logger.LogWarning(
+			"The shell '{ShellType}' is also the view of the initial route, so a second instance was nested inside it. " +
+			"Host navigation in a separate shell that implements IContentControlProvider and keep '{ShellName}' as a route.",
+			typeof(TShell).FullName,
+			typeof(TShell).Name);
 }

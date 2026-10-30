@@ -27,8 +27,9 @@ below cover only what changes in Extensions.
   longer hosts navigation: it used to leave a blank screen, and now throws `InvalidOperationException`.
   Make the shell implement `IContentControlProvider` and return the `ContentControl` that hosts
   navigation, as the `unoapp` template's `Shell` does. If the page is also a route (for example the
-  `IsDefault` route), don't make the page itself the provider, or it gets navigated into itself: wrap it
-  instead, and keep the page as a route.
+  `IsDefault` route), don't make the page itself the provider: navigating to that route creates a second
+  instance of the page inside the first, and a warning is logged when the initial navigation does so.
+  Wrap the page in a separate `Shell` instead, and keep the page as a route.
 
   ```csharp
   public sealed partial class Shell : UserControl, IContentControlProvider
