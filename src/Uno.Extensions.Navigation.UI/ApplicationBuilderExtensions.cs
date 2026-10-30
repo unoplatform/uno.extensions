@@ -10,10 +10,17 @@ public static class ApplicationBuilderExtensions
 	/// Creates the Application Shell and will initialize the Shell Content before creating
 	/// the <see cref="IHost" /> and initializing the app with the initial navigation.
 	/// </summary>
-	/// <typeparam name="TShell">The <see cref="UIElement" /> to use for the App Shell.</typeparam>
+	/// <typeparam name="TShell">
+	/// The <see cref="UIElement" /> to use for the App Shell. It must either derive from <see cref="ContentControl" />
+	/// or implement <see cref="IContentControlProvider" /> to supply the <see cref="ContentControl" /> that hosts navigation.
+	/// </typeparam>
 	/// <param name="appBuilder">The <see cref="IApplicationBuilder" />.</param>
 	/// <param name="initialNavigate">An optional Navigation Delegate to conditionally control where the app should navigate on launch.</param>
 	/// <returns>The <see cref="IHost" />.</returns>
+	/// <exception cref="InvalidOperationException">
+	/// <typeparamref name="TShell" /> neither derives from <see cref="ContentControl" /> nor implements <see cref="IContentControlProvider" />
+	/// (e.g. a <see cref="Page" /> or a plain <see cref="UserControl" />).
+	/// </exception>
 	[RequiresUnreferencedCode(RequiresUnreferencedCodeMessage)]
 	public static async Task<IHost> NavigateAsync<TShell>(this IApplicationBuilder appBuilder,
 		Func<IServiceProvider, INavigator, Task>? initialNavigate = null)
@@ -26,29 +33,75 @@ public static class ApplicationBuilderExtensions
 			navRoot = contentProvider.ContentControl;
 		}
 
+		// The shell becomes Window.Content, so a navigation root that isn't part of it would never
+		// be loaded and the initial navigation would park forever (a silent blank screen).
+		// Page and UserControl derive from Control (not ContentControl) since Uno 7.
+		if (navRoot is null)
+		{
+			throw new InvalidOperationException(
+				$"The shell type '{typeof(TShell).FullName}' must derive from {nameof(ContentControl)} or implement {nameof(IContentControlProvider)} to host navigation.");
+		}
+
 		Action<Window, FrameworkElement, Task> initializeViewHost = (_, _, _) => { };
 		if (appBuilder.Properties.TryGetValue(typeof(IRootViewInitializer), out var propValue) && propValue is IRootViewInitializer initializer)
 		{
-			navRoot ??= initializer.CreateDefaultView();
 			initializer.PreInitialize(navRoot, appBuilder);
 			initializeViewHost = initializer.InitializeViewHost;
 		}
 
-		navRoot ??= new ContentControl
-		{
-			HorizontalAlignment = HorizontalAlignment.Stretch,
-			VerticalAlignment = VerticalAlignment.Stretch,
-			HorizontalContentAlignment = HorizontalAlignment.Stretch,
-			VerticalContentAlignment = VerticalAlignment.Stretch
-		};
-
 		appBuilder.Window.Content = appRoot;
 
-		return await appBuilder.Window.InternalInitializeNavigationAsync(
+		var host = await appBuilder.Window.InternalInitializeNavigationAsync(
 			buildHost: () => Task.FromResult(appBuilder.Build()),
 			navigationRoot: navRoot,
 			initializeViewHost: initializeViewHost,
 			initialNavigate: initialNavigate
 		);
+
+		if (host.Services.GetService<ILogger<NavigationRegion>>() is { } logger && logger.IsEnabled(LogLevel.Warning))
+		{
+			WarnIfShellIsNested<TShell>(navRoot, logger);
+		}
+
+		return host;
 	}
+
+	/// <summary>
+	/// Navigators don't compare the view they create with the shell already on screen, so a route whose view
+	/// is the shell type (e.g. a Page shell that is its own <see cref="IContentControlProvider" />) nests a
+	/// second shell inside the first.
+	/// </summary>
+	private static void WarnIfShellIsNested<TShell>(ContentControl navRoot, ILogger logger)
+	{
+		switch (navRoot.Content)
+		{
+			case TShell:
+				LogNestedShell<TShell>(logger);
+				break;
+
+			// A Page is wrapped in a FrameView, whose Frame only navigates to it after startup completes.
+			case FrameView { Content: Frame frame } when frame.Content is TShell:
+				LogNestedShell<TShell>(logger);
+				break;
+
+			case FrameView { Content: Frame { Content: null } frame }:
+				void OnNavigated(object sender, NavigationEventArgs e)
+				{
+					frame.Navigated -= OnNavigated;
+					if (e.Content is TShell)
+					{
+						LogNestedShell<TShell>(logger);
+					}
+				}
+				frame.Navigated += OnNavigated;
+				break;
+		}
+	}
+
+	private static void LogNestedShell<TShell>(ILogger logger) =>
+		logger.LogWarning(
+			"The shell '{ShellType}' is also the view of the initial route, so a second instance was nested inside it. " +
+			"Host navigation in a separate shell that implements IContentControlProvider and keep '{ShellName}' as a route.",
+			typeof(TShell).FullName,
+			typeof(TShell).Name);
 }
