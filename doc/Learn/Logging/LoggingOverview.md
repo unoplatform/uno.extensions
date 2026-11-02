@@ -4,7 +4,7 @@ uid: Uno.Extensions.Logging.Overview
 
 # Logging
 
-> **UnoFeatures:** `Logging` or `Serilog` (add to `<UnoFeatures>` in your `.csproj`)
+> **UnoFeatures:** `Logging`, plus `LoggingSerilog` for Serilog (add to `<UnoFeatures>` in your `.csproj`)
 
 Apps that record events typically do so for informational or diagnostic purposes, depending on the desired level of verbosity. **Logging** is the process of recording events to either a _persistent_ store such as a text file or database, or a _transient_ location like the standard output console. The `Uno.Extensions.Logging` library leverages logging capabilities tailored to the target platform to easily write entries for both app-specific and Uno internal events to one or more locations. These locations where logs can be written are referred to as **providers**. This feature enables a simple way to wire up custom log providers for locations not included by the runtime libraries or extensions.
 
@@ -115,7 +115,7 @@ This example configures the minimum log level to `Trace` when the app is running
 
 Serilog is a third-party logging framework that is otherwise available as a [NuGet package](https://www.nuget.org/packages/Serilog). The benefit of using Serilog is that it provides a more robust logging framework that can be configured to log to a variety of different sinks, including the console and file. Examples of other sinks include Azure Application Insights, Seq, and many more.
 
-An option to use Serilog is available by calling the `UseSerilog()` extension method on the `IHostBuilder` instance. This method will configure the Serilog logger to specifically not use the console or file sink by default. The following example shows how to enable Serilog:
+To use Serilog, add `LoggingSerilog` to `<UnoFeatures>`, which adds the `Uno.Extensions.Logging.Serilog` package (the `Extensions` feature does not include it). Then call the `UseSerilog()` extension method on the `IHostBuilder` instance. This method will configure the Serilog logger to specifically not use the console or file sink by default. The following example shows how to enable Serilog:
 
 ```csharp
 protected override void OnLaunched(LaunchActivatedEventArgs e)

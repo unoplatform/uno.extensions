@@ -10,6 +10,26 @@ Extensions 8.0 is the line for **Uno Platform 7.0**; use Extensions 7.x with Uno
 [Uno Platform 7.0 migration guide](xref:Uno.Development.MigratingToUno7) for the app itself — the notes
 below cover only what changes in Extensions.
 
+### Requirements
+
+- **Uno Platform 7.0.** Every `*.WinUI` package declares an `Uno.WinUI` floor of the 7.0 build it was
+  compiled against (a `7.0.0-dev` build while 7.0 is in preview), so an app still on Uno Platform 6.x
+  fails at restore with an `NU1605` package-downgrade error. Update the Uno SDK version in your
+  `global.json` — see [updating your Uno.Sdk](xref:Uno.Development.UpgradeUnoNuget).
+- **.NET 10.** See [Target frameworks](#target-frameworks) below.
+- **Dependency floors.** The packages declare these minimum versions; if your app pins any of them
+  explicitly, raise the pin or remove it and let the Uno SDK supply it:
+  - `Microsoft.Extensions.*` (Configuration, DependencyInjection, Hosting, Http, Localization,
+    Logging): 10.0.12.
+  - `Uno.Toolkit.WinUI` 11.0 (an `11.0.0-dev` build while it is in preview), for
+    `Uno.Extensions.Reactive.WinUI` and `Uno.Extensions.Navigation.Toolkit.WinUI`.
+  - `Microsoft.Identity.Client` 4.87.0, for `Uno.Extensions.Authentication.MSAL.WinUI`.
+  - `Uno.Core.Extensions.Collections` and `Uno.Core.Extensions.Logging` 5.0, the line that Uno
+    Platform 7.0 requires.
+- **`System.Text.Json` is no longer a package dependency.** It ships with .NET 10, so the packages no
+  longer reference it; remove an explicit `System.Text.Json` reference rather than raising it, as
+  NuGet reports it as unnecessary (`NU1510`).
+
 ### Target frameworks
 
 - The packages target .NET 10 (`net10.0`, `net10.0-windows10.0.19041`, `net10.0-android`, `net10.0-ios`).
@@ -107,9 +127,8 @@ is not a formality. Interactive sign-in on Android, iOS and WebAssembly heads bu
 after the 6.7.x releases. Without it `WithUnoHelpers()` silently does nothing and the sign-in UI never
 appears at all.
 
-`Microsoft.Identity.Client` also moves from 4.72.1 to 4.87.0, and `System.Text.Json` from 8.0.x to
-9.0.x. If your app pins either package explicitly, raise the pin or remove it and let the Uno SDK
-supply it.
+`Microsoft.Identity.Client` also moves from 4.72.1 to 4.87.0. If your app pins it explicitly, raise the
+pin or remove it and let the Uno SDK supply it.
 
 ### MSAL authentication behavior changes
 

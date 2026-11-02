@@ -9,22 +9,33 @@ Make your test class inherit from `FeedTests`, then in your tests methods, you c
 It will subscribe to your feed and persist all received messages. Then you can assert the expected messages using the fluent assertions:
 
 ```csharp
-[TestMethod]
-public async Task When_ProviderReturnsValueSync_Then_GetSome()
-{
-    var sut = Feed.Async(async ct =>
-    {
-        await Task.Delay(500, ct);
-        return 42;
-    });
-    using var result = await sut.Record();
+using FluentAssertions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Uno.Extensions.Reactive;
+using Uno.Extensions.Reactive.Testing;
 
-    result.Should().Be(r => r
-        .Message(Changed.Progress, Data.Undefined, Error.No, Progress.Transient)
-        .Message(Changed.Data, 42, Error.No, Progress.Final)
-    );
+[TestClass]
+public class Given_MyFeed : FeedTests
+{
+    [TestMethod]
+    public async Task When_ProviderReturnsValueAsync_Then_GetSome()
+    {
+        var sut = Feed.Async(async ct =>
+        {
+            await Task.Delay(500, ct);
+            return 42;
+        });
+        using var result = sut.Record();
+
+        await result.Should().BeAsync(r => r
+            .Message(Changed.Progress, Data.Undefined, Error.No, Progress.Transient)
+            .Message(Changed.Data & Changed.Progress, 42, Error.No, Progress.Final)
+        );
+    }
 }
 ```
+
+`Record()` starts recording immediately. `BeAsync` waits until the expected number of messages has been received (or times out) before asserting; `Be` asserts on the messages already received.
 
 You define each axis (`Data` / `Error` / `Progress`) in the `Message` you want to validate. You can also define which axes are expected to have changed (`Changed`).
 
