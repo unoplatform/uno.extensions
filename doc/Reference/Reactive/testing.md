@@ -126,7 +126,9 @@ For every MVUX model it finds, the generator emits, next to the model:
 
 - a `record {Model}Mock` whose **required** members are exactly the
   service-dependent feeds, and whose **optional** members are the derived feeds
-  (a `{Model}Mock.Empty` pins every input to its empty state);
+  (a `{Model}Mock.Empty` pins every input to its empty state). A feed that
+  reads a service is an input even when it also reads another feed, such as a
+  search over a query state or a list with a selection;
 - a `partial class {Vm}Mock` with `Create(...)` factories that build the **real
   view-model** with every constructor parameter null-injected (services,
   navigator, ...) except every parameter typed

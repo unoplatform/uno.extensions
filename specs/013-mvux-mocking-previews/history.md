@@ -312,6 +312,19 @@ built states and a fire-and-forget dispose. Limits: a state built over another m
 subscription, so mocking the state mocks that feed too; hot reload still swaps a state at the context's
 subscription to the state. Fixture: `TasksModel`. Tests: `Given_GeneratedMock` and `Given_SingleProjectMock`.
 
+## v20 — a feed that reads a service is an input, whatever else it reads
+
+The classification ranked a feed dependency before a service, so a member reading both was derived: optional in the
+mock and left out of `Empty`. A search over a query state (`Query.SelectAsync((query, ct) => Service.Search(query,
+ct))`) and a list with a selection (`ListFeed.Async(...).Selection(SelectedTask)`) are both of that shape. Left unset,
+such a member ran its real logic over the null-injected service, so `Create()` showed its error. A derived member is
+optional because its real logic recomputes over the mocked inputs, which cannot hold when that logic reads a service.
+The service now wins: such a member is a required input, as §7 states (required members are exactly the
+service-dependent feeds), and the metadata path treats a member as derived only when every `[FeedDependency]` on it
+names a feed. Consumer-visible: a mock that left such a member unset no longer compiles. A list with a selection is
+classified the same way; swapping it once mocked is #3247's fix. Fixture: `SearchModel`. Tests: `Given_GeneratedMock`
+and `Given_FeedsMockGenerator`.
+
 ---
 
 ## Final decision register
