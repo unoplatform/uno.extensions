@@ -17,6 +17,7 @@ internal sealed class SelectionService : ISelectionService, IDisposable, ISelect
 
 	private CancellationTokenSource? _setSelectionFromViewToken;
 	private SelectionInfo _selection = SelectionInfo.Empty;
+	private volatile bool _isLostBySource;
 	private bool _isDisposed;
 
 	/// <inheritdoc />
@@ -27,14 +28,24 @@ internal sealed class SelectionService : ISelectionService, IDisposable, ISelect
 		_setSelectionFromView = setSelectionFromView;
 	}
 
+	/// <inheritdoc />
+	public bool IsLostBySource => _isLostBySource;
+
 	#region Change selection from source
 	public void SetFromSource(SelectionInfo selection)
 	{
+		_isLostBySource = false;
 		if (Update((_, s) => s, selection))
 		{
 			StateChanged?.Invoke(this, EventArgs.Empty);
 		}
-	} 
+	}
+
+	/// <summary>
+	/// Indicates that the source no longer holds the current selection, without altering the selection of the view (cf. <see cref="IsLostBySource"/>).
+	/// </summary>
+	public void SetLostBySource()
+		=> _isLostBySource = true;
 	#endregion
 
 	#region Modify selection from View
@@ -95,6 +106,8 @@ internal sealed class SelectionService : ISelectionService, IDisposable, ISelect
 
 	private void PushToSource()
 	{
+		_isLostBySource = false;
+
 		var ct = new CancellationTokenSource();
 		Interlocked.Exchange(ref _setSelectionFromViewToken, ct)?.Cancel();
 
