@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+using System.Runtime.Loader;
 
 namespace Uno.Extensions.Navigation;
 
@@ -12,6 +12,10 @@ public class RouteResolverDefault : RouteResolver
 	public string[] ViewModelSuffixes { get; set; } = new[] { "Model", "ViewModel", "VM" };
 
 	private IDictionary<string, Type>? loadedTypes;
+
+	private object? loadedTypesLock;
+
+	private string loadedTypesScope = string.Empty;
 
 	public RouteResolverDefault(
 		ILogger<RouteResolverDefault> logger,
@@ -197,7 +201,7 @@ public class RouteResolverDefault : RouteResolver
 			}
 		}
 		if (Logger.IsEnabled(LogLevel.Warning))
-			Logger.LogWarningMessage($"Navigation failed: Could not resolve type for path '{path}'.");
+			Logger.LogWarningMessage($"Navigation failed: Could not resolve type for path '{path}'. Searched {loadedTypesScope}; types in any other load context need an explicit ViewMap/RouteMap.");
 
 		return null;
 
@@ -266,40 +270,24 @@ public class RouteResolverDefault : RouteResolver
 	public IDictionary<string, Type> LoadedTypes
 	{
 		[RequiresUnreferencedCode("From Assembly.GetTypes(): Types might be removed")]
-		get
-		{
-			if (loadedTypes is null)
-			{
-				loadedTypes = (from asb in AppDomain.CurrentDomain.GetAssemblies()
-							   where (!(asb.FullName ?? string.Empty).StartsWith("_") && !AssemblyExtensions.Excludes.Contains(asb.FullName ?? string.Empty))
-							   from t in asb.SafeGetTypes()
-							   where t.IsClass
-							   select new { t.Name, Type = t }).ToDictionaryDistinct(x => x.Name, x => x.Type);
-			}
-
-			return loadedTypes;
-		}
+		get => LazyInitializer.EnsureInitialized(ref loadedTypes, ref loadedTypesLock, IndexLoadedTypes);
 	}
-}
-
-public static class AssemblyExtensions
-{
-	public static IList<string> Excludes { get; } = new List<string>();
 
 	[RequiresUnreferencedCode("From Assembly.GetTypes(): Types might be removed")]
-	public static Type[] SafeGetTypes(this Assembly assembly)
+	private IDictionary<string, Type> IndexLoadedTypes()
 	{
-		try
+		var (ownContext, types) = RouteTypeIndex.For(typeof(RouteResolverDefault).Assembly, (assembly, error) =>
 		{
-			return assembly.GetTypes();
-		}
-		catch
-		{
-			if (assembly.FullName is not null)
-			{
-				Excludes.Add(assembly.FullName);
-			}
-			return new Type[] { };
-		}
+			if (Logger.IsEnabled(LogLevel.Warning))
+				Logger.LogWarning(error, "Auto-resolve: Types of assembly {Assembly} could not all be loaded; those that failed are not searched for implicit routes", assembly.FullName);
+		});
+
+		loadedTypesScope = ownContext == AssemblyLoadContext.Default
+			? "the default load context"
+			: $"load context '{ownContext.Name}' and the default one";
+		if (Logger.IsEnabled(LogLevel.Debug))
+			Logger.LogDebugMessage($"Auto-resolve: Indexed {types.Count} types from {loadedTypesScope}");
+
+		return types;
 	}
 }

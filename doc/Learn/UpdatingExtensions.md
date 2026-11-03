@@ -8,13 +8,12 @@ uid: Uno.Extensions.Migration
 
 ### Minimum Uno Platform version
 
-Extensions 7.4 requires **Uno Platform 6.8**. Every `*.WinUI` package declares an `Uno.WinUI` floor
-of `6.8.0-dev.46` — that is, while 6.8 is in preview, a **`6.8.0-dev` build** is required (this
-release was built against `Uno.Sdk` `6.8.0-dev.21`); once a stable 6.8.0 ships it satisfies the floor
-too. An older Uno fails at restore with a clear error rather than misbehaving at runtime:
+Extensions 7.4 requires **Uno Platform 6.7.65 or later**. Every `*.WinUI` package declares an
+`Uno.WinUI` floor of `6.7.65` (this release was built against `Uno.Sdk` `6.7.18`); Uno Platform 6.8
+satisfies it too. An older Uno fails at restore with a clear error rather than misbehaving at runtime:
 
 ```console
-error NU1605: Detected package downgrade: Uno.WinUI from 6.8.0-dev.46 to 6.7.24
+error NU1605: Detected package downgrade: Uno.WinUI from 6.7.65 to 6.6.184
 ```
 
 Update the Uno SDK version in your `global.json` — see [updating your Uno.Sdk](xref:Uno.Development.UpgradeUnoNuget):
@@ -22,8 +21,8 @@ Update the Uno SDK version in your `global.json` — see [updating your Uno.Sdk]
 ```diff
  {
    "msbuild-sdks": {
--    "Uno.Sdk": "6.7.24"
-+    "Uno.Sdk": "6.8.0-dev.21"
+-    "Uno.Sdk": "6.6.42"
++    "Uno.Sdk": "6.7.30"
    }
  }
 ```
@@ -31,8 +30,9 @@ Update the Uno SDK version in your `global.json` — see [updating your Uno.Sdk]
 For apps using [MSAL authentication](xref:Uno.Extensions.Authentication.HowToMsalAuthentication) this
 is not a formality. Interactive sign-in on Android, iOS and WebAssembly heads built with
 `UnoFeatures=SkiaRenderer` depends on the fix for
-[unoplatform/uno#20601](https://github.com/unoplatform/uno/issues/20601), which shipped in `Uno.WinUI`
-after the 6.7.x releases. Without it `WithUnoHelpers()` silently does nothing and the sign-in UI never
+[unoplatform/uno#20601](https://github.com/unoplatform/uno/issues/20601), which every `Uno.WinUI`
+release from 6.7.65 on includes (6.7 got it with
+[unoplatform/uno#24131](https://github.com/unoplatform/uno/pull/24131)). Without it `WithUnoHelpers()` silently does nothing and the sign-in UI never
 appears at all.
 
 `Microsoft.Identity.Client` also moves from 4.72.1 to 4.87.0, and `System.Text.Json` from 8.0.x to

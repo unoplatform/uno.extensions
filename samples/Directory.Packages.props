@@ -3,8 +3,8 @@
 		<SkiaSharpVersion>3.119.2</SkiaSharpVersion>
 		<SvgSkiaVersion>3.0.2</SvgSkiaVersion>
 		<WinAppSdkVersion>1.7.250909003</WinAppSdkVersion>
-		<!-- Matches what Uno.Sdk 6.8.0-dev.21 supplies; Uno.Extensions.Hosting.WinUI now requires it. -->
-		<WinAppSdkBuildToolsVersion>10.0.28000.2526</WinAppSdkBuildToolsVersion>
+		<!-- Matches what Uno.Sdk 6.7.18 supplies; Uno.Extensions.Hosting.WinUI requires it. -->
+		<WinAppSdkBuildToolsVersion>10.0.28000.2705</WinAppSdkBuildToolsVersion>
 		<MicrosoftLoggingVersion>9.0.18</MicrosoftLoggingVersion>
 		<WindowsCompatibilityVersion>8.0.15</WindowsCompatibilityVersion>
 		<MicrosoftIdentityClientVersion>4.87.0</MicrosoftIdentityClientVersion>

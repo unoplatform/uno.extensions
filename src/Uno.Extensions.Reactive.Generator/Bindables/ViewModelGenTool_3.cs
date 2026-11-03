@@ -226,7 +226,8 @@ internal partial class ViewModelGenTool_3 : ICodeGenTool
 					{members.Select(member => member.GetDeclaration()).Align(5)}
 
 					{GenerateVmMockingSeam(members).Align(5)}
-				}}");
+				}}",
+			CommandFromMethod.GetAwaiterImports(members));
 
 
 		// If type is at least internally accessible, add it to a mapping from the VM type to it's bindable counterpart to ease usage in navigation engine.

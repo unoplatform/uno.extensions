@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Equality;
+using Uno.Extensions.Reactive.Core;
+using Uno.Extensions.Reactive.Messaging;
 using Uno.Extensions.Reactive.Operators;
 using Uno.Extensions.Reactive.Testing;
 
@@ -870,5 +872,51 @@ public partial class Given_ListFeedSelection : FeedTests
 				.Changed(Changed.Selection & MessageAxes.SelectionSource)
 				.Current(Items.Some(0, 1, 2, 3, 4, 42), Error.No, Progress.Final, Selection.Items(42)))
 		);
+	}
+
+	[TestMethod]
+	public async Task When_SelectedFromList_And_SourceRefreshed_Then_SelectionKept()
+	{
+		// https://github.com/unoplatform/uno.extensions/issues/3258
+		var selection = State<int>.Empty(this).Record();
+		var list = ListFeed.Async(async _ => Enumerable.Range(0, 10).ToImmutableList());
+		var sut = ListFeedSelection<int>.Create(list, selection.Feed, "sut");
+		var result = sut.Record();
+
+		await result.WaitForMessages(1);
+		(await sut.TrySelectAsync(5, CT)).Should().BeTrue();
+		await selection.WaitForMessages(2);
+
+		(await sut.TryRefreshAsync(CT)).Should().BeTrue();
+		await result.WaitForMessages(3);
+
+		result.Last().Current.GetSelectionInfo().Should().Be(SelectionInfo.Single(5));
+		// The selection state must not get a None written back while the list reloads.
+		await selection.Should().BeAsync(r => r
+			.Message(Data.None, Error.No, Progress.Final)
+			.Message(5, Error.No, Progress.Final));
+	}
+
+	[TestMethod]
+	public async Task When_SelectedFromList_And_NextPageLoaded_Then_SelectionKept()
+	{
+		var selection = State<int>.Empty(this).Record();
+		var list = ListFeed.PaginatedAsync<int>(async (page, _) => Enumerable.Range((int)page.CurrentCount, 20).ToImmutableList());
+		var sut = ListFeedSelection<int>.Create(list, selection.Feed, "sut");
+		var result = sut.Record();
+
+		await result.WaitForMessages(1);
+		(await sut.TrySelectAsync(5, CT)).Should().BeTrue();
+		await selection.WaitForMessages(2);
+
+		sut.Requests.RequestMoreItems(20);
+		await result.WaitForMessages(3);
+
+		result.Last().Current.Data.SomeOrDefault().Should().HaveCount(40);
+		result.Last().Current.GetSelectionInfo().Should().Be(SelectionInfo.Single(5));
+		// The selection state must not get a None written back while the list reloads.
+		await selection.Should().BeAsync(r => r
+			.Message(Data.None, Error.No, Progress.Final)
+			.Message(5, Error.No, Progress.Final));
 	}
 }

@@ -39,8 +39,9 @@ partial class BindableViewModelBase
 		{
 			if (_instances is null)
 			{
-				if (_untypedLog.IsEnabled(LogLevel.Information))
-					_untypedLog.Info("Hot reload has been disabled.");
+				// A model has been updated but hot-reload is not enabled: the update will have no effect, so do not stay silent.
+				if (_untypedLog.IsEnabled(LogLevel.Warning))
+					_untypedLog.Warn($"Hot reload is disabled for MVUX, the update of {originalModel} will not be applied.");
 
 				return;
 			}

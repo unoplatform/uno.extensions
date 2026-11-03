@@ -285,26 +285,39 @@ internal record BindableGenerationContext(
 				return isAwaitable;
 			}
 
-			isAwaitable = type.GetMembers(WellKnownMemberNames.GetAwaiter).Any(IsInstanceGetAwaiter)
-				|| Context.Compilation.GetSymbolsWithName(WellKnownMemberNames.GetAwaiter, SymbolFilter.Member, Context.CancellationToken).Any(IsExtensionGetAwaiter);
+			isAwaitable = HasInstanceGetAwaiter(type) || FindExtensionGetAwaiter(type) is not null;
 
 			_isAwaitableCache[type] = isAwaitable;
 
 			return isAwaitable;
 		}
-
-		static bool IsInstanceGetAwaiter(ISymbol symbol)
-			=> symbol is IMethodSymbol { IsStatic: false, Parameters.Length: 0 } method
-				&& IsAwaiter(method.ReturnType);
-
-		bool IsExtensionGetAwaiter(ISymbol symbol)
-			=> symbol is IMethodSymbol { IsStatic: true, Parameters.Length: 1 } method
-				&& SymbolEqualityComparer.Default.Equals(method.Parameters[0].Type, type)
-				&& IsAwaiter(method.ReturnType);
-
-		static bool IsAwaiter(ITypeSymbol returnType)
-			=> returnType.AllInterfaces.Any(intf => intf.ToString().Equals(_notifyCompletion));
 	}
+
+	/// <summary>
+	/// Gets the static class declaring the extension `GetAwaiter` that makes the given type awaitable, if the type is awaitable only through such an extension.
+	/// Generated code that statically awaits that type must import it.
+	/// </summary>
+	public INamedTypeSymbol? GetAwaiterExtensionClass(ITypeSymbol type)
+		=> type.SpecialType == SpecialType.System_Void
+			|| type.ToString() is var typeStr && (typeStr.StartsWith(_task, StringComparison.Ordinal) || typeStr.StartsWith(_valueTask, StringComparison.Ordinal))
+			|| HasInstanceGetAwaiter(type)
+				? null
+				: FindExtensionGetAwaiter(type)?.ContainingType;
+
+	private static bool HasInstanceGetAwaiter(ITypeSymbol type)
+		=> type.GetMembers(WellKnownMemberNames.GetAwaiter).Any(symbol => symbol is IMethodSymbol { IsStatic: false, Parameters.Length: 0 } method && IsAwaiter(method.ReturnType));
+
+	private IMethodSymbol? FindExtensionGetAwaiter(ITypeSymbol type)
+		=> Context
+			.Compilation
+			.GetSymbolsWithName(WellKnownMemberNames.GetAwaiter, SymbolFilter.Member, Context.CancellationToken)
+			.OfType<IMethodSymbol>()
+			.FirstOrDefault(method => method is { IsStatic: true, Parameters.Length: 1 }
+				&& SymbolEqualityComparer.Default.Equals(method.Parameters[0].Type, type)
+				&& IsAwaiter(method.ReturnType));
+
+	private static bool IsAwaiter(ITypeSymbol returnType)
+		=> returnType.AllInterfaces.Any(intf => intf.ToString().Equals(_notifyCompletion));
 
 	public IMethodSymbol? GetDefaultCtor(INamedTypeSymbol type)
 	{
