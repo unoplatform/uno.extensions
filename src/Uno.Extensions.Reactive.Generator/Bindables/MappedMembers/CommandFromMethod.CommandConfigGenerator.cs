@@ -87,12 +87,12 @@ internal partial record CommandFromMethod
 
 							{DeconstructParameters!("reactive_arguments", "reactive_ct").Align(7)}
 
-							{GetAwait()}{N.Ctor.Model}.{Owner.Method.Name}({Owner.Method.Parameters.Select(p => p.Name).JoinBy(", ")});".Align(0));
+							{GetInvoke(Owner.Method.Parameters.Select(p => p.Name).JoinBy(", "))};".Align(0));
 						sb.AppendLine();
 					}
 					else
 					{
-						sb.AppendLine($@"{GetAwait()}{N.Ctor.Model}.{Owner.Method.Name}({Owner.Method.Parameters.Select(_ => "reactive_ct").JoinBy(", ")});");
+						sb.AppendLine($@"{GetInvoke(Owner.Method.Parameters.Select(_ => "reactive_ct").JoinBy(", "))};");
 						sb.AppendLine();
 					}
 				}
@@ -101,9 +101,20 @@ internal partial record CommandFromMethod
 			return sb.ToString();
 		}
 
-		private string GetAwait()
-			=> Owner.Context.IsAwaitable(Owner.Method)
-				? "await "
-				: string.Empty;
+		private string GetInvoke(string arguments)
+		{
+			var invoke = $"{N.Ctor.Model}.{Owner.Method.Name}({arguments})";
+			if (!Owner.Context.IsAwaitable(Owner.Method))
+			{
+				return invoke;
+			}
+
+			// On the updated-model (Hot Reload) path the model is `dynamic`: cast the call to its declared type so we don't await
+			// a dynamic value, which crashes Roslyn EnC on later edits (https://github.com/dotnet/roslyn/issues/86045).
+			// Harmless where the model is statically typed. Remove once Roslyn is fixed.
+			return Owner.Method.ReturnsVoid // `async void`, no type to cast to (kept as is)
+				? $"await {invoke}"
+				: $"await (({Owner.Method.ReturnType.ToFullString()}){invoke})";
+		}
 	}
 }
