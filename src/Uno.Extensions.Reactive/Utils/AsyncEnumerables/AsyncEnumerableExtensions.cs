@@ -8,16 +8,6 @@ namespace Uno.Extensions.Reactive.Utils;
 
 internal static class AsyncEnumerableExtensions
 {
-	public static async ValueTask<TSource> FirstOrDefaultAsync<TSource>(this IAsyncEnumerable<TSource> source, TSource defaultValue, CancellationToken ct)
-	{
-		await foreach (var value in source.WithCancellation(ct).ConfigureAwait(false))
-		{
-			return value;
-		}
-
-		return defaultValue;
-	}
-
 	public static Task ForEachAwaitWithCancellationAsync<TSource>(this IAsyncEnumerable<TSource> source, AsyncAction<TSource> asyncAction, ConcurrencyMode mode, CancellationToken ct)
 		=> ForEachAwaitWithCancellationAsync(source, asyncAction, mode, continueOnError: false, ct);
 

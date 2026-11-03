@@ -106,7 +106,7 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 			_isParentReady = owner._waitForParent is null;
 
 			// mode=AbortPrevious => When we receive a new update, we can abort the update and start a new one
-			owner._updates.ForEachAsync(OnUpdateReceived, ct);
+			_ = owner._updates.ForEachAsync(OnUpdateReceived, ct);
 			context
 				.GetOrCreateSource(owner._source)
 				.ForEachAsync(OnParentUpdated, ct)
