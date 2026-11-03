@@ -417,9 +417,10 @@ public class Given_FeedsMockGenerator
 	}
 
 	[TestMethod]
-	public void When_MemberIsDeclaredBothInputAndDerived_Then_MockTreatsItAsDerivedLikeTheSourcePath()
+	public void When_MemberIsDeclaredBothInputAndDerived_Then_MockRequiresItLikeTheSourcePath()
 	{
-		// Hand-declared attributes can mix both kinds; the source-path classification ranks derived first.
+		// Hand-declared attributes can mix both kinds. Left to its real logic, the member would read the null-injected
+		// service, so like the source-path classification the parameter wins.
 		var (sources, diagnostics) = Run(Preamble + """
 			[Model(typeof(ItemsViewModel))]
 			[FeedDependency("Items", OnParameter = "service")]
@@ -443,7 +444,61 @@ public class Given_FeedsMockGenerator
 		diagnostics.Should().BeEmpty();
 		var mock = sources.Should().ContainSingle().Subject;
 		Occurrences(mock, " Count { get; init; }").Should().Be(1);
-		mock.Should().NotContain("required global::Uno.Extensions.Reactive.IFeed<int> Count");
+		mock.Should().Contain("public required global::Uno.Extensions.Reactive.IFeed<int> Count { get; init; }");
+		mock.Should().Contain("Count = global::Uno.HotTesting.Reactive.FeedMock.Empty<int>()");
+	}
+
+	[TestMethod]
+	public void When_SearchReadsAServiceAndAQueryState_Then_MockRequiresIt()
+	{
+		var (sources, diagnostics) = Run("""
+			using System.Collections.Immutable;
+			using System.Threading;
+			using System.Threading.Tasks;
+			using Uno.Extensions.Reactive;
+
+			namespace App;
+
+			public interface ISearchService { ValueTask<IImmutableList<string>> Search(string query, CancellationToken ct); }
+
+			public partial record SearchModel(ISearchService Service)
+			{
+				public IState<string> Query => State<string>.Value(this, () => "");
+				public IListFeed<string> Results => Query.SelectAsync(async (query, ct) => await Service.Search(query ?? "", ct)).AsListFeed();
+			}
+			""");
+
+		diagnostics.Should().BeEmpty();
+		var mock = sources.Should().ContainSingle().Subject;
+		mock.Should().Contain("public required global::Uno.Extensions.Reactive.IListFeed<string> Results { get; init; }");
+		mock.Should().Contain("Results = global::Uno.HotTesting.Reactive.ListFeedMock.Empty<string>()");
+		mock.Should().NotContain(" Query { get; init; }");
+	}
+
+	[TestMethod]
+	public void When_ListWithASelectionReadsAService_Then_MockRequiresIt()
+	{
+		var (sources, diagnostics) = Run("""
+			using System.Collections.Immutable;
+			using System.Threading;
+			using System.Threading.Tasks;
+			using Uno.Extensions.Reactive;
+
+			namespace App;
+
+			public interface ITaskService { ValueTask<IImmutableList<string>> GetTasks(CancellationToken ct); }
+
+			public partial record TaskPickerModel(ITaskService Service)
+			{
+				public IState<string> SelectedTask => State<string>.Empty(this);
+				public IListFeed<string> Tasks => ListFeed.Async(async ct => await Service.GetTasks(ct)).Selection(SelectedTask);
+			}
+			""");
+
+		diagnostics.Should().BeEmpty();
+		var mock = sources.Should().ContainSingle().Subject;
+		mock.Should().Contain("public required global::Uno.Extensions.Reactive.IListFeed<string> Tasks { get; init; }");
+		mock.Should().Contain("Tasks = global::Uno.HotTesting.Reactive.ListFeedMock.Empty<string>()");
 	}
 
 	private static int Occurrences(string text, string value)
