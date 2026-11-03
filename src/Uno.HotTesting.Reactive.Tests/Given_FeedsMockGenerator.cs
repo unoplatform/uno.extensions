@@ -476,6 +476,33 @@ public class Given_FeedsMockGenerator
 	}
 
 	[TestMethod]
+	public void When_DerivedFeedHasALambdaParameterNamedLikeACtorParameter_Then_ItStaysOptional()
+	{
+		// The lambda's `tag` is not the constructor's: Count reads no service.
+		var (sources, diagnostics) = Run("""
+			using System.Collections.Immutable;
+			using System.Linq;
+			using System.Threading;
+			using System.Threading.Tasks;
+			using Uno.Extensions.Reactive;
+
+			namespace App;
+
+			public interface ITagService { ValueTask<IImmutableList<string>> GetTags(CancellationToken ct); }
+
+			public partial record TagModel(ITagService Service, string tag)
+			{
+				public IListFeed<string> Tags => ListFeed.Async(async ct => await Service.GetTags(ct));
+				public IFeed<int> Count => Tags.AsFeed().Select(tags => tags.Count(tag => tag.Length > 0));
+			}
+			""");
+
+		diagnostics.Should().BeEmpty();
+		var mock = sources.Should().ContainSingle().Subject;
+		mock.Should().Contain("public global::Uno.Extensions.Reactive.IFeed<int>? Count { get; init; }");
+	}
+
+	[TestMethod]
 	public void When_ListWithASelectionReadsAService_Then_MockRequiresIt()
 	{
 		var (sources, diagnostics) = Run("""
