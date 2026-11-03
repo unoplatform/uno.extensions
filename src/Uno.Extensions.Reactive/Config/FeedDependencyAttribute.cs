@@ -17,6 +17,8 @@ namespace Uno.Extensions.Reactive.Config;
 /// <item><description><see cref="OnFeed"/> set → the member is <em>derived</em> from another feed member
 /// (never required in a mock; recomputes over the swapped inputs).</description></item>
 /// <item><description>neither set → the member is <em>independent</em>.</description></item>
+/// <item><description>a member named with <see cref="OnParameter"/> on one instance and <see cref="OnFeed"/> on another
+/// is a <em>service-dependent input</em>: left to its real logic it would read the null-injected service.</description></item>
 /// </list>
 /// </remarks>
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = true)]
