@@ -70,6 +70,18 @@ internal partial record CommandFromMethod : IMappedMember
 
 	public BindableGenerationContext Context { get; }
 
+	/// <summary>
+	/// Gets the static classes the generated file must import (`using static`) to await the commands' methods,
+	/// i.e. the ones declaring an extension `GetAwaiter` for a return type that is awaitable only through it.
+	/// </summary>
+	public static IEnumerable<string> GetAwaiterImports(IEnumerable<IMappedMember> members)
+		=> members
+			.OfType<CommandFromMethod>()
+			.Where(command => command.Context.IsAwaitable(command.Method)) // Cached, avoids looking up all symbols for non-awaitable commands
+			.Select(command => command.Context.GetAwaiterExtensionClass(command.Method.ReturnType)?.ToFullString())
+			.OfType<string>()
+			.Distinct();
+
 	/// <inheritdoc />
 	public string? GetBackingField()
 		=> null;
