@@ -801,14 +801,23 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 				// deliver the missing type — the retry path will re-issue the
 				// navigation once children attach. In that state, demote the warn
 				// to Debug so the bundle doesn't fill up with the same race-symptom
-				// across every HR delta. Real misconfigurations (no pending retry,
-				// no HR in flight) still surface at Warning.
+				// across every HR delta. An empty route is the normal case for a
+				// page without nested regions (the route was fully consumed), so it
+				// is not a misconfiguration either. Real misconfigurations (unconsumed
+				// route, no pending retry) still surface at Warning.
 				var inPendingRetry = (Region.Navigator() as ControlNavigator)?.HasPendingFailedRequest ?? false;
 				if (inPendingRetry)
 				{
 					if (Logger.IsEnabled(LogLevel.Debug))
 					{
 						Logger.LogDebugMessage($"Region '{Region.Name}' has no children to forward request to (route: '{request.Route.Base}', view loaded: {Region.View?.IsLoaded}) — quiet because a pending HR retry is in flight on this region");
+					}
+				}
+				else if (request.Route.IsEmpty())
+				{
+					if (Logger.IsEnabled(LogLevel.Debug))
+					{
+						Logger.LogDebugMessage($"Region '{Region.Name}' has no children and the route is fully consumed — nothing to forward");
 					}
 				}
 				else if (Logger.IsEnabled(LogLevel.Warning))

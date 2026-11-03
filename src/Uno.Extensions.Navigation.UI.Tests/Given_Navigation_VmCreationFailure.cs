@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,34 +37,6 @@ public class Given_Navigation_VmCreationFailure
 		public ThrowingCtorViewModel()
 		{
 			throw new InvalidOperationException(FailureMessage);
-		}
-	}
-
-	private sealed class CapturingLoggerProvider : ILoggerProvider
-	{
-		public ConcurrentQueue<(LogLevel Level, string Message, Exception? Exception)> Entries { get; } = new();
-
-		public ILogger CreateLogger(string categoryName) => new CapturingLogger(this);
-
-		public void Dispose()
-		{
-		}
-
-		private sealed class CapturingLogger : ILogger
-		{
-			private readonly CapturingLoggerProvider _owner;
-
-			public CapturingLogger(CapturingLoggerProvider owner)
-			{
-				_owner = owner;
-			}
-
-			public IDisposable? BeginScope<TState>(TState state) where TState : notnull => default;
-
-			public bool IsEnabled(LogLevel logLevel) => true;
-
-			public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
-				=> _owner.Entries.Enqueue((logLevel, formatter(state, exception), exception));
 		}
 	}
 
