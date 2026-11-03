@@ -312,6 +312,20 @@ built states and a fire-and-forget dispose. Limits: a state built over another m
 subscription, so mocking the state mocks that feed too; hot reload still swaps a state at the context's
 subscription to the state. Fixture: `TasksModel`. Tests: `Given_GeneratedMock` and `Given_SingleProjectMock`.
 
+## v20 — `Create` takes the parameters the view-model's construction reads (R1)
+
+A feed written as a method group (`ListFeed.Async(Service.GetItems)`) reads its service when the feed is built, and
+the view-model's constructor builds every feed, so `Create` threw a `NullReferenceException` before any mock was
+applied. R1 is now built. The analysis counts a constructor parameter dereferenced outside a lambda in a feed body
+as eager, next to the constructor body, and a receiver that is the member a parameter feeds (a positional record's
+property, an assigned field) counts as that parameter. The mocking generator reads `[CtorDependency(Eager = true)]`
+on the metadata path and runs the analysis on the source path, and `Create` takes those parameters from its caller:
+`Create(service)` and `Create(service, mock)`. A model with no eager parameter keeps `Create()` and `Create(mock)`
+unchanged. The messenger of v18 stays the one stopgap; making it an optional argument is still to do.
+Consumer-visible: a model whose construction dereferences a service loses `Create()` and `Create(mock)`, which threw,
+for the overloads that take the service. Fixture: `ShelfModel`. Tests: `Given_GeneratedMock` and
+`Given_FeedsMockGenerator`.
+
 ---
 
 ## Final decision register
