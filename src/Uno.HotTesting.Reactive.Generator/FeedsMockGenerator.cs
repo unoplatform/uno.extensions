@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Uno.Extensions.Generators;
 
 namespace Uno.HotTesting.Reactive.Generator;
@@ -30,6 +31,7 @@ namespace Uno.HotTesting.Reactive.Generator;
 public sealed class FeedsMockGenerator : ISourceGenerator
 {
 	private const string FeedDependencyAttribute = "Uno.Extensions.Reactive.Config.FeedDependencyAttribute";
+	private const string CtorDependencyAttribute = "Uno.Extensions.Reactive.Config.CtorDependencyAttribute";
 	private const string ModelAttribute = "Uno.Extensions.Reactive.Bindings.ModelAttribute";
 	private const string EnableFeedMockingAttribute = "Uno.Extensions.Reactive.Config.EnableFeedMockingAttribute";
 	private const string ReactiveAssemblyName = "Uno.Extensions.Reactive";
@@ -79,6 +81,7 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 	{
 		var compilation = context.Compilation;
 		var feedDep = compilation.GetTypeByMetadataName(FeedDependencyAttribute);
+		var ctorDep = compilation.GetTypeByMetadataName(CtorDependencyAttribute);
 		var modelAttr = compilation.GetTypeByMetadataName(ModelAttribute);
 		if (feedDep is null || modelAttr is null)
 		{
@@ -112,7 +115,7 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 				continue;
 			}
 
-			if (DescribeFromMetadata(model, feedDep, modelAttr, reactiveBindable) is { } described)
+			if (DescribeFromMetadata(model, feedDep, ctorDep, modelAttr, reactiveBindable) is { } described)
 			{
 				AddSource(context, described, messenger, emitted, diagnosed, hintNames);
 			}
@@ -373,6 +376,12 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 		/// </summary>
 		public IMethodSymbol? Constructor;
 
+		/// <summary>
+		/// The constructor parameters the view-model's construction dereferences (R1): <c>Create</c> takes them from
+		/// its caller, since a null-injected one would throw before any mock is applied.
+		/// </summary>
+		public readonly HashSet<string> EagerParameters = new(StringComparer.Ordinal);
+
 		public readonly List<FeedMember> Inputs = new();
 		public readonly List<FeedMember> Derived = new();
 	}
@@ -380,6 +389,7 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 	private static ModelMock? DescribeFromMetadata(
 		INamedTypeSymbol model,
 		INamedTypeSymbol feedDep,
+		INamedTypeSymbol? ctorDep,
 		INamedTypeSymbol modelAttr,
 		INamedTypeSymbol? reactiveBindable)
 	{
@@ -401,6 +411,7 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 			Accessibility = vm.DeclaredAccessibility == Microsoft.CodeAnalysis.Accessibility.Public ? "public" : "internal",
 			Constructor = PickConstructor(vm.Constructors, reactiveBindable),
 		};
+		described.EagerParameters.UnionWith(ReadEagerParameters(model, ctorDep));
 
 		foreach (var (memberName, isDerived) in ReadFeedDependencies(model, feedDep))
 		{
@@ -457,6 +468,25 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 		return members;
 	}
 
+	/// <summary>The constructor parameters the model's <c>[CtorDependency(Eager = true)]</c> attributes name.</summary>
+	private static IEnumerable<string> ReadEagerParameters(INamedTypeSymbol model, INamedTypeSymbol? ctorDep)
+	{
+		if (ctorDep is null)
+		{
+			yield break;
+		}
+
+		foreach (var attr in model.GetAttributes().Where(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, ctorDep)))
+		{
+			if (attr.ConstructorArguments is { Length: 1 } args
+				&& args[0].Value is string parameter
+				&& attr.NamedArguments.Any(n => n.Key == "Eager" && n.Value.Value is true))
+			{
+				yield return parameter;
+			}
+		}
+	}
+
 	private static ModelMock? DescribeFromSource(INamedTypeSymbol model, FeedDependencyAnalysis analysis, INamedTypeSymbol? reactiveBindable)
 	{
 		var feedMembers = analysis.GetFeedMembers(model);
@@ -485,6 +515,7 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 		var feedMemberNames = new HashSet<string>(feedMembers.Select(m => m.Name), StringComparer.Ordinal);
 		var ctorParamNames = analysis.GetCtorParameterNames(model);
 		var fieldToParam = analysis.BuildFieldToParamMap(model, ctorParamNames);
+		described.EagerParameters.UnionWith(analysis.FindEagerCtorParameters(model, feedMembers, ctorParamNames, fieldToParam));
 
 		foreach (var member in feedMembers)
 		{
@@ -602,7 +633,16 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 			return null;
 		}
 
-		var ctorArguments = string.Join(", ", ctor.Parameters.Select(p => $"{CtorArgument(p.Type, messenger)} /* {p.Name} */"));
+		var createParameters = ctor.Parameters.Where(p => IsTakenFromCaller(p, described, messenger)).ToList();
+		var createParameterNames = new HashSet<string>(createParameters.Select(p => p.Name), StringComparer.Ordinal);
+		var parameters = string.Join(", ", createParameters.Select(p => $"{FullName(p.Type)} {Identifier(p.Name)}"));
+		var leadingParameters = createParameters.Count == 0 ? "" : parameters + ", ";
+		var leadingArguments = string.Concat(createParameters.Select(p => Identifier(p.Name) + ", "));
+		var mockParameter = Unused("mock", createParameterNames);
+		var vmLocal = Unused("vm", createParameterNames);
+		var ctorArguments = string.Join(", ", ctor.Parameters.Select(p => createParameterNames.Contains(p.Name)
+			? Identifier(p.Name)
+			: $"{CtorArgument(p.Type, messenger)} /* {p.Name} */"));
 		var vmFull = described.ViewModelFullName;
 		var mockName = described.MockName;
 		var vmMockName = described.VmMockName;
@@ -654,18 +694,18 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 
 			{{accessibility}} static partial class {{vmMockName}}
 			{
-				public static {{vmFull}} Create() => Create({{mockName}}.Empty);
+				public static {{vmFull}} Create({{parameters}}) => Create({{leadingArguments}}{{mockName}}.Empty);
 
-				public static {{vmFull}} Create({{mockName}} mock)
+				public static {{vmFull}} Create({{leadingParameters}}{{mockName}} {{mockParameter}})
 				{
 					// The activation scope is only needed while the VM/Model context is created:
 					// the mockable bit is captured on that context instance, so later SetMock calls
 					// (and lazy first subscriptions) still swap even after the scope is disposed.
 					using (global::Uno.HotTesting.Reactive.MockingService.Enable())
 					{
-						var vm = new {{vmFull}}({{ctorArguments}});
-						vm.SetMock(mock);
-						return vm;
+						var {{vmLocal}} = new {{vmFull}}({{ctorArguments}});
+						{{vmLocal}}.SetMock({{mockParameter}});
+						return {{vmLocal}};
 					}
 				}
 
@@ -685,13 +725,36 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 	/// Both are typed: a bare <c>default!</c> cannot pick between constructors of equal arity (CS0121).
 	/// </summary>
 	/// <remarks>
-	/// The messenger is a stopgap until spec 013 R1, which has <c>Create</c> require every eagerly used parameter:
-	/// do not add other known types here.
+	/// The messenger is the one stopgap left from before spec 013 R1: <c>Create</c> takes every other eagerly used
+	/// parameter from its caller. Do not add other known types here.
 	/// </remarks>
 	private static string CtorArgument(ITypeSymbol type, INamedTypeSymbol? messenger)
 		=> SymbolEqualityComparer.Default.Equals(type, messenger)
 			? $"({FullName(type)})new {MessengerImplementation}()"
 			: $"default({FullName(type)})!";
+
+	/// <summary>
+	/// Whether <c>Create</c> takes a constructor parameter from its caller rather than injecting it (R1): the
+	/// view-model's construction dereferences it. A messenger keeps its stopgap (<see cref="CtorArgument"/>).
+	/// </summary>
+	private static bool IsTakenFromCaller(IParameterSymbol parameter, ModelMock described, INamedTypeSymbol? messenger)
+		=> described.EagerParameters.Contains(parameter.Name)
+			&& !SymbolEqualityComparer.Default.Equals(parameter.Type, messenger);
+
+	/// <summary>A parameter name as C# source, escaped when it is a keyword (<c>@event</c>).</summary>
+	private static string Identifier(string name)
+		=> SyntaxFacts.GetKeywordKind(name) == SyntaxKind.None ? name : "@" + name;
+
+	/// <summary>A name for one of <c>Create</c>'s own parameters or locals that no parameter it forwards already uses.</summary>
+	private static string Unused(string name, HashSet<string> taken)
+	{
+		while (taken.Contains(name))
+		{
+			name = "_" + name;
+		}
+
+		return name;
+	}
 
 	/// <summary>
 	/// Resolves the feed interface a member is mocked through. It is the interface, not the member's own

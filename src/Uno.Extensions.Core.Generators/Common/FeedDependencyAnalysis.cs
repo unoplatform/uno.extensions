@@ -280,10 +280,16 @@ internal sealed class FeedDependencyAnalysis
 
 	/// <summary>
 	/// Constructor instrumentation (R1): finds constructor parameters that are dereferenced eagerly
-	/// (member access / invocation receiver) in a constructor body, excluding references nested in a
-	/// lambda / anonymous method / local function, which are deferred rather than eager.
+	/// (member access / invocation receiver), directly or through the member they feed, in a constructor body
+	/// or in a feed member's body, excluding references nested in a lambda / anonymous method / local function,
+	/// which are deferred rather than eager. Feed bodies count because the generated view-model's constructor
+	/// builds every feed: a method group such as <c>ListFeed.Async(Service.GetItems)</c> reads its service then.
 	/// </summary>
-	public HashSet<string> FindEagerCtorParameters(INamedTypeSymbol model, HashSet<string> ctorParamNames)
+	public HashSet<string> FindEagerCtorParameters(
+		INamedTypeSymbol model,
+		IEnumerable<ISymbol> feedMembers,
+		HashSet<string> ctorParamNames,
+		Dictionary<string, string> fieldToParam)
 	{
 		var eager = new HashSet<string>(StringComparer.Ordinal);
 
@@ -298,16 +304,27 @@ internal sealed class FeedDependencyAnalysis
 					continue;
 				}
 
-				var semanticModel = GetSemanticModel(node.SyntaxTree);
-				InspectEager(body, semanticModel, ctorParamNames, eager);
+				InspectEager(body, model, ctorParamNames, fieldToParam, eager);
 			}
+		}
+
+		foreach (var body in feedMembers.SelectMany(GetMemberBodies))
+		{
+			InspectEager(body, model, ctorParamNames, fieldToParam, eager);
 		}
 
 		return eager;
 	}
 
-	private static void InspectEager(SyntaxNode body, SemanticModel semanticModel, HashSet<string> ctorParamNames, HashSet<string> eager)
+	private void InspectEager(
+		SyntaxNode body,
+		INamedTypeSymbol model,
+		HashSet<string> ctorParamNames,
+		Dictionary<string, string> fieldToParam,
+		HashSet<string> eager)
 	{
+		var semanticModel = GetSemanticModel(body.SyntaxTree);
+
 		// The receiver of a member-access / element-access is an eager dereference.
 		var receivers = body
 			.DescendantNodesAndSelf()
@@ -330,11 +347,30 @@ internal sealed class FeedDependencyAnalysis
 				continue; // lambda/anonymous/local-function body → not eager at construction
 			}
 
-			if (semanticModel.GetSymbolInfo(id).Symbol is IParameterSymbol param && ctorParamNames.Contains(param.Name))
+			if (CtorParameterBehind(semanticModel.GetSymbolInfo(id).Symbol, model, ctorParamNames, fieldToParam) is { } parameter)
 			{
-				eager.Add(param.Name);
+				eager.Add(parameter);
 			}
 		}
+	}
+
+	/// <summary>The constructor parameter a symbol is, or the one the model member it names is fed by.</summary>
+	private static string? CtorParameterBehind(
+		ISymbol? symbol,
+		INamedTypeSymbol model,
+		HashSet<string> ctorParamNames,
+		Dictionary<string, string> fieldToParam)
+	{
+		if (symbol is IParameterSymbol parameter)
+		{
+			return ctorParamNames.Contains(parameter.Name) ? parameter.Name : null;
+		}
+
+		return symbol is IFieldSymbol or IPropertySymbol
+			&& SymbolEqualityComparer.Default.Equals(symbol.ContainingType, model)
+			&& fieldToParam.TryGetValue(symbol.Name, out var parameterName)
+				? parameterName
+				: null;
 	}
 
 	private static bool IsInsideDeferredBoundary(SyntaxNode node, SyntaxNode stopAt)

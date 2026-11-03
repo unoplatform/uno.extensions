@@ -73,7 +73,7 @@ internal partial class ViewModelGenTool_3
 		}
 
 		// 2) Ctor instrumentation — eager parameter dereference (R1).
-		foreach (var parameter in analysis.FindEagerCtorParameters(model, ctorParamNames).OrderBy(p => p, StringComparer.Ordinal))
+		foreach (var parameter in analysis.FindEagerCtorParameters(model, feedMembers, ctorParamNames, fieldToParam).OrderBy(p => p, StringComparer.Ordinal))
 		{
 			sb.Append($"\r\n[{NS.Config}.CtorDependency(\"{parameter}\", Eager = true)]");
 		}
