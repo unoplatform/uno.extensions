@@ -59,7 +59,7 @@ Identity risk (R6): lambdas capturing locals/params produce fresh delegate targe
 **a) Dependency analysis** (Roslyn, source available):
 
 - per feed/command member: walk initializer/getter body; **lambda/anonymous/local-function bodies = deferred boundary**; eager remainder binding to a ctor param (or param-assigned field) → `ServiceDependent(param)`; reference to another feed member → `DerivedFrom(member)`; else `Independent`.
-- **ctor instrumentation**: walk ctor bodies (incl. field/property initializers, primary-ctor captures used eagerly) and the eager remainder of every feed body, which the view-model's constructor builds; any eager service dereference, directly or through the member the parameter feeds → the ctor is **unsafe under null-inject for that parameter**.
+- **ctor instrumentation**: walk ctor bodies and the eager remainder of every feed body, a feed's field/property initializer included, since the view-model's constructor builds every feed; any eager service dereference, directly or through the member the parameter feeds (seen through `this.`, parentheses, `!` and casts) → the ctor is **unsafe under null-inject for that parameter**. Not walked: constructor initializers (`: this(...)`) and the initializers of other members; a hand-declared `[CtorDependency(Eager = true)]` covers them.
 
 **b) Emitted metadata attributes** (defined in core so they survive as metadata; also **hand-declarable** on the Model — explicit declarations override/merge with analysis):
 

@@ -153,7 +153,7 @@ Given this model:
 public partial record RecipeModel(IRecipeService Service)
 {
     // service-dependent input
-    public IListFeed<Step> Steps => ListFeed.Async(async ct => await Service.GetSteps(ct));
+    public IListFeed<Step> Steps => ListFeed.Async(ct => Service.GetSteps(ct));
 
     // derived — recomputes over whatever Steps emits
     public IFeed<int> StepsCount => Steps.Select(steps => steps.Count);
