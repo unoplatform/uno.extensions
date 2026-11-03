@@ -394,7 +394,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs args)
 Differences vs local check:
 
 - we used `AddCustom<IDummyJsonEndpoint>` to get the API instance directly,
-- we placed the token back into credentials. ([Uno Platform][1])
+- we return a new dictionary holding only the token, never `credentials`: whatever `Login` returns is persisted, so returning `credentials` would store the password. ([Uno Platform][1])
 
 **6. Update the login viewmodel to send username + password**
 
@@ -460,14 +460,14 @@ public class MainViewModel
 
 **Step-by-step authentication implementation:**
 
-1. **Add features:** `Authentication` to `<UnoFeatures>` in .csproj (+ `Http` if using backend)
+1. **Add features:** `Authentication` to `<UnoFeatures>` in .csproj (+ `HttpRefit` if using a Refit backend)
 2. **Register:** Call `UseAuthentication(...)` with `AddCustom(...)` or `AddCustom<TService>(...)` to configure authentication logic
 3. **Inject:** Add `IAuthenticationService` parameter to ViewModel constructors (framework provides this)
 4. **UI:** TextBoxes + "Login" button → call `_auth.LoginAsync(dispatcher, credentials, ct)` on the injected service
 5. **Post-login:** Navigate to protected viewmodel after successful `LoginAsync`
 6. **Startup:** Call `_auth.RefreshAsync(ct)` in ShellViewModel to auto-sign-in with stored tokens
 7. **Logout:** Button → call `_auth.LogoutAsync(dispatcher, ct)`
-8. **Backend (optional):** Add Refit client, configure base URL in appsettings.json, call API in `AddCustom<TService>` login callback, store returned token in credentials dictionary
+8. **Backend (optional):** Add Refit client, configure base URL in appsettings.json, call API in `AddCustom<TService>` login callback, return a new dictionary holding only the returned token (never the credentials, which would store the password)
 
 All parts are independent and can be shown to an LLM as separate chunks. ([Uno Platform][1])
 
