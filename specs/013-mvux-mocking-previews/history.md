@@ -317,14 +317,17 @@ subscription to the state. Fixture: `TasksModel`. Tests: `Given_GeneratedMock` a
 A feed written as a method group (`ListFeed.Async(Service.GetItems)`) reads its service when the feed is built, and
 the view-model's constructor builds every feed, so `Create` threw a `NullReferenceException` before any mock was
 applied. R1 is now built. The analysis counts a constructor parameter dereferenced outside a lambda in a feed body
-as eager, next to the constructor body, and a receiver that is the member a parameter feeds (a positional record's
-property, an assigned field) counts as that parameter. The mocking generator reads `[CtorDependency(Eager = true)]`
-on the metadata path and runs the analysis on the source path, and `Create` takes those parameters from its caller:
-`Create(service)` and `Create(service, mock)`. A model with no eager parameter keeps `Create()` and `Create(mock)`
-unchanged. The messenger of v18 stays the one stopgap; making it an optional argument is still to do.
-Consumer-visible: a model whose construction dereferences a service loses `Create()` and `Create(mock)`, which threw,
-for the overloads that take the service. Fixture: `ShelfModel`. Tests: `Given_GeneratedMock` and
-`Given_FeedsMockGenerator`.
+as eager, next to the constructor body, a feed's property initializer included. A receiver that is the member a
+parameter feeds (a positional record's property, an assigned field, an expression-bodied constructor's assignment
+too) counts as that parameter, seen through `this.`, parentheses, `!` and casts. The mocking generator reads
+`[CtorDependency(Eager = true)]`, hand-declared ones included, and on the source path also runs the analysis;
+`Create` takes those parameters from its caller: `Create(service)` and `Create(service, mock)`. A model with no eager
+parameter keeps `Create()` and `Create(mock)` unchanged. Since `Create` can always take what it needs, no model is
+left unconstructible, so R1's diagnostic has no case to report. The messenger of v18 stays the one stopgap; making it
+an optional argument is still to do. Consumer-visible: a model whose construction dereferences a service loses
+`Create()` and `Create(mock)`, which threw, for the overloads that take the service. On the metadata path the change
+reaches a model once its assembly is rebuilt with this version of the MVUX generator. Fixture: `ShelfModel`. Tests:
+`Given_GeneratedMock` and `Given_FeedsMockGenerator`.
 
 ---
 
