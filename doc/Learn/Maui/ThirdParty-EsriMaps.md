@@ -12,7 +12,7 @@ An existing sample app that showcases the controls is available [here](https://g
 > [!NOTE]
 > For this sample you don't need to have a license, because it's just a demo and for development purposes.
 >
-> Esri ArcGIS Maps SDK for .NET is currently only compatible with Windows, Android, iOS, and Mac Catalyst when used with Uno Platform at the moment.
+> Esri ArcGIS Maps SDK for .NET is currently only compatible with Windows, Android, and iOS when used with Uno Platform at the moment.
 
 ## Installation
 
@@ -55,7 +55,7 @@ For more information on all the template options, see [Using the Uno Platform Te
 Create a new application using the `unoapp` template, enabling .NET MAUI Embedding. In this case, we're going to use the Blank template (`-preset blank`) and include .NET MAUI Embedding support (`-maui`).
 
 ```bash
-dotnet new unoapp -preset blank -maui -platforms "android" -platforms "ios" -platforms "maccatalyst" -platforms "windows" -o ArcGisApp
+dotnet new unoapp -preset blank -maui -platforms "android" -platforms "ios" -platforms "windows" -o ArcGisApp
 ```
 
 This will create a new folder called **ArcGisApp** containing the new application.
@@ -158,10 +158,6 @@ public static class AppBuilderExtensions
 - **iOS:**
 
     ![iOS EsriMaps](Assets/Screenshots/iOS/EsriMaps.png)
-
-- **Mac Catalyst:**
-
-    ![Mac Catalyst EsriMaps](Assets/Screenshots/MacCatalyst/EsriMaps.png)
 
 - **Windows:**
 
