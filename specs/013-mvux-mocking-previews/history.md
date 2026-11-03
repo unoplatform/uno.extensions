@@ -319,11 +319,15 @@ mock and left out of `Empty`. A search over a query state (`Query.SelectAsync((q
 ct))`) and a list with a selection (`ListFeed.Async(...).Selection(SelectedTask)`) are both of that shape. Left unset,
 such a member ran its real logic over the null-injected service, so `Create()` showed its error. A derived member is
 optional because its real logic recomputes over the mocked inputs, which cannot hold when that logic reads a service.
-The service now wins: such a member is a required input, as §7 states (required members are exactly the
-service-dependent feeds), and the metadata path treats a member as derived only when every `[FeedDependency]` on it
-names a feed. Consumer-visible: a mock that left such a member unset no longer compiles. A list with a selection is
-classified the same way; swapping it once mocked is #3247's fix. Fixture: `SearchModel`. Tests: `Given_GeneratedMock`
-and `Given_FeedsMockGenerator`.
+The service now wins: such a member is a required input, as spec §7 states (required members are exactly the
+service-dependent feeds). The MVUX generator emits both its `OnParameter` and its `OnFeed` attributes, and the
+metadata path treats a member as derived only when every `[FeedDependency]` on it names a feed. A service is a
+parameter of one of the model's constructors; a lambda parameter of the same name no longer counts. Accepted
+simplification: every constructor parameter counts, including one a mock does not leave null (a messenger, a value
+type); telling them apart would put mocking rules into the shared classification. Consumer-visible: a mock that left
+such a member unset no longer compiles. On the metadata path the change reaches a model once its assembly is rebuilt
+with this version of the MVUX generator. A list with a selection is classified the same way; swapping it once mocked
+is #3247's fix. Fixture: `SearchModel`. Tests: `Given_GeneratedMock` and `Given_FeedsMockGenerator`.
 
 ---
 
