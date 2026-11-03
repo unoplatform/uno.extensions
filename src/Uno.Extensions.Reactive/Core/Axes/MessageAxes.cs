@@ -26,6 +26,11 @@ public static class MessageAxes
 	public const string Progress = nameof(Progress);
 
 	/// <summary>
+	/// Name of the validation axis.
+	/// </summary>
+	public const string Validation = nameof(Validation);
+
+	/// <summary>
 	/// Name of the refresh axis.
 	/// </summary>
 	internal const string Refresh = nameof(Refresh);

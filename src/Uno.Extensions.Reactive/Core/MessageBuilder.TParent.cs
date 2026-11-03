@@ -18,18 +18,22 @@ public class MessageBuilder<TParent, TResult> : IMessageEntry, IMessageEntry<TRe
 	private bool _hasUpdates; // This allows us to easily determine if we have changes no matter if we removed axis axises flagged has IsTransient.
 	private readonly IMessage? _parent;
 	private readonly Message<TResult> _currentLocal; // This is the last message published by the manager. Unlike the 'Parent' is does not reflect the updates made on this builder.
+	private readonly bool _forwardLocalAxes; // Indicates if axes flagged as IsLocal should be read from the parent (cf. MessageManager).
 
 	/// <summary>
 	/// Creates a new message builder, including some changes (a.k.a. updates) that was previously made on the local message.
 	/// </summary>
 	/// <param name="parent">The last message received from the parent, if any.</param>
 	/// <param name="local">The last message produced by the local Feed.</param>
+	/// <param name="forwardLocalAxes">Indicates if axes flagged as IsLocal should be read from the parent.</param>
 	internal MessageBuilder(
 		IMessage? parent,
-		(IReadOnlyDictionary<MessageAxis, MessageAxisUpdate> updates, Message<TResult> value) local)
+		(IReadOnlyDictionary<MessageAxis, MessageAxisUpdate> updates, Message<TResult> value) local,
+		bool forwardLocalAxes = false)
 	{
 		_parent = parent;
 		_currentLocal = local.value;
+		_forwardLocalAxes = forwardLocalAxes;
 
 		// We make sure to clear all transient axes when we update a message
 		// Note: We remove only "local" values, parent values are still propagated, it's their responsibility to remove them.
@@ -42,10 +46,12 @@ public class MessageBuilder<TParent, TResult> : IMessageEntry, IMessageEntry<TRe
 	/// </summary>
 	/// <param name="parent">The last message received from the parent, if any.</param>
 	/// <param name="local">The last message produced by the local Feed.</param>
-	internal MessageBuilder(IMessage? parent, Message<TResult> local)
+	/// <param name="forwardLocalAxes">Indicates if axes flagged as IsLocal should be read from the parent.</param>
+	internal MessageBuilder(IMessage? parent, Message<TResult> local, bool forwardLocalAxes = false)
 	{
 		_parent = parent;
 		_currentLocal = local;
+		_forwardLocalAxes = forwardLocalAxes;
 
 		_updates = new();
 		_hasUpdates = true; // When we drop the local changes, we should consider that we have changes.
@@ -84,7 +90,9 @@ public class MessageBuilder<TParent, TResult> : IMessageEntry, IMessageEntry<TRe
 		=> Get(axis);
 	internal (MessageAxisValue value, IChangeSet? changes) Get(MessageAxis axis)
 	{
-		var parentValue = _parent?.Current[axis] ?? MessageAxisValue.Unset;
+		var parentValue = axis.IsLocal && !_forwardLocalAxes
+			? MessageAxisValue.Unset
+			: _parent?.Current[axis] ?? MessageAxisValue.Unset;
 		var localValue = _currentLocal.Current[axis];
 
 		return _updates.TryGetValue(axis, out var updater)

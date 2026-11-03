@@ -123,7 +123,11 @@
 		"reparented",
 		"reparent",
 		"retarget",
-		"MSIX"
+		"MSIX",
+		"backported",
+		"swappable",
+		"reflog",
+		"resx"
 	],
 	"ignoreWords": [
 		"ADAL",

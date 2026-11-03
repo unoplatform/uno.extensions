@@ -301,6 +301,10 @@ cd src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin/Uno.Extension
 UNO_RUNTIME_TESTS_RUN_TESTS='{"Filter": {"Value": "<test name>"}, "Attempts": 1}' UNO_RUNTIME_TESTS_OUTPUT_PATH=<results.xml> DOTNET_MODIFIABLE_ASSEMBLIES=debug dotnet Uno.Extensions.RuntimeTests.dll
 ```
 
+The dev-server must match the major version of the .NET SDK resolved for the head (`Project TargetFramework version mismatch. Expected: net11, Current: net10` otherwise), and the engine picks its host from the SDK of a temp folder, not from the head. With a .NET 11 preview SDK installed (no `sdk` pin in `global.json`), the engine starts the `net11.0` host, which needs a newer .NET 11 runtime than the preview one (`You must install or update .NET to run this application`), so every HR test times out. CI uses the .NET 10 SDK: locally, pin it with a temporary `"sdk": { "version": "10.0.401", "rollForward": "latestFeature" }` in `global.json` (never committed), build with it, and point the engine at the matching host with `UNO_RUNTIME_TESTS_DEV_SERVER_PATH=~/.nuget/packages/uno.winui.devserver/<Uno.Sdk version>/tools/rc/host/net10.0/Uno.UI.RemoteControl.Host.dll`.
+
+When the main app gives up on the secondary app, it can exit without results while the secondary app keeps running and locks the files of the desktop output (`MSB3021 ... being used by another process` on the next build). Look for a leftover `dotnet Uno.Extensions.RuntimeTests.dll` process before rebuilding.
+
 Pass `"Attempts": 1` when diagnosing. The engine retries a failed test up to 3 times and reports only the last attempt; for an HR test the revert of attempt 1 is itself a delta, so retries fail earlier and for a different reason, hiding the real failure.
 
 **Apply to:** any HR-sensitive change (`*HotReload*` tests under `src/**/*.UI.Tests/`). Also: unit-level HR repros (`Reactive.Tests/IntegrationTests/Given_HotReload.cs`, hand-written `_v1` shadow types + `HotReloadService.UpdateApplication`) cannot reproduce Edit-and-Continue semantics, such as an EnC-updated constructor running a different getter than reflection on the original type. For #3226 the unit repro was green while the runtime test on a recreated view model was still red; only the runtime test exposed the second root cause (spec 015). Cover the "view model created after the delta" path in the runtime test, not just the live view model.
@@ -336,3 +340,19 @@ Pass `"Attempts": 1` when diagnosing. The engine retries a failed test up to 3 t
 **Correct pattern:** treat a launcher exception as token-bearing. Log the `NativeErrorCode` and the launcher's name, not the exception; rethrow a new `Win32Exception(ex.NativeErrorCode, fixedMessage)` with **no inner exception** (`ToString()` prints inner exceptions too). Cover it with a test whose fake launcher throws a `Win32Exception` carrying the request URL and asserts neither the log nor the thrown exception's `ToString()` contains it (`When_BrowserLaunchFails_Then_RequestUriNotLoggedAndNextFlowRuns`).
 
 **Apply to:** every place a URL, a connection string or a command line with secrets is handed to `Process.Start`, `ShellExecute` or any API that echoes its input into an exception; also to catch blocks that log `ex` from a user-overridable seam, since the override's exception is not ours to trust.
+
+## Localize at one consumer entry point, not in each producer (spec 023)
+
+**Problem:** spec 023 (then numbered 016) v1 localized validation messages in the producer layer: `Uno.Extensions.Validation` got `UseLocalizedDataAnnotations` (an attribute-by-attribute re-implementation of `TryValidateObject` with localized messages, display names and format arguments) and a `Microsoft.Extensions.Localization.Abstractions` dependency, while MVUX `Validate` grew its own localized overloads. Two localization paths for the same messages, a localization dependency in a layer that has nothing to do with UI text, and a BCL re-implementation to keep in parity. It was walked back (v1 kept on branch `dev/xygu/20261005/spec-016-validation-localization-v1`).
+
+**Correct pattern:** producers (`IValidator`, DataAnnotations, FluentValidation) report messages as written, so a resource key comes out as-is. The consumer layer that turns results into UI state, MVUX (`State.Validate`, and the validation of commands since spec 024, through the shared `ValidationHelper`), is the single place where keys are resolved, through an optional trailing `IStringLocalizer? localizer = null` handled only in the base overload. Accept the trade-off explicitly (no format arguments / display names) rather than duplicating the path.
+
+**Apply to:** any cross-cutting presentation concern (localization, formatting, display names) that several producers feed into one consumer. Put it at the consumer entry point, and keep the producer packages free of it unless the producer is used without that consumer.
+
+## Local vs remote divergence: check the reflog before calling either side stale
+
+**Problem:** while rewriting the spec 023 (then 016) branch, the local branch and its base (`Validate`) differed from origin (`WithValidation`). The local side was taken for an out-of-date checkout, and the work was rebuilt on origin's base with the old name and force-pushed. In fact the local branches carried a newer, unpushed rewrite (`rename WithValidation to Validate`, visible in `git reflog`), so the "fix" reverted the user's latest decision on the PR.
+
+**Correct pattern:** when local and `origin/<branch>` have diverged (`ahead N, behind N`), find out which side is newer before choosing one: `git reflog <branch>` (look for rebase/amend/rename entries), and compare the **committer** dates of both tips (author dates survive a rebase, committer dates don't). If the local side is newer, it is unpushed work: build on it and ask before force-pushing it (and its base branch, if stacked). Never resolve the divergence silently in either direction.
+
+**Apply to:** any rebase, history rewrite or force-push on a branch whose local and remote tips differ, especially stacked PRs where the base branch may have been rewritten locally too.

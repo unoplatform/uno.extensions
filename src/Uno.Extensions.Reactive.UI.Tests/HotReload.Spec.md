@@ -61,6 +61,7 @@ Each scenario should:
 | **Self-patch with ctor-deps** | New VM constructed AFTER HR on a model with required ctor params | Exercises `TryHotPatch` self-patch path: `__reactiveModelArgs` must be captured in the outermost public ctor before the call fires. |
 | **Inheritance parent-only HR** | Edit a parent model while a child VM is live; child has its own feed and inherits parent's | Exercises base-type shadow walk + base-only-patch detection. Inherited feed must hot-swap; child-only feed must stay intact. |
 | **Add derived feed next to a state + command** | A `Count.Select(...)` feed is added while `Count` (state) and `Increment` (command) are live and bound | #3226. The patcher must swap the subscription the bindable is attached to, and re-key it before the new feed subscribes to the updated state; otherwise the command updates a state the view no longer shows. Covers live and recreated VMs. |
+| **Validator update** | The body of a `State.Validate(...)` validator changes while the validated state is bound two-way to a `TextBox` | Spec 015. Only the updated validator may publish results (`INotifyDataErrorInfo`) once the state is hot-swapped. Covers live and recreated VMs. |
 
 ## 4. Scenario catalog
 
@@ -238,6 +239,24 @@ Each scenario should:
 - **Status**: Passing. Red on `main` (the recreated VM stays at `0`). Run
   locally on Windows with the recipe in `specs/lessons.md`.
 
+### 4.14 Validator updated in a live model (implemented)
+
+- **ID**: `When_UpdateValidatorInModel_Then_ErrorsFromUpdatedValidator`
+- **Goal**: Prove that MVUX validation (spec 022) follows a hot-reload of
+  the model: once the delta is applied, the errors exposed through
+  `INotifyDataErrorInfo` come from the updated validator only, both for
+  the view model that is live during the delta and for one created after it.
+- **Model**: `MvuxHotReloadValidationModel` with
+  `IState<string> Name => State.Value(...).Validate(...)`, whose validator
+  always returns `$"original:{name}"` for the `Name` member.
+- **HR change**: Single delta — the validator returns `$"updated:{name}"`.
+- **Assertion**: The live VM, edited through a two-way bound `TextBox`,
+  reports `updated:<value>` after the delta and no `original:` result is
+  published after the first edit. A VM created after the delta reports
+  `updated:initial`, then `updated:edited` once edited.
+- **Status**: Passing. Run locally on Windows (desktop) with the recipe in
+  `specs/lessons.md`, together with the 14 other tests of the class (15/15).
+
 ## 5. Organizational notes
 
 - One test method per scenario.
@@ -266,3 +285,4 @@ Each scenario should:
 | `MvuxHotReloadParentModel.cs` | Base model for inheritance scenario |
 | `MvuxHotReloadInheritedChildModel.cs` | Derived model for inheritance scenario |
 | `MvuxHotReloadAddDerivedFeedModel.cs` | Model for the add-derived-feed scenario (#3226) |
+| `MvuxHotReloadValidationModel.cs` | Model for the validator-update scenario (spec 022) |

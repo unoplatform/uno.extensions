@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,7 +9,7 @@ using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive.Bindings;
 
-internal sealed class Input<T> : IInput<T>
+internal sealed class Input<T> : IInput<T>, IValidationTarget
 {
 	private readonly IState<T> _state;
 
@@ -38,6 +40,11 @@ internal sealed class Input<T> : IInput<T>
 				msg.Set(BindableViewModelBase.BindingSource, this);
 			},
 			ct);
+
+	/// <inheritdoc />
+	/// <remarks>Forwarded to the wrapped state, so validation results published on the input are ordered with the ones of the state (the last validation started wins).</remarks>
+	ValueTask IValidationTarget.PublishValidationAsync(IImmutableList<ValidationResult> results, long version, CancellationToken ct)
+		=> ValidationHelper.GetPublisher(_state)(results, version, ct);
 
 	/// <inheritdoc />
 	public ValueTask DisposeAsync()
