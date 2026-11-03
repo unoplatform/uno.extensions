@@ -241,7 +241,203 @@ public class Given_FeedsMockGenerator
 
 		var mock = sources.Should().ContainSingle().Subject;
 		mock.Should().Contain("public required global::Uno.Extensions.Reactive.IListFeed<string> Items");
+		mock.Should().Contain("new global::App.PantryViewModel(Service)");
+	}
+
+	[TestMethod]
+	public void When_FeedIsAMethodGroup_Then_CreateTakesTheServiceItReads()
+	{
+		// Binding Service.GetItems reads Service when the feed is built, and the view-model's constructor builds every feed.
+		var (sources, diagnostics) = Run("""
+			using System.Collections.Immutable;
+			using System.Threading;
+			using System.Threading.Tasks;
+			using Uno.Extensions.Reactive;
+
+			namespace App;
+
+			public interface IPantryService { ValueTask<IImmutableList<string>> GetItems(CancellationToken ct); }
+
+			public partial record PantryModel(IPantryService Service)
+			{
+				public IListFeed<string> Items => ListFeed.Async(Service.GetItems);
+			}
+			""");
+
+		diagnostics.Should().BeEmpty();
+		var mock = sources.Should().ContainSingle().Subject;
+		mock.Should().Contain("Create(global::App.IPantryService Service) => Create(Service, PantryModelMock.Empty);");
+		mock.Should().Contain("Create(global::App.IPantryService Service, PantryModelMock mock)");
+		mock.Should().Contain("new global::App.PantryViewModel(Service)");
+	}
+
+	[TestMethod]
+	public void When_FeedReadsItsServiceInALambda_Then_CreateStillNullInjectsIt()
+	{
+		// The lambda runs only when the feed is read, and a mocked feed never is.
+		var (sources, diagnostics) = Run("""
+			using System.Collections.Immutable;
+			using System.Threading;
+			using System.Threading.Tasks;
+			using Uno.Extensions.Reactive;
+
+			namespace App;
+
+			public interface IPantryService { ValueTask<IImmutableList<string>> GetItems(CancellationToken ct); }
+
+			public partial record PantryModel(IPantryService Service)
+			{
+				public IListFeed<string> Items => ListFeed.Async(async ct => await Service.GetItems(ct));
+			}
+			""");
+
+		diagnostics.Should().BeEmpty();
+		var mock = sources.Should().ContainSingle().Subject;
+		mock.Should().Contain("Create() => Create(PantryModelMock.Empty);");
 		mock.Should().Contain("new global::App.PantryViewModel(default(global::App.IPantryService)! /* Service */)");
+	}
+
+	[TestMethod]
+	public void When_CtorDependencyIsEager_Then_CreateTakesThatParameter()
+	{
+		var (sources, diagnostics) = Run(Preamble + """
+			[Model(typeof(ItemsViewModel))]
+			[FeedDependency("Items", OnParameter = "service")]
+			[CtorDependency("service", Eager = true)]
+			public class ItemsModel
+			{
+				public ItemsModel(IService service, ISnapshot snapshot) { }
+				public IListFeed<string> Items => null!;
+			}
+
+			public class ItemsViewModel
+			{
+				public ItemsViewModel(IService service, ISnapshot snapshot) { }
+				protected ItemsViewModel(ItemsModel model) { }
+				public ItemsModel Model => null!;
+			}
+			""");
+
+		diagnostics.Should().BeEmpty();
+		var mock = sources.Should().ContainSingle().Subject;
+		mock.Should().Contain("Create(global::App.IService service) => Create(service, ItemsModelMock.Empty);");
+		mock.Should().Contain("Create(global::App.IService service, ItemsModelMock mock)");
+		mock.Should().Contain("new global::App.ItemsViewModel(service, default(global::App.ISnapshot)! /* snapshot */)");
+		mock.Should().NotContain("Create()");
+	}
+
+	[TestMethod]
+	public void When_EagerParametersAreNamedLikeCreateLocals_Then_CreateRenamesItsOwn()
+	{
+		var (sources, diagnostics) = Run(Preamble + """
+			[Model(typeof(ItemsViewModel))]
+			[FeedDependency("Items", OnParameter = "mock")]
+			[CtorDependency("mock", Eager = true)]
+			[CtorDependency("vm", Eager = true)]
+			[CtorDependency("event", Eager = true)]
+			public class ItemsModel
+			{
+				public ItemsModel(IService mock, ISnapshot vm, IService @event) { }
+				public IListFeed<string> Items => null!;
+			}
+
+			public class ItemsViewModel
+			{
+				public ItemsViewModel(IService mock, ISnapshot vm, IService @event) { }
+				protected ItemsViewModel(ItemsModel model) { }
+				public ItemsModel Model => null!;
+			}
+			""");
+
+		diagnostics.Should().BeEmpty();
+		var mock = sources.Should().ContainSingle().Subject;
+		mock.Should().Contain("Create(global::App.IService mock, global::App.ISnapshot vm, global::App.IService @event, ItemsModelMock _mock)");
+		mock.Should().Contain("var _vm = new global::App.ItemsViewModel(mock, vm, @event);");
+	}
+
+	[TestMethod]
+	[DataRow("public IListFeed<string> Items => ListFeed.Async(this.Service.GetItems);")]
+	[DataRow("public IListFeed<string> Items => ListFeed.Async(Service!.GetItems);")]
+	[DataRow("public IListFeed<string> Items => ListFeed.Async(((IPantryService)Service).GetItems);")]
+	[DataRow("public IListFeed<string> Items { get; } = ListFeed.Async(Service.GetItems);")]
+	public void When_ServiceIsReadWhileBuiltInAnotherSpelling_Then_CreateTakesIt(string member)
+	{
+		var (sources, diagnostics) = Run($$"""
+			using System.Collections.Immutable;
+			using System.Threading;
+			using System.Threading.Tasks;
+			using Uno.Extensions.Reactive;
+
+			namespace App;
+
+			public interface IPantryService { ValueTask<IImmutableList<string>> GetItems(CancellationToken ct); }
+
+			public partial record PantryModel(IPantryService Service)
+			{
+				{{member}}
+			}
+			""");
+
+		diagnostics.Should().BeEmpty();
+		var mock = sources.Should().ContainSingle().Subject;
+		mock.Should().Contain("public required global::Uno.Extensions.Reactive.IListFeed<string> Items");
+		mock.Should().Contain("Create(global::App.IPantryService Service, PantryModelMock mock)");
+	}
+
+	[TestMethod]
+	public void When_FieldAssignedInAnExpressionBodiedCtorIsReadWhileBuilt_Then_CreateTakesItsParameter()
+	{
+		var (sources, diagnostics) = Run("""
+			using System.Collections.Immutable;
+			using System.Threading;
+			using System.Threading.Tasks;
+			using Uno.Extensions.Reactive;
+
+			namespace App;
+
+			public interface IPantryService { ValueTask<IImmutableList<string>> GetItems(CancellationToken ct); }
+
+			public partial class PantryModel
+			{
+				private readonly IPantryService _service;
+
+				public PantryModel(IPantryService service) => _service = service;
+
+				public IListFeed<string> Items => ListFeed.Async(_service.GetItems);
+			}
+			""");
+
+		diagnostics.Should().BeEmpty();
+		var mock = sources.Should().ContainSingle().Subject;
+		mock.Should().Contain("public required global::Uno.Extensions.Reactive.IListFeed<string> Items");
+		mock.Should().Contain("Create(global::App.IPantryService service, PantryModelMock mock)");
+	}
+
+	[TestMethod]
+	public void When_SourceModelDeclaresAnEagerCtorDependency_Then_CreateTakesThatParameter()
+	{
+		// The hand-declared attribute is the author's way to name what the analysis cannot see.
+		var (sources, diagnostics) = Run("""
+			using System.Collections.Immutable;
+			using System.Threading;
+			using System.Threading.Tasks;
+			using Uno.Extensions.Reactive;
+			using Uno.Extensions.Reactive.Config;
+
+			namespace App;
+
+			public interface IPantryService { ValueTask<IImmutableList<string>> GetItems(CancellationToken ct); }
+
+			[CtorDependency("Service", Eager = true)]
+			public partial record PantryModel(IPantryService Service)
+			{
+				public IListFeed<string> Items => ListFeed.Async(async ct => await Service.GetItems(ct));
+			}
+			""");
+
+		diagnostics.Should().BeEmpty();
+		sources.Should().ContainSingle()
+			.Which.Should().Contain("Create(global::App.IPantryService Service, PantryModelMock mock)");
 	}
 
 	[TestMethod]

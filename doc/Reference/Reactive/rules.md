@@ -57,8 +57,9 @@ Only the runtime type of the parameter matters, so the analyzer reports only a f
 **No mock is generated for a model whose view-model has no public constructor.**
 
 `Uno.HotTesting.Reactive` builds the real view-model with every constructor parameter null-injected, except every
-parameter typed `CommunityToolkit.Mvvm.Messaging.IMessenger`, which gets a fresh messenger of its own
-(`{Vm}Mock.Create`). The generated view-model mirrors the
+parameter typed `CommunityToolkit.Mvvm.Messaging.IMessenger`, which gets a fresh messenger of its own, and every
+parameter its construction dereferences, which `Create` takes as an argument (`{Vm}Mock.Create`). The generated
+view-model mirrors the
 model's constructors, so a model whose constructors are all `internal` or `private` leaves nothing for `Create`
 to call: the generator reports this warning and emits no `{Model}Mock` / `{Vm}Mock` for that model.
 

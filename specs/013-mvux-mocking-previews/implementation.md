@@ -60,7 +60,7 @@ public sealed class CtorDependencyAttribute : Attribute
 
 On by default (the runtime decides activation). Opt-out: `[assembly: EnableFeedMocking(IsEnabled = false)]` → byte-identical MVUX output.
 
-1. **Analysis pass** (per Model): classify members `ServiceDependent(param) | DerivedFrom(feed) | Independent`; lambda/anonymous/local-function bodies = deferred boundary. **Ctor instrumentation**: walk ctor bodies + field/property initializers + primary-ctor eager captures → mark `CtorDependency(Eager=true)` per offending parameter. Hand-declared attributes override/merge (author is the escape hatch).
+1. **Analysis pass** (per Model): classify members `ServiceDependent(param) | DerivedFrom(feed) | Independent`; lambda/anonymous/local-function bodies = deferred boundary. **Ctor instrumentation**: walk ctor bodies + field/property initializers + primary-ctor eager captures + the eager remainder of feed bodies (the view-model's constructor builds every feed) → mark `CtorDependency(Eager=true)` per offending parameter. Hand-declared attributes override/merge (author is the escape hatch).
 2. **Emit attributes** (§2.1) on the generated Model partial.
 3. **Emitted seams** (`EditorBrowsable(Never)`) — only what reflection cannot synthesize:
    - Model partial: **no per-feed `__Mock_Swap_{Member}`** — swap is a typed call per member at runtime (D11), which swaps the member's subscription.
