@@ -12,11 +12,16 @@ labels: kind/enhancement, triage/untriaged
 
 ## For which Platform:
 
-- [ ] iOS
-- [ ] Android
+- [ ] All platforms
 - [ ] WebAssembly
-- [ ] WebAssembly renders for Xamarin.Forms
-- [ ] Windows
+- [ ] Android
+- [ ] iOS
+- [ ] tvOS
+- [ ] Desktop (Windows)
+- [ ] Desktop (macOS)
+- [ ] Desktop (X11)
+- [ ] Desktop (Linux Framebuffer)
+- [ ] Windows App SDK
 - [ ] Build tasks
 
 ## Anything else we need to know?
