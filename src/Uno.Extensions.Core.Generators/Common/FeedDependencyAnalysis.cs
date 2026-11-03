@@ -195,8 +195,12 @@ internal sealed class FeedDependencyAnalysis
 					continue;
 				}
 
-				// A ctor parameter (primary-ctor capture), directly referenced → service.
-				if (symbol is IParameterSymbol p && ctorParamNames.Contains(p.Name))
+				// A ctor parameter (primary-ctor capture), directly referenced → service. A lambda's parameter of the same
+				// name is not one.
+				if (symbol is IParameterSymbol p
+					&& p.ContainingSymbol is IMethodSymbol { MethodKind: MethodKind.Constructor } declaringCtor
+					&& SymbolEqualityComparer.Default.Equals(declaringCtor.ContainingType, model)
+					&& ctorParamNames.Contains(p.Name))
 				{
 					if (seenServices.Add(p.Name))
 					{
