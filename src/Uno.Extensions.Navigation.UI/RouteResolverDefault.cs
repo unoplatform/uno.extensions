@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.Loader;
 
 namespace Uno.Extensions.Navigation;
 
@@ -270,7 +271,17 @@ public class RouteResolverDefault : RouteResolver
 		{
 			if (loadedTypes is null)
 			{
-				loadedTypes = (from asb in AppDomain.CurrentDomain.GetAssemblies()
+				var ownContext = AssemblyLoadContext.GetLoadContext(typeof(RouteResolverDefault).Assembly) ?? AssemblyLoadContext.Default;
+				var assemblies = OwnAndDefaultContextAssemblies(ownContext);
+				if (Logger.IsEnabled(LogLevel.Debug))
+				{
+					var scope = ownContext == AssemblyLoadContext.Default
+						? "the default load context"
+						: $"load context '{ownContext.Name}' and the default one";
+					Logger.LogDebugMessage($"Auto-resolve: Indexing types from {assemblies.Length} assemblies in {scope}");
+				}
+
+				loadedTypes = (from asb in assemblies
 							   where (!(asb.FullName ?? string.Empty).StartsWith("_") && !AssemblyExtensions.Excludes.Contains(asb.FullName ?? string.Empty))
 							   from t in asb.SafeGetTypes()
 							   where t.IsClass
@@ -279,6 +290,28 @@ public class RouteResolverDefault : RouteResolver
 
 			return loadedTypes;
 		}
+	}
+
+	/// <summary>
+	/// The assemblies of the resolver's own load context, followed by those of the default context.
+	/// </summary>
+	/// <remarks>
+	/// The own context comes first, and <c>ToDictionaryDistinct</c> keeps the first type per name, so the resolver's own
+	/// context wins over a same-named type in the default one. A default-context assembly whose simple name the own context
+	/// also has is skipped: code in the own context binds to its own copy, never to the default one.
+	/// </remarks>
+	private static Assembly[] OwnAndDefaultContextAssemblies(AssemblyLoadContext ownContext)
+	{
+		var ownAssemblies = ownContext.Assemblies.ToArray();
+		if (ownContext == AssemblyLoadContext.Default)
+		{
+			return ownAssemblies;
+		}
+
+		var ownNames = new HashSet<string?>(ownAssemblies.Select(asb => asb.GetName().Name), StringComparer.Ordinal);
+		return ownAssemblies
+			.Concat(AssemblyLoadContext.Default.Assemblies.Where(asb => !ownNames.Contains(asb.GetName().Name)))
+			.ToArray();
 	}
 }
 
