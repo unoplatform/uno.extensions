@@ -222,13 +222,14 @@ internal sealed class FeedDependencyAnalysis
 			}
 		}
 
-		if (derivedFrom.Count > 0)
-		{
-			return (FeedKind.Derived, derivedFrom, services);
-		}
+		// A service wins over a feed: left to its real logic, the member would read the null-injected service.
 		if (services.Count > 0)
 		{
 			return (FeedKind.ServiceDependent, derivedFrom, services);
+		}
+		if (derivedFrom.Count > 0)
+		{
+			return (FeedKind.Derived, derivedFrom, services);
 		}
 		return (FeedKind.Independent, derivedFrom, services);
 	}
