@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!--
+		Regression test for trimmed apps, run by CI as a published executable (it is not a VSTest
+		assembly): `dotnet publish -c Release`, then run the output; a non-zero exit code fails the job.
+
+		It registers a Refit and a Kiota client the way an app does, from an appsettings-style endpoint
+		section, and checks that each client gets the configured base address after trimming. Partial
+		trim mode is what iOS and Android Release builds use: only assemblies marked IsTrimmable (here
+		Uno.Extensions.Http, through IsAotCompatible) are trimmed, which is exactly where the
+		EndpointOptions setters lived.
+
+		Keep this app free of anything that would preserve EndpointOptions on its own (binding it,
+		constructing it, reflecting over it): the point is that the registration methods must do it.
+	-->
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net10.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+
+		<RuntimeIdentifier>$(NETCoreSdkRuntimeIdentifier)</RuntimeIdentifier>
+		<SelfContained>true</SelfContained>
+		<PublishTrimmed>true</PublishTrimmed>
+		<TrimMode>partial</TrimMode>
+		<!-- Trim this app too, so DerivedEndpointOptions below is only kept by the registration methods. -->
+		<IsTrimmable>true</IsTrimmable>
+
+		<!-- The trimmer's warnings (mostly from Refit itself) must not fail the publish; the run is
+			the test. Add TrimmerSingleWarn=false to see them one by one. -->
+		<ILLinkTreatWarningsAsErrors>false</ILLinkTreatWarningsAsErrors>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Http.Kiota\Uno.Extensions.Http.Kiota.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Hosting" />
+	</ItemGroup>
+
+</Project>

@@ -68,7 +68,7 @@ public static class ServiceCollectionExtensions
 		TClient,
 		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
 		TImplementation,
-		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicProperties)]
 		TEndpoint
 	>(
 		 this IServiceCollection services,
@@ -130,7 +130,7 @@ public static class ServiceCollectionExtensions
 	public static IServiceCollection AddClientWithEndpoint<
 		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
 		TInterface,
-		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicProperties)]
 		TEndpoint
 	>(
 		  this IServiceCollection services,
