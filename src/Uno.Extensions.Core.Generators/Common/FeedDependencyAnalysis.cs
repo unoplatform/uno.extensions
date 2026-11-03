@@ -114,7 +114,7 @@ internal sealed class FeedDependencyAnalysis
 				}
 
 				var semanticModel = GetSemanticModel(node.SyntaxTree);
-				foreach (var assignment in body.DescendantNodes().OfType<AssignmentExpressionSyntax>())
+				foreach (var assignment in body.DescendantNodesAndSelf().OfType<AssignmentExpressionSyntax>())
 				{
 					if (!assignment.IsKind(SyntaxKind.SimpleAssignmentExpression))
 					{
@@ -245,7 +245,7 @@ internal sealed class FeedDependencyAnalysis
 
 	/// <summary>
 	/// Returns the getter/initializer body syntax nodes of a feed member (property expression body,
-	/// getter body, or field initializer).
+	/// getter body, or property/field initializer).
 	/// </summary>
 	private IEnumerable<SyntaxNode> GetMemberBodies(ISymbol member)
 	{
@@ -255,7 +255,11 @@ internal sealed class FeedDependencyAnalysis
 			switch (syntaxRef.GetSyntax())
 			{
 				case PropertyDeclarationSyntax pds:
-					if (pds.ExpressionBody?.Expression is { } exprBody)
+					if (pds.Initializer?.Value is { } propertyInit)
+					{
+						bodies.Add(propertyInit);
+					}
+					else if (pds.ExpressionBody?.Expression is { } exprBody)
 					{
 						bodies.Add(exprBody);
 					}
@@ -337,7 +341,7 @@ internal sealed class FeedDependencyAnalysis
 
 		foreach (var receiver in receivers)
 		{
-			if (receiver is not IdentifierNameSyntax id)
+			if (receiver is null || DereferencedName(receiver) is not { } id)
 			{
 				continue;
 			}
@@ -353,6 +357,18 @@ internal sealed class FeedDependencyAnalysis
 			}
 		}
 	}
+
+	/// <summary>The name a receiver dereferences, seen through <c>this.</c>, parentheses, <c>!</c> and casts.</summary>
+	private static IdentifierNameSyntax? DereferencedName(ExpressionSyntax receiver)
+		=> receiver switch
+		{
+			IdentifierNameSyntax name => name,
+			MemberAccessExpressionSyntax { Expression: ThisExpressionSyntax, Name: IdentifierNameSyntax name } => name,
+			ParenthesizedExpressionSyntax parenthesized => DereferencedName(parenthesized.Expression),
+			PostfixUnaryExpressionSyntax suppressed when suppressed.IsKind(SyntaxKind.SuppressNullableWarningExpression) => DereferencedName(suppressed.Operand),
+			CastExpressionSyntax cast => DereferencedName(cast.Expression),
+			_ => null,
+		};
 
 	/// <summary>The constructor parameter a symbol is, or the one the model member it names is fed by.</summary>
 	private static string? CtorParameterBehind(

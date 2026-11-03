@@ -129,7 +129,7 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 				continue;
 			}
 
-			if (DescribeFromSource(model, analysis, reactiveBindable) is { } described)
+			if (DescribeFromSource(model, analysis, ctorDep, reactiveBindable) is { } described)
 			{
 				AddSource(context, described, messenger, emitted, diagnosed, hintNames);
 			}
@@ -480,14 +480,18 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 		{
 			if (attr.ConstructorArguments is { Length: 1 } args
 				&& args[0].Value is string parameter
-				&& attr.NamedArguments.Any(n => n.Key == "Eager" && n.Value.Value is true))
+				&& attr.NamedArguments.Any(n => n.Key == "Eager" && n.Value.Kind == TypedConstantKind.Primitive && n.Value.Value is true))
 			{
 				yield return parameter;
 			}
 		}
 	}
 
-	private static ModelMock? DescribeFromSource(INamedTypeSymbol model, FeedDependencyAnalysis analysis, INamedTypeSymbol? reactiveBindable)
+	private static ModelMock? DescribeFromSource(
+		INamedTypeSymbol model,
+		FeedDependencyAnalysis analysis,
+		INamedTypeSymbol? ctorDep,
+		INamedTypeSymbol? reactiveBindable)
 	{
 		var feedMembers = analysis.GetFeedMembers(model);
 		if (feedMembers.Count == 0)
@@ -516,6 +520,7 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 		var ctorParamNames = analysis.GetCtorParameterNames(model);
 		var fieldToParam = analysis.BuildFieldToParamMap(model, ctorParamNames);
 		described.EagerParameters.UnionWith(analysis.FindEagerCtorParameters(model, feedMembers, ctorParamNames, fieldToParam));
+		described.EagerParameters.UnionWith(ReadEagerParameters(model, ctorDep));
 
 		foreach (var member in feedMembers)
 		{
@@ -633,18 +638,22 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 			return null;
 		}
 
+		var vmFull = described.ViewModelFullName;
+		var mockName = described.MockName;
+
+		// Create takes the parameters the view-model's construction dereferences from its caller (R1).
 		var createParameters = ctor.Parameters.Where(p => IsTakenFromCaller(p, described, messenger)).ToList();
 		var createParameterNames = new HashSet<string>(createParameters.Select(p => p.Name), StringComparer.Ordinal);
-		var parameters = string.Join(", ", createParameters.Select(p => $"{FullName(p.Type)} {Identifier(p.Name)}"));
-		var leadingParameters = createParameters.Count == 0 ? "" : parameters + ", ";
-		var leadingArguments = string.Concat(createParameters.Select(p => Identifier(p.Name) + ", "));
 		var mockParameter = Unused("mock", createParameterNames);
 		var vmLocal = Unused("vm", createParameterNames);
+		var declared = createParameters.Select(p => $"{FullName(p.Type)} {Identifier(p.Name)}").ToList();
+		var forwarded = createParameters.Select(p => Identifier(p.Name)).ToList();
+		var createDefaultParameters = string.Join(", ", declared);
+		var createDefaultArguments = string.Join(", ", forwarded.Append($"{mockName}.Empty"));
+		var createParametersWithMock = string.Join(", ", declared.Append($"{mockName} {mockParameter}"));
 		var ctorArguments = string.Join(", ", ctor.Parameters.Select(p => createParameterNames.Contains(p.Name)
 			? Identifier(p.Name)
 			: $"{CtorArgument(p.Type, messenger)} /* {p.Name} */"));
-		var vmFull = described.ViewModelFullName;
-		var mockName = described.MockName;
 		var vmMockName = described.VmMockName;
 		var ns = model.ContainingNamespace.IsGlobalNamespace ? null : model.ContainingNamespace.ToDisplayString();
 
@@ -694,9 +703,9 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 
 			{{accessibility}} static partial class {{vmMockName}}
 			{
-				public static {{vmFull}} Create({{parameters}}) => Create({{leadingArguments}}{{mockName}}.Empty);
+				public static {{vmFull}} Create({{createDefaultParameters}}) => Create({{createDefaultArguments}});
 
-				public static {{vmFull}} Create({{leadingParameters}}{{mockName}} {{mockParameter}})
+				public static {{vmFull}} Create({{createParametersWithMock}})
 				{
 					// The activation scope is only needed while the VM/Model context is created:
 					// the mockable bit is captured on that context instance, so later SetMock calls
