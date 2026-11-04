@@ -21,7 +21,4 @@
 		     whole workspace on every app launch. -->
 		<TargetFrameworks>$(TargetFrameworks.Trim(';'))</TargetFrameworks>
 	</PropertyGroup>
-	<PropertyGroup>
-		<WindowsSdkPackageVersion>10.0.19041.87</WindowsSdkPackageVersion>
-	</PropertyGroup>
 </Project>
