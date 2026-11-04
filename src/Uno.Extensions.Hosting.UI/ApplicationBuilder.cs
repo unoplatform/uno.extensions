@@ -5,6 +5,7 @@ namespace Uno.Extensions.Hosting;
 internal record ApplicationBuilder : IApplicationBuilder
 {
 	private readonly List<Action<IHostBuilder, Window>> _delegates = [];
+	private Window? _window;
 
 	/// <summary>
 	/// Fires when a new <see cref="ApplicationBuilder"/> is created.
@@ -37,7 +38,13 @@ internal record ApplicationBuilder : IApplicationBuilder
 
 	public IDictionary<object, object> Properties { get; } = new Dictionary<object, object>();
 
-	public Window Window { get; } =
+	public Window Window
+	{
+		get => _window ??= CreateDefaultWindow();
+		internal set => _window = value;
+	}
+
+	private static Window CreateDefaultWindow() =>
 #if (NET6_0_OR_GREATER && WINDOWS) || HAS_UNO_WINUI
 		new Window();
 #else
