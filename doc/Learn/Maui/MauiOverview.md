@@ -56,7 +56,7 @@ dotnet new unoapp -preset blank -maui -o SimpleMauiApp
 
 .NET MAUI Embedding can be added to any existing Uno application via the following steps. The .NET MAUI Embedding feature is only supported in Uno applications that target iOS, Android, MacCatalyst, and Windows, as shown in the Platforms folder in the following solution structure.
 
-### MauiEmbedding Dependencies
+### MauiNativeEmbedding Dependencies
 
 #### [**Single Project Template**](#tab/single-project)
 
@@ -64,7 +64,7 @@ dotnet new unoapp -preset blank -maui -o SimpleMauiApp
 
 ##### UnoFeatures
 
-In the **.csproj** file, find the `<UnoFeatures>` property and add `MauiEmbedding`. This step adds all the dependencies you need for you to have Maui Embedding working with your project.
+In the **.csproj** file, find the `<UnoFeatures>` property and add `MauiNativeEmbedding` (named `MauiEmbedding` before Uno.Sdk 7.0, where that name now selects the unrelated `Uno.Maui.Embedding` package). This step adds all the dependencies you need for you to have Maui Embedding working with your project.
 
 ```diff
 <UnoFeatures>
@@ -72,7 +72,7 @@ In the **.csproj** file, find the `<UnoFeatures>` property and add `MauiEmbeddin
    Serialization;
    Localization;
    Navigation;
-+  MauiEmbedding;
++  MauiNativeEmbedding;
 </UnoFeatures>
 ```
 
