@@ -19,21 +19,15 @@ internal static class QueryStringConfiguration
 		var parameters = System.Web.HttpUtility.ParseQueryString(query);
 		var values = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
 
-		foreach (var key in parameters.AllKeys)
+		foreach (var key in parameters.AllKeys.OfType<string>())
 		{
-			if (key is not null)
-			{
-				values[key] = parameters[key];
-			}
+			values[key] = parameters[key];
 		}
 
 		// ParseQueryString files every segment that has no '=' under a null key, with the segment as its value.
-		foreach (var bareKey in parameters.GetValues(null) ?? [])
+		foreach (var bareKey in (parameters.GetValues(null) ?? []).Where(static segment => segment.Length > 0))
 		{
-			if (bareKey.Length > 0)
-			{
-				values.TryAdd(bareKey, string.Empty);
-			}
+			values.TryAdd(bareKey, string.Empty);
 		}
 
 		return values;
