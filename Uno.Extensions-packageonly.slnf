@@ -14,6 +14,7 @@
       "src\\Uno.Extensions.Core.Tests\\Uno.Extensions.Core.Tests.csproj",
       "src\\Uno.Extensions.Core.UI\\Uno.Extensions.Core.WinUI.csproj",
       "src\\Uno.Extensions.Core\\Uno.Extensions.Core.csproj",
+      "src\\Uno.Extensions.Hosting.Tests\\Uno.Extensions.Hosting.Tests.csproj",
       "src\\Uno.Extensions.Hosting.UI\\Uno.Extensions.Hosting.WinUI.csproj",
       "src\\Uno.Extensions.Hosting\\Uno.Extensions.Hosting.csproj",
       "src\\Uno.Extensions.Http.Kiota\\Uno.Extensions.Http.Kiota.csproj",
