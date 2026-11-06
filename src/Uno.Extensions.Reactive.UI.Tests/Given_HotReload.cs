@@ -232,6 +232,42 @@ public class Given_HotReload
 
 	[TestMethod]
 	[RunsOnUIThread]
+	public async Task When_DeltaAddsModelField_Then_NewViewModelDoesNotRunUpdatedCodeOnOriginalModel(CancellationToken ct)
+	{
+		await using var vm1 = new MvuxHotReloadAddFieldViewModel();
+
+		// HR: the model gets fields, written by the getter of a new state. The view model ctor is updated in place to take the updated model,
+		// while its public ctor still creates the original one, which does not have that field (dotnet/roslyn#86338).
+		await using var delta = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadAddFieldModel.cs",
+			"""// field-backed state added here""",
+			"""private object? _f1, _f2, _f3, _f4, _f5, _f6, _f7, _f8; public IState<string> Note { get { _f1 = _f2 = _f3 = _f4 = _f5 = _f6 = _f7 = _f8 = new object(); return State.Value(this, () => "note"); } }""",
+			ct);
+
+		// The page navigated to after the delta: reading the new state on the original model would write past its end,
+		// which corrupts the heap (the GC below then crashes the app).
+		await using var vm2 = new MvuxHotReloadAddFieldViewModel();
+		GC.Collect();
+		GC.WaitForPendingFinalizers();
+		GC.Collect();
+
+		var count = new TextBlock();
+		var note = new TextBlock();
+		var ui = new StackPanel { DataContext = vm2, Children = { count, note } };
+		count.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("Count") });
+		note.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("Note") });
+		await LoadAsync(ui, ct);
+
+		await TestHelper.TryWaitFor(() => note.Text == "note", 5000, ct);
+		Assert.AreEqual("note", note.Text, "The state added by the delta must be bound on a view model created after it.");
+
+		vm2.Increment.Execute(null);
+		await TestHelper.TryWaitFor(() => count.Text == "1", 5000, ct);
+		Assert.AreEqual("1", count.Text, "The command of a view model created after the delta must update the bound state.");
+	}
+
+	[TestMethod]
+	[RunsOnUIThread]
 	public async Task When_UpdateValidatorInModel_Then_ErrorsFromUpdatedValidator(CancellationToken ct)
 	{
 		var timeout = TimeSpan.FromSeconds(5);
