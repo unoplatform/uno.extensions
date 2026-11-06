@@ -1,7 +1,7 @@
 # Spec 025: MVUX hot-patch must swap list feed properties too
 
 **Status:** Implemented
-**Issue:** [#3295](https://github.com/unoplatform/uno.extensions/issues/3295) (related; the access violation it reports is not reproduced, see below)
+**Issue:** [#3295](https://github.com/unoplatform/uno.extensions/issues/3295) (the access violation it reports is covered by spec 026)
 **Files touched:**
 
 - `src/Uno.Extensions.Reactive/Presentation/Bindings/BindableViewModelBase.HotReload.cs`
@@ -42,14 +42,6 @@ Run locally on Windows (desktop head, retries off, see `specs/lessons.md`):
 - green with the fix; also green with `ListState.Value(this, () => ...)` instead of `ListState.Empty(this)`;
 - all 16 `Reactive.WinUI.Tests.Given_HotReload` tests green.
 
-## Not resolved: the access violation of #3295
+## The access violation of #3295
 
-No run crashed (8 applications of the edit, default load context, secondary app process). The issue's host
-loads the app into a collectible `AssemblyLoadContext` (7 crashes in 9 runs), which this lane does not cover.
-A reflection dump of the view model after the delta shows what EnC did, which are leads for a runtime-level
-fault, not a confirmed cause:
-
-- the protected `ViewModel(Model)` ctor kept its token but its signature now reads `(Model#1)`;
-- its closure class `<>c__DisplayClass10_0` is reused: field `model` is still declared as `Model` and holds a `Model#1`;
-- the pre-edit async lambda `<.ctor>b__0` is mapped onto a different lambda, and struct-typed fields
-  (`ValueTuple<...>`, `CancellationToken`) are EnC-added to its existing state machine.
+That crash is a different cause, worked around in spec 026 (dotnet/roslyn#86338).
