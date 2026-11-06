@@ -61,6 +61,7 @@ Each scenario should:
 | **Self-patch with ctor-deps** | New VM constructed AFTER HR on a model with required ctor params | Exercises `TryHotPatch` self-patch path: `__reactiveModelArgs` must be captured in the outermost public ctor before the call fires. |
 | **Inheritance parent-only HR** | Edit a parent model while a child VM is live; child has its own feed and inherits parent's | Exercises base-type shadow walk + base-only-patch detection. Inherited feed must hot-swap; child-only feed must stay intact. |
 | **Add derived feed next to a state + command** | A `Count.Select(...)` feed is added while `Count` (state) and `Increment` (command) are live and bound | #3226. The patcher must swap the subscription the bindable is attached to, and re-key it before the new feed subscribes to the updated state; otherwise the command updates a state the view no longer shows. Covers live and recreated VMs. |
+| **Command gets state-bound parameters** | A CT-only command that awaits states becomes one that takes them as parameters, next to a bound `IListState<T>` | #3295, spec 025. The list bindable must follow the updated model's list state, or the items the rebuilt command adds never show. Covers live and recreated VMs. |
 | **Validator update** | The body of a `State.Validate(...)` validator changes while the validated state is bound two-way to a `TextBox` | Spec 015. Only the updated validator may publish results (`INotifyDataErrorInfo`) once the state is hot-swapped. Covers live and recreated VMs. |
 
 ## 4. Scenario catalog
