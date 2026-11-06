@@ -96,6 +96,48 @@ public class Given_FeedsGenerator_Commands
 		Occurrences(vm, "await ((global::Awaitables.Job)model.Increment(reactive_ct));").Should().Be(2);
 	}
 
+	[TestMethod]
+	public void When_ModelIsNotOfTheCtorModelType_Then_CtorInitializesNothingFromIt()
+	{
+		// A hot-reload delta that updates the view model ctor retypes its model parameter to the updated model type, while the
+		// public ctors that were not updated still pass the original model (dotnet/roslyn#86338). The ctor must not use it.
+		var (sources, diagnostics) = Run("""
+			using System.Threading;
+			using System.Threading.Tasks;
+			using Uno.Extensions.Reactive;
+
+			namespace App;
+
+			public partial record ParentModel
+			{
+				public IState<int> Count => State.Value(this, () => 0);
+				public async ValueTask Increment(CancellationToken ct) { }
+			}
+
+			public partial record ChildModel : ParentModel
+			{
+				public IState<string> Name => State.Value(this, () => "");
+			}
+			""");
+
+		diagnostics.Should().BeEmpty();
+		foreach (var (vmName, model, member) in new[] { ("ParentViewModel", "ParentModel", "Count"), ("ChildViewModel", "ChildModel", "Name") })
+		{
+			var vm = sources.Should().ContainSingle(source => source.Contains($"partial class {vmName}")).Subject;
+			var start = vm.IndexOf($"protected {vmName}(global::App.{model} model)", StringComparison.Ordinal);
+			var ctor = vm.Substring(start, vm.IndexOf("#region Hot-reload support", start, StringComparison.Ordinal) - start);
+			var guard = ctor.IndexOf($"if (!typeof(global::App.{model}).IsInstanceOfType(model))", StringComparison.Ordinal);
+
+			guard.Should().BePositive($"the ctor of {vmName} must check the type of its model");
+			ctor.IndexOf($"model.{member}", StringComparison.Ordinal).Should().BeGreaterThan(guard, "members are initialized only from a model of the ctor's type");
+			if (vmName is "ParentViewModel")
+			{
+				ctor.IndexOf("model.__reactiveBindableViewModel = this;", StringComparison.Ordinal).Should().BeGreaterThan(guard);
+				ctor.IndexOf("__reactiveModel = model;", StringComparison.Ordinal).Should().BeInRange(0, guard, "the view model still tracks the model it was given, to hot-patch it");
+			}
+		}
+	}
+
 	private static int Occurrences(string text, string value)
 	{
 		var count = 0;
