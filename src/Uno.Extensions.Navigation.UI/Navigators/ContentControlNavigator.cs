@@ -33,6 +33,33 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 		return view?.IsSubclassOf(typeof(FrameworkElement)) ??
 			(view is null && routeMap.ViewModel is not null); // Inject a FrameView if no View specified but there is a viewmodel (eg for shellviewmodel scenario) (ie return true if view is null)
 	}
+
+	/// <summary>
+	/// A page shown in a content control is wrapped in a <see cref="UI.Controls.FrameView"/>, so the
+	/// page's route belongs to the frame inside it, not to this navigator. When a request comes for the
+	/// route that frame already shows, for example initialNavigate going to the default page that the
+	/// startup navigation has just shown, showing it again would replace the FrameView and build the
+	/// page (and everything nested in it) a second time. Keep the current content instead, and leave
+	/// the request to the frame, which doesn't rebuild the page it's already on.
+	/// </summary>
+	protected override Task<Route?> ExecuteRequestAsync(NavigationRequest request)
+	{
+		if (_content is UI.Controls.FrameView &&
+			Region.Children.Any(child =>
+				child.Navigator()?.Route?.Base is { Length: > 0 } shown &&
+				string.Equals(shown, request.Route.Base, StringComparison.OrdinalIgnoreCase)))
+		{
+			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"'{request.Route.Base}' is already shown by the frame in this region; keeping the current content");
+			ClearPendingFailedRequest();
+
+			// Same result as showing a page in a FrameView: the request isn't consumed here, so the
+			// frame receives it unchanged.
+			return Task.FromResult<Route?>(Route.Empty);
+		}
+
+		return base.ExecuteRequestAsync(request);
+	}
+
 	protected override async Task<string?> Show(
 		string? path,
 		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
