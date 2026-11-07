@@ -3,7 +3,14 @@ uid: Uno.Extensions.Maui.Overview
 ---
 # .NET MAUI Embedding
 
-With .NET MAUI Embedding 3rd party control libraries for .NET MAUI can be used within an Uno Platform application. Note that these controls work only for target platforms .NET MAUI reaches – iOS, Android, MacOS, and Windows.
+With .NET MAUI Embedding 3rd party control libraries for .NET MAUI can be used within an Uno Platform application. There are two embeddings, selected by UnoFeatures:
+
+| UnoFeature | Package | Targets |
+| --- | --- | --- |
+| `MauiNativeEmbedding` | [Uno.Extensions.Maui.WinUI](https://www.nuget.org/packages/Uno.Extensions.Maui.WinUI) | The targets .NET MAUI reaches: iOS, Android and Windows. MAUI views are native views. This page describes it. |
+| `MauiEmbedding` | [Uno.Maui.Embedding](https://www.nuget.org/packages/Uno.Maui.Embedding) (experimental preview) | Skia desktop and WebAssembly. MAUI views are drawn by MAUI's WinUI handlers through Skia. See [.NET MAUI Embedding on Skia desktop and WebAssembly](xref:Uno.Extensions.Maui.Embedding). |
+
+Both use the same API: `MauiHost` and `UseMauiEmbedding` in `Uno.Extensions.Maui`.
 
 ## Overview
 
@@ -15,7 +22,7 @@ It's recommended that instead of hosting individual .NET MAUI controls in a `Mau
 
 ## MAUI Embedding with Skia rendered applications
 
-.NET MAUI Embedding is also supported in applications that use Skia rendering via [Native Control Embedding](xref:Uno.Skia.Embedding.Native).
+The native embedding is also supported in applications that use Skia rendering via [Native Control Embedding](xref:Uno.Skia.Embedding.Native).
 
 > [!IMPORTANT]
 > Native elements require non-infinite layout bounds in order to render correctly. Refer to the [Features section](xref:Uno.Skia.Embedding.Native#features) of the Native Control Embedding documentation for more information on how to use Skia rendering with native controls.
@@ -56,7 +63,7 @@ dotnet new unoapp -preset blank -maui -o SimpleMauiApp
 
 .NET MAUI Embedding can be added to any existing Uno application via the following steps. The .NET MAUI Embedding feature is only supported in Uno applications that target iOS, Android, MacCatalyst, and Windows, as shown in the Platforms folder in the following solution structure.
 
-### MauiEmbedding Dependencies
+### MauiNativeEmbedding Dependencies
 
 #### [**Single Project Template**](#tab/single-project)
 
@@ -64,7 +71,7 @@ dotnet new unoapp -preset blank -maui -o SimpleMauiApp
 
 ##### UnoFeatures
 
-In the **.csproj** file, find the `<UnoFeatures>` property and add `MauiEmbedding`. This step adds all the dependencies you need for you to have Maui Embedding working with your project.
+In the **.csproj** file, find the `<UnoFeatures>` property and add `MauiNativeEmbedding` (named `MauiEmbedding` before Uno.Sdk 7.0, where that name now selects the unrelated `Uno.Maui.Embedding` package). This step adds all the dependencies you need for you to have Maui Embedding working with your project.
 
 ```diff
 <UnoFeatures>
@@ -72,7 +79,7 @@ In the **.csproj** file, find the `<UnoFeatures>` property and add `MauiEmbeddin
    Serialization;
    Localization;
    Navigation;
-+  MauiEmbedding;
++  MauiNativeEmbedding;
 </UnoFeatures>
 ```
 

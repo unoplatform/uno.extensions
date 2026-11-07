@@ -1,6 +1,8 @@
 
 - name: Overview
   href: xref:Uno.Extensions.Maui.Overview
+- name: Skia Desktop and WebAssembly (Uno.Maui.Embedding)
+  href: xref:Uno.Extensions.Maui.Embedding
 - name: "How-To: Use ArcGIS Controls"
   href: xref:Uno.Extensions.Maui.ThirdParty.EsriMaps
 - name: "How-To: Use DevExpress Controls"
