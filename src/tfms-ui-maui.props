@@ -15,7 +15,7 @@
 		<TargetFrameworks>$(TargetFrameworks.Trim(';'))</TargetFrameworks>
 	</PropertyGroup>
 	<PropertyGroup>
-		<WindowsSdkPackageVersion>10.0.19041.87</WindowsSdkPackageVersion>
+		<WindowsSdkPackageMinimumRevision>87</WindowsSdkPackageMinimumRevision>
 	</PropertyGroup>
 	<PropertyGroup>
 		<!-- The SDK supplies newer AndroidX than MAUI's Ktx packages allow; the newer ones are compatible. -->
