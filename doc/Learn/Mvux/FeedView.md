@@ -280,7 +280,7 @@ Instead of a progress ring, the `FeedView` can display a *skeleton* of its conte
 
 ### Applying the style
 
-The skeleton is provided by the `SkeletonFeedViewStyle` style. It requires the Uno Toolkit (the `Toolkit` [UnoFeature](xref:Uno.Features.Uno.Sdk)). Merge the `FeedView` resources where you use the style (or once in your `App.xaml`), then apply it:
+The skeleton is provided by the `SkeletonFeedViewStyle` style. It requires the Uno Toolkit (the `Toolkit` [UnoFeature](xref:Uno.Features.Uno.Sdk)), with its resources loaded in your `App.xaml` (`<ToolkitResources xmlns="using:Uno.Toolkit.UI" />`, or a Toolkit theme such as `MaterialToolkitTheme`): without them the skeleton controls have no template and the `FeedView` shows nothing. Merge the `FeedView` resources where you use the style (or once in your `App.xaml`), then apply it:
 
 ```xml
 <Page xmlns:mvux="using:Uno.Extensions.Reactive.UI">
