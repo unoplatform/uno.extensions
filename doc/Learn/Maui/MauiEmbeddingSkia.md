@@ -15,7 +15,7 @@ It is selected by the `MauiEmbedding` UnoFeature. The native embedding of Uno.Ex
 - **Run on:** Skia desktop on macOS, Windows and Linux, and WebAssembly in Chromium-based browsers.
 - **Not run:** embedding on Android and iOS, and accessibility. On these targets, use `MauiNativeEmbedding`.
 - **MAUI version:** `Microsoft.Maui.Controls` 10.0.101 only. Another 10.0 patch release builds with warning `UMH001`. Another minor or major version stops the build unless `UnoMauiAllowUnsupportedVersion` is `true`.
-- **Uno Platform:** Uno.WinUI `7.0.29` or later. The `MauiEmbedding` and `MauiNativeEmbedding` UnoFeatures are in Uno.Sdk `7.0.0-dev.189` and later.
+- **Uno Platform:** Uno.WinUI `7.0.29` or later. The `MauiEmbedding` and `MauiNativeEmbedding` UnoFeatures are in Uno.Sdk `7.0.5` (and the `7.0.0-dev.189` development build) and later.
 
 ## Packages
 
@@ -42,7 +42,7 @@ In an Uno.Sdk project, add `MauiEmbedding` to `UnoFeatures`:
 
 The feature references Uno.Maui.Embedding and `Microsoft.Maui.Controls` 10.0.101, and turns on the `Retarget` feature. `UnoMauiVersion` overrides the version of the Uno.Maui packages, `UnoRetargetVersion` the version of Uno.WinUI.Retarget, and `MauiVersion` the version of MAUI. Set `UnoMauiVersion` and `UnoRetargetVersion` to the same version, since the packages depend on each other's exact version.
 
-The first Uno.Sdk builds with the feature, from `7.0.0-dev.189`, reference `0.1.0-dev.1`, which doesn't have the `Uno.Extensions.Maui` API (see [Coming from MauiNativeEmbedding](#coming-from-mauinativeembedding)). If the build reports `UXAML0001` for `MauiHost`, set both properties in `Directory.Build.props`:
+Uno.Sdk `7.0.5` and the development builds before it reference `0.1.0-dev.2` or `0.1.0-dev.1`, which don't have the `Uno.Extensions.Maui` API (see [Coming from MauiNativeEmbedding](#coming-from-mauinativeembedding)). If the build reports `UXAML0001` for `MauiHost`, set both properties in `Directory.Build.props`:
 
 ```xml
 <UnoMauiVersion>0.1.0-dev.4</UnoMauiVersion>
