@@ -15,7 +15,7 @@ It is selected by the `MauiEmbedding` UnoFeature. The native embedding of Uno.Ex
 - **Run on:** Skia desktop on macOS, Windows and Linux, and WebAssembly in Chromium-based browsers.
 - **Not run:** embedding on Android and iOS, and accessibility. On these targets, use `MauiNativeEmbedding`.
 - **MAUI version:** `Microsoft.Maui.Controls` 10.0.101 only. Another 10.0 patch release builds with warning `UMH001`. Another minor or major version stops the build unless `UnoMauiAllowUnsupportedVersion` is `true`.
-- **Uno Platform:** Uno.WinUI `7.0.0-dev.2333` or later, a development build of Uno Platform 7.0.
+- **Uno Platform:** Uno.WinUI `7.0.29` or later. The `MauiEmbedding` and `MauiNativeEmbedding` UnoFeatures are in Uno.Sdk `7.0.0-dev.189` and later.
 
 ## Packages
 
@@ -40,7 +40,14 @@ In an Uno.Sdk project, add `MauiEmbedding` to `UnoFeatures`:
 </UnoFeatures>
 ```
 
-The feature references Uno.Maui.Embedding and `Microsoft.Maui.Controls` 10.0.101, and turns on the `Retarget` feature. `UnoMauiVersion` overrides the version of the Uno.Maui packages, and `MauiVersion` overrides the version of MAUI.
+The feature references Uno.Maui.Embedding and `Microsoft.Maui.Controls` 10.0.101, and turns on the `Retarget` feature. `UnoMauiVersion` overrides the version of the Uno.Maui packages, `UnoRetargetVersion` the version of Uno.WinUI.Retarget, and `MauiVersion` the version of MAUI. Set `UnoMauiVersion` and `UnoRetargetVersion` to the same version, since the packages depend on each other's exact version.
+
+The first Uno.Sdk builds with the feature, from `7.0.0-dev.189`, reference `0.1.0-dev.1`, which doesn't have the `Uno.Extensions.Maui` API (see [Coming from MauiNativeEmbedding](#coming-from-mauinativeembedding)). If the build reports `UXAML0001` for `MauiHost`, set both properties in `Directory.Build.props`:
+
+```xml
+<UnoMauiVersion>0.1.0-dev.4</UnoMauiVersion>
+<UnoRetargetVersion>0.1.0-dev.4</UnoRetargetVersion>
+```
 
 Before Uno.Sdk 7.0, `MauiEmbedding` was the native embedding of Uno.Extensions, which is now named `MauiNativeEmbedding`. On an Android, iOS, Mac Catalyst or Windows App SDK target, a project that lists `MauiEmbedding` gets warning [UNOB0036](xref:Build.Solution.error-codes#unob0036-mauiembedding-now-selects-unomauiembedding). If the project needs MAUI views on these targets, replace `MauiEmbedding` with `MauiNativeEmbedding`.
 
@@ -163,7 +170,7 @@ What differs:
 - `Uno.Extensions.Maui.WinUI.Markup` (C# Markup) has no counterpart.
 - `MauiEmbeddingException` and `MauiEmbeddingInitializationException` exist but are not thrown.
 
-The namespace `Uno.Extensions.Maui` is in `Uno.Maui.Embedding` versions after `0.1.0-dev.1`. In `0.1.0-dev.1` the types are in `Uno.Maui.Embedding`.
+The namespace `Uno.Extensions.Maui` is in `Uno.Maui.Embedding` `0.1.0-dev.4` and later. In `0.1.0-dev.1` and `0.1.0-dev.2` the types are in `Uno.Maui.Embedding`, and an app written for `MauiNativeEmbedding` fails to build with `UXAML0001` (`MauiHost` not found) and `CS1061` (`UseMauiEmbedding`).
 
 ## Existing Uno projects
 
