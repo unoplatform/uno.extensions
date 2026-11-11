@@ -13,5 +13,13 @@
       PRI257: Ignore default language (en) not being one of the included resources (eg en-us, en-uk)
     -->
 		<NoWarn>$(NoWarn);NU1507;NETSDK1201;PRI257</NoWarn>
+
+		<!--
+			Opt back into Hot Design, which the root Directory.Build.props disables: the Uno.UI.HotDesign 2.x
+			that Uno.Sdk 7.0 pins targets Uno 7, and provides UseStudio() (App.xaml.cs). Debug builds only
+			(the SDK doesn't reference it when optimizing). App MCP stays disabled: Uno.UI.App.Mcp 2.0.0-dev.7
+			still needs Uno.UI.Lottie at startup.
+		-->
+		<UnoDisableHotDesign>false</UnoDisableHotDesign>
 	</PropertyGroup>
 </Project>
