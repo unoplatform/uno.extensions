@@ -42,6 +42,10 @@ Run locally on Windows (desktop head, retries off, see `specs/lessons.md`):
 - green with the fix; also green with `ListState.Value(this, () => ...)` instead of `ListState.Empty(this)`;
 - all 16 `Reactive.WinUI.Tests.Given_HotReload` tests green.
 
+Runtime test `When_UpdateListFeedSource_Then_LiveViewModelListUpdates` covers a list feed that is not a list state
+(`ListFeed.Async(...)`): red without the list feed branch of `GetAsFeed` (the live list stays on the original items),
+green with it; all 18 `Given_HotReload` tests green.
+
 ## The access violation of #3295
 
 That crash is a different cause, worked around in spec 026 (dotnet/roslyn#86338).
