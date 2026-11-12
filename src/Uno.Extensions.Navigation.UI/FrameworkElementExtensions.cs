@@ -38,12 +38,14 @@ public static class FrameworkElementExtensions
 		{
 			var initialNavigation = () => nav.NavigateRouteAsync(root, initialRoute ?? string.Empty);
 
-			Route? launchRoute = default;
+			// LaunchRoute() returns an empty route, not null, when there's no launch URL (desktop,
+			// mobile). Keep only a real one: an empty launch route would match an initial navigation
+			// that lands on the "" shell route and skip the initial view/view model navigation below.
+			var launchRoute = sp.GetService<IOptions<HostConfiguration>>()?.Value?.LaunchRoute() is { } route && !route.IsEmpty()
+				? route
+				: null;
 			var start = () => Task.CompletedTask;
-			var hostConfigOptions = sp.GetService<IOptions<HostConfiguration>>();
-			if (hostConfigOptions?.Value is { } hostConfig &&
-				(launchRoute = hostConfig.LaunchRoute()) is { } &&
-				!launchRoute.IsEmpty())
+			if (launchRoute is not null)
 			{
 				start = () => nav.NavigateRouteAsync(root, launchRoute.FullPath());
 			}
