@@ -9,7 +9,9 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Hosting;
+using Uno.Extensions.Navigation.UI.Controls;
 using Uno.Extensions.Navigation.UI.Tests.Pages;
+using Uno.Extensions.Navigation.UI.Tests.ViewModels;
 using Uno.UI.RuntimeTests;
 
 namespace Uno.Extensions.Navigation.UI.Tests;
@@ -131,6 +133,69 @@ public class Given_NavigatorStartup
 		finally
 		{
 			await host!.StopAsync();
+		}
+	}
+
+	/// <summary>
+	/// An app whose shell route ("") has no IsDefault child and that passes an initial view
+	/// must land on that view. Without a launch URL (desktop, mobile), the launch route is
+	/// empty and matched the shell route the initial navigation lands on, so the initial view
+	/// navigation was skipped and the app showed an empty shell.
+	/// </summary>
+	[TestMethod]
+	public async Task When_ShellHasNoDefaultRoute_And_InitialViewSet_Then_InitialViewShown()
+	{
+		using var cts = new CancellationTokenSource(Timeout);
+		var window = UnitTestsUIContentHelper.CurrentTestWindow!;
+		var navigationRoot = new ContentControl
+		{
+			HorizontalAlignment = HorizontalAlignment.Stretch,
+			VerticalAlignment = VerticalAlignment.Stretch,
+			HorizontalContentAlignment = HorizontalAlignment.Stretch,
+			VerticalContentAlignment = VerticalAlignment.Stretch,
+		};
+
+		UnitTestsUIContentHelper.SaveOriginalContent();
+		window.Content = navigationRoot;
+
+		IHost? host = null;
+		try
+		{
+			host = await window.InitializeNavigationAsync(
+				buildHost: async () => UnoHost
+					.CreateDefaultBuilder(typeof(Given_NavigatorStartup).Assembly)
+					.UseNavigation(
+						viewRouteBuilder: (views, routes) =>
+						{
+							views.Register(
+								new ViewMap(ViewModel: typeof(StartupShellModel)),
+								new ViewMap<TestPageOne>(),
+								new ViewMap<TestPageTwo>());
+
+							routes.Register(
+								new RouteMap("", View: views.FindByViewModel<StartupShellModel>(), Nested: new RouteMap[]
+								{
+									new RouteMap("TestPageOne", View: views.FindByView<TestPageOne>()),
+									new RouteMap("TestPageTwo", View: views.FindByView<TestPageTwo>()),
+								}));
+						})
+					.Build(),
+				navigationRoot: navigationRoot,
+				initialView: typeof(TestPageTwo));
+
+			INavigator? frameNav = null;
+			await UIHelper.WaitFor(() => (frameNav = (navigationRoot.Content as FrameView)?.Navigator) is not null, cts.Token);
+			await UIHelper.WaitFor(() => frameNav!.Route?.Base == "TestPageTwo", cts.Token);
+
+			frameNav!.Route?.Base.Should().Be("TestPageTwo");
+		}
+		finally
+		{
+			if (host is not null)
+			{
+				await host.StopAsync();
+			}
+			UnitTestsUIContentHelper.RestoreOriginalContent();
 		}
 	}
 }
