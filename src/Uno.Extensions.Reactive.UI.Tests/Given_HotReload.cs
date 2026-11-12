@@ -232,6 +232,29 @@ public class Given_HotReload
 
 	[TestMethod]
 	[RunsOnUIThread]
+	public async Task When_UpdateListFeedSource_Then_LiveViewModelListUpdates(CancellationToken ct)
+	{
+		await using var vm = new MvuxHotReloadListFeedPatchViewModel();
+		var list = new ListView();
+		list.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Path = new PropertyPath("Items") });
+		await LoadAsync(new StackPanel { DataContext = vm, Children = { list } }, ct);
+		await TestHelper.WaitFor(() => list.Items.Count == 1, ct);
+		Assert.AreEqual("original", list.Items[0]);
+
+		// HR: the list feed, which is not a list state, produces other items (#3295, spec 025)
+		await using var delta = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadListFeedPatchModel.cs",
+			"""ImmutableList.Create("original")""",
+			"""ImmutableList.Create("updated")""",
+			ct);
+
+		// The live view model is hot-patched onto the updated model: its list follows the updated model's list feed.
+		await TestHelper.TryWaitFor(() => list.Items.OfType<string>().SequenceEqual(["updated"]), 5000, ct);
+		Assert.AreEqual("updated", string.Join(",", list.Items.OfType<string>()), "The list of the live view model must follow the updated list feed.");
+	}
+
+	[TestMethod]
+	[RunsOnUIThread]
 	public async Task When_DeltaAddsModelField_Then_NewViewModelDoesNotRunUpdatedCodeOnOriginalModel(CancellationToken ct)
 	{
 		await using var vm1 = new MvuxHotReloadAddFieldViewModel();
