@@ -29,8 +29,9 @@ public sealed class CtorDependencyAttribute : Attribute
 
 	/// <summary>
 	/// <see langword="true"/> when the parameter is dereferenced eagerly during construction
-	/// (constructor body, field/property initializer, or eager primary-ctor capture), so a
-	/// null-injected value would throw. The generated <c>Create</c> must then require this parameter.
+	/// (constructor body, field/property initializer, eager primary-ctor capture, or a feed the generated
+	/// view-model builds in its constructor, such as a method group), so a null-injected value would throw.
+	/// The generated <c>Create</c> must then require this parameter.
 	/// </summary>
 	public bool Eager { get; init; }
 

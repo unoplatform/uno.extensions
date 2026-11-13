@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -95,6 +96,23 @@ public class Given_GeneratedMock : FeedUITests
 
 		var items = await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Items);
 		items.Should().BeEquivalentTo(new[] { "a", "b" });
+	}
+
+	[TestMethod]
+	public async Task When_FeedIsAMethodGroup_Then_CreateTakesTheServiceAndInputFlows()
+	{
+		// ShelfModel binds Service.GetBooks when Books is built, which the view-model's constructor does.
+		var vm = ShelfViewModelMock.Create(new MockedShelfService(), new ShelfModelMock { Books = ListFeedMock.Value("dune") });
+		using var _ = SourceContext.GetOrCreate(vm.Model).AsCurrent();
+
+		var books = await CurrentItems(SourceContext.GetOrCreate(vm.Model), vm.Model.Books);
+		books.Should().BeEquivalentTo(new[] { "dune" });
+	}
+
+	private sealed class MockedShelfService : IShelfService
+	{
+		public ValueTask<IImmutableList<string>> GetBooks(CancellationToken ct)
+			=> throw new InvalidOperationException("Books is mocked.");
 	}
 
 	[TestMethod]
