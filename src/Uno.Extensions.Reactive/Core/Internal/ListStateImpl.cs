@@ -17,7 +17,7 @@ namespace Uno.Extensions.Reactive;
 
 // Note: This is a "quick implementation". Inheriting from FeedToListFeedAdapter is most probably not a good idea.
 
-internal class ListStateImpl<T> : FeedToListFeedAdapter<T>, IListState<T>, IStateImpl
+internal class ListStateImpl<T> : FeedToListFeedAdapter<T>, IListState<T>, IStateImpl, IListStateView<T>
 {
 	private readonly StateImpl<IImmutableList<T>> _implementation;
 
@@ -42,6 +42,9 @@ internal class ListStateImpl<T> : FeedToListFeedAdapter<T>, IListState<T>, IStat
 	/// Gets the state this list state is a view of.
 	/// </summary>
 	internal StateImpl<IImmutableList<T>> Implementation => _implementation;
+
+	/// <inheritdoc />
+	StateImpl<IImmutableList<T>> IListStateView<T>.Implementation => _implementation;
 
 	internal void HotSwap(ListStateImpl<T> replacement)
 		=> _implementation.HotSwap(replacement._implementation);
