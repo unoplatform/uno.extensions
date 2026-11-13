@@ -30,7 +30,7 @@ The protected ctor checks its model before using it as its own model type:
 ```csharp
 if (!typeof(global::App.Model).IsInstanceOfType(model))
 {
-	return;
+    return;
 }
 ```
 
