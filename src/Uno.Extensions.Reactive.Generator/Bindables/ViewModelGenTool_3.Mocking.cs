@@ -64,6 +64,10 @@ internal partial class ViewModelGenTool_3
 					{
 						sb.Append($"\r\n[{NS.Config}.FeedDependency(\"{member.Name}\", OnParameter = \"{svc}\")]");
 					}
+					foreach (var feed in derivedFrom)
+					{
+						sb.Append($"\r\n[{NS.Config}.FeedDependency(\"{member.Name}\", OnFeed = \"{feed}\")]");
+					}
 					break;
 
 				default:

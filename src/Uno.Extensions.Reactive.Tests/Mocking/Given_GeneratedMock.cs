@@ -74,6 +74,28 @@ public class Given_GeneratedMock : FeedUITests
 	}
 
 	[TestMethod]
+	public async Task When_CreateDefault_Then_AFeedReadingAServiceAndAnotherFeedIsEmptyToo()
+	{
+		// SearchModel.Results reads Service and Query: left to its real logic it would call the null-injected service.
+		var vm = SearchViewModelMock.Create();
+		var ctx = SourceContext.GetOrCreate(vm.Model);
+		using var _ = ctx.AsCurrent();
+
+		var (results, _) = ctx.GetOrCreateListState(vm.Model.Results).Record();
+		await results.WaitForMessages(1);
+
+		results.First().Current.Error.Should().BeNull("the real, null-injected Search never runs");
+		results.First().Current.Data.IsNone().Should().BeTrue("Empty pins the input to None");
+	}
+
+	[TestMethod]
+	public void When_FeedReadsAServiceAndAnotherFeed_Then_MockRequiresIt()
+	{
+		IsRequired(typeof(SearchModelMock).GetProperty(nameof(SearchModel.Results))).Should().BeTrue();
+		typeof(SearchModelMock).GetProperty(nameof(SearchModel.Query)).Should().BeNull("an independent state is not part of the mock");
+	}
+
+	[TestMethod]
 	public async Task When_CatalogEntry_Then_PinnedState()
 	{
 		// Tier-3 sample: a named catalog entry (a partial of the generated RecipeViewModelMock).
