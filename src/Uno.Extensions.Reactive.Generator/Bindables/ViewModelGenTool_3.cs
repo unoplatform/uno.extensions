@@ -131,6 +131,18 @@ internal partial class ViewModelGenTool_3 : ICodeGenTool
 						base.RegisterDisposable({N.Ctor.Model});
 
 						__reactiveModel = {N.Ctor.Model};
+						#endif
+
+						// After a hot-reload delta that updated this ctor, `{model.Name}` stands for the updated model type, but the public
+						// ctors that were not updated still pass an instance of the original one: using it as the updated type would run the
+						// updated code on it, and read or write fields it does not have (dotnet/roslyn#86338). The members are then initialized
+						// from an instance of the updated type by the self-patch of the public ctor (`HotReloadService.TryHotPatch`).
+						if (!typeof({model.ToFullString()}).IsInstanceOfType({N.Ctor.Model}))
+						{{
+							return;
+						}}
+
+						#if {!hasBaseType} // !hasBaseType
 						{N.Ctor.Model}.__reactiveBindableViewModel = this;
 						#endif
 
