@@ -109,6 +109,8 @@ Below is a list of methods available for use within binding expressions:
 | `OneWay()`                                | Sets the Binding Mode to OneWay                                                                                 |
 | `TwoWay()`                                | Sets the Binding Mode to TwoWay                                                                                 |
 | `Converter(IValueConverter)`              | Sets a custom IValueConverter to convert data between the source and target during binding                      |
+| `ConverterParameter(object)`              | Sets the parameter passed to the converter's `Convert` and `ConvertBack` methods                                |
+| `ConverterLanguage(string)`               | Sets the language passed to the converter's `Convert` and `ConvertBack` methods                                 |
 | `Convert(Func<TSource, TTarget>)`         | Sets a conversion function to transform the source data to the target type during binding                       |
 | `ConvertBack(Func<TTarget, TSource>)`     | Sets a conversion function to transform the target data back to the source type during binding (TwoWay binding) |
 | `FallbackValue(T)`                        | Sets a fallback value to be used when the source data is null or cannot be converted                            |
