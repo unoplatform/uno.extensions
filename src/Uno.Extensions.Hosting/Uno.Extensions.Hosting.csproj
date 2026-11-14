@@ -21,5 +21,7 @@
 		<InternalsVisibleTo Include="Uno.Extensions.Navigation.UI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Navigation.WinUI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Maui.WinUI" />
+		<InternalsVisibleTo Include="Uno.Extensions.Hosting.WinUI" />
+		<InternalsVisibleTo Include="Uno.Extensions.Hosting.Tests" />
 	</ItemGroup>
 </Project>

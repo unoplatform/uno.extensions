@@ -105,11 +105,7 @@ public static class UnoHost
 							};
 						config.AddInMemoryCollection(appsettingsPrefix);
 
-						var query = new Uri(href).Query;
-						var queriesValues = System.Web.HttpUtility.ParseQueryString(query);
-						var queryDict = (from k in queriesValues.AllKeys
-										 select new { Key = k, Value = queriesValues[k] }).ToDictionary(x => x.Key, x => (string?)x.Value);
-						config.AddInMemoryCollection(queryDict);
+						config.AddInMemoryCollection(QueryStringConfiguration.Parse(new Uri(href).Query));
 					}
 				})
 			.UseStorage();
