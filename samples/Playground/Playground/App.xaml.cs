@@ -16,15 +16,13 @@ public partial class App : Application
 
     protected async override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        MainWindow = new Window();
-#if DEBUG
-        MainWindow.EnableHotReload();
-#endif
-
         var appBuilder = this.CreateBuilder(args)
                     .ConfigureApp()
                     .UseToolkitNavigation();
         MainWindow = appBuilder.Window;
+#if DEBUG && !UNO_HOT_DESIGN_DISABLED
+        MainWindow.UseStudio();
+#endif
 
         var hostingOption = InitOption.Splash;
 

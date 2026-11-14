@@ -1,6 +1,11 @@
 ﻿<Project Sdk="Uno.Sdk.Private">
 	<Import Project="..\..\..\src\tfms-ui-winui-apps.props" />
 
+	<!-- Lets App.xaml.cs skip UseStudio(), which Uno.UI.HotDesign provides, when a build disables Hot Design -->
+	<PropertyGroup Condition="'$(UnoDisableHotDesign)' == 'true'">
+		<DefineConstants>$(DefineConstants);UNO_HOT_DESIGN_DISABLED</DefineConstants>
+	</PropertyGroup>
+
 	<PropertyGroup>
 
 		<OutputType>Exe</OutputType>
@@ -58,7 +63,7 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.UI\Uno.Extensions.Http.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Localization.UI\Uno.Extensions.Localization.WinUI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.csproj" ExcludeAssets="all" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
