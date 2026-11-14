@@ -20,7 +20,7 @@ namespace Uno.Extensions.Configuration.Tests;
 [TestClass]
 public class Given_EmbeddedAppConfigurationFile
 {
-	// A type in THIS test assembly, which embeds exactly one appsettings.json (see the .csproj).
+	// A type in THIS test assembly, which embeds appsettings*.json resources (see the .csproj).
 	private sealed class AppRootWithSettings
 	{
 	}

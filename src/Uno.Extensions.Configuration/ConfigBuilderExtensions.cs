@@ -53,9 +53,15 @@ public static class ConfigBuilderExtensions
 	}
 
 	/// <summary>
-	/// Sets up the host builder to register embedded resource files from 
+	/// Sets up the host builder to register embedded resource files from
 	/// the specified assembly as a configuration source
 	/// </summary>
+	/// <remarks>
+	/// Reads <c>appsettings.json</c>, or <c>appsettings.{config}.json</c> when <paramref name="config"/> is provided,
+	/// followed by <c>appsettings[.{config}].{environment}.json</c> when <paramref name="includeEnvironmentSettings"/> is <see langword="true"/>.
+	/// All files are read from the embedded resources of the assembly containing <typeparamref name="TApplicationRoot"/>;
+	/// missing files are ignored.
+	/// </remarks>
 	/// <typeparam name="TApplicationRoot">
 	/// The type that will be used to locate an assembly that contains the embedded resource files.
 	/// </typeparam>
@@ -63,7 +69,7 @@ public static class ConfigBuilderExtensions
 	/// The <see cref="IConfigBuilder"/> to configure.
 	/// </param>
 	/// <param name="config">
-	/// A name to identify the added configuration source. Optional
+	/// A name to identify the added configuration source, used in the embedded file names. Optional
 	/// </param>
 	/// <param name="includeEnvironmentSettings">
 	/// Whether or not environment specific settings should be included. Optional
@@ -82,7 +88,7 @@ public static class ConfigBuilderExtensions
 						b.AddEmbeddedConfiguration<TApplicationRoot>(ctx, config);
 						if (includeEnvironmentSettings)
 						{
-							b.AddEnvironmentConfiguration(ctx, config);
+							b.AddEnvironmentEmbeddedConfiguration<TApplicationRoot>(ctx, config);
 						}
 					}
 					else
