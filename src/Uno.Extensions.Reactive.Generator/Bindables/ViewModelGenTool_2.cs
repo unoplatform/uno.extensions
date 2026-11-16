@@ -129,6 +129,14 @@ internal class ViewModelGenTool_2 : ICodeGenTool
 							base.RegisterDisposable({N.Ctor.Model});
 							{N.Model} = {N.Ctor.Model};").Align(6)}
 
+						// After a hot-reload delta that updated this ctor, the public ctors that were not updated still pass an instance of
+						// the original model type: initializing from it would run the updated code on it (dotnet/roslyn#86338).
+						// The members are then initialized from an instance of the updated type by `HotReloadService.TryHotPatch`.
+						if (!typeof({model.ToFullString()}).IsInstanceOfType({N.Ctor.Model}))
+						{{
+							return;
+						}}
+
 						{N.Ctor.Model}.__reactiveBindableViewModel = this;
 
 						{members.Select(member => member.GetInitialization()).Align(6)}

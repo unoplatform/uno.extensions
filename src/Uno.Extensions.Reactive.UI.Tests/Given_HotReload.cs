@@ -192,6 +192,105 @@ public class Given_HotReload
 
 	[TestMethod]
 	[RunsOnUIThread]
+	public async Task When_CommandGetsParametersBoundToStates_Then_NewViewModelUsesUpdatedCommand(CancellationToken ct)
+	{
+		await using var vm1 = new MvuxHotReloadCommandParametersViewModel("hello");
+		var list1 = new ListView();
+		list1.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Path = new PropertyPath("Items") });
+		await LoadAsync(new StackPanel { DataContext = vm1, Children = { list1 } }, ct);
+
+		await TestHelper.WaitFor(() => vm1.Add.CanExecute(null), ct);
+		vm1.Add.Execute(null);
+		await TestHelper.WaitFor(() => list1.Items.Count == 1, ct);
+		Assert.AreEqual("hello-title-1-Food-2026-01-02-original", list1.Items[0]);
+
+		// HR: the command stops awaiting the states and takes them as parameters instead (#3295)
+		await using var delta = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadCommandParametersModel.cs",
+			"""public async ValueTask Add(CancellationToken ct) { var newTitle = await NewTitle; var newCount = await NewCount; var newCategory = await NewCategory; var newDate = await NewDate; await Items.AddAsync($"{Prefix}-{newTitle}-{newCount}-{newCategory}-{newDate:yyyy-MM-dd}-original", ct); }""",
+			"""public async ValueTask Add(string newTitle, int newCount, MvuxHotReloadCommandParametersCategory newCategory, DateOnly newDate, CancellationToken ct) { await Items.AddAsync($"{Prefix}-{newTitle}-{newCount}-{newCategory}-{newDate:yyyy-MM-dd}-updated", ct); }""",
+			ct);
+
+		// The page navigated to after the delta: its view model is created from the updated model ...
+		await using var vm2 = new MvuxHotReloadCommandParametersViewModel("hello");
+		var list2 = new ListView();
+		list2.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Path = new PropertyPath("Items") });
+		await LoadAsync(new StackPanel { DataContext = vm2, Children = { list2 } }, ct);
+
+		// ... and the items its command adds reach the list the view is bound to.
+		await TestHelper.WaitFor(() => vm2.Add.CanExecute(null), TimeSpan.FromSeconds(5), ct);
+		vm2.Add.Execute(null);
+		await TestHelper.TryWaitFor(() => list2.Items.Count == 1, 5000, ct);
+		Assert.AreEqual(1, list2.Items.Count, "The items added by the command of a view model created after the delta must reach its bound list.");
+		Assert.AreEqual("hello-title-1-Food-2026-01-02-updated", list2.Items[0]);
+
+		// The live view model is hot-patched onto the updated model: its list follows the updated model's list state.
+		vm1.Add.Execute(null);
+		await TestHelper.TryWaitFor(() => list1.Items.OfType<string>().Contains("hello-title-1-Food-2026-01-02-updated"), 5000, ct);
+		CollectionAssert.Contains(list1.Items.ToList(), "hello-title-1-Food-2026-01-02-updated", "The items added by the command of the live view model must reach its bound list.");
+	}
+
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_UpdateListFeedSource_Then_LiveViewModelListUpdates(CancellationToken ct)
+	{
+		await using var vm = new MvuxHotReloadListFeedPatchViewModel();
+		var list = new ListView();
+		list.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Path = new PropertyPath("Items") });
+		await LoadAsync(new StackPanel { DataContext = vm, Children = { list } }, ct);
+		await TestHelper.WaitFor(() => list.Items.Count == 1, ct);
+		Assert.AreEqual("original", list.Items[0]);
+
+		// HR: the list feed, which is not a list state, produces other items (#3295, spec 025)
+		await using var delta = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadListFeedPatchModel.cs",
+			"""ImmutableList.Create("original")""",
+			"""ImmutableList.Create("updated")""",
+			ct);
+
+		// The live view model is hot-patched onto the updated model: its list follows the updated model's list feed.
+		await TestHelper.TryWaitFor(() => list.Items.OfType<string>().SequenceEqual(["updated"]), 5000, ct);
+		Assert.AreEqual("updated", string.Join(",", list.Items.OfType<string>()), "The list of the live view model must follow the updated list feed.");
+	}
+
+	[TestMethod]
+	[RunsOnUIThread]
+	public async Task When_DeltaAddsModelField_Then_NewViewModelDoesNotRunUpdatedCodeOnOriginalModel(CancellationToken ct)
+	{
+		await using var vm1 = new MvuxHotReloadAddFieldViewModel();
+
+		// HR: the model gets fields, written by the getter of a new state. The view model ctor is updated in place to take the updated model,
+		// while its public ctor still creates the original one, which does not have that field (dotnet/roslyn#86338).
+		await using var delta = await HotReloadHelper.UpdateSourceFile(
+			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadAddFieldModel.cs",
+			"""// field-backed state added here""",
+			"""private object? _f1, _f2, _f3, _f4, _f5, _f6, _f7, _f8; public IState<string> Note { get { _f1 = _f2 = _f3 = _f4 = _f5 = _f6 = _f7 = _f8 = new object(); return State.Value(this, () => "note"); } }""",
+			ct);
+
+		// The page navigated to after the delta: reading the new state on the original model would write past its end,
+		// which corrupts the heap (the GC below then crashes the app).
+		await using var vm2 = new MvuxHotReloadAddFieldViewModel();
+		GC.Collect();
+		GC.WaitForPendingFinalizers();
+		GC.Collect();
+
+		var count = new TextBlock();
+		var note = new TextBlock();
+		var ui = new StackPanel { DataContext = vm2, Children = { count, note } };
+		count.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("Count") });
+		note.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("Note") });
+		await LoadAsync(ui, ct);
+
+		await TestHelper.TryWaitFor(() => note.Text == "note", 5000, ct);
+		Assert.AreEqual("note", note.Text, "The state added by the delta must be bound on a view model created after it.");
+
+		vm2.Increment.Execute(null);
+		await TestHelper.TryWaitFor(() => count.Text == "1", 5000, ct);
+		Assert.AreEqual("1", count.Text, "The command of a view model created after the delta must update the bound state.");
+	}
+
+	[TestMethod]
+	[RunsOnUIThread]
 	public async Task When_UpdateValidatorInModel_Then_ErrorsFromUpdatedValidator(CancellationToken ct)
 	{
 		var timeout = TimeSpan.FromSeconds(5);

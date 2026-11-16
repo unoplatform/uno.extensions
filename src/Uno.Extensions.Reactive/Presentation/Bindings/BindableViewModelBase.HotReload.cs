@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -416,11 +417,38 @@ partial class BindableViewModelBase
 		}
 	}
 
+	[RequiresDynamicCode("HotReload does not support trimmed environments.")]
 	[UnconditionalSuppressMessage("Trimming", "IL2072", Justification = "TODO: Don't know how to constrain `property.PropertyType`.")]
+	[UnconditionalSuppressMessage("Trimming", "IL2060", Justification = "HotReload does not support trimmed environments.")]
 	private static (object instance, Type valueType)? GetAsFeed(object model, PropertyInfo? property)
-		=> property is not null && IsFeed(property.PropertyType, out var valueType) && property.GetValue(model) is { } instance
-			? (instance, valueType)
-			: null;
+	{
+		if (property is null)
+		{
+			return null;
+		}
+
+		if (TryGetGenericArgument(property.PropertyType, typeof(IFeed<>), out var valueType))
+		{
+			return property.GetValue(model) is { } feed ? (feed, valueType) : null;
+		}
+
+		// A list feed is patched as the feed of list its bindable reads (#3295).
+		if (TryGetGenericArgument(property.PropertyType, typeof(IListFeed<>), out var itemType))
+		{
+			return property.GetValue(model) is { } listFeed
+				? (_asFeedOfList.MakeGenericMethod(itemType).Invoke(null, [listFeed])!, typeof(IImmutableList<>).MakeGenericType(itemType))
+				: null;
+		}
+
+		return null;
+	}
+
+	private static readonly MethodInfo _asFeedOfList = typeof(BindableViewModelBase).GetMethod(nameof(AsFeedOfList), BindingFlags.Static | BindingFlags.NonPublic)!;
+
+	// The bindable of a list state reads the state it is a view of (cf. FeedToListFeedAdapter),
+	// and the one of any other list feed reads it as a feed of list (cf. SourceContext.GetOrCreateListState).
+	private static IFeed<IImmutableList<T>> AsFeedOfList<T>(IListFeed<T> listFeed)
+		=> listFeed is ListStateImpl<T> state ? state.Implementation : listFeed.AsFeed();
 
 	// A bindable stays attached to the subscription of the feed it was created from, so that feed is what a hot-patch must swap.
 	// Reading the property again from the model is not equivalent: once a metadata update has been applied, the EnC-updated
@@ -439,25 +467,18 @@ partial class BindableViewModelBase
 			? (instance, valueType)
 			: null;
 
-	private static bool IsFeed(
+	private static bool TryGetGenericArgument(
 		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
 		Type type,
-		[NotNullWhen(true)] out Type? valueType)
+		Type genericInterface,
+		[NotNullWhen(true)] out Type? argument)
 	{
-		var feedType = IsIFeed(type) ? type : type.GetInterfaces().FirstOrDefault(IsIFeed);
-		if (feedType is null)
-		{
-			valueType = null;
-			return false;
-		}
-		else
-		{
-			valueType = feedType.GetGenericArguments()[0];
-			return true;
-		}
+		var implemented = Is(type) ? type : type.GetInterfaces().FirstOrDefault(Is);
+		argument = implemented?.GetGenericArguments()[0];
+		return argument is not null;
 
-		static bool IsIFeed(Type intf)
-			=> intf is { GenericTypeArguments.Length: 1 } && intf.GetGenericTypeDefinition() == typeof(IFeed<>);
+		bool Is(Type intf)
+			=> intf is { GenericTypeArguments.Length: 1 } && intf.GetGenericTypeDefinition() == genericInterface;
 	}
 
 	private static readonly MethodInfo? _tryPatchBindableProperty = typeof(BindableViewModelBase).GetMethod(nameof(TryPatchBindablePropertyGeneric), BindingFlags.Instance | BindingFlags.NonPublic);
