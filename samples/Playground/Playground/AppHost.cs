@@ -128,6 +128,7 @@ internal static class AppHost
 			new ViewMap<ComplexDialogSecondPage>(),
 			new ViewMap<PanelVisibilityPage>(),
 			new ViewMap<VisualStatesPage>(),
+			new ViewMap<SkeletonFeedPage>(),
 			new ViewMap<AdHocPage, AdHocViewModel>(),
 			new ViewMap<ListPage, ListViewModel>(),
 			new ViewMap<ItemDetailsPage, ItemDetailsViewModel>(),
@@ -183,6 +184,7 @@ internal static class AppHost
 					}),
 					new RouteMap("PanelVisibility",View: views.FindByView<PanelVisibilityPage>()),
 					new RouteMap("VisualStates",View: views.FindByView<VisualStatesPage>()),
+					new RouteMap("SkeletonFeed",View: views.FindByView<SkeletonFeedPage>()),
 					new RouteMap("AdHoc",View: views.FindByViewModel<AdHocViewModel>(),
 					Nested: new[]
 					{

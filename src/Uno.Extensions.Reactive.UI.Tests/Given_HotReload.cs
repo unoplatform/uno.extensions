@@ -199,9 +199,10 @@ public class Given_HotReload
 		list1.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Path = new PropertyPath("Items") });
 		await LoadAsync(new StackPanel { DataContext = vm1, Children = { list1 } }, ct);
 
-		await TestHelper.WaitFor(() => vm1.Add.CanExecute(null), ct);
+		// The previous test's hot-reload update can still be applying on a CI emulator, so the default 1s is too short here.
+		await TestHelper.WaitFor(() => vm1.Add.CanExecute(null), TimeSpan.FromSeconds(5), ct);
 		vm1.Add.Execute(null);
-		await TestHelper.WaitFor(() => list1.Items.Count == 1, ct);
+		await TestHelper.WaitFor(() => list1.Items.Count == 1, TimeSpan.FromSeconds(5), ct);
 		Assert.AreEqual("hello-title-1-Food-2026-01-02-original", list1.Items[0]);
 
 		// HR: the command stops awaiting the states and takes them as parameters instead (#3295)
@@ -300,7 +301,7 @@ public class Given_HotReload
 		var history = new List<string[]>();
 		((INotifyDataErrorInfo)vm).ErrorsChanged += (snd, e) => history.Add(GetValidationErrors(vm, "Name"));
 
-		await UIHelper.Load(ui, ct);
+		await LoadAsync(ui, ct);
 		await TestHelper.WaitFor(() => GetValidationErrors(vm, "Name") is ["original:initial"], timeout, ct);
 
 		textBox.Text = "edited";
@@ -333,7 +334,7 @@ public class Given_HotReload
 		var textBox2 = CreateTwoWayTextBox("Name");
 		var ui2 = new StackPanel { DataContext = vm2, Children = { textBox2 } };
 
-		await UIHelper.Load(ui2, ct);
+		await LoadAsync(ui2, ct);
 		await TestHelper.TryWaitFor(() => GetValidationErrors(vm2, "Name") is ["updated:initial"], timeout, ct);
 		CollectionAssert.AreEqual(new[] { "updated:initial" }, GetValidationErrors(vm2, "Name"), "A view model created after the delta must be validated by the updated validator.");
 
