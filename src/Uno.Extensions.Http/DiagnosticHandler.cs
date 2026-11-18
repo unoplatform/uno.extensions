@@ -67,22 +67,36 @@ public class DiagnosticHandler : DelegatingHandler
 		return response;
 	}
 
-	// Security: credentials must never reach a log sink.
-	private static string LoggableValue(KeyValuePair<string, IEnumerable<string>> header) =>
-		IsCredentialHeader(header.Key) ? RedactedValue : string.Join(", ", header.Value);
-
-	private static readonly string[] CredentialNameParts = ["auth", "cookie", "key", "token", "secret"];
-
-	private static bool IsCredentialHeader(string name)
+	// Security: a header value is logged only when it is known to carry no credential; logs can reach a dashboard.
+	private static string LoggableValue(KeyValuePair<string, IEnumerable<string>> header)
 	{
-		foreach (var part in CredentialNameParts)
+		if (DiagnosticHeaders.Contains(header.Key))
 		{
-			if (name.Contains(part, StringComparison.OrdinalIgnoreCase))
-			{
-				return true;
-			}
+			return string.Join(", ", header.Value);
 		}
 
-		return false;
+		if (UrlHeaders.Contains(header.Key))
+		{
+			return string.Join(", ", header.Value.Select(WithoutQuery));
+		}
+
+		return RedactedValue;
+	}
+
+	private static readonly HashSet<string> DiagnosticHeaders = new(StringComparer.OrdinalIgnoreCase)
+	{
+		"Accept", "Content-Type", "User-Agent", "traceparent",
+	};
+
+	private static readonly HashSet<string> UrlHeaders = new(StringComparer.OrdinalIgnoreCase)
+	{
+		"Location", "Content-Location", "Referer",
+	};
+
+	// A query string can carry a token, as for the request line.
+	private static string WithoutQuery(string url)
+	{
+		var query = url.IndexOfAny(['?', '#']);
+		return query < 0 ? url : url[..query];
 	}
 }

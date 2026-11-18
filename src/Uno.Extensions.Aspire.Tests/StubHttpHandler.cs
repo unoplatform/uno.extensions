@@ -4,9 +4,9 @@ using System.Net.Http.Headers;
 namespace Uno.Extensions.Aspire.Tests;
 
 /// <summary>
-/// Terminal handler that records every request it receives and answers with a fixed status.
+/// Terminal handler that records every request it receives and answers with a fixed status, and a location when one is given.
 /// </summary>
-internal sealed class StubHttpHandler(HttpStatusCode status) : HttpMessageHandler
+internal sealed class StubHttpHandler(HttpStatusCode status, Uri? location = null) : HttpMessageHandler
 {
 	private readonly List<Uri?> _requestUris = new();
 
@@ -22,6 +22,7 @@ internal sealed class StubHttpHandler(HttpStatusCode status) : HttpMessageHandle
 		// Retry-After: 0 makes every retry layer retry immediately, so the tests do not wait.
 		response.Headers.RetryAfter = new RetryConditionHeaderValue(TimeSpan.Zero);
 		response.Headers.TryAddWithoutValidation("Set-Cookie", "session=server-secret");
+		response.Headers.Location = location;
 		return Task.FromResult(response);
 	}
 }
