@@ -13,4 +13,8 @@
 		<PackageReference Include="Aspire.Hosting" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="Uno.Extensions.Aspire.Hosting.Tests" />
+	</ItemGroup>
+
 </Project>

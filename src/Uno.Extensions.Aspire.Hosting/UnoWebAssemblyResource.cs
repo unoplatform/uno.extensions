@@ -14,7 +14,7 @@ public sealed class UnoWebAssemblyResource : UnoHeadResource
 	public const string EndpointName = "http";
 
 	internal UnoWebAssemblyResource(string name, UnoAppResource app)
-		: base(name, app, $"net{Environment.Version.Major}.0-browserwasm")
+		: base(name, app, "browserwasm")
 	{
 	}
 }

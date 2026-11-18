@@ -21,9 +21,9 @@ public class Given_WebAssemblyHead
 		var wasm = _solution.AddWebAssembly(builder);
 
 		wasm.Resource.Name.Should().Be("app-wasm");
-		var result = await TestSolution.StartAsync(builder, wasm.Resource);
+		var result = await ExecutionConfiguration.ResolveAsync(builder, wasm.Resource);
 		result.Arguments.Select(argument => argument.Value).Should()
-			.Equal("run", "--project", _solution.ProjectPath, "-f", TestSolution.WebAssemblyTargetFramework, "--no-launch-profile");
+			.Equal("run", "--project", _solution.ProjectPath, "-f", TestSolution.WebAssemblyTargetFramework, "--no-build", "--no-launch-profile");
 		result.EnvironmentVariables.Should().Contain("ASPNETCORE_URLS", "http://localhost:5377");
 		result.EnvironmentVariables.Should().NotContainKey("OTEL_EXPORTER_OTLP_ENDPOINT");
 	}

@@ -1,7 +1,6 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using FluentAssertions;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Uno.Extensions.Aspire.Hosting.Tests;
@@ -10,12 +9,6 @@ namespace Uno.Extensions.Aspire.Hosting.Tests;
 public class Given_UnoApp
 {
 	private static readonly string ProjectPath = Path.Join(AppContext.BaseDirectory, "MyApp", "MyApp.csproj");
-
-	private static Task<IExecutionConfigurationResult> ResolveAsync(IDistributedApplicationBuilder builder, IResource resource) =>
-		ExecutionConfigurationBuilder.Create(resource)
-			.WithArgumentsConfig()
-			.WithEnvironmentVariablesConfig()
-			.BuildAsync(builder.ExecutionContext, NullLogger.Instance, CancellationToken.None);
 
 	[ClassInitialize]
 	public static void CreateProjectFile(TestContext _)
@@ -33,6 +26,30 @@ public class Given_UnoApp
 		app.AddDesktop();
 
 		builder.Resources.Select(resource => resource.Name).Should().Equal("app-desktop");
+	}
+
+	[TestMethod]
+	public void When_ProjectNamesItsFrameworks_Then_EachHeadUsesItsOwn()
+	{
+		using var solution = new TestSolution("<PropertyGroup><TargetFrameworks>net9.0-android;net9.0-browserwasm;net9.0-desktop</TargetFrameworks></PropertyGroup>");
+		var builder = solution.CreateBuilder();
+
+		var app = builder.AddUnoApp("app", solution.ProjectPath);
+
+		app.AddDesktop().Resource.TargetFramework.Should().Be("net9.0-desktop");
+		app.AddWebAssembly().Resource.TargetFramework.Should().Be("net9.0-browserwasm");
+		app.AddAndroidEmulator().Resource.TargetFramework.Should().Be("net9.0-android");
+	}
+
+	[TestMethod]
+	public void When_ProjectComputesItsFrameworks_Then_HeadsUseTheAppHostVersion()
+	{
+		using var solution = new TestSolution("<PropertyGroup><TargetFrameworks>$(DotNetVersion)-desktop</TargetFrameworks></PropertyGroup>");
+		var builder = solution.CreateBuilder();
+
+		var desktop = builder.AddUnoApp("app", solution.ProjectPath).AddDesktop();
+
+		desktop.Resource.TargetFramework.Should().Be($"net{Environment.Version.Major}.0-desktop");
 	}
 
 	[TestMethod]
@@ -77,8 +94,8 @@ public class Given_UnoApp
 
 		desktop.Resource.Command.Should().Be("dotnet");
 		desktop.Resource.WorkingDirectory.Should().Be(Path.GetDirectoryName(ProjectPath));
-		var args = (await ResolveAsync(builder, desktop.Resource)).Arguments.Select(argument => argument.Value);
-		args.Should().Equal("run", "--project", ProjectPath, "-f", $"net{Environment.Version.Major}.0-desktop", "--no-launch-profile");
+		var args = (await ExecutionConfiguration.ResolveAsync(builder, desktop.Resource)).Arguments.Select(argument => argument.Value);
+		args.Should().Equal("run", "--project", ProjectPath, "-f", $"net{Environment.Version.Major}.0-desktop", "--no-build", "--no-launch-profile");
 	}
 
 	[TestMethod]
@@ -92,8 +109,8 @@ public class Given_UnoApp
 			.WithLaunchProfile("MyApp (Desktop)");
 
 		desktop.Resource.Name.Should().Be("ui");
-		var args = (await ResolveAsync(builder, desktop.Resource)).Arguments.Select(argument => argument.Value);
-		args.Should().Equal("run", "--project", ProjectPath, "-f", "net9.0-desktop", "--launch-profile", "MyApp (Desktop)");
+		var args = (await ExecutionConfiguration.ResolveAsync(builder, desktop.Resource)).Arguments.Select(argument => argument.Value);
+		args.Should().Equal("run", "--project", ProjectPath, "-f", "net9.0-desktop", "--no-build", "--launch-profile", "MyApp (Desktop)");
 	}
 
 	[TestMethod]
@@ -103,7 +120,7 @@ public class Given_UnoApp
 
 		var desktop = builder.AddUnoApp("app", ProjectPath).AddDesktop();
 
-		var environment = (await ResolveAsync(builder, desktop.Resource)).EnvironmentVariables;
+		var environment = (await ExecutionConfiguration.ResolveAsync(builder, desktop.Resource)).EnvironmentVariables;
 		environment.Should().Contain("DOTNET_MODIFIABLE_ASSEMBLIES", "debug");
 		environment.Should().ContainKey("OTEL_EXPORTER_OTLP_ENDPOINT");
 		environment.Should().ContainKey("OTEL_SERVICE_NAME");
@@ -119,7 +136,7 @@ public class Given_UnoApp
 
 		var desktop = builder.AddUnoApp("app", ProjectPath).AddDesktop().WithReference(api.GetEndpoint("http"));
 
-		var environment = (await ResolveAsync(builder, desktop.Resource)).EnvironmentVariables;
+		var environment = (await ExecutionConfiguration.ResolveAsync(builder, desktop.Resource)).EnvironmentVariables;
 		environment.Should().Contain("services__api__http__0", "http://localhost:5171");
 	}
 

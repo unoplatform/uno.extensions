@@ -9,7 +9,7 @@ namespace Aspire.Hosting.ApplicationModel;
 public sealed class UnoAndroidEmulatorResource : UnoHeadResource
 {
 	internal UnoAndroidEmulatorResource(string name, UnoAppResource app)
-		: base(name, app, $"net{Environment.Version.Major}.0-android")
+		: base(name, app, "android")
 	{
 	}
 }

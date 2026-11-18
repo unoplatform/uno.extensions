@@ -8,11 +8,15 @@ namespace Aspire.Hosting.ApplicationModel;
 [Experimental(UnoAppDiagnostics.ExperimentalId)]
 public abstract class UnoHeadResource : ExecutableResource
 {
-	private protected UnoHeadResource(string name, UnoAppResource app, string targetFramework)
-		: base(name, "dotnet", Path.GetDirectoryName(app.ProjectPath)!)
+	/// <param name="name">The name of the head.</param>
+	/// <param name="app">The app the head belongs to.</param>
+	/// <param name="platform">The platform part of the target framework, for example <c>desktop</c>.</param>
+	private protected UnoHeadResource(string name, UnoAppResource app, string platform)
+		: base(name, "dotnet", app.ProjectDirectory)
 	{
 		App = app;
-		TargetFramework = targetFramework;
+		TargetFramework = app.TargetFrameworks.FirstOrDefault(framework => framework.EndsWith($"-{platform}", StringComparison.OrdinalIgnoreCase))
+			?? $"net{Environment.Version.Major}.0-{platform}";
 	}
 
 	/// <summary>
@@ -21,7 +25,8 @@ public abstract class UnoHeadResource : ExecutableResource
 	public UnoAppResource App { get; }
 
 	/// <summary>
-	/// The target framework the head is built and run for.
+	/// The target framework the head is built and run for: the one of its platform in the project file, else the
+	/// AppHost's .NET version with the platform.
 	/// </summary>
 	public string TargetFramework { get; internal set; }
 
