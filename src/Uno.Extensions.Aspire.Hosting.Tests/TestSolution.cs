@@ -1,6 +1,5 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Uno.Extensions.Aspire.Hosting.Tests;
 
@@ -13,11 +12,20 @@ internal sealed class TestSolution : IDisposable
 
 	public static readonly string AndroidTargetFramework = $"net{Environment.Version.Major}.0-android";
 
-	public TestSolution()
+	// Builds instantly, and fails when a file named fail.txt sits next to it. Build comes first: it is the default target.
+	public const string BuildTargets = """
+		<Target Name="Build">
+			<Error Condition="Exists('fail.txt')" Text="Requested failure." />
+		</Target>
+		<Target Name="Restore" />
+		""";
+
+	/// <param name="projectContent">What goes inside the project's root element, by default targets that build instantly.</param>
+	public TestSolution(string projectContent = BuildTargets)
 	{
 		Folder = Path.Join(Path.GetTempPath(), "uno-aspire-tests", Guid.NewGuid().ToString("N"));
 		Directory.CreateDirectory(AppFolder);
-		File.WriteAllText(ProjectPath, "<Project />");
+		File.WriteAllText(ProjectPath, $"<Project>{projectContent}</Project>");
 	}
 
 	public string Folder { get; }
@@ -40,13 +48,6 @@ internal sealed class TestSolution : IDisposable
 
 	public IResourceBuilder<UnoAndroidEmulatorResource> AddAndroidEmulator(IDistributedApplicationBuilder builder) =>
 		builder.AddUnoApp("app", ProjectPath).AddAndroidEmulator();
-
-	// Resolves the head's arguments and environment as a start does, without starting a process.
-	public static async Task<IExecutionConfigurationResult> StartAsync(IDistributedApplicationBuilder builder, IResource resource) =>
-		await ExecutionConfigurationBuilder.Create(resource)
-			.WithArgumentsConfig()
-			.WithEnvironmentVariablesConfig()
-			.BuildAsync(builder.ExecutionContext, NullLogger.Instance, CancellationToken.None);
 
 	public void Dispose() => Directory.Delete(Folder, recursive: true);
 }

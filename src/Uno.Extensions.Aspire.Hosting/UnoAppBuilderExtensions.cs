@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Aspire.Hosting.ApplicationModel;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Aspire.Hosting;
 
@@ -35,22 +36,28 @@ public static class UnoAppBuilderExtensions
 		ArgumentException.ThrowIfNullOrEmpty(projectPath);
 
 		var fullPath = Path.GetFullPath(projectPath, builder.AppHostDirectory);
+		IReadOnlyList<string> targetFrameworks = [];
 		// Heads are left out of a publish, which may run where the app is not checked out.
-		if (builder.ExecutionContext.IsRunMode && !File.Exists(fullPath))
+		if (builder.ExecutionContext.IsRunMode)
 		{
-			throw new DistributedApplicationException($"The project file of the Uno app '{name}' was not found at '{fullPath}'.");
+			if (!File.Exists(fullPath))
+			{
+				throw new DistributedApplicationException($"The project file of the Uno app '{name}' was not found at '{fullPath}'.");
+			}
+
+			targetFrameworks = ProjectTargetFrameworks.Read(fullPath);
 		}
 
 		// Not added to the model: the app runs nothing, only its heads appear in the dashboard.
-		return builder.CreateResourceBuilder(new UnoAppResource(name, fullPath));
+		return builder.CreateResourceBuilder(new UnoAppResource(name, fullPath, targetFrameworks));
 	}
 
 	/// <summary>
 	/// Adds the desktop head of the app. It starts with the AppHost.
 	/// </summary>
 	/// <remarks>
-	/// The target framework defaults to the .NET version the AppHost runs on, for example <c>net10.0-desktop</c>.
-	/// Use <see cref="WithTargetFramework"/> when the app targets another one.
+	/// The target framework is the project's <c>-desktop</c> one, or the AppHost's .NET version when the project computes
+	/// its target frameworks from properties. Use <see cref="WithTargetFramework"/> to choose another one.
 	/// </remarks>
 	/// <param name="builder">The app builder.</param>
 	/// <param name="name">The name of the head, <c>&lt;app&gt;-desktop</c> when omitted.</param>
@@ -91,9 +98,9 @@ public static class UnoAppBuilderExtensions
 			.WithHttpEndpoint(name: UnoWebAssemblyResource.EndpointName)
 			.WithEnvironment(context => context.EnvironmentVariables[ServerUrlsVariable] =
 				ReferenceExpression.Create($"http://localhost:{head.GetEndpoint(UnoWebAssemblyResource.EndpointName).Property(EndpointProperty.TargetPort)}"))
-			// Running while it builds; healthy once the app is served.
+			// Healthy once the app is served.
 			.WithHttpHealthCheck("/", endpointName: UnoWebAssemblyResource.EndpointName)
-			// Heads share the project's obj folder: only the desktop head builds with the AppHost.
+			// Started by hand, so a run does not build every head.
 			.WithExplicitStart();
 	}
 
@@ -120,7 +127,7 @@ public static class UnoAppBuilderExtensions
 				AddRunArguments(head, context.Args);
 				context.Args.Add(EmulatorTargetArgument);
 			})
-			// Heads share the project's obj folder: only the desktop head builds with the AppHost.
+			// Started by hand: it needs a running emulator.
 			.WithExplicitStart();
 	}
 
@@ -159,11 +166,24 @@ public static class UnoAppBuilderExtensions
 	}
 
 	private static IResourceBuilder<T> AddHead<T>(this IDistributedApplicationBuilder builder, T head)
-		where T : UnoHeadResource =>
-		builder.AddResource(head)
+		where T : UnoHeadResource
+	{
+		var resource = builder.AddResource(head)
 			// dotnet run without a launch profile does not set it, and Hot Reload needs it.
 			.WithEnvironment(ModifiableAssembliesVariable, "debug")
 			.ExcludeFromManifest();
+
+		if (builder.ExecutionContext.IsRunMode)
+		{
+			resource.OnBeforeResourceStarted((head, @event, cancellationToken) => HeadBuild.RunAsync(
+				head,
+				@event.Services.GetRequiredService<ResourceNotificationService>(),
+				@event.Services.GetRequiredService<ResourceLoggerService>().GetLogger(head),
+				cancellationToken));
+		}
+
+		return resource;
+	}
 
 	private static void AddRunArguments(UnoHeadResource head, IList<object> args)
 	{
@@ -172,6 +192,8 @@ public static class UnoAppBuilderExtensions
 		args.Add(head.App.ProjectPath);
 		args.Add("-f");
 		args.Add(head.TargetFramework);
+		// Built just before, under the app's build lock.
+		args.Add("--no-build");
 
 		if (head.LaunchProfile is null)
 		{

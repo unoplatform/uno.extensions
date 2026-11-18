@@ -9,7 +9,7 @@ namespace Aspire.Hosting.ApplicationModel;
 public sealed class UnoDesktopResource : UnoHeadResource
 {
 	internal UnoDesktopResource(string name, UnoAppResource app)
-		: base(name, app, $"net{Environment.Version.Major}.0-desktop")
+		: base(name, app, "desktop")
 	{
 	}
 }

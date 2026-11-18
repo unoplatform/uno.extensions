@@ -21,9 +21,9 @@ public class Given_AndroidEmulatorHead
 		var android = _solution.AddAndroidEmulator(builder);
 
 		android.Resource.Name.Should().Be("app-android");
-		var result = await TestSolution.StartAsync(builder, android.Resource);
+		var result = await ExecutionConfiguration.ResolveAsync(builder, android.Resource);
 		result.Arguments.Select(argument => argument.Value).Should()
-			.Equal("run", "--project", _solution.ProjectPath, "-f", TestSolution.AndroidTargetFramework, "--no-launch-profile", "-p:AdbTarget=-e");
+			.Equal("run", "--project", _solution.ProjectPath, "-f", TestSolution.AndroidTargetFramework, "--no-build", "--no-launch-profile", "-p:AdbTarget=-e");
 		result.EnvironmentVariables.Should().NotContainKey("OTEL_EXPORTER_OTLP_ENDPOINT");
 		android.Resource.Annotations.OfType<ExplicitStartupAnnotation>().Should().ContainSingle();
 		android.Resource.Annotations.OfType<ManifestPublishingCallbackAnnotation>().Should().Equal(ManifestPublishingCallbackAnnotation.Ignore);
