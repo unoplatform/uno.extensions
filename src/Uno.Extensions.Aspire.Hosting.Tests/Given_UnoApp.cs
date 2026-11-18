@@ -9,7 +9,7 @@ namespace Uno.Extensions.Aspire.Hosting.Tests;
 [TestClass]
 public class Given_UnoApp
 {
-	private static readonly string ProjectPath = Path.Combine(AppContext.BaseDirectory, "MyApp", "MyApp.csproj");
+	private static readonly string ProjectPath = Path.Join(AppContext.BaseDirectory, "MyApp", "MyApp.csproj");
 
 	private static Task<IExecutionConfigurationResult> ResolveAsync(IDistributedApplicationBuilder builder, IResource resource) =>
 		ExecutionConfigurationBuilder.Create(resource)
@@ -39,7 +39,7 @@ public class Given_UnoApp
 	public void When_ProjectFileIsMissing_Then_AddUnoAppThrows()
 	{
 		var builder = DistributedApplication.CreateBuilder();
-		var missingPath = Path.Combine(AppContext.BaseDirectory, "missing", "Missing.csproj");
+		var missingPath = Path.Join(AppContext.BaseDirectory, "missing", "Missing.csproj");
 
 		var add = () => builder.AddUnoApp("app", missingPath);
 
@@ -49,9 +49,9 @@ public class Given_UnoApp
 	[TestMethod]
 	public void When_ProjectFileIsMissingInPublishMode_Then_AddUnoAppDoesNotThrow()
 	{
-		var builder = DistributedApplication.CreateBuilder(["--publisher", "manifest", "--output-path", Path.Combine(AppContext.BaseDirectory, "manifest")]);
+		var builder = DistributedApplication.CreateBuilder(["--publisher", "manifest", "--output-path", Path.Join(AppContext.BaseDirectory, "manifest")]);
 
-		var add = () => builder.AddUnoApp("app", Path.Combine(AppContext.BaseDirectory, "missing", "Missing.csproj"));
+		var add = () => builder.AddUnoApp("app", Path.Join(AppContext.BaseDirectory, "missing", "Missing.csproj"));
 
 		add.Should().NotThrow();
 	}
