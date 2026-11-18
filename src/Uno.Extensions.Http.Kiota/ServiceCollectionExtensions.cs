@@ -71,7 +71,7 @@ public static class ServiceCollectionExtensions
 	where TEndpoint : EndpointOptions, new()
 	{
 		services.AddKiotaHandlers();
-		if (HttpRetryOwnership.IsOwnedByResilienceHandler(context))
+		if (context.Properties.TryGetValue(HttpRetryOwnership.ResilienceHandlerKey, out var ownsRetries) && ownsRetries is true)
 		{
 			// TryAdd: an app-registered option wins. A resilience handler already retries, see specs/027-aspire-support/spec.md
 			services.TryAddSingleton(new RetryHandlerOption { MaxRetry = 0 });
