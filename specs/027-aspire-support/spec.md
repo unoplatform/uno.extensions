@@ -1,75 +1,14 @@
 # 027 - Aspire support for Uno apps
 
-**Status: lots 1 to 4 in progress (code done; open items listed below), lots 5 and 6 not started.** The design is extracted from a working
-sample (an Uno app on desktop, WebAssembly and Android, an ASP.NET Core API and a PostgreSQL
-container under one AppHost). Anything the sample did not exercise is marked *unproven* and names
-the lot that proves it.
+**Status: lots 1 to 4 in progress (code done; open items listed below), lots 5 and 6 not started.**
 
-Verified on the sample's desktop head, with the package in place of its hand-written project and
-of its hand-registered Kiota option: started by the AppHost, the app resolved `https+http://api` to
-the injected address, its call went through the resilience handler, and the dashboard showed one
-trace of three spans (the app's request, the API's, the database query). A task added from the
-app's own UI reached the API as one `POST` and the database as one row.
+The design is extracted from a working sample: an Uno app on desktop, WebAssembly and Android, an
+ASP.NET Core API and a PostgreSQL container under one AppHost. The sample is local and not in the
+repository: it is where each head was run by hand, and the tests under *Tests* guard the
+behavior in the repository. Anything not run on it is marked *unproven*.
 
-WebAssembly size, measured on a trimmed Release publish of the sample with and without the
-package: 14 more assemblies, 0.47 MB more uncompressed (46.10 MB against 45.64 MB) and 0.17 MB more
-Brotli-compressed (12.55 MB against 12.38 MB). No OpenTelemetry assembly is in the output; the
-added ones are the resilience and service discovery libraries.
-
-Still open in lot 1: running the published WebAssembly app, and an AOT publish.
-
-Lot 2, verified on the same sample with `AddUnoApp(...).AddDesktop()` in place of `AddExecutable`:
-the head started with the AppHost once the API was healthy, and its call reached the API and the
-database. Stopping the head alone ended the app process, starting it again started the app again, and
-stopping the AppHost ended it.
-
-Lot 3, verified on the same sample with `AddWebAssembly()` next to the desktop head and nothing
-about Aspire in the app's project: the head stayed stopped until started from the AppHost, its
-build wrote the API's address into the bootstrapper configuration, the app loaded from the
-address the AppHost owns, and a task added in the browser reached the API as one `POST` after a
-CORS check the API answered for that origin only. Stopping the head ended the dev server.
-Nothing was written before the head was started, and the head reported unhealthy while it built
-and healthy once the app was served.
-
-With the values in the app's `obj` folder: a `dotnet build` of the WebAssembly target while the
-head ran, as an IDE makes, said it used them, kept the address in the bootstrapper configuration,
-and the browser still reached the API. Stopping the head alone left the file; stopping the
-AppHost removed it, and the next build carried no address. With an `https` endpoint added to
-the API, both addresses were baked and the browser called the `https` one, with the development
-certificate trusted.
-
-Measured while settling the lot 3 review:
-
-- A quote and a backslash in a baked value reach the page escaped: the bootstrapper writes
-  values as JavaScript strings.
-- A changed value in an imported file compiled the app again. With the values in a project the build
-  calls instead, a changed value reached the page and the app was not compiled again.
-- A launch profile's `applicationUrl` overrode the port passed to the WebAssembly dev server.
-- With the first design, a targets file passed as a property to the head's build only, a build
-  of the WebAssembly target without the property, as an IDE makes, removed the baked address.
-  That is why the values now live in the app's `obj` folder.
-- `dotnet publish -c Debug --no-build` after an AppHost build copied the baked address into the
-  publish output.
-- Restarting the head from the dashboard wrote the values file again, after it had been deleted by
-  hand: the head's arguments are resolved at every start.
-- One MSBuild build manager and project collection kept across builds, as an IDE keeps them, read
-  each rewrite of the values file: no stale value from a cached project.
-
-Still open in lot 3: stopping a head on macOS and Linux, and two heads building the same project
-at once.
-
-Lot 4, verified on the same sample with `AddAndroidEmulator()` on an x86_64 emulator, API 35:
-
-- The head built and deployed the app; `dotnet run` stayed attached and streamed the app's log
-  into the head's console.
-- The app's environment carried `SERVICES__API__HTTP__0=http://10.0.2.2:5171`. A task added on the
-  emulator reached the API, and the API returned it to the host.
-- An `https` endpoint of the API was left out with an Information line naming it.
-- The app reached `10.0.2.2` over plain `http` with a network security configuration that allows
-  that address only, without `usesCleartextTraffic`.
-- A `dotnet build -f net10.0-android` while the head ran, as an IDE makes, kept the address;
-  after the AppHost stopped, the next build's environment had none.
-- Stopping the head ended the app on the emulator.
+Still open: running the published WebAssembly app, an AOT publish, and stopping a head on macOS
+and Linux.
 
 ## Problem
 
@@ -119,8 +58,10 @@ this.CreateBuilder(args)
 ```
 
 `UseServiceDefaults()` is an `IHostBuilder` extension in namespace `Uno.Extensions`, named `Use*`
-like the rest of Uno.Extensions hosting. It takes no parameters: every piece below has a standard
-per-client or per-app override, and an options overload can be added later without breaking.
+like the rest of Uno.Extensions hosting. An overload takes `ServiceDefaultsOptions`: Aspire's own
+service defaults are a project the app edits, which a package cannot be, so the options turn the
+resilience handler or the telemetry off, and change the resilience handler after unsafe methods
+are excluded from retries.
 
 ### Service discovery
 
@@ -134,17 +75,21 @@ per-client or per-app override, and an options overload can be added later witho
 `AddClientWithEndpoint` sets it as `BaseAddress` unchanged, and the resolver replaces the host per
 request from `services:api:http:0`, which Aspire injects as `services__api__http__0`.
 
-**Embedded settings beat the environment.** The Uno host adds environment variables first and the
-app's embedded `appsettings*.json` after, and the later source wins. Two rules follow:
+**Injected addresses win.** The Uno host adds environment variables first and the app's embedded
+`appsettings*.json` after, and the later source wins. So `UseServiceDefaults` adds one more source
+holding the `services__*` environment variables only, after every other source. It registers that
+source from a host configuration step, which runs before the app configuration steps are walked,
+so the source lands last whatever the order of `UseServiceDefaults` and `UseConfiguration`.
 
-- A literal `Url` in any embedded settings file is used as is. The injected address is ignored and
-  nothing reports it. Apps that run under Aspire keep the logical form in every settings file.
-- A `services:<name>` section in embedded settings overrides what Aspire injects, so it cannot
-  serve as a fallback. To run the app without the AppHost, set `services__api__http__0` in the
-  environment.
-
-`UseServiceDefaults` does not reorder configuration sources: that would change precedence for
-every key in the app.
+- An address Aspire passes wins over the same key in a settings file. Every other key keeps the
+  usual precedence.
+- A `services` section in a settings file is a fallback: it is used when nothing is injected, as
+  when the app runs without the AppHost.
+- The override is per key: a settings file naming `services:api:https:0` while Aspire injects only
+  `services:api:http:0` keeps both, and `https+http` then picks the settings' `https` address.
+- A literal `Url` in a settings file is still used as is, since the resolver never sees it. Apps
+  that run under Aspire keep the logical form in every settings file.
+- Names are compared ignoring case: an Android app receives them in upper case.
 
 ### Resilience
 
@@ -167,14 +112,15 @@ failing `POST` is sent four times, because Kiota retries unsafe methods and the 
 governs the outer layer. `RetryHandler` falls back to a `RetryHandlerOption` from the container,
 so:
 
-- `UseServiceDefaults` sets a key in the host builder's `Properties` when it is called, the
-  existing `IsRegistered` pattern.
-- The key means "`UseServiceDefaults` was called", not "a resilience handler is present": an app
-  that adds its own standard resilience handler still stacks Kiota's retries.
-- The key is read across separately versioned packages. An `Uno.Extensions.Http.Kiota` older than
-  this change ignores it, so the packages are used at the same version.
-- `AddKiotaClient` reads the key from the `HostBuilderContext` it already receives. When set, it
-  registers a no-retry `RetryHandlerOption` with `TryAddSingleton`.
+- `UseServiceDefaults` sets a key in the host builder's `Properties` when it is called with the
+  resilience handler on. With it off, Kiota keeps its own retries.
+- The key means "`UseServiceDefaults` added the resilience handler", not "a resilience handler is
+  present": an app that adds its own standard resilience handler still stacks Kiota's retries.
+- The key is read across separately versioned packages. It is a constant, so its value is compiled
+  into `Uno.Extensions.Http.Kiota` and no internal method is called across the two. An older Kiota
+  package ignores it, so the packages are used at the same version.
+- `AddKiotaClient` reads the key from the `Properties` of the `HostBuilderContext` it already
+  receives. When set, it registers a no-retry `RetryHandlerOption` with `TryAddSingleton`.
 
 Consequences:
 
@@ -209,9 +155,12 @@ traces (HttpClient), exported with `UseOtlpExporter()`. The service name comes f
   synchronously on the UI thread. A killed process loses its last batch. The how-to does not yet
   show a window-close flush: a bounded one has not been tried on a real app.
 - **Request headers reach the dashboard.** `DiagnosticHandler` logs every request header at
-  Information, `Authorization` included, and those logs are exported when the gate is open. Lot 1
-  logs the path without the query string there, and redacts the value of any header whose name
-  contains `auth`, `cookie`, `key`, `token` or `secret`.
+  Information, and those logs are exported when the gate is open. Lot 1 logs the path without the
+  query string, and a header value only when it is known to carry no credential: `Accept`,
+  `Content-Type`, `User-Agent` and `traceparent` as they are, `Location`, `Content-Location` and
+  `Referer` without their query string, every other value redacted, as `HttpClientFactory`
+  logging does since .NET 9. A deny-list of names would miss `Signature` or `X-Session-Id`. This
+  changes the log output of a published package, so the release notes say so.
 - **The gate is the same in a Release build.** A shipped app exports when the variable is set on
   the machine or in a settings file. The how-to warns about it; a development-only gate is an open
   decision.
@@ -229,8 +178,8 @@ Added to `Directory.Packages.props`, referenced by `Uno.Extensions.Aspire` only:
   gRPC or protobuf package. An app on the current Uno.Sdk restoring without a downgrade error is
   not checked yet.
 - OpenTelemetry is 1.15.2 or later, the first release whose batch workers run without threads.
-- **WebAssembly size gates the first stable release.** Lot 1 measures the Release `browserwasm`
-  size with and without the package and records it in the pull request. Removing a dependency
+- **WebAssembly size gates the first stable release.** On a trimmed Release publish of the sample,
+  the package adds 0.17 MB Brotli-compressed and no OpenTelemetry assembly. Removing a dependency
   after a stable release is breaking, so the decision to exclude one for `browserwasm` is made
   then.
 
@@ -255,14 +204,15 @@ app.AddAndroidEmulator().WithReference(api).WaitFor(api);
 | `AddAndroidEmulator(string? name = null)` | `IResourceBuilder<UnoAndroidEmulatorResource>` |
 | `WithTargetFramework(string tfm)` | the head it was called on |
 | `WithLaunchProfile(string profileName)` | the desktop head it was called on |
-| `WithBakedEnvironment(string name)` | the WebAssembly or Android head it was called on |
+| `WithClientEnvironment(string name)` | the WebAssembly or Android head it was called on |
 
 - `WithLaunchProfile` takes the desktop head only: a profile's `applicationUrl` overrides the port
   the AppHost serves the WebAssembly head on.
-- `WithBakedEnvironment` has one overload per head that bakes its environment, WebAssembly and
-  Android. It is not on the base type, where it would do nothing for the desktop
-  head, and it is not turned into a generic method later, which would break binary
-  compatibility.
+- `WithClientEnvironment` has one overload per head whose environment is written into the app,
+  WebAssembly and Android. It is not on the base type, where it would do nothing for the desktop
+  head, and it is not turned into a generic method later, which would break binary compatibility.
+  Its name does not say how the environment reaches the app: for WebAssembly, delivery at run time
+  can replace build time without another rename (see *Alternatives considered*).
 
 - `AddUnoApp` holds the project path and starts no process. It is not a resource in the model,
   so only heads appear in the dashboard. A project file that does not exist fails the AppHost at
@@ -276,30 +226,36 @@ app.AddAndroidEmulator().WithReference(api).WaitFor(api);
 
 | Head | Process | Environment delivery |
 |---|---|---|
-| Desktop | `dotnet run --project <path> -f <tfm> --no-launch-profile` in the project folder | Process environment |
+| Desktop | `dotnet run --project <path> -f <tfm> --no-build --no-launch-profile` in the project folder | Process environment |
 | WebAssembly | the same, plus an HTTP endpoint for the served app | Baked into the bootstrapper at build time |
 | Android emulator | the same, plus `-p:AdbTarget=-e` | Baked into the APK at build time |
 
-- **Target framework.** Defaults to the AppHost's .NET version with the head's suffix
-  (`net10.0-desktop`, `net10.0-browserwasm`, `net10.0-android`). `WithTargetFramework` overrides
-  it. The project is not evaluated to find it.
+- **Target framework.** The one of the head's platform in the project file's `TargetFramework` or
+  `TargetFrameworks`, read without evaluating the project. When the file names none or computes
+  them from properties, the AppHost's .NET version with the platform (`net10.0-desktop`,
+  `net10.0-browserwasm`, `net10.0-android`). `WithTargetFramework` overrides it. A start fails with
+  a message naming the project's frameworks when they do not include the head's.
 - **Launch profile.** None by default. Without `--no-launch-profile`, `dotnet run` takes the first
   profile, which may belong to another head. `WithLaunchProfile` opts in; a profile's own
   `environmentVariables` then override what Aspire injects.
-- **Start.** The desktop head starts with the AppHost. The WebAssembly and Android heads do not:
-  heads share one project and its `obj` folder, so starting several at once runs concurrent
-  builds of it. This lowers the chance, it does not prevent it: a head started from the dashboard
-  while another builds still races. Aspire's own `WithExplicitStart()` turns automatic start off
-  for the desktop head.
+- **Build.** Heads share one project and its `obj` folder, and two builds of it at once fail. So
+  before a head starts, the integration builds it under a lock held per app: the head shows as
+  *Queued* while another head of the app builds, then *Building* while `dotnet build -f <tfm>` runs,
+  with the build output in its log. It then runs with `--no-build`, which still deploys an Android
+  app, and the lock covers the build only. The build gets none of the head's environment, so no
+  value reaches a binary log. A build fails the head after ten minutes. Builds an IDE makes are not
+  serialized with these. This follows the build queue of Aspire's own MAUI integration, which holds
+  its lock until an Android app ends.
+- **Start.** The desktop head starts with the AppHost. The WebAssembly and Android heads start from
+  the dashboard, so a run does not build every head, and an Android head needs an emulator.
+  Aspire's own `WithExplicitStart()` turns automatic start off for the desktop head.
 - **Stop.** Stopping a head ends the app, not only `dotnet run`, whether the head or the whole
   AppHost is stopped. For the Android head, the app on the emulator ends too. No code of the integration does this: it is Aspire's process handling,
-  verified on Windows and *unproven* on macOS and Linux. A head has no health check.
+  verified on Windows and *unproven* on macOS and Linux.
 - **Publish.** In publish mode the project file is not checked, so a publish runs where the app
   is not checked out.
-- **Build.** The head's environment reaches the build inside `dotnet run`, where MSBuild reads
-  environment variables as properties and records them in a binary log.
 - **Not published.** A head is left out of the deployment manifest.
-- **Failure.** A failed build leaves the head failed, with the build output in its console log.
+- **Failure.** A failed build stops the head, with the build output in its console log.
 
 ### Hot Reload
 
@@ -331,7 +287,7 @@ dashboard as failed requests of the head. They stop once an IDE has the solution
 
 Proven for WebAssembly in lot 3 and for the Android emulator in lot 4.
 
-When a head starts, the integration resolves its environment and writes a **values file** into
+Before a head is built, the integration resolves its environment and writes a **values file** into
 the app's own `obj` folder, `obj/uno-aspire/<target framework>.v1.values.proj`. It is a small
 project that returns name and value pairs, the same for every platform.
 
@@ -339,9 +295,26 @@ The client package `Uno.Extensions.Aspire` ships build logic (`buildTransitive`)
 when it exists and turns the pairs into what the platform understands: `WasmShellMonoEnvironment`
 items for WebAssembly; for Android, the `RuntimeEnvironmentVariable` items `dotnet run -e` adds,
 added before .NET for Android's `_GenerateEnvironmentFiles`, which writes them into the app's own
-environment file. Nothing is passed on the command
-line, so every build of the app finds it: the head's own, and the one an IDE makes while the head
-runs.
+environment file. Nothing is passed on the command line, so every build of the app finds it: the
+head's own, and the one an IDE makes while the AppHost runs.
+
+**Alternatives considered.**
+
+- **A command-line property**, as Aspire's MAUI integration passes a targets file to `dotnet run`:
+  a build the IDE makes never sees it. The first version of this design did so, and an IDE build of
+  the WebAssembly target removed the address while the head ran.
+- **An imported file holding the values:** a changed value changes an import, and the app is
+  compiled again. The values file is called with the `MSBuild` task instead.
+- **Delivery at run time through a gateway**, as Aspire's Blazor integration does: the page reads
+  its configuration from the AppHost before it boots, and APIs and telemetry are proxied from the
+  same origin. No CORS, no file left behind, telemetry possible in the browser. It needs a hook in
+  `Uno.Wasm.Bootstrap` that runs before the app boots, which does not exist yet; the public name
+  `WithClientEnvironment` leaves the door open.
+- **A push over the Uno dev server's channel:** no rebuild and nothing in the build output, but
+  the addresses arrive after startup, and it requires a running dev server.
+
+A consequence: a WebAssembly or Android app started from the IDE gets the addresses only once its
+head has been started from the dashboard in this AppHost run.
 
 What depends on the head kind is decided by the AppHost, which knows it: the allow-list below,
 and for Android the names in upper case, the loopback rewrite and leaving out `https`. The build
@@ -349,8 +322,10 @@ logic only maps.
 
 The file is valid while the AppHost runs:
 
-- It is written at every start of the head, never before and never in publish mode. Whether a
-  value changed in the dashboard during a run reaches the next start is not measured.
+- It is written at every start of the head, before its build, never in publish mode. When the
+  environment fails to resolve, the start fails and the last file stays: a partial environment
+  would overwrite good values. Whether a value changed in the dashboard during a run reaches the
+  next start is not measured.
 - Stopping the head alone leaves it: the services it points to still run.
 - The AppHost removes it when it stops, and again when it starts, for a file left by an AppHost
   that was killed. Until then, such a file puts a dead address into Debug builds. The build output
@@ -361,13 +336,14 @@ Consequences:
 
 - The app's csproj names no resource, but the app has to reference `Uno.Extensions.Aspire`.
   Without it the head runs and the app has no address. When the head starts, the AppHost reads the
-  app's `obj/project.assets.json` and warns if the package is not among its libraries. Before the
-  app's first restore there is no such file, and nothing is checked.
+  libraries of the app's `obj/project.assets.json`, with a source-generated serializer, and warns if
+  the package is not among them. Before the app's first restore, or with another intermediate
+  output path, there is no such file and nothing is checked.
 - The path is the app's project folder, so the projects the app references, which have their own
   folder, read nothing.
 - The AppHost and the client package agree on the path and the format of the file. The format
-  version is in the file name: a client that finds only another version's file warns, naming both
-  packages, and reads nothing. They ship at the same version.
+  version is in the file name: a client that finds only another version's file warns
+  (`UNOASPIRE101`), naming both packages, and reads nothing. They ship at the same version.
 - Two heads of the same app for the same target framework share one file.
 - Two AppHosts running the same app remove each other's file. A head whose target framework
   changed after an AppHost was killed leaves the old framework's file until it is deleted.
@@ -379,7 +355,7 @@ unpacks the APK.
 - Everything else, including connection strings, parameters, literal values and `OTEL_*`, is left
   out. It does not stop the head: Aspire itself adds a variable such as `API_HTTP` to every
   reference, so refusing unknown names would stop every head.
-- The AppHost opts a single variable in by name with `WithBakedEnvironment`, whatever its value.
+- The AppHost opts a single variable in by name with `WithClientEnvironment`, whatever its value.
 - The check follows a value into the expressions it is built from, so an endpoint wrapped around a
   secret parameter is left out.
 
@@ -387,10 +363,14 @@ The head's log says what happened, with names and never values:
 
 - Information: the names written into the app.
 - Information: for Android, the service addresses left out over `https` on the host's loopback.
-- Warning: a `services__*` variable left out, because the app will not reach that service.
+- Warning: a `services__*` variable left out, because the app will not reach that service. It
+  names `WithClientEnvironment` as the way to write one anyway.
 - Warning: for Android, a service with no address left once those are out.
 - Warning: a name opted in that the head does not have, or one whose value holds a secret.
 - Debug: the other names left out.
+
+The build logic's warnings have their own codes, `UNOASPIRE101` and `UNOASPIRE102`, so a build that
+treats warnings as errors can silence one without silencing the experimental API's `UNOASPIRE001`.
 
 **No baked value reaches a shipped artifact.**
 
@@ -419,8 +399,7 @@ configuration keys are case-insensitive, so the app reads them unchanged.
 - The integration owns the port the app is served on: the head has an endpoint named `http`
   (`UnoWebAssemblyResource.EndpointName`), and its target port is passed to the dev server as
   `ASPNETCORE_URLS`. The app's launch settings are not read.
-- The head has an HTTP health check on `/`: it is unhealthy while it builds and healthy once the
-  app is served.
+- The head has an HTTP health check on `/`: healthy once the app is served.
 - The served endpoint is local, not external.
 - The dev server's own variables (`ASPNETCORE_URLS`, `DOTNET_MODIFIABLE_ASSEMBLIES`) stay in its
   process and are not baked.
@@ -433,8 +412,8 @@ configuration keys are case-insensitive, so the app reads them unchanged.
 Implemented in lot 4. The sample first ran this head through a preview integration built for
 another framework, with the address set by hand; a stable package cannot depend on that.
 
-- The head runs `dotnet run -f net10.0-android -p:AdbTarget=-e`, which deploys to the running
-  emulator and stays attached to the app.
+- The head runs `dotnet run -f net10.0-android --no-build -p:AdbTarget=-e`, which deploys to the
+  running emulator and stays attached to the app.
 - An emulator reaches the host machine at `10.0.2.2`. A service address on the host's loopback
   is written with that host, over **`http` only**: over `https` it would present a development
   certificate the emulator does not trust, so it is left out and named in the head's log. A
@@ -448,15 +427,15 @@ another framework, with the address set by hand; a stable package cannot depend 
   every build, Release included. On a device `10.0.2.2` is an ordinary private address that can
   belong to another machine; a Release build is never configured to call it, since the AppHost
   writes nothing into one.
-- The build logic hooks a target and an item of .NET for Android that are not public, verified on
-  SDK 36.1.118. After the build it checks that the values reached the environment file, and warns
-  naming them when they did not, for an older SDK or a renamed target.
+- The build logic hooks a target and an item of .NET for Android that are not public, the hook
+  Aspire's MAUI integration relies on too. The item is read by the Android workload 36.1.118, not
+  by 36.1.2. After the build it checks that the values reached the environment file, and warns
+  (`UNOASPIRE102`) naming them when they did not, for an older workload or a renamed target.
 - An API that redirects `http` to `https` (`UseHttpsRedirection`) sends the emulator to the
   untrusted certificate. The how-to says so.
 - No `WithOtlpExporter()`: see *Open questions*.
-- The head needs exactly one running emulator. Booting one is out of scope; with several
-  emulators, or a device attached as well, `-p:AdbTarget=-e` is not enough to pick one and is not
-  verified.
+- The head needs exactly one running emulator: with `-p:AdbTarget=-e`, adb targets the only
+  emulator and ignores attached devices. Booting one is out of scope.
 
 ## Out of scope
 
@@ -465,7 +444,7 @@ another framework, with the address set by hand; a stable package cannot depend 
 - Publishing or deploying an Uno head through Aspire. This is the local development loop only.
 - Booting an emulator from the dashboard.
 - A server-side service defaults project: the Aspire template covers it.
-- Detecting the app's target frameworks by evaluating the project.
+- Evaluating the project to find its target frameworks.
 
 ## Open questions
 
@@ -489,8 +468,8 @@ rather than by head:
 Later lots are one pull request each.
 
 1. **Client package.** `Uno.Extensions.Aspire`; the `Properties` key read by `AddKiotaClient`;
-   header redaction in `DiagnosticHandler`; the size measurement; a how-to under `doc/Learn/` that
-   uses `AddExecutable` for a desktop head.
+   header redaction in `DiagnosticHandler`; the size measurement. The how-to under `doc/Learn/`
+   ships with the last of the three pull requests, once it can show the whole feature.
 2. **AppHost package, desktop.** `AddUnoApp`, `AddDesktop`, `WithTargetFramework`,
    `WithLaunchProfile`, the start and stop behavior.
 3. **AppHost package, WebAssembly.** Opens with the baking spike. `AddWebAssembly`, the values
@@ -504,53 +483,12 @@ Lots 1 and 2 are enough to run an app's desktop head with its backend in one ste
 
 ## Tests
 
-`Uno.Extensions.Aspire.Tests`:
-
-- With no OTLP endpoint in configuration, no OpenTelemetry service is registered.
-- With one, a span from an `HttpClient` call reaches an in-memory exporter.
-- A client with `BaseAddress` `https+http://api` sends its request to the address in
-  `services:api:http:0`.
-- A literal `Url` is used as is, even when `services:api:http:0` is set.
-- Against a stub handler that always returns 503, with retry delays set to zero: a `GET` is
-  attempted four times, a `POST` once.
-- The same stub behind a Kiota client: four attempts with `UseServiceDefaults`, in either call
-  order with `UseHttp`; Kiota's own count without it; the app's count when the app registers a
-  `RetryHandlerOption`.
-- A client that calls `RemoveAllResilienceHandlers()` makes one attempt.
-- A container-registered delegating handler runs once per attempt.
-- `DiagnosticHandler` does not log a query string or the value of a credential header.
-
-`Uno.Extensions.Aspire.Hosting.Tests`, on the application model with endpoints allocated by the
-test, without starting a process:
-
-- Each head's command line carries its `-f`, `--no-launch-profile` by default, and the profile
-  name after `WithLaunchProfile`.
-- A referenced endpoint appears in the desktop head's environment, and in the values file for
-  WebAssembly and Android.
-- A connection string, a secret parameter, a literal value and an endpoint wrapped around a secret
-  are each left out for a baked head; a variable opted in by name is baked.
-- A value containing MSBuild or XML special characters round-trips; one with a line break is refused.
-- Android names are written in upper case; a loopback service address is rewritten over `http`, left out
-  over `https` (with a warning when the service has no address left), and kept when it is not on
-  the loopback; an opted-in `services__*` variable is rewritten like the others and any other
-  opted-in value is not; an encoded path stays encoded; two names differing only by case stop the
-  head.
-- Writing the same environment twice leaves the file untouched; a changed value rewrites it.
-- The AppHost's start removes a file and temporary files left by an earlier run, and its stop
-  removes the one it wrote. With nothing written, removing logs nothing.
-- The log warns for a left-out service address, a missing opt-in and a secret opt-in, and never
-  carries a value.
-- A restored app without `Uno.Extensions.Aspire` among its libraries gets a warning; one with a
-  package whose name only starts the same, or with the name outside `libraries`, does not count.
-
-Build tests (`Given_AppBuildLogic`) run the client package's build logic with MSBuild, in a
-process, on a project that stands in for the app, against the file the AppHost wrote:
-
-- A Debug build carries the values, including MSBuild and XML special characters, and its output lists
-  the names, not the values. An Android build hands them to the environment file, carries none
-  when optimized, and warns when the SDK does not write them.
-- Another configuration, an optimized build, a publish and another target framework carry none,
-  and so does a build with no file.
-- A file of another format version gives a warning and no values.
-
-One end-to-end sample under `samples/`, run by hand: AppHost, API, database and the three heads.
+- `Uno.Extensions.Aspire.Tests` runs `UseServiceDefaults` on a host with stub handlers and a
+  loopback server: which address a request goes to, how many attempts it makes with and without
+  Kiota, what is exported, and what `DiagnosticHandler` logs.
+- `Uno.Extensions.Aspire.Hosting.Tests` works on the application model with endpoints allocated by
+  the test: run arguments and environment, target frameworks, the build lock with a real
+  `dotnet build` of a project that builds instantly, what is written into the app and logged, and
+  when the file is removed.
+- `Given_AppBuildLogic`, in the same project, runs the client package's build logic with MSBuild in
+  a process, on a project that stands in for the app, against the file the AppHost wrote.
