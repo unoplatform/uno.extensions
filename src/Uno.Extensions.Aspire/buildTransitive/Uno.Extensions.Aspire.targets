@@ -1,0 +1,65 @@
+<Project>
+	<!--
+		An Aspire AppHost using Uno.Extensions.Aspire.Hosting writes the environment of a WebAssembly or Android head here while it runs.
+		Debug builds read it, so the head's build and an IDE build carry the same values. Other builds and publishes never do.
+		The file name carries the format version; Uno.Extensions.Aspire.Hosting writes the same one.
+	-->
+	<PropertyGroup>
+		<_UnoAspireEnvironmentFolder>$(MSBuildProjectDirectory)\obj\uno-aspire</_UnoAspireEnvironmentFolder>
+		<_UnoAspireEnvironmentFile>$(_UnoAspireEnvironmentFolder)\$(TargetFramework).v1.values.proj</_UnoAspireEnvironmentFile>
+	</PropertyGroup>
+
+	<Target Name="_UnoAspireReadEnvironment"
+			Condition="'$(Configuration)' == 'Debug' and '$(Optimize)' != 'true' and '$(_IsPublishing)' != 'true'">
+		<ItemGroup>
+			<_UnoAspireOtherFormat Include="$(_UnoAspireEnvironmentFolder)\$(TargetFramework).*.values.proj" Exclude="$(_UnoAspireEnvironmentFile)" />
+		</ItemGroup>
+
+		<Warning Condition="'@(_UnoAspireOtherFormat)' != '' and !Exists('$(_UnoAspireEnvironmentFile)')"
+				 Code="UNOASPIRE101"
+				 Text="Uno.Extensions.Aspire: the Aspire AppHost wrote the environment in a format this version does not read (@(_UnoAspireOtherFormat->'%(Filename)%(Extension)')). Use the same version of Uno.Extensions.Aspire and Uno.Extensions.Aspire.Hosting." />
+
+		<MSBuild Condition="Exists('$(_UnoAspireEnvironmentFile)')" Projects="$(_UnoAspireEnvironmentFile)" Targets="GetEnvironment">
+			<Output TaskParameter="TargetOutputs" ItemName="_UnoAspireEnvironment" />
+		</MSBuild>
+
+		<Message Condition="Exists('$(_UnoAspireEnvironmentFile)')"
+				 Importance="high"
+				 Text="Uno.Extensions.Aspire: written into the app from the Aspire AppHost: @(_UnoAspireEnvironment->'%(Identity)', ', '). They hold only while the AppHost runs; if none does, delete $(_UnoAspireEnvironmentFile)." />
+	</Target>
+
+	<!-- WebAssembly: the bootstrapper writes these into its configuration. -->
+	<Target Name="_UnoAspireWebAssemblyEnvironment" BeforeTargets="GenerateUnoWasmAssets" DependsOnTargets="_UnoAspireReadEnvironment">
+		<ItemGroup>
+			<WasmShellMonoEnvironment Include="@(_UnoAspireEnvironment)" />
+		</ItemGroup>
+	</Target>
+
+	<!-- Android: the items `dotnet run -e NAME=VALUE` adds, which .NET for Android's _GenerateEnvironmentFiles writes into the app's environment file. -->
+	<Target Name="_UnoAspireAndroidEnvironment" BeforeTargets="_GenerateEnvironmentFiles" DependsOnTargets="_UnoAspireReadEnvironment">
+		<ItemGroup>
+			<RuntimeEnvironmentVariable Include="@(_UnoAspireEnvironment)" />
+		</ItemGroup>
+	</Target>
+
+	<!--
+		The hook above depends on a target and an item of .NET for Android that are not public. When an SDK does not honour them,
+		the values never reach the environment file: say so instead of leaving the app without its addresses.
+	-->
+	<Target Name="_UnoAspireCheckAndroidEnvironment"
+			AfterTargets="Build"
+			DependsOnTargets="_UnoAspireReadEnvironment"
+			Condition="'$(TargetPlatformIdentifier)' == 'android'">
+		<PropertyGroup>
+			<_UnoAspireAndroidEnvironmentText Condition="Exists('$(IntermediateOutputPath)__environment__.txt')">$([System.IO.File]::ReadAllText('$(IntermediateOutputPath)__environment__.txt'))</_UnoAspireAndroidEnvironmentText>
+		</PropertyGroup>
+
+		<ItemGroup>
+			<_UnoAspireAndroidEnvironmentMissing Include="@(_UnoAspireEnvironment)" Condition="!$(_UnoAspireAndroidEnvironmentText.Contains('%(Identity)='))" />
+		</ItemGroup>
+
+		<Warning Condition="'@(_UnoAspireAndroidEnvironmentMissing)' != ''"
+				 Code="UNOASPIRE102"
+				 Text="Uno.Extensions.Aspire: this .NET for Android SDK did not write the Aspire AppHost's environment into the app (@(_UnoAspireAndroidEnvironmentMissing->'%(Identity)', ', ')). Update the Android workload: dotnet workload update." />
+	</Target>
+</Project>

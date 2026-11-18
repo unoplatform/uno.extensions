@@ -10,10 +10,6 @@ namespace Aspire.Hosting;
 [Experimental(UnoAppDiagnostics.ExperimentalId)]
 public static class UnoProjectBuilderExtensions
 {
-	private const string ModifiableAssembliesVariable = "DOTNET_MODIFIABLE_ASSEMBLIES";
-	private const string EnvironmentVariable = "DOTNET_ENVIRONMENT";
-	private const string ServerUrlsVariable = "ASPNETCORE_URLS";
-
 	// Deploys to the running emulator, not to a connected device.
 	private const string EmulatorTargetArgument = "-p:AdbTarget=-e";
 
@@ -82,8 +78,11 @@ public static class UnoProjectBuilderExtensions
 	/// Adds the WebAssembly head of the app. It is started from the dashboard, not with the AppHost.
 	/// </summary>
 	/// <remarks>
-	/// The app is served on the endpoint <see cref="UnoWebAssemblyResource.EndpointName"/>, and the API has to allow
-	/// that origin in its CORS policy.
+	/// A browser has no process environment, so the addresses of referenced services are written into the app
+	/// when it is built. Nothing else is: use <see cref="WithClientEnvironment(IResourceBuilder{UnoWebAssemblyResource}, string)"/>
+	/// to add a variable by name. The app reads them through the build logic of the Uno.Extensions.Aspire package, which it has
+	/// to reference. The app is served on the endpoint <see cref="UnoWebAssemblyResource.EndpointName"/>, and the API has to
+	/// allow that origin in its CORS policy.
 	/// </remarks>
 	/// <param name="builder">The app builder.</param>
 	/// <param name="name">The name of the head, <c>&lt;app&gt;-wasm</c> when omitted.</param>
@@ -97,10 +96,10 @@ public static class UnoProjectBuilderExtensions
 
 		var head = new UnoWebAssemblyResource(name ?? $"{builder.Resource.Name}-wasm", builder.Resource);
 
-		return builder.ApplicationBuilder.AddHead(head)
+		return builder.ApplicationBuilder.AddHead(head, BakedEnvironment.ForWebAssembly)
 			.WithArgs(context => AddRunArguments(head, context.Args))
 			.WithHttpEndpoint(name: UnoWebAssemblyResource.EndpointName)
-			.WithEnvironment(context => context.EnvironmentVariables[ServerUrlsVariable] =
+			.WithEnvironment(context => context.EnvironmentVariables[BakedEnvironment.ServerUrlsVariable] =
 				ReferenceExpression.Create($"http://localhost:{head.GetEndpoint(UnoWebAssemblyResource.EndpointName).Property(EndpointProperty.TargetPort)}"))
 			// Healthy once the app is served.
 			.WithHttpHealthCheck("/", endpointName: UnoWebAssemblyResource.EndpointName)
@@ -112,7 +111,10 @@ public static class UnoProjectBuilderExtensions
 	/// Adds the Android head of the app, deployed to the running emulator. It is started from the dashboard, not with the AppHost.
 	/// </summary>
 	/// <remarks>
-	/// Exactly one emulator has to be running; booting it is not part of the head.
+	/// An Android app does not inherit the environment of <c>dotnet run</c>, so the addresses of referenced services are written
+	/// into the app when it is built, as for <see cref="AddWebAssembly"/>. A service address on the host's loopback is written with
+	/// <c>10.0.2.2</c>, the emulator's address for the host machine, and only over <c>http</c>. The app has to allow cleartext
+	/// traffic to that address. Exactly one emulator has to be running; booting it is not part of the head.
 	/// </remarks>
 	/// <param name="builder">The app builder.</param>
 	/// <param name="name">The name of the head, <c>&lt;app&gt;-android</c> when omitted.</param>
@@ -126,7 +128,7 @@ public static class UnoProjectBuilderExtensions
 
 		var head = new UnoAndroidEmulatorResource(name ?? $"{builder.Resource.Name}-android", builder.Resource);
 
-		return builder.ApplicationBuilder.AddHead(head)
+		return builder.ApplicationBuilder.AddHead(head, BakedEnvironment.ForAndroidEmulator)
 			.WithArgs(context =>
 			{
 				AddRunArguments(head, context.Args);
@@ -134,6 +136,41 @@ public static class UnoProjectBuilderExtensions
 			})
 			// Started by hand: it needs a running emulator.
 			.WithExplicitStart();
+	}
+
+	/// <summary>
+	/// Writes one more environment variable of the head into the app. Anyone who loads the page can read it.
+	/// </summary>
+	/// <param name="builder">The head builder.</param>
+	/// <param name="name">The name of a variable set on the head, for example with <c>WithEnvironment</c>.</param>
+	/// <returns>The same head builder.</returns>
+	public static IResourceBuilder<UnoWebAssemblyResource> WithClientEnvironment(
+		this IResourceBuilder<UnoWebAssemblyResource> builder,
+		string name)
+	{
+		ArgumentNullException.ThrowIfNull(builder);
+		ArgumentException.ThrowIfNullOrEmpty(name);
+
+		builder.Resource.ClientEnvironmentNames.Add(name);
+		return builder;
+	}
+
+	/// <summary>
+	/// Writes one more environment variable of the head into the app, with its name in upper case. A <c>services__</c> variable is
+	/// treated as a service address. Anyone who unpacks the APK can read it.
+	/// </summary>
+	/// <param name="builder">The head builder.</param>
+	/// <param name="name">The name of a variable set on the head, for example with <c>WithEnvironment</c>.</param>
+	/// <returns>The same head builder.</returns>
+	public static IResourceBuilder<UnoAndroidEmulatorResource> WithClientEnvironment(
+		this IResourceBuilder<UnoAndroidEmulatorResource> builder,
+		string name)
+	{
+		ArgumentNullException.ThrowIfNull(builder);
+		ArgumentException.ThrowIfNullOrEmpty(name);
+
+		builder.Resource.ClientEnvironmentNames.Add(name);
+		return builder;
 	}
 
 	/// <summary>
@@ -172,25 +209,44 @@ public static class UnoProjectBuilderExtensions
 		return builder;
 	}
 
-	private static IResourceBuilder<T> AddHead<T>(this IDistributedApplicationBuilder builder, T head)
+	/// <param name="builder">The application builder.</param>
+	/// <param name="head">The head to add.</param>
+	/// <param name="clientEnvironment">
+	/// For a head without a process environment, what of its environment is written into the app before it is built.
+	/// </param>
+	private static IResourceBuilder<T> AddHead<T>(this IDistributedApplicationBuilder builder, T head, Func<BakePlan, BakePlan>? clientEnvironment = null)
 		where T : UnoHeadResource
 	{
 		var resource = builder.AddResource(head)
 			// dotnet run without a launch profile does not set it, and Hot Reload needs it.
-			.WithEnvironment(ModifiableAssembliesVariable, "debug")
+			.WithEnvironment(BakedEnvironment.ModifiableAssembliesVariable, "debug")
 			// As Aspire does for its projects; the app exports telemetry only in Development.
-			.WithEnvironment(EnvironmentVariable, "Development")
+			.WithEnvironment(BakedEnvironment.EnvironmentVariable, "Development")
 			.ExcludeFromManifest();
 
-		if (builder.ExecutionContext.IsRunMode)
+		if (!builder.ExecutionContext.IsRunMode)
 		{
-			resource.OnBeforeResourceStarted((head, @event, cancellationToken) => HeadBuild.RunAsync(
-				head,
-				@event.Services.GetRequiredService<ResourceNotificationService>(),
-				@event.Services.GetRequiredService<DistributedApplicationExecutionContext>(),
-				@event.Services.GetRequiredService<ResourceLoggerService>().GetLogger(head),
-				cancellationToken));
+			return resource;
 		}
+
+		if (clientEnvironment is not null)
+		{
+			ClientEnvironment.RemoveOutsideTheRun(builder, head);
+		}
+
+		resource.OnBeforeResourceStarted(async (head, @event, cancellationToken) =>
+		{
+			var logger = @event.Services.GetRequiredService<ResourceLoggerService>().GetLogger(head);
+			var executionContext = @event.Services.GetRequiredService<DistributedApplicationExecutionContext>();
+			// Before the build: the head runs with --no-build.
+			if (clientEnvironment is not null)
+			{
+				await ClientEnvironment.WriteAsync(head, clientEnvironment, executionContext, logger, cancellationToken).ConfigureAwait(false);
+			}
+
+			var notifications = @event.Services.GetRequiredService<ResourceNotificationService>();
+			await HeadBuild.RunAsync(head, notifications, executionContext, logger, cancellationToken).ConfigureAwait(false);
+		});
 
 		return resource;
 	}

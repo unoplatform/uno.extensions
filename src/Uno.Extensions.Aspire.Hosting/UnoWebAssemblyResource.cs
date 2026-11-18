@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aspire.Hosting.ApplicationModel;
 
 /// <summary>
-/// The WebAssembly head of an Uno Platform app, served by the WebAssembly dev server.
+/// The WebAssembly head of an Uno Platform app, served by the WebAssembly dev server. Its environment is written into the app at build time.
 /// </summary>
 [Experimental(UnoAppDiagnostics.ExperimentalId)]
 public sealed class UnoWebAssemblyResource : UnoHeadResource
