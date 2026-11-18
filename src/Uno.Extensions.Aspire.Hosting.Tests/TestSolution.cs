@@ -15,16 +15,16 @@ internal sealed class TestSolution : IDisposable
 
 	public TestSolution()
 	{
-		Folder = Path.Combine(Path.GetTempPath(), "uno-aspire-tests", Guid.NewGuid().ToString("N"));
+		Folder = Path.Join(Path.GetTempPath(), "uno-aspire-tests", Guid.NewGuid().ToString("N"));
 		Directory.CreateDirectory(AppFolder);
 		File.WriteAllText(ProjectPath, "<Project />");
 	}
 
 	public string Folder { get; }
 
-	public string AppFolder => Path.Combine(Folder, "MyWasmApp");
+	public string AppFolder => Path.Join(Folder, "MyWasmApp");
 
-	public string ProjectPath => Path.Combine(AppFolder, "MyWasmApp.csproj");
+	public string ProjectPath => Path.Join(AppFolder, "MyWasmApp.csproj");
 
 	public IDistributedApplicationBuilder CreateBuilder() =>
 		DistributedApplication.CreateBuilder(new DistributedApplicationOptions { Args = [], ProjectDirectory = Folder });
