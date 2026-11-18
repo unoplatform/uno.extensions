@@ -22,7 +22,7 @@ internal sealed class LoopbackServer : IDisposable
 
 	public static LoopbackServer Start()
 	{
-		var probe = new TcpListener(IPAddress.Loopback, 0);
+		using var probe = new TcpListener(IPAddress.Loopback, 0);
 		probe.Start();
 		var port = ((IPEndPoint)probe.LocalEndpoint).Port;
 		probe.Stop();

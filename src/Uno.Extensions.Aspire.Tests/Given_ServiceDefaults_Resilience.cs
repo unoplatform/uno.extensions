@@ -30,7 +30,8 @@ public class Given_ServiceDefaults_Resilience
 		var stub = new StubHttpHandler(HttpStatusCode.ServiceUnavailable);
 		using var host = BuildHost(stub);
 
-		await host.CreateTestClient().PostAsync("http://api.test/items", new StringContent("{}"));
+		using var content = new StringContent("{}");
+		await host.CreateTestClient().PostAsync("http://api.test/items", content);
 
 		stub.Attempts.Should().Be(1);
 	}

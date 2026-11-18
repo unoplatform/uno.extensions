@@ -10,9 +10,10 @@ internal sealed class TestKiotaClient(IRequestAdapter adapter)
 	public async Task SendAsync(Method method, CancellationToken ct)
 	{
 		var request = new RequestInformation { HttpMethod = method, URI = new Uri("http://kiota.test/items") };
+		using var body = new MemoryStream(new byte[] { 1 });
 		if (method != Method.GET)
 		{
-			request.SetStreamContent(new MemoryStream(new byte[] { 1 }), "application/octet-stream");
+			request.SetStreamContent(body, "application/octet-stream");
 		}
 
 		try
