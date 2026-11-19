@@ -3,10 +3,13 @@
 		An Aspire AppHost using Uno.Extensions.Aspire.Hosting writes the environment of a WebAssembly or Android head here while it runs.
 		Debug builds read it, so the head's build and an IDE build carry the same values. Other builds and publishes never do.
 		The file name carries the format version; Uno.Extensions.Aspire.Hosting writes the same one.
+		The AppHost renews the file every minute while it runs: an older file was left by one that no longer does.
+		The lease is part of the format: changing it changes the version in the file name.
 	-->
 	<PropertyGroup>
 		<_UnoAspireEnvironmentFolder>$(MSBuildProjectDirectory)\obj\uno-aspire</_UnoAspireEnvironmentFolder>
 		<_UnoAspireEnvironmentFile>$(_UnoAspireEnvironmentFolder)\$(TargetFramework).v1.values.proj</_UnoAspireEnvironmentFile>
+		<_UnoAspireEnvironmentLeaseMinutes>5</_UnoAspireEnvironmentLeaseMinutes>
 	</PropertyGroup>
 
 	<Target Name="_UnoAspireReadEnvironment"
@@ -19,13 +22,29 @@
 				 Code="UNOASPIRE101"
 				 Text="Uno.Extensions.Aspire: the Aspire AppHost wrote the environment in a format this version does not read (@(_UnoAspireOtherFormat->'%(Filename)%(Extension)')). Use the same version of Uno.Extensions.Aspire and Uno.Extensions.Aspire.Hosting." />
 
-		<MSBuild Condition="Exists('$(_UnoAspireEnvironmentFile)')" Projects="$(_UnoAspireEnvironmentFile)" Targets="GetEnvironment">
+		<PropertyGroup Condition="Exists('$(_UnoAspireEnvironmentFile)')">
+			<!-- In UTC ticks: MSBuild divides whole numbers as integers, and local time moves with daylight saving. -->
+			<_UnoAspireEnvironmentAgeTicks>$([MSBuild]::Subtract($([System.DateTime]::UtcNow.Ticks), $([System.IO.File]::GetLastWriteTime('$(_UnoAspireEnvironmentFile)').ToUniversalTime().Ticks)))</_UnoAspireEnvironmentAgeTicks>
+			<_UnoAspireEnvironmentLeaseTicks>$([MSBuild]::Multiply($(_UnoAspireEnvironmentLeaseMinutes), 600000000))</_UnoAspireEnvironmentLeaseTicks>
+			<!-- A file dated in the future was not renewed by a running AppHost either. -->
+			<_UnoAspireEnvironmentIsCurrent Condition="$(_UnoAspireEnvironmentAgeTicks) &gt;= 0 and $(_UnoAspireEnvironmentAgeTicks) &lt;= $(_UnoAspireEnvironmentLeaseTicks)">true</_UnoAspireEnvironmentIsCurrent>
+			<_UnoAspireEnvironmentIsStale Condition="'$(_UnoAspireEnvironmentIsCurrent)' != 'true'">true</_UnoAspireEnvironmentIsStale>
+		</PropertyGroup>
+
+		<!-- Before the warning: a build that treats warnings as errors then fails once, not every time after. -->
+		<Delete Condition="'$(_UnoAspireEnvironmentIsStale)' == 'true'" Files="$(_UnoAspireEnvironmentFile)" ContinueOnError="true" />
+
+		<Warning Condition="'$(_UnoAspireEnvironmentIsStale)' == 'true'"
+				 Code="UNOASPIRE103"
+				 Text="Uno.Extensions.Aspire: removed $(_UnoAspireEnvironmentFile), which its Aspire AppHost had not renewed for over $(_UnoAspireEnvironmentLeaseMinutes) minutes, so it appears to have stopped. The app gets no service address from Aspire; start the head from the AppHost again." />
+
+		<MSBuild Condition="'$(_UnoAspireEnvironmentIsCurrent)' == 'true'" Projects="$(_UnoAspireEnvironmentFile)" Targets="GetEnvironment">
 			<Output TaskParameter="TargetOutputs" ItemName="_UnoAspireEnvironment" />
 		</MSBuild>
 
-		<Message Condition="Exists('$(_UnoAspireEnvironmentFile)')"
+		<Message Condition="'$(_UnoAspireEnvironmentIsCurrent)' == 'true'"
 				 Importance="high"
-				 Text="Uno.Extensions.Aspire: written into the app from the Aspire AppHost: @(_UnoAspireEnvironment->'%(Identity)', ', '). They hold only while the AppHost runs; if none does, delete $(_UnoAspireEnvironmentFile)." />
+				 Text="Uno.Extensions.Aspire: written into the app from the running Aspire AppHost: @(_UnoAspireEnvironment->'%(Identity)', ', ')." />
 	</Target>
 
 	<!-- WebAssembly: the bootstrapper writes these into its configuration. -->

@@ -16,14 +16,20 @@ internal static class ClientEnvironment
 {
 	private const string ClientPackageId = "Uno.Extensions.Aspire";
 
-	// The values hold only while this AppHost runs: removed at its start (a file left by a killed AppHost) and at its stop.
+	// The values hold only while this AppHost runs: removed at its start and stop, and renewed in between, so a build
+	// can tell a file left by a killed AppHost, which never reaches its stop.
 	internal static void RemoveOutsideTheRun(IDistributedApplicationBuilder builder, UnoHeadResource head) =>
 		builder.Eventing.Subscribe<BeforeStartEvent>((@event, _) =>
 		{
 			// The AppHost's own log: at stop, the dashboard that shows a head's log is going away.
 			var logger = @event.Services.GetRequiredService<ILoggerFactory>().CreateLogger(typeof(UnoAppBuilderExtensions));
 			BakedEnvironment.Delete(head, logger);
-			@event.Services.GetRequiredService<IHostApplicationLifetime>().ApplicationStopping.Register(() => BakedEnvironment.Delete(head, logger));
+			var lease = new Timer(_ => BakedEnvironment.RenewLease(head, logger), null, BakedEnvironment.LeaseRenewal, BakedEnvironment.LeaseRenewal);
+			@event.Services.GetRequiredService<IHostApplicationLifetime>().ApplicationStopping.Register(() =>
+			{
+				lease.Dispose();
+				BakedEnvironment.Delete(head, logger);
+			});
 			return Task.CompletedTask;
 		});
 
@@ -51,7 +57,7 @@ internal static class ClientEnvironment
 			return (Name: name, Unprocessed: (object?)unprocessed, Processed: processed);
 		});
 		var plan = forHead(BakedEnvironment.Plan(environment, head.ClientEnvironmentNames));
-		BakedEnvironment.WriteIfChanged(head.Name, BakedEnvironment.ValuesPath(head), BakedEnvironment.CreateValues(head.Name, plan.Variables));
+		BakedEnvironment.Write(head.Name, BakedEnvironment.ValuesPath(head), BakedEnvironment.CreateValues(head.Name, plan.Variables));
 		LogPlan(logger, head.Name, plan);
 		WarnIfTheAppDoesNotReadIt(logger, head);
 	}
