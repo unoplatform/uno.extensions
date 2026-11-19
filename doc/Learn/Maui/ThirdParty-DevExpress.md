@@ -47,7 +47,7 @@ At this point you'll enter the **Uno Platform Template Wizard**, giving you opti
 
 - Select **Blank** in **Presets** selection
 
-- Select the **Platforms** tab and unselect **WebAssembly**, **macOS (Catalyst)**, **Windows**, and **Desktop** platforms
+- Select the **Platforms** tab and unselect **WebAssembly**, **Windows**, and **Desktop** platforms
 
 - Select the **Features** tab and click on **.NET MAUI Embedding** and **Toolkit**
 

@@ -61,7 +61,7 @@ dotnet new unoapp -preset blank -maui -o SimpleMauiApp
 
 ## Get Started - Existing Uno Application
 
-.NET MAUI Embedding can be added to any existing Uno application via the following steps. The .NET MAUI Embedding feature is only supported in Uno applications that target iOS, Android, MacCatalyst, and Windows, as shown in the Platforms folder in the following solution structure.
+.NET MAUI Embedding can be added to any existing Uno application via the following steps. The .NET MAUI Embedding feature is only supported in Uno applications that target iOS, Android, and Windows, as shown in the Platforms folder in the following solution structure.
 
 ### MauiNativeEmbedding Dependencies
 

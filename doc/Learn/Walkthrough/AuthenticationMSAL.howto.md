@@ -103,10 +103,12 @@ In **MainViewModel.cs**:
 public class MainViewModel : ObservableObject
 {
     private readonly IAuthenticationService _authenticationService;
+    private readonly IDispatcher _dispatcher;
 
-    public MainViewModel(IAuthenticationService authenticationService)
+    public MainViewModel(IAuthenticationService authenticationService, IDispatcher dispatcher)
     {
         _authenticationService = authenticationService;
+        _dispatcher = dispatcher;
         Authenticate = new AsyncRelayCommand(AuthenticateAsync);
     }
 
@@ -114,9 +116,11 @@ public class MainViewModel : ObservableObject
 
     private async Task AuthenticateAsync()
     {
-        await _authenticationService.LoginAsync();
+        await _authenticationService.LoginAsync(_dispatcher);
     }
 }
 ```
+
+The MSAL provider needs an `IDispatcher` to show its sign-in UI: calling `LoginAsync()` without one throws `ArgumentNullException`.
 
 This triggers the MSAL flow. Token is cached and refreshed automatically.
