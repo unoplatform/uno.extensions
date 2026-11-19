@@ -25,7 +25,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<InternalsVisibleTo Include="Uno.Extensions.Aspire" />
 		<InternalsVisibleTo Include="Uno.Extensions.Authentication" />
+		<InternalsVisibleTo Include="Uno.Extensions.Http.Kiota" />
 		<InternalsVisibleTo Include="Uno.Extensions.Http.UI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Http.WinUI" />
 	</ItemGroup>

@@ -1,0 +1,23 @@
+<Project Sdk="Uno.Sdk.Private">
+	<Import Project="..\tfms-ui-winui-apps.props" />
+
+	<PropertyGroup>
+		<Description>Test library for the Aspire extensions on Uno's host builder (WinUI)</Description>
+		<EnableDefaultPageItems>false</EnableDefaultPageItems>
+		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+		<UnoSingleProject>true</UnoSingleProject>
+		<OutputType>Library</OutputType>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MSTest.TestFramework" />
+		<PackageReference Include="FluentAssertions" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Aspire\Uno.Extensions.Aspire.csproj" />
+		<!-- The tests build Uno's HostBuilder, which is what apps get, rather than Microsoft's. -->
+		<ProjectReference Include="..\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.RuntimeTests\Uno.Extensions.RuntimeTests.Core\Uno.Extensions.RuntimeTests.Core.csproj" />
+	</ItemGroup>
+</Project>
