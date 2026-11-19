@@ -80,7 +80,7 @@ Aspire's `AddProject` does not accept a project that targets several frameworks.
     </ItemGroup>
     ```
 
-    The API is experimental. Add `UNOASPIRE001` to the AppHost's `NoWarn` to use it.
+    It needs Aspire 13.6.5 or later, and is tested with 13.6.5 and 17. The API is experimental. Add `UNOASPIRE001` to the AppHost's `NoWarn` to use it.
 
 * In the AppHost's `Program.cs`:
 
@@ -98,6 +98,8 @@ Aspire's `AddProject` does not accept a project that targets several frameworks.
   * `WithReference(api)` passes the API's address to the app.
 
 * The target framework comes from the project file. When the project computes its target frameworks from properties, the AppHost's .NET version is used. To choose another one or a launch profile, add `.WithTargetFramework("net9.0-desktop")` or `.WithLaunchProfile("MyApp (Desktop)")`. Launch profiles are for the desktop head only. Environment variables of a launch profile override the ones Aspire passes, the API's address and the telemetry endpoint included.
+
+* Arguments added with `.WithArgs(...)` reach `dotnet run`. The ones that change the build, properties (`-p:Name=Value`), the configuration (`-c Release`), the runtime, architecture and OS, also reach the build that runs before the head starts. A Release head gets no address written into it.
 
 * Do not add a `ProjectReference` from the AppHost to the app.
 
@@ -166,7 +168,7 @@ What to know:
 * **CORS error in the browser console:** the API does not allow the head's origin. Check that the AppHost passes `Cors__Origin` and that the API reads it.
 * **Certificate error:** the browser does not trust the API's development certificate. Run `dotnet dev-certs https --trust`.
 * **The app calls `api` by name, or calls nothing:** the address is not in the app. Read the head's log: a warning says when the app does not reference `Uno.Extensions.Aspire`, or names a service address that was left out.
-* **The app calls an address nothing listens on:** an AppHost that was killed instead of stopped leaves its address in `obj/uno-aspire`. The next AppHost start removes it; until then, delete that folder.
+* **Build warning `UNOASPIRE103`, saying the file was removed:** an AppHost that was killed instead of stopped, as an IDE's stop does, left its addresses in `obj/uno-aspire`. A running AppHost renews them every minute; once they are five minutes old, the next build removes them and the app gets no address from Aspire. Start the head from a running AppHost again.
 * **Build warning `UNOASPIRE101`, asking for the same version of both packages:** the AppHost's `Uno.Extensions.Aspire.Hosting` and the app's `Uno.Extensions.Aspire` differ. Update them to the same version.
 * **Publishing:** do not publish with `--no-build` after a build started by the AppHost. That copies the development address into the output.
 
@@ -287,6 +289,8 @@ To change a value for every client, or to turn the resilience handler or the tel
 
 With the resilience handler off, Kiota clients keep their own retries.
 
+Each call to `UseServiceDefaults` changes the same options, in order, so a call with options after a library's own call to `UseServiceDefaults()` still applies.
+
 ### Opt a client out
 
 The timeouts run until the response headers arrive, so a large upload or a slow endpoint will exceed them. Remove the handler for that client:
@@ -310,10 +314,9 @@ Kiota has its own retry handler. With `UseServiceDefaults()`, `AddKiotaClient` t
 
 ## Telemetry
 
-Telemetry is exported only when the app is given an OTLP endpoint (`OTEL_EXPORTER_OTLP_ENDPOINT`), which `AddDesktop()` does. An app started any other way registers no exporter and no instrumentation.
+Telemetry is exported only when the app is given an OTLP endpoint (`OTEL_EXPORTER_OTLP_ENDPOINT`), which `AddDesktop()` does, and runs in the Development environment, which the AppHost sets on every head. An app started any other way registers no exporter and no instrumentation.
 
-> [!WARNING]
-> The check is the same in a Release build. A published app exports its logs, traces and metrics to whatever endpoint that variable or a settings file names. Do not set it in a settings file you ship.
+A released app exports nothing, even when an OTLP endpoint appears in its configuration. To export from every environment, set `options.ExportTelemetryInAllEnvironments = true`; the app then sends its logs, traces and metrics to whatever endpoint that variable or a settings file names.
 
 * Traces and metrics cover `HttpClient` calls; logs come from `ILogger`.
 * Telemetry is not exported on WebAssembly or from the Android emulator.
