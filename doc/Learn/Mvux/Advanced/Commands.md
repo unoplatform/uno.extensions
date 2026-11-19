@@ -333,7 +333,7 @@ The `Command.Async` method will create a command that when executed will run the
 You can use the `Command.Create` factory methods to create a command. The `Command.Create` provides an `ICommandBuilder` parameter, which you can use to configure the command in a fluent API fashion.
 This API is intended for Uno Platform's internal use but can be useful if you need to create custom commands.
 
-`ICommandBuilder` provides the three methods below.
+`ICommandBuilder` provides the methods below.
 
 - ##### Given
 
@@ -354,6 +354,21 @@ This API is intended for Uno Platform's internal use but can be useful if you ne
   ```
 
   In the above example, the predicate passed into the `When` method will be executed when the UI wants to determine if the command can be executed, which will only happen when the command parameter is greater than 10.
+
+- ##### Validation
+
+  Validates the parameter each time the command is executed, right before the action given to `Then`. The results are published on the State given as parameter (`Given`), and the execution is aborted if there is any error. Validation errors don't change the 'can execute' of the command.
+
+  ```csharp
+  public IState<Person> Person => State.Value(this, () => new Person());
+
+  public IAsyncCommand Submit => Command.Create(builder => builder
+      .Given(Person)
+      .Validation(Validator) // An IValidator, or a delegate
+      .Then(async (person, ct) => await Save(person, ct)));
+  ```
+
+  See [validating when a command is executed](xref:Uno.Extensions.Mvux.Advanced.Validation#validating-when-a-command-is-executed).
 
 - ##### Then
 

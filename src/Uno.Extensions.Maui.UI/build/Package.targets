@@ -48,6 +48,17 @@
 						MatchExpression="that.class"
 						ReplacementText="that.@class"
 						Condition="Exists('$(IntermediateOutputPath)XamlTypeInfo.g.cs')" />
+		<!--
+			A System.Type property set in XAML (MauiHost.Source="controls:MyView") makes the WinUI XAML compiler generate
+			accessors for every property of that type and its base types. It treats [Obsolete(error: true)] like a warning,
+			so the getters of TemplatedView.Children and ScrollView.Children (obsolete as errors since .NET MAUI 10) fail
+			with CS0619. Both hide Compatibility.Layout.Children and return it, so read it through the base type.
+		-->
+		<ReplaceFileText Filename="$(IntermediateOutputPath)XamlTypeInfo.g.cs"
+						MatchExpression="(var that = \(global::Microsoft\.Maui\.Controls\.)(?:TemplatedView|ScrollView)(\)instance;\s+return that\.Children;)"
+						ReplacementText="${1}Compatibility.Layout${2}"
+						UseRegex="true"
+						Condition="Exists('$(IntermediateOutputPath)XamlTypeInfo.g.cs')" />
 	</Target>
 
 	<!-- Using Regex Replace prevents XmlPoke from replacing Tabs with Spaces -->
@@ -56,6 +67,7 @@
 			<Filename ParameterType="System.String" Required="true" />
 			<MatchExpression ParameterType="System.String" Required="true" />
 			<ReplacementText ParameterType="System.String" Required="true" />
+			<UseRegex ParameterType="System.Boolean" Required="false" />
 		</ParameterGroup>
 		<Task>
 			<Using Namespace="System" />
@@ -63,10 +75,14 @@
 			<Using Namespace="System.Text.RegularExpressions" />
 			<Code Type="Fragment" Language="cs">
 				<![CDATA[
-					File.WriteAllText(
-						Filename,
-						File.ReadAllText(Filename).Replace(MatchExpression, ReplacementText)
-						);
+					var text = File.ReadAllText(Filename);
+					var updated = UseRegex
+						? Regex.Replace(text, MatchExpression, ReplacementText)
+						: text.Replace(MatchExpression, ReplacementText);
+					if (updated != text)
+					{
+						File.WriteAllText(Filename, updated);
+					}
 				]]>
 			</Code>
 		</Task>

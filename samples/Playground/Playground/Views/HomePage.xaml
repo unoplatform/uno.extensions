@@ -76,6 +76,8 @@
 						Content="List Tests" />
 				<Button uen:Navigation.Request="ThemeSwitch"
 						Content="Theme Switch" />
+				<Button uen:Navigation.Request="Validation"
+						Content="MVUX Validation" />
 			</StackPanel>
 		</ScrollViewer>
 	</Grid>

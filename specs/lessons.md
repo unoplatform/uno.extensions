@@ -301,6 +301,58 @@ cd src/Uno.Extensions.RuntimeTests/Uno.Extensions.RuntimeTests/bin/Uno.Extension
 UNO_RUNTIME_TESTS_RUN_TESTS='{"Filter": {"Value": "<test name>"}, "Attempts": 1}' UNO_RUNTIME_TESTS_OUTPUT_PATH=<results.xml> DOTNET_MODIFIABLE_ASSEMBLIES=debug dotnet Uno.Extensions.RuntimeTests.dll
 ```
 
+The dev-server must match the major version of the .NET SDK resolved for the head (`Project TargetFramework version mismatch. Expected: net11, Current: net10` otherwise), and the engine picks its host from the SDK of a temp folder, not from the head. With a .NET 11 preview SDK installed (no `sdk` pin in `global.json`), the engine starts the `net11.0` host, which needs a newer .NET 11 runtime than the preview one (`You must install or update .NET to run this application`), so every HR test times out. CI uses the .NET 10 SDK: locally, pin it with a temporary `"sdk": { "version": "10.0.401", "rollForward": "latestFeature" }` in `global.json` (never committed), build with it, and point the engine at the matching host with `UNO_RUNTIME_TESTS_DEV_SERVER_PATH=~/.nuget/packages/uno.winui.devserver/<Uno.Sdk version>/tools/rc/host/net10.0/Uno.UI.RemoteControl.Host.dll`.
+
+When the main app gives up on the secondary app, it can exit without results while the secondary app keeps running and locks the files of the desktop output (`MSB3021 ... being used by another process` on the next build). Look for a leftover `dotnet Uno.Extensions.RuntimeTests.dll` process before rebuilding.
+
 Pass `"Attempts": 1` when diagnosing. The engine retries a failed test up to 3 times and reports only the last attempt; for an HR test the revert of attempt 1 is itself a delta, so retries fail earlier and for a different reason, hiding the real failure.
 
 **Apply to:** any HR-sensitive change (`*HotReload*` tests under `src/**/*.UI.Tests/`). Also: unit-level HR repros (`Reactive.Tests/IntegrationTests/Given_HotReload.cs`, hand-written `_v1` shadow types + `HotReloadService.UpdateApplication`) cannot reproduce Edit-and-Continue semantics, such as an EnC-updated constructor running a different getter than reflection on the original type. For #3226 the unit repro was green while the runtime test on a recreated view model was still red; only the runtime test exposed the second root cause (spec 015). Cover the "view model created after the delta" path in the runtime test, not just the live view model.
+
+## An unset MVUX `Selection` axis is not "nothing selected" — and only the collection view knows when indexes became invalid
+
+**Problem:** for #3258, `BindableListFeed` was changed to push an unset `MessageAxis.Selection` to the `ListView` as `SelectionInfo.Empty`, so a refresh of a `ListFeed` without `.Selection()` wouldn't restore a stale index. Review ([#3259](https://github.com/unoplatform/uno.extensions/pull/3259)) found that it deselected the row on every next page of an infinite-scroll list: the selection made on the view is a *volatile* update of the binding's list state, and `StateImpl` drops it on any new source message, including the "loading more" one. On `main` the unset was ignored, and a page (an `Add`) leaves the selected index valid.
+
+**Correct pattern:** treat an unset selection as "the source lost it", not as "cleared". Keep the view's selection while its indexes are valid, and only decide at the point where the indexes become invalid, which is the `Reset` raised by the collection view: `SelectionService.IsLostBySource` is set by `BindableListFeed` (before the `Switch`, so the UI thread sees it when handling the reset), and `SelectionFacet` restores on reset only when the source still holds the selection. Don't try to predict upstream whether a data change will be a reset: `DataLayerTracker` decides it from a threshold of changes (`DataStructure.DefaultResetThreshold`).
+
+**Apply to:** any change to how `BindableListFeed`/`SelectionFacet` map the `Selection` axis to the view. Cover both shapes of source message in runtime tests — a refresh (reset) and a next page (add) — for a list with *and* without `.Selection()`; a guard that accepts either outcome guards nothing.
+
+## Uno's static `WebAuthenticationBroker` snapshots its provider once; tests must register a shared double before anything touches it
+
+**Problem:** `Windows.Security.Authentication.Web.WebAuthenticationBroker` resolves its `IWebAuthenticationBrokerProvider` in its **static constructor** (`ApiExtensibility.CreateInstance`, else the built-in provider, whose Skia build throws `NotImplementedException`). There is one instance per process, and `ApiExtensibility.Register` is `TryAdd`. So a test that registers a provider after any test (or any product code) has touched the static broker registers nothing, and a test that drives the static broker after the real `DesktopWebAuthenticationBrokerProvider.TryRegister()` ran opens a real browser on the CI agent.
+
+**Correct pattern:** one shared test double for the process, registered through an idempotent helper called at the top of every test that goes through the static broker, `WebAuthenticatorBrowser`, or an `AddOidc`/`AddWeb` host (`StaticBrokerRegistration.EnsureRegistered` in `Uno.Extensions.Authentication.UI.Tests`), which also asserts that `ApiExtensibility.CreateInstance` hands back that exact instance before any flow is driven, so a stray earlier registration fails loudly instead of launching a browser. The positive path (the real broker registering on an empty registry) is unobservable in such a process; say so instead of writing a vacuous test.
+
+**Apply to:** any product code that registers into `ApiExtensibility` and any test of it. The same holds for every Uno API that resolves an extension once (static constructor or `Lazy`): the first touch wins for the process lifetime.
+
+## `this.Log()` caches one logger per type at first access; give registry-built types a logger seam
+
+**Problem:** `Uno.Core.Extensions.Logging.Singleton`'s `Log<T>(this T)` creates the logger from `LogExtensionPoint.AmbientLoggerFactory` once per closed type and never re-reads the factory, so a test cannot install a capturing factory after the type has logged once (and the runtime-test host installs its own factory, with a `"Uno" -> Warning` filter, at startup). A token-leak guard written against the ambient factory would be order-dependent or silently capture nothing.
+
+**Correct pattern:** types built outside DI (Uno's extensibility registry, static helpers) take an optional `ILogger` through a protected constructor and fall back to `this.Log()` lazily; the test double passes a capturing logger whose `IsEnabled` is always `true`, and the leak test asserts the capture saw the type's own lines before asserting what it did not see. `typeof(T).Log()` (the `Type` overload) does not cache and is the right call for a one-off line from a static method.
+
+**Apply to:** any `this.Log()` user that a test needs to observe, and any assertion on log *absence* - it is vacuous unless the same test proves the logger was wired.
+
+## `Process.Start` failures carry the command line in the exception message; never log one raw when it is a URL
+
+**Problem:** on Windows, `Process.Start(new ProcessStartInfo(url) { UseShellExecute = true })` that fails (no browser association, AppLocker, kiosk) throws a `Win32Exception` whose message is formatted from `startInfo.FileName` - the whole request URL, with `state`, `nonce`, `login_hint` and, for an end-session request, the `id_token_hint` JWT. The desktop broker logged that exception at Error and rethrew it, and the OIDC provider logged the exception text again as `LoginResult.Error`. The token-leak guard did not see it because the test double overrides the launcher. `open`/`xdg-open` with `ArgumentList` are not affected (the argument is not in the message).
+
+**Correct pattern:** treat a launcher exception as token-bearing. Log the `NativeErrorCode` and the launcher's name, not the exception; rethrow a new `Win32Exception(ex.NativeErrorCode, fixedMessage)` with **no inner exception** (`ToString()` prints inner exceptions too). Cover it with a test whose fake launcher throws a `Win32Exception` carrying the request URL and asserts neither the log nor the thrown exception's `ToString()` contains it (`When_BrowserLaunchFails_Then_RequestUriNotLoggedAndNextFlowRuns`).
+
+**Apply to:** every place a URL, a connection string or a command line with secrets is handed to `Process.Start`, `ShellExecute` or any API that echoes its input into an exception; also to catch blocks that log `ex` from a user-overridable seam, since the override's exception is not ours to trust.
+
+## Localize at one consumer entry point, not in each producer (spec 023)
+
+**Problem:** spec 023 (then numbered 016) v1 localized validation messages in the producer layer: `Uno.Extensions.Validation` got `UseLocalizedDataAnnotations` (an attribute-by-attribute re-implementation of `TryValidateObject` with localized messages, display names and format arguments) and a `Microsoft.Extensions.Localization.Abstractions` dependency, while MVUX `Validate` grew its own localized overloads. Two localization paths for the same messages, a localization dependency in a layer that has nothing to do with UI text, and a BCL re-implementation to keep in parity. It was walked back (v1 kept on branch `dev/xygu/20261005/spec-016-validation-localization-v1`).
+
+**Correct pattern:** producers (`IValidator`, DataAnnotations, FluentValidation) report messages as written, so a resource key comes out as-is. The consumer layer that turns results into UI state, MVUX (`State.Validate`, and the validation of commands since spec 024, through the shared `ValidationHelper`), is the single place where keys are resolved, through an optional trailing `IStringLocalizer? localizer = null` handled only in the base overload. Accept the trade-off explicitly (no format arguments / display names) rather than duplicating the path.
+
+**Apply to:** any cross-cutting presentation concern (localization, formatting, display names) that several producers feed into one consumer. Put it at the consumer entry point, and keep the producer packages free of it unless the producer is used without that consumer.
+
+## Local vs remote divergence: check the reflog before calling either side stale
+
+**Problem:** while rewriting the spec 023 (then 016) branch, the local branch and its base (`Validate`) differed from origin (`WithValidation`). The local side was taken for an out-of-date checkout, and the work was rebuilt on origin's base with the old name and force-pushed. In fact the local branches carried a newer, unpushed rewrite (`rename WithValidation to Validate`, visible in `git reflog`), so the "fix" reverted the user's latest decision on the PR.
+
+**Correct pattern:** when local and `origin/<branch>` have diverged (`ahead N, behind N`), find out which side is newer before choosing one: `git reflog <branch>` (look for rebase/amend/rename entries), and compare the **committer** dates of both tips (author dates survive a rebase, committer dates don't). If the local side is newer, it is unpushed work: build on it and ask before force-pushing it (and its base branch, if stacked). Never resolve the divergence silently in either direction.
+
+**Apply to:** any rebase, history rewrite or force-push on a branch whose local and remote tips differ, especially stacked PRs where the base branch may have been rewritten locally too.

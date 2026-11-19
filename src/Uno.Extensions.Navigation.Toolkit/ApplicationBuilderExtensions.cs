@@ -4,8 +4,6 @@ public static class ApplicationBuilderExtensions
 {
 	private struct ToolkitViewInitializer : IRootViewInitializer
 	{
-		public ContentControl CreateDefaultView() => new LoadingView();
-
 		public void InitializeViewHost(Window window, FrameworkElement element, Task loadingTask)
 		{
 			window.ApplyLoadingTask(element, loadingTask);

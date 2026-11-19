@@ -32,7 +32,12 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 		/// Gets a boolean which indicates if there is some handlers currently subscribed to events or not.
 		/// </summary>
 		public bool HasListener => VectorChanged != null || CollectionChanged != null;
-		
+
+		/// <summary>
+		/// Gets a boolean which indicates if a reset of the collection is currently being raised to the handlers.
+		/// </summary>
+		public bool IsRaisingReset { get; private set; }
+
 		/// <summary>
 		/// Gets the sender that will be used to raise the events
 		/// </summary>
@@ -104,13 +109,19 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 			void Raise(IVectorChangedEventArgs args)
 			{
 				var sender = _onBehalfOf.Value;
+				var wasRaisingReset = IsRaisingReset;
 				try
 				{
+					IsRaisingReset |= args.CollectionChange is CollectionChange.Reset;
 					vectorChanged(sender, args);
 				}
 				catch (Exception e)
 				{
 					sender.Log().Error(e, "Failed to notify collection changed");
+				}
+				finally
+				{
+					IsRaisingReset = wasRaisingReset;
 				}
 			}
 		}
@@ -139,13 +150,19 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 			void Raise(NotifyCollectionChangedEventArgs args)
 			{
 				var sender = _onBehalfOf.Value;
+				var wasRaisingReset = IsRaisingReset;
 				try
 				{
+					IsRaisingReset |= args.Action is NotifyCollectionChangedAction.Reset;
 					collectionChanged(sender, args);
 				}
 				catch (Exception e)
 				{
 					sender.Log().Error(e, "Failed to notify collection changed");
+				}
+				finally
+				{
+					IsRaisingReset = wasRaisingReset;
 				}
 			}
 		}

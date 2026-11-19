@@ -22,6 +22,6 @@
 		<TargetFrameworks>$(TargetFrameworks.Trim(';'))</TargetFrameworks>
 	</PropertyGroup>
 	<PropertyGroup>
-		<WindowsSdkPackageVersion>10.0.19041.87</WindowsSdkPackageVersion>
+		<WindowsSdkPackageMinimumRevision>87</WindowsSdkPackageMinimumRevision>
 	</PropertyGroup>
 </Project>

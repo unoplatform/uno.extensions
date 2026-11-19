@@ -22,6 +22,53 @@ below cover only what changes in Extensions.
 - **Removed:** `NavigatorExtensions.ShowPickerAsync` (iOS only). It routed to the native UIKit picker,
   which Uno Platform 7.0 removes, and no navigator had handled that route since the picker navigator
   was dropped, so the call never completed. Show a `Flyout` or a dialog with a list instead.
+- **`NavigateAsync<TShell>()` requires a `ContentControl` shell.** On Uno Platform 7.0, `Page` and
+  `UserControl` derive from `Control`, not `ContentControl`, so a shell such as `MainPage : Page` no
+  longer hosts navigation: it used to leave a blank screen, and now throws `InvalidOperationException`.
+  Pick one of the setups the `unoapp` template uses:
+  - **No shell** (the template's default): drop `NavigateAsync<TShell>()` and start navigation on the
+    window, passing the page's route as the initial route. The page stays a route.
+
+    ```csharp
+    Host = await builder.Window.InitializeNavigationAsync(
+        () => Task.FromResult(builder.Build()),
+        initialRoute: "Main");
+    ```
+
+  - **A separate shell** (the template's `Shell` option), for example to host an `ExtendedSplashScreen`:
+    a `UserControl` that implements `IContentControlProvider` and returns the `ContentControl` that hosts
+    navigation. Keep the page as a route.
+
+    ```csharp
+    public sealed partial class Shell : UserControl, IContentControlProvider
+    {
+        private readonly ContentControl _content = new()
+        {
+            HorizontalContentAlignment = HorizontalAlignment.Stretch,
+            VerticalContentAlignment = VerticalAlignment.Stretch,
+        };
+
+        public Shell() => Content = _content;
+
+        public ContentControl ContentControl => _content;
+    }
+
+    // App.xaml.cs
+    Host = await builder.NavigateAsync<Shell>();
+    ```
+
+  Don't make the page itself implement `IContentControlProvider` when it is also a route (for example the
+  `IsDefault` route): navigating to that route creates a second instance of the page inside the first, and
+  a warning is logged when the initial navigation does so.
+
+### Validation
+
+- `FluentValidator` (`Uno.Extensions.Validation.Fluent`) now reports the property name of each failure in `ValidationResult.MemberNames` (it was always empty). Code that treats results with empty `MemberNames` as form-level errors sees FluentValidation errors as field errors. Failures without a property name still have empty `MemberNames`.
+- **Breaking (mixed package versions):** `IValidator` moved from `Uno.Extensions.Validation` to `Uno.Extensions.Core`, in the same namespace (`Uno.Extensions.Validation`), so MVUX can use it without depending on `Uno.Extensions.Validation`. A type forward keeps binaries compiled against the previous location working. Upgrade all the `Uno.Extensions.*` packages together (the Uno.Sdk does): referencing an older `Uno.Extensions.Validation` with a newer `Uno.Extensions.Core` declares `IValidator` twice (`CS0433`).
+
+### MVUX commands
+
+- The error reported when a command fails no longer includes the value of its parameter (its `ToString`, which could expose the fields of a form, passwords included), only its type. Code that parses or displays that message sees a different text.
 
 ### Storage
 
@@ -32,6 +79,11 @@ below cover only what changes in Extensions.
   once after the upgrade.
 - Those iOS apps now need the Keychain [entitlements](xref:Uno.Extensions.Storage.HowToRequiredEntitlements)
   for the default store.
+
+### Authentication
+
+- **Skia Desktop sign-in works out of the box for the Web and OIDC providers.** `AddWeb()` and `AddOidc()` now register `DesktopWebAuthenticationBrokerProvider`, a loopback `WebAuthenticationBroker` (system browser + `localhost` listener), on Windows, macOS and Linux. Previously Uno's broker threw `NotImplementedException` on that target and the interactive sign-in could not complete. The registration goes through `ApiExtensibility` and the first registration wins, so an app that already supplies its own `IWebAuthenticationBrokerProvider` keeps it as long as it registers before `AddWeb()`/`AddOidc()`. An app that registered its own provider *after* `AddWeb()`/`AddOidc()` now has it ignored on Skia Desktop: move that registration ahead of the `UseAuthentication` call. Broker diagnostics go to Uno's ambient logger, so pass `enableUnoLogging: true` to `UseLogging()` to see them. The redirect URI on this target must be a loopback HTTP address; see [Web Authentication](xref:Uno.Extensions.Authentication.HowToWebAuthentication) and [OIDC Authentication](xref:Uno.Extensions.Authentication.HowToOidcAuthentication).
+- **OIDC provider, every platform:** the browser flow now reports its outcome to the OIDC client as a `BrowserResultType` (`Timeout` for both the client's `BrowserOptions.Timeout` and the broker's own timeout, `UserCancel`, `HttpError`) instead of a `Success` result with no response or an `UnknownError`, so `LoginResult.Error` reads `Timeout`/`UserCancel` where it used to be an exception text. A `CancellationToken` the app cancels during `LoginAsync`/`LogoutAsync` now propagates as `OperationCanceledException` out of `IAuthenticationService` instead of a failed result: `LoginAsync` used to return `false`, so code that passes a cancellable token should now catch the exception. A cancelled sign-in also no longer clears the stored tokens (the failed result used to be saved as an empty token set, signing the user out); `IAuthenticationService.LogoutAsync` still clears them when cancelled. Sign-out sends the cached ID token as `id_token_hint`, which some identity providers require before redirecting back to `PostLogoutRedirectUri`.
 
 ## Upgrading to Extensions 7.4
 

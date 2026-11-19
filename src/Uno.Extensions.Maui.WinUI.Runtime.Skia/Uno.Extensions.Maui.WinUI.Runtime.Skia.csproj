@@ -4,9 +4,6 @@
 		<TargetFrameworks Condition="'$(Build_Android)'=='true'">$(TargetFrameworks);net10.0-android</TargetFrameworks>
 	</PropertyGroup>
 	<PropertyGroup>
-		<WindowsSdkPackageVersion>10.0.19041.87</WindowsSdkPackageVersion>
-	</PropertyGroup>
-	<PropertyGroup>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<UseMaui>true</UseMaui>
@@ -18,9 +15,6 @@
 		<UnoSingleProject>true</UnoSingleProject>
 		<OutputType>Library</OutputType>
 		<DefineConstants>$(DefineConstants);MAUI_RUNTIME_SKIA</DefineConstants>
-		<UnoFeatures>
-			SkiaRenderer;
-		</UnoFeatures>
 	</PropertyGroup>
 	<ItemGroup>
 		<Compile Include="..\Uno.Extensions.Maui.UI\Extensibility\Impl\MauiEmbeddingExtension.cs" Link="MauiEmbeddingExtension.cs" />

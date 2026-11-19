@@ -207,7 +207,8 @@ public sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 	{
 		if (error is not null)
 		{
-			ReportError(error, when: $"executing command with '{coercedParameter ?? "-null-"}'");
+			// Note: We only report the type of the parameter, as its value is commonly user input (e.g. a form with a password) which must not reach the logs.
+			ReportError(error, when: $"executing command with a parameter of type '{coercedParameter?.GetType().Name ?? "-null-"}'");
 		}
 
 		coercedParameter ??= _null;

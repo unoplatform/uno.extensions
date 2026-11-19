@@ -98,6 +98,8 @@ Under the hood, `OidcAuthenticationProvider` relies on [Duende.IdentityModel.Oid
   }
   ```
 
+  On Skia Desktop the redirect URI must be a loopback HTTP address instead of a custom scheme; see [Skia Desktop](#skia-desktop-windows-macos-linux) below.
+
   > Common scopes include `openid`, `profile`, `email`, and `offline_access`. The `openid` scope is required for OpenID Connect authentication. The `profile` and `email` scopes are used to request additional user information, and the `offline_access` scope is used to request a refresh token. Your identity provider may provide additional scopes, such as `api`, to request access to specific APIs.
 
 - `Authority`: The URL of the identity provider.
@@ -124,6 +126,18 @@ Under the hood, `OidcAuthenticationProvider` relies on [Duende.IdentityModel.Oid
             options.Policy.Discovery.ValidateIssuerName = false; // Disable issuer name validation
         }));
     ```
+
+#### Skia Desktop (Windows, macOS, Linux)
+
+Uno Platform has no built-in `WebAuthenticationBroker` on the Skia Desktop target, so `AddOidc()` registers one: `DesktopWebAuthenticationBrokerProvider`, which opens the sign-in page in the system browser and receives the redirect on a loopback HTTP listener. It is registered through Uno's `ApiExtensibility` registry, where the first registration wins, so an app that supplies its own `IWebAuthenticationBrokerProvider` must register it before calling `AddOidc()`.
+
+- The `RedirectUri` (and `PostLogoutRedirectUri`) must be a loopback HTTP address, for example `http://localhost:5001/authentication-callback`, and that exact value must be registered with the identity provider. A custom scheme is not routed back to a desktop app.
+- `WebAuthenticationBroker.GetCurrentApplicationCallbackUri()` returns `http://localhost:{port}/authentication-callback` on this target, with a port the broker picks once per process; set `WinRTFeatureConfiguration.WebAuthenticationBroker.DefaultReturnUri` to pin it. Do not call it before `AddOidc()` has run: the broker resolves its provider on first use, and anything that touches `WebAuthenticationBroker` earlier pins Uno's built-in provider, which throws on this target. A sign-in that fails with an error naming `DesktopWebAuthenticationBrokerProvider.TryRegister()` (the built-in provider's `NotImplementedException`) is this case: move the earlier call after `UseAuthentication`. A provider the app registers *after* `AddOidc()` is ignored for the same reason: the registry keeps the first registration.
+- Whether the loopback broker took the registration, or an earlier one kept it, is logged through the host's logger once the host is built (`Uno.Extensions.Authentication` category, Debug and Information). That line is written by an `IServiceInitialize`, which only the Uno host (`this.CreateBuilder(args)` or `UnoHost.CreateDefaultBuilder()`) runs, so a host built some other way never writes it. Independently of the host, the broker's first sign-in flow logs at Information on Uno's ambient logger that the loopback broker is handling it; if the first sign-in logs no such line, an app-supplied provider handled it. Both lines sit under the `Uno.` category, so they only show once `CoreLogLevel` is `Information` or lower. The broker's own diagnostics (a port that could not be bound, a timed-out flow, a browser that would not open) go to Uno's ambient logger, which `UseLogging()` only connects with `enableUnoLogging: true`; its per-flow lines are at Debug, below the `Uno` filter the usual log levels apply.
+- Apps that call `WebAuthenticationBroker` directly can register the broker themselves with `DesktopWebAuthenticationBrokerProvider.TryRegister()` during startup.
+- Sign-out sends the cached ID token as `id_token_hint`, which the identity provider needs before it will redirect back to `PostLogoutRedirectUri`. Some providers redirect at once; others, such as the Duende demo server, show a signed-out page with a link back to the app, and the sign-out completes when the user follows it.
+- If no redirect arrives within `WinRTFeatureConfiguration.WebAuthenticationBroker.AuthenticationTimeout`, the flow is reported as cancelled with `ResponseErrorDetail` set to `DesktopWebAuthenticationBrokerProvider.TimeoutErrorDetail` (408).
+- To open the page some other way (a specific browser, a private window), derive from `DesktopWebAuthenticationBrokerProvider`, override `LaunchBrowserAsync`, and register your type with `ApiExtensibility.Register` before `AddOidc()`. The type only exists in the non-WinAppSDK builds of the package, so guard the reference with `#if !WINDOWS` in code shared with a WinAppSDK head.
 
 ### 4. Use the provider in your application
 
