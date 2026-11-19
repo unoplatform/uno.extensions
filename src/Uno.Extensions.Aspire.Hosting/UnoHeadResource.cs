@@ -42,4 +42,9 @@ public abstract class UnoHeadResource : ExecutableResource
 	/// The launch profile the head runs with, or <c>null</c> to run without one.
 	/// </summary>
 	public string? LaunchProfile { get; internal set; }
+
+	/// <summary>
+	/// Names of variables written into the app whatever their value, for a head whose environment is written into the app.
+	/// </summary>
+	internal HashSet<string> ClientEnvironmentNames { get; } = new(StringComparer.Ordinal);
 }
