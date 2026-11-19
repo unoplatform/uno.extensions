@@ -84,6 +84,40 @@ public class Given_HeadBuild
 	}
 
 	[TestMethod]
+	public async Task When_HeadIsGivenAProperty_Then_TheBuildGetsItToo()
+	{
+		const string RecordsTheProperty = """
+			<Target Name="Build">
+				<WriteLinesToFile File="marker.txt" Lines="$(Marker)" Overwrite="true" />
+			</Target>
+			<Target Name="Restore" />
+			""";
+		_solution = new TestSolution(RecordsTheProperty);
+		var builder = _solution.CreateBuilder();
+		builder.Configuration["DcpPublisher:CliPath"] = "dcp";
+		builder.Configuration["DcpPublisher:DashboardPath"] = "dashboard";
+		var head = builder.AddUnoApp("app", _solution.ProjectPath).AddDesktop().WithArgs("-p:Marker=forwarded").Resource;
+		await using var app = builder.Build();
+
+		await StartAsync(app, head);
+
+		File.ReadAllText(Path.Join(_solution.AppFolder, "marker.txt")).Trim().Should().Be("forwarded");
+	}
+
+	[TestMethod]
+	[DataRow(new[] { "run", "-p:A=1", "--no-build" }, new[] { "-p:A=1" })]
+	[DataRow(new[] { "--property:A=1", "/p:B=2" }, new[] { "--property:A=1", "/p:B=2" })]
+	[DataRow(new[] { "-c", "Release", "--launch-profile", "Desktop" }, new[] { "-c", "Release" })]
+	[DataRow(new[] { "-p", "A=1", "--property", "B=2" }, new[] { "-p", "A=1", "--property", "B=2" })]
+	[DataRow(new[] { "--configuration=Release", "-c:Debug", "-p=A=1" }, new[] { "--configuration=Release", "-c:Debug", "-p=A=1" })]
+	[DataRow(new[] { "--project", "-path/app.csproj", "-cx" }, new string[0])]
+	[DataRow(new[] { "-r", "win-x64", "--os=linux" }, new[] { "-r", "win-x64", "--os=linux" })]
+	[DataRow(new[] { "-p:A=1", "--", "-c", "Release" }, new[] { "-p:A=1" })]
+	[DataRow(new[] { "--configuration" }, new string[0])]
+	public void When_RunArgumentsAreGiven_Then_OnlyPropertiesAndConfigurationReachTheBuild(string[] run, string[] expected) =>
+		HeadBuild.SelectBuildArguments(run).Should().Equal(expected);
+
+	[TestMethod]
 	public async Task When_ProjectDoesNotTargetTheFramework_Then_TheStartFailsBeforeBuilding()
 	{
 		var (app, head) = CreateApp("<PropertyGroup><TargetFrameworks>net9.0-android</TargetFrameworks></PropertyGroup>" + TestSolution.BuildTargets);
