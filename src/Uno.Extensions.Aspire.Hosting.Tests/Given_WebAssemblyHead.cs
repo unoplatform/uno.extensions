@@ -109,7 +109,7 @@ public class Given_WebAssemblyHead
 	}
 
 	[TestMethod]
-	public async Task When_ValuesChangeBetweenRuns_Then_TheFileIsRewrittenOnlyWhenTheyChange()
+	public async Task When_ValuesChangeBetweenRuns_Then_TheFileHoldsTheLatest()
 	{
 		async Task RunAsync(string value)
 		{
@@ -119,12 +119,6 @@ public class Given_WebAssemblyHead
 		}
 
 		await RunAsync("one");
-		var written = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-		File.SetLastWriteTimeUtc(_solution.ValuesPath, written);
-
-		await RunAsync("one");
-		File.GetLastWriteTimeUtc(_solution.ValuesPath).Should().Be(written, "an unchanged value keeps the build incremental");
-
 		await RunAsync("two");
 		_solution.BakedVariables().Should().Contain("Value", "two");
 		Directory.GetFiles(Path.GetDirectoryName(_solution.ValuesPath)!).Should().ContainSingle("no temporary file is left behind");
@@ -236,6 +230,19 @@ public class Given_WebAssemblyHead
 			.PublishAsync(new BeforeResourceStartedEvent(wasm.Resource, app.Services));
 
 		File.ReadAllLines(Path.Join(_solution.AppFolder, "environment.txt")).Should().Equal("services__api__http__0=http://localhost:5171");
+	}
+
+	[TestMethod]
+	public async Task When_TheLeaseIsRenewed_Then_TheValuesCountAsCurrentAgain()
+	{
+		var builder = _solution.CreateBuilder();
+		var wasm = _solution.AddWebAssembly(builder).WithEnvironment("Value", "one").WithClientEnvironment("Value");
+		await TestSolution.WriteClientEnvironmentAsync(builder, wasm.Resource);
+		File.SetLastWriteTimeUtc(_solution.ValuesPath, DateTime.UtcNow.AddMinutes(-10));
+
+		BakedEnvironment.RenewLease(wasm.Resource, new ListLogger());
+
+		File.GetLastWriteTimeUtc(_solution.ValuesPath).Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
 	}
 
 	[TestMethod]

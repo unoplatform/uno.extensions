@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Globalization;
+using System.Xml.Linq;
 using Aspire.Hosting;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -80,6 +82,33 @@ public class Given_AppBuildLogic
 
 		environment.Should().BeEquivalentTo([$"Name={value}", "services__api__http__0=http://localhost:5171"]);
 		log.Should().Contain("Name, services__api__http__0").And.NotContain("a;b", "values may be secrets");
+	}
+
+	[TestMethod]
+	[DataRow(-10, DisplayName = "Not renewed for 10 minutes")]
+	[DataRow(10, DisplayName = "Dated in the future")]
+	public async Task When_TheAppHostDidNotRenewTheValues_Then_TheBuildRemovesThemAndWarnsOnce(int minutesFromNow)
+	{
+		var builder = _solution.CreateBuilder();
+		var api = TestSolution.AddApi(builder);
+		var wasm = _solution.AddWebAssembly(builder).WithReference(api.GetEndpoint("http"));
+		await TestSolution.WriteClientEnvironmentAsync(builder, wasm.Resource);
+		File.SetLastWriteTimeUtc(_solution.ValuesPath, DateTime.UtcNow.AddMinutes(minutesFromNow));
+
+		var (environment, log) = await BuildAppAsync();
+
+		environment.Should().BeEmpty("a killed AppHost left addresses nobody serves");
+		log.Should().Contain("warning UNOASPIRE103");
+		File.Exists(_solution.ValuesPath).Should().BeFalse("a build that treats warnings as errors fails once, not every time");
+	}
+
+	[TestMethod]
+	public void When_TheLeaseIsRead_Then_SeveralRenewalsFitInIt()
+	{
+		var targets = XDocument.Load(Path.Join(AppContext.BaseDirectory, "Uno.Extensions.Aspire.targets"));
+		var leaseMinutes = int.Parse(targets.Descendants().Single(element => element.Name.LocalName == "_UnoAspireEnvironmentLeaseMinutes").Value, CultureInfo.InvariantCulture);
+
+		TimeSpan.FromMinutes(leaseMinutes).Should().BeGreaterThanOrEqualTo(3 * BakedEnvironment.LeaseRenewal, "a late or failed renewal must not expire the file");
 	}
 
 	[TestMethod]

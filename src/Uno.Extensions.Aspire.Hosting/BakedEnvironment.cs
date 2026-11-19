@@ -22,6 +22,7 @@ internal static partial class BakedEnvironment
 	internal const string EnvironmentVariable = "DOTNET_ENVIRONMENT";
 
 	// Part of the file name. Uno.Extensions.Aspire warns about a file of another version instead of reading it.
+	// The format includes LeaseRenewal and the build's lease: changing either changes the version.
 	internal const string FormatVersion = "v1";
 
 	// The emulator's address for the host machine's loopback interface.
@@ -145,16 +146,11 @@ internal static partial class BakedEnvironment
 			new XElement("Target", new XAttribute("Name", ValuesTarget), new XAttribute("Returns", "@(_UnoAspireEnvironment)"))).ToString();
 	}
 
-	// Leaves an unchanged file untouched, and never leaves a half-written one for a build to read.
-	internal static void WriteIfChanged(string headName, string path, string content)
+	// Never leaves a half-written file for a build to read.
+	internal static void Write(string headName, string path, string content)
 	{
 		try
 		{
-			if (File.Exists(path) && File.ReadAllText(path) == content)
-			{
-				return;
-			}
-
 			Directory.CreateDirectory(Path.GetDirectoryName(path) ?? throw new ArgumentException("The path has no directory.", nameof(path)));
 		}
 		catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
@@ -173,6 +169,27 @@ internal static partial class BakedEnvironment
 		{
 			// A temporary file left here is removed with the values, see Delete.
 			throw new DistributedApplicationException($"The environment of '{headName}' could not be written to '{path}': {exception.Message}", exception);
+		}
+	}
+
+	// While the AppHost runs it renews the file this often; the app's build ignores a file older than
+	// _UnoAspireEnvironmentLeaseMinutes in Uno.Extensions.Aspire.targets, so one left by a killed AppHost stops counting.
+	internal static readonly TimeSpan LeaseRenewal = TimeSpan.FromMinutes(1);
+
+	internal static void RenewLease(UnoHeadResource head, ILogger logger)
+	{
+		var path = ValuesPath(head);
+		try
+		{
+			if (File.Exists(path))
+			{
+				File.SetLastWriteTimeUtc(path, DateTime.UtcNow);
+			}
+		}
+		catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+		{
+			// The next renewal tries again. Five failures in a row and the app's build ignores the file.
+			logger.LogWarning(exception, "The environment of '{Head}' in '{Path}' could not be renewed. A build ignores it once it is not renewed for a few minutes.", head.Name, path);
 		}
 	}
 
