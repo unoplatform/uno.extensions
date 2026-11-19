@@ -15,8 +15,16 @@ public abstract class UnoHeadResource : ExecutableResource
 		: base(name, "dotnet", app.ProjectDirectory)
 	{
 		App = app;
-		TargetFramework = app.TargetFrameworks.FirstOrDefault(framework => framework.EndsWith($"-{platform}", StringComparison.OrdinalIgnoreCase))
+		TargetFramework = app.TargetFrameworks.FirstOrDefault(framework => IsForPlatform(framework, platform))
 			?? $"net{Environment.Version.Major}.0-{platform}";
+	}
+
+	// The platform part may carry a version: net10.0-android36.0 is an Android target.
+	private static bool IsForPlatform(string framework, string platform)
+	{
+		var separator = framework.IndexOf('-');
+		return separator >= 0
+			&& framework[(separator + 1)..].TrimEnd("0123456789.".ToCharArray()).Equals(platform, StringComparison.OrdinalIgnoreCase);
 	}
 
 	/// <summary>
