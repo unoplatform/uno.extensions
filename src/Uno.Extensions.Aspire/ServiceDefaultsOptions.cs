@@ -17,10 +17,19 @@ public sealed class ServiceDefaultsOptions
 	/// <summary>
 	/// Changes the standard resilience handler, after unsafe methods are excluded from retries.
 	/// </summary>
+	/// <remarks>
+	/// Assigning it replaces what an earlier call to <c>UseServiceDefaults</c> set; use <c>+=</c> to keep it.
+	/// </remarks>
 	public Action<HttpStandardResilienceOptions>? ConfigureResilience { get; set; }
 
 	/// <summary>
 	/// Whether OpenTelemetry is exported when an OTLP endpoint is configured. <c>true</c> by default.
 	/// </summary>
 	public bool UseTelemetry { get; set; } = true;
+
+	/// <summary>
+	/// Whether telemetry is exported outside the Development environment too. <c>false</c> by default, so a released
+	/// app sends nothing when an OTLP endpoint appears in its configuration on someone else's machine.
+	/// </summary>
+	public bool ExportTelemetryInAllEnvironments { get; set; }
 }

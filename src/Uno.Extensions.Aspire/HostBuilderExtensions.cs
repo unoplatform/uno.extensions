@@ -17,16 +17,24 @@ public static class HostBuilderExtensions
 {
 	private const string OtlpEndpointKey = "OTEL_EXPORTER_OTLP_ENDPOINT";
 
+	private static readonly object OptionsKey = typeof(ServiceDefaultsOptions);
+
 	/// <summary>
 	/// Adds service discovery and the standard resilience handler to every <see cref="HttpClient"/>,
-	/// and exports OpenTelemetry when an OTLP endpoint is configured.
+	/// and exports OpenTelemetry in the Development environment when an OTLP endpoint is configured.
 	/// </summary>
 	/// <remarks>
 	/// <list type="bullet">
 	/// <item><description>The service addresses Aspire passes win over the same keys in the app's settings files.</description></item>
+	/// <item><description>The resilience handler applies to every client, authentication, upload and download ones
+	/// included: each attempt times out after 10 seconds, the whole request after 30, and a circuit breaker stops
+	/// calls for 5 seconds when 10% of at least 100 calls in 30 seconds fail. Change it with
+	/// <see cref="ServiceDefaultsOptions.ConfigureResilience"/>, or turn it off with
+	/// <see cref="ServiceDefaultsOptions.UseResilience"/>.</description></item>
 	/// <item><description>Unsafe methods (<c>POST</c>, <c>PUT</c>, <c>PATCH</c>, <c>DELETE</c>) are never retried.</description></item>
 	/// <item><description>Kiota clients stop adding their own retries, so a request is retried by one layer only.</description></item>
-	/// <item><description>Nothing is exported on WebAssembly, even when an OTLP endpoint is configured.</description></item>
+	/// <item><description>Telemetry is exported only in the Development environment, unless
+	/// <see cref="ServiceDefaultsOptions.ExportTelemetryInAllEnvironments"/> is set, and never on WebAssembly.</description></item>
 	/// </list>
 	/// </remarks>
 	/// <param name="builder">The host builder to configure.</param>
@@ -38,6 +46,10 @@ public static class HostBuilderExtensions
 	/// Adds the service defaults as <see cref="UseServiceDefaults(IHostBuilder)"/> does, with the parts and settings
 	/// <paramref name="configure"/> chooses.
 	/// </summary>
+	/// <remarks>
+	/// Every call changes the same options, in call order, and the parts are added when the host is built. A library
+	/// can call it first and the app change its choice afterwards.
+	/// </remarks>
 	/// <param name="builder">The host builder to configure.</param>
 	/// <param name="configure">Turns the resilience handler or the telemetry off, or changes the resilience handler.</param>
 	/// <returns>The same <see cref="IHostBuilder"/> for chaining.</returns>
@@ -46,18 +58,17 @@ public static class HostBuilderExtensions
 		ArgumentNullException.ThrowIfNull(builder);
 		ArgumentNullException.ThrowIfNull(configure);
 
-		if (builder.IsRegistered(nameof(UseServiceDefaults)))
-		{
-			return builder;
-		}
-
-		var options = new ServiceDefaultsOptions();
+		var isFirstCall = !builder.Properties.TryGetValue(OptionsKey, out var stored);
+		var options = stored as ServiceDefaultsOptions ?? new ServiceDefaultsOptions();
+		builder.Properties[OptionsKey] = options;
 		configure(options);
 
 		// Set at call time, not in ConfigureServices: client registrations read it whatever the call order.
-		if (options.UseResilience)
+		builder.Properties[HttpRetryOwnership.ResilienceHandlerKey] = options.UseResilience;
+
+		if (!isFirstCall)
 		{
-			builder.Properties[HttpRetryOwnership.ResilienceHandlerKey] = true;
+			return builder;
 		}
 
 		// A host configuration step runs before every app configuration step, so the source added here comes after
@@ -88,12 +99,17 @@ public static class HostBuilderExtensions
 				return;
 			}
 
-			if (options.UseTelemetry && !string.IsNullOrWhiteSpace(context.Configuration[OtlpEndpointKey]))
+			if (ShouldExportTelemetry(options, context))
 			{
 				AddOpenTelemetry(services);
 			}
 		});
 	}
+
+	private static bool ShouldExportTelemetry(ServiceDefaultsOptions options, HostBuilderContext context) =>
+		options.UseTelemetry
+		&& !string.IsNullOrWhiteSpace(context.Configuration[OtlpEndpointKey])
+		&& (options.ExportTelemetryInAllEnvironments || context.HostingEnvironment.IsDevelopment());
 
 	private static void AddOpenTelemetry(IServiceCollection services)
 	{

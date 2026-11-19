@@ -58,9 +58,33 @@ public class Given_ServiceDefaults_Options
 	public void When_TelemetryIsOff_Then_NothingIsRegisteredEvenWithAnEndpoint()
 	{
 		using var host = TestHost.CreateBuilder((OtlpEndpointKey, "http://localhost:4317"))
+			.UseEnvironment(Environments.Development)
 			.UseServiceDefaults(options => options.UseTelemetry = false)
 			.Build();
 
 		host.Services.GetService<TracerProvider>().Should().BeNull();
+	}
+
+	[TestMethod]
+	public async Task When_CalledAgainWithOptions_Then_TheLaterOptionsApply()
+	{
+		var stub = new StubHttpHandler(HttpStatusCode.ServiceUnavailable);
+		using var host = TestHost.CreateBuilder((OtlpEndpointKey, "http://localhost:4317"))
+			.UseEnvironment(Environments.Development)
+			.UseServiceDefaults()
+			.UseServiceDefaults(options =>
+			{
+				options.UseResilience = false;
+				options.UseTelemetry = false;
+			})
+			.ConfigureServices(services => services
+				.AddHttpClient(TestHost.ClientName)
+				.ConfigurePrimaryHttpMessageHandler(() => stub))
+			.Build();
+
+		await host.CreateTestClient().GetAsync("http://api.test/items");
+
+		stub.Attempts.Should().Be(1, "the second call turned the resilience handler off");
+		host.Services.GetService<TracerProvider>().Should().BeNull("the second call turned the telemetry off");
 	}
 }

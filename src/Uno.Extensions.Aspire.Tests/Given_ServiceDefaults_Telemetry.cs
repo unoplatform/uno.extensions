@@ -27,6 +27,7 @@ public class Given_ServiceDefaults_Telemetry
 		using var server = LoopbackServer.Start();
 		var exported = new List<Activity>();
 		using var host = TestHost.CreateBuilder((OtlpEndpointKey, server.Address.ToString()))
+			.UseEnvironment(Environments.Development)
 			.UseServiceDefaults()
 			.ConfigureServices(services => services
 				.ConfigureOpenTelemetryTracerProvider(tracing => tracing.AddInMemoryExporter(exported))
@@ -39,5 +40,27 @@ public class Given_ServiceDefaults_Telemetry
 
 		exported.Should().Contain(activity => activity.Kind == ActivityKind.Client);
 		await host.StopAsync();
+	}
+
+	[TestMethod]
+	public void When_OtlpEndpointOutsideDevelopment_Then_NoTelemetryIsRegistered()
+	{
+		using var host = TestHost.CreateBuilder((OtlpEndpointKey, "http://localhost:4317"))
+			.UseEnvironment(Environments.Production)
+			.UseServiceDefaults()
+			.Build();
+
+		host.Services.GetService<TracerProvider>().Should().BeNull("a released app exports nothing unless it asks to");
+	}
+
+	[TestMethod]
+	public void When_ExportInAllEnvironments_Then_TelemetryIsRegisteredOutsideDevelopment()
+	{
+		using var host = TestHost.CreateBuilder((OtlpEndpointKey, "http://localhost:4317"))
+			.UseEnvironment(Environments.Production)
+			.UseServiceDefaults(options => options.ExportTelemetryInAllEnvironments = true)
+			.Build();
+
+		host.Services.GetService<TracerProvider>().Should().NotBeNull();
 	}
 }
