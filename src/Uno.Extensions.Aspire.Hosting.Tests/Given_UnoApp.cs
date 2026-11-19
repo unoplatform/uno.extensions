@@ -42,6 +42,31 @@ public class Given_UnoApp
 	}
 
 	[TestMethod]
+	public void When_TheFrameworkCarriesAPlatformVersion_Then_TheHeadStillUsesIt()
+	{
+		using var solution = new TestSolution("<PropertyGroup><TargetFrameworks>net10.0-android36.0;net10.0-desktop</TargetFrameworks></PropertyGroup>");
+		var builder = solution.CreateBuilder();
+
+		var android = builder.AddUnoApp("app", solution.ProjectPath).AddAndroidEmulator();
+
+		android.Resource.TargetFramework.Should().Be("net10.0-android36.0");
+	}
+
+	[TestMethod]
+	public void When_AGroupAppendsToTheList_Then_ItsFrameworksAreKept()
+	{
+		using var solution = new TestSolution("""
+			<PropertyGroup><TargetFrameworks>net9.0-desktop</TargetFrameworks></PropertyGroup>
+			<PropertyGroup Condition="'$(OS)' == 'Windows_NT'"><TargetFrameworks>$(TargetFrameworks);net9.0-android</TargetFrameworks></PropertyGroup>
+			""");
+		var builder = solution.CreateBuilder();
+
+		var app = builder.AddUnoApp("app", solution.ProjectPath);
+
+		app.Resource.TargetFrameworks.Should().Equal("net9.0-desktop", "net9.0-android");
+	}
+
+	[TestMethod]
 	public void When_ProjectComputesItsFrameworks_Then_HeadsUseTheAppHostVersion()
 	{
 		using var solution = new TestSolution("<PropertyGroup><TargetFrameworks>$(DotNetVersion)-desktop</TargetFrameworks></PropertyGroup>");
