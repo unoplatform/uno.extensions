@@ -422,7 +422,8 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 
 	/// <summary>
 	/// Classifies each member named by the model's <c>[FeedDependency]</c> attributes once, in declaration order.
-	/// A member carries one attribute per dependency; like the source-path analysis, any feed dependency makes it derived.
+	/// A member carries one attribute per dependency; like the source-path analysis, any parameter makes it an input,
+	/// and it is derived only when every dependency is a feed.
 	/// </summary>
 	private static List<(string MemberName, bool IsDerived)> ReadFeedDependencies(INamedTypeSymbol model, INamedTypeSymbol feedDep)
 	{
@@ -443,14 +444,15 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 				continue; // independent → not part of the mock
 			}
 
+			var namesOnlyAFeed = onParameter is null;
 			if (indexes.TryGetValue(memberName, out var index))
 			{
-				members[index] = (memberName, members[index].IsDerived || onFeed is not null);
+				members[index] = (memberName, members[index].IsDerived && namesOnlyAFeed);
 			}
 			else
 			{
 				indexes[memberName] = members.Count;
-				members.Add((memberName, onFeed is not null));
+				members.Add((memberName, namesOnlyAFeed));
 			}
 		}
 
