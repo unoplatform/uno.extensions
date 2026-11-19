@@ -131,7 +131,10 @@ For every MVUX model it finds, the generator emits, next to the model:
   view-model** with every constructor parameter null-injected (services,
   navigator, ...) except every parameter typed
   `CommunityToolkit.Mvvm.Messaging.IMessenger`, which gets a fresh messenger of
-  its own, then apply the mock;
+  its own, then apply the mock. A parameter the view-model's construction
+  dereferences cannot be null, so `Create` takes it as an argument instead
+  (`Create(service, mock)`): one the model's constructor uses, or one a feed
+  reads while it is built, as a method group does (`ListFeed.Async(Service.GetSteps)`);
 - a `SetMock(this {Vm}, {Model}Mock)` extension that swaps each mocked feed.
 
 A view-model whose constructors are all non-public cannot be built this way:
@@ -150,7 +153,7 @@ Given this model:
 public partial record RecipeModel(IRecipeService Service)
 {
     // service-dependent input
-    public IListFeed<Step> Steps => ListFeed.Async(Service.GetSteps);
+    public IListFeed<Step> Steps => ListFeed.Async(ct => Service.GetSteps(ct));
 
     // derived — recomputes over whatever Steps emits
     public IFeed<int> StepsCount => Steps.Select(steps => steps.Count);

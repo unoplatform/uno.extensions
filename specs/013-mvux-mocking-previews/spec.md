@@ -179,7 +179,7 @@ Generated surface, `Create` overload rules and diagnostics: [architecture.md §2
 
 ## 8. Tier 3 at a glance
 
-The same engine: `Create` takes **only the mock record** (its required members are exactly the service-dependent feeds). `Create()` uses `{Model}Mock.Empty`.
+The same engine: `Create` takes **only the mock record** (its required members are exactly the service-dependent feeds), plus any service the view-model's construction dereferences (R1). `Create()` uses `{Model}Mock.Empty`.
 
 ```csharp
 var vm      = RecipeViewModelMock.Create(new RecipeModelMock { Steps = ListFeedMock.Value(steps) });
