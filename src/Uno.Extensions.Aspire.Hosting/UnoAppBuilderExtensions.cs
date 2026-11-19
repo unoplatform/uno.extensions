@@ -11,6 +11,7 @@ namespace Aspire.Hosting;
 public static class UnoAppBuilderExtensions
 {
 	private const string ModifiableAssembliesVariable = "DOTNET_MODIFIABLE_ASSEMBLIES";
+	private const string EnvironmentVariable = "DOTNET_ENVIRONMENT";
 	private const string ServerUrlsVariable = "ASPNETCORE_URLS";
 
 	// Deploys to the running emulator, not to a connected device.
@@ -171,6 +172,8 @@ public static class UnoAppBuilderExtensions
 		var resource = builder.AddResource(head)
 			// dotnet run without a launch profile does not set it, and Hot Reload needs it.
 			.WithEnvironment(ModifiableAssembliesVariable, "debug")
+			// As Aspire does for its projects; the app exports telemetry only in Development.
+			.WithEnvironment(EnvironmentVariable, "Development")
 			.ExcludeFromManifest();
 
 		if (builder.ExecutionContext.IsRunMode)
