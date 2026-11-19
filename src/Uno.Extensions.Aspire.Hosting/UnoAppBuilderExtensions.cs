@@ -178,6 +178,7 @@ public static class UnoAppBuilderExtensions
 			resource.OnBeforeResourceStarted((head, @event, cancellationToken) => HeadBuild.RunAsync(
 				head,
 				@event.Services.GetRequiredService<ResourceNotificationService>(),
+				@event.Services.GetRequiredService<DistributedApplicationExecutionContext>(),
 				@event.Services.GetRequiredService<ResourceLoggerService>().GetLogger(head),
 				cancellationToken));
 		}

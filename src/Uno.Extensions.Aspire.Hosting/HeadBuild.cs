@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Aspire.Hosting.ApplicationModel;
@@ -18,9 +19,15 @@ internal static class HeadBuild
 	// A first build restores packages and can take minutes; a build stuck longer than this is reported as failed.
 	private static readonly TimeSpan Timeout = TimeSpan.FromMinutes(10);
 
-	internal static async Task RunAsync(UnoHeadResource head, ResourceNotificationService notifications, ILogger logger, CancellationToken cancellationToken)
+	internal static async Task RunAsync(
+		UnoHeadResource head,
+		ResourceNotificationService notifications,
+		DistributedApplicationExecutionContext executionContext,
+		ILogger logger,
+		CancellationToken cancellationToken)
 	{
 		EnsureTheProjectTargetsIt(head);
+		var forwarded = await ArgumentsForTheBuildAsync(head, executionContext, logger, cancellationToken).ConfigureAwait(false);
 
 		var buildLock = head.App.BuildLock;
 		if (!await buildLock.WaitAsync(TimeSpan.Zero, cancellationToken).ConfigureAwait(false))
@@ -33,7 +40,7 @@ internal static class HeadBuild
 		try
 		{
 			await PublishStateAsync(notifications, head, BuildingState).ConfigureAwait(false);
-			await BuildAsync(head, logger, cancellationToken).ConfigureAwait(false);
+			await BuildAsync(head, forwarded, logger, cancellationToken).ConfigureAwait(false);
 		}
 		finally
 		{
@@ -51,10 +58,61 @@ internal static class HeadBuild
 		}
 	}
 
+	// The head runs with --no-build, so the properties and configuration it is given have to reach the build too.
+	private static async Task<IReadOnlyList<string>> ArgumentsForTheBuildAsync(
+		UnoHeadResource head,
+		DistributedApplicationExecutionContext executionContext,
+		ILogger logger,
+		CancellationToken cancellationToken)
+	{
+		var configuration = await ExecutionConfigurationBuilder.Create(head)
+			.WithArgumentsConfig()
+			.BuildAsync(executionContext, logger, cancellationToken)
+			.ConfigureAwait(false);
+
+		return SelectBuildArguments(configuration.Arguments.Select(argument => argument.Value).ToList());
+	}
+
+	// The options of dotnet build that change what it produces or where, in their joined (-p:A=1, -c:Release) and
+	// separate (-p A=1, -c Release) forms.
+	private static readonly string[] BuildOptions =
+		["-p", "/p", "--property", "-property", "-c", "--configuration", "-r", "--runtime", "-a", "--arch", "--os"];
+
+	internal static IReadOnlyList<string> SelectBuildArguments(IReadOnlyList<string> runArguments)
+	{
+		var selected = new List<string>();
+		for (var index = 0; index < runArguments.Count; index++)
+		{
+			var argument = runArguments[index];
+			if (argument == "--")
+			{
+				// What follows is for the app.
+				break;
+			}
+
+			if (IsJoinedBuildOption(argument))
+			{
+				selected.Add(argument);
+			}
+			else if (BuildOptions.Contains(argument, StringComparer.OrdinalIgnoreCase) && index + 1 < runArguments.Count)
+			{
+				selected.Add(argument);
+				selected.Add(runArguments[++index]);
+			}
+		}
+
+		return selected;
+	}
+
+	private static bool IsJoinedBuildOption(string argument) =>
+		BuildOptions.Any(option =>
+			argument.StartsWith(option + ":", StringComparison.OrdinalIgnoreCase)
+			|| argument.StartsWith(option + "=", StringComparison.OrdinalIgnoreCase));
+
 	private static Task PublishStateAsync(ResourceNotificationService notifications, UnoHeadResource head, string state) =>
 		notifications.PublishUpdateAsync(head, snapshot => snapshot with { State = new ResourceStateSnapshot(state, KnownResourceStateStyles.Info) });
 
-	private static async Task BuildAsync(UnoHeadResource head, ILogger logger, CancellationToken cancellationToken)
+	private static async Task BuildAsync(UnoHeadResource head, IReadOnlyList<string> forwarded, ILogger logger, CancellationToken cancellationToken)
 	{
 		var start = new ProcessStartInfo("dotnet")
 		{
@@ -63,7 +121,7 @@ internal static class HeadBuild
 			RedirectStandardError = true,
 			UseShellExecute = false,
 		};
-		foreach (var argument in new[] { "build", head.App.ProjectPath, "-f", head.TargetFramework })
+		foreach (var argument in new[] { "build", head.App.ProjectPath, "-f", head.TargetFramework }.Concat(forwarded))
 		{
 			start.ArgumentList.Add(argument);
 		}
@@ -80,7 +138,7 @@ internal static class HeadBuild
 		}
 		catch (OperationCanceledException)
 		{
-			process.Kill(entireProcessTree: true);
+			StopIfRunning(process);
 			if (cancellationToken.IsCancellationRequested)
 			{
 				throw;
@@ -93,6 +151,19 @@ internal static class HeadBuild
 		if (process.ExitCode != 0)
 		{
 			throw new DistributedApplicationException($"The build of '{head.Name}' failed. Its errors are in the head's log.");
+		}
+	}
+
+	// The build can exit between the timeout and the kill; that must not replace the timeout or the cancellation.
+	private static void StopIfRunning(Process process)
+	{
+		try
+		{
+			process.Kill(entireProcessTree: true);
+		}
+		catch (Exception exception) when (exception is InvalidOperationException or Win32Exception or AggregateException)
+		{
+			// Exited meanwhile, or could not be stopped: either way the caller reports the timeout or the cancellation.
 		}
 	}
 
