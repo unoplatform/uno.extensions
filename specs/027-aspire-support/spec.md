@@ -41,8 +41,10 @@ Two packages:
 - The whole `Uno.Extensions.Aspire.Hosting` surface is marked `[Experimental]`. It stays so after
   the Android lot, until stopping a head is verified on macOS and Linux and telemetry questions 1
   and 2 are settled: the Android head also depends on a target of .NET for Android that is not
-  public (see *Android emulator*). It tracks `Aspire.Hosting` 13.x and states that range in its dependency, from 13.6.5: earlier
-  versions carry a security advisory.
+  public (see *Android emulator*).
+- Its dependency on `Aspire.Hosting` is 13.6.5 or later, with no upper bound. Earlier versions carry
+  a security advisory, and a range would refuse each new major on release, as 17 followed 13. The
+  package builds against 13.6.5, and its tests have run on 13.6.5 and 17; CI runs them on 17.
 
 ## Client package: `Uno.Extensions.Aspire`
 
@@ -61,7 +63,10 @@ this.CreateBuilder(args)
 like the rest of Uno.Extensions hosting. An overload takes `ServiceDefaultsOptions`: Aspire's own
 service defaults are a project the app edits, which a package cannot be, so the options turn the
 resilience handler or the telemetry off, and change the resilience handler after unsafe methods
-are excluded from retries.
+are excluded from retries. Every call changes the same options, in call order, and the parts are
+added when the host is built: a library can call `UseServiceDefaults()` and the app change a choice
+afterwards. `ConfigureResilience` is a delegate like any other property: assigning it replaces an
+earlier caller's, and `+=` adds to it.
 
 ### Service discovery
 
@@ -138,8 +143,14 @@ No new public type is added to `Uno.Extensions.Http` or `Uno.Extensions.Http.Kio
 ### Telemetry
 
 OpenTelemetry is registered **only** when `OTEL_EXPORTER_OTLP_ENDPOINT` is present in
-configuration, the same gate as the server template. An app started without Aspire registers no
-exporter, no instrumentation and no hosted service.
+configuration, the same gate as the server template, **and** the host environment is Development.
+An app started without Aspire registers no exporter, no instrumentation and no hosted service.
+
+- **A released app exports nothing by default.** The endpoint can appear in an app's configuration
+  on someone else's machine, as an environment variable. `ExportTelemetryInAllEnvironments` opts a
+  released app in.
+- The AppHost sets `DOTNET_ENVIRONMENT=Development` on every head, as Aspire does for its projects,
+  and Uno's default host reads it. An app that sets its own environment keeps it.
 
 When the gate is open: logs (formatted message and scopes), metrics (HttpClient and runtime) and
 traces (HttpClient), exported with `UseOtlpExporter()`. The service name comes from the
@@ -161,9 +172,6 @@ traces (HttpClient), exported with `UseOtlpExporter()`. The service name comes f
   `Referer` without their query string, every other value redacted, as `HttpClientFactory`
   logging does since .NET 9. A deny-list of names would miss `Signature` or `X-Session-Id`. This
   changes the log output of a published package, so the release notes say so.
-- **The gate is the same in a Release build.** A shipped app exports when the variable is set on
-  the machine or in a settings file. The how-to warns about it; a development-only gate is an open
-  decision.
 
 ### Dependencies
 
@@ -235,6 +243,9 @@ app.AddAndroidEmulator().WithReference(api).WaitFor(api);
   them from properties, the AppHost's .NET version with the platform (`net10.0-desktop`,
   `net10.0-browserwasm`, `net10.0-android`). `WithTargetFramework` overrides it. A start fails with
   a message naming the project's frameworks when they do not include the head's.
+  - A platform with a version, such as `net10.0-android36.0`, matches its platform.
+  - A group that appends to the list, `$(TargetFrameworks);net10.0-ios`, adds its own values. Any
+    other property makes the list unknown, and no start is refused on it.
 - **Launch profile.** None by default. Without `--no-launch-profile`, `dotnet run` takes the first
   profile, which may belong to another head. `WithLaunchProfile` opts in; a profile's own
   `environmentVariables` then override what Aspire injects.
@@ -242,7 +253,11 @@ app.AddAndroidEmulator().WithReference(api).WaitFor(api);
   before a head starts, the integration builds it under a lock held per app: the head shows as
   *Queued* while another head of the app builds, then *Building* while `dotnet build -f <tfm>` runs,
   with the build output in its log. It then runs with `--no-build`, which still deploys an Android
-  app, and the lock covers the build only. The build gets none of the head's environment, so no
+  app, and the lock covers the build only. The arguments given with `WithArgs` that change what
+  the build produces or where are passed to the build too, since `--no-build` would otherwise drop
+  them: properties, configuration, runtime, architecture and OS, joined or separate, and nothing
+  after `--`. A head given a Release configuration gets no address written into it. The build gets
+  none of the head's environment, so no
   value reaches a binary log. A build fails the head after ten minutes. Builds an IDE makes are not
   serialized with these. This follows the build queue of Aspire's own MAUI integration, which holds
   its lock until an Android app ends.
@@ -327,9 +342,17 @@ The file is valid while the AppHost runs:
   would overwrite good values. Whether a value changed in the dashboard during a run reaches the
   next start is not measured.
 - Stopping the head alone leaves it: the services it points to still run.
-- The AppHost removes it when it stops, and again when it starts, for a file left by an AppHost
-  that was killed. Until then, such a file puts a dead address into Debug builds. The build output
-  lists the names it wrote and the file to delete when no AppHost runs.
+- The AppHost removes it when it stops and again when it starts, and renews it every minute in
+  between. A killed AppHost, which is what an IDE's stop does, never reaches its stop. So a Debug
+  build removes a file not renewed for five minutes, or dated in the future, with warning
+  `UNOASPIRE103`, rather than bake addresses nobody serves. Removing it means a build that treats
+  warnings as errors fails once, not every time. The age is measured in UTC. The build output lists
+  the names it read.
+- The renewal and the lease are part of the file's format: changing either changes the version in
+  its name. A test checks that several renewals fit in the lease.
+- A changed value reaches an incremental build. The WebAssembly bootstrapper writes its
+  configuration and .NET for Android its environment file on every build, and a redeployed Android
+  app carries the new file. Checked by hand: a changed port, rebuilt and redeployed with no clean.
 - A removal that fails is a warning in the AppHost's own log, which outlives the dashboard.
 
 Consequences:
@@ -369,7 +392,7 @@ The head's log says what happened, with names and never values:
 - Warning: a name opted in that the head does not have, or one whose value holds a secret.
 - Debug: the other names left out.
 
-The build logic's warnings have their own codes, `UNOASPIRE101` and `UNOASPIRE102`, so a build that
+The build logic's warnings have their own codes, `UNOASPIRE101`, `UNOASPIRE102` and `UNOASPIRE103`, so a build that
 treats warnings as errors can silence one without silencing the experimental API's `UNOASPIRE001`.
 
 **No baked value reaches a shipped artifact.**
@@ -486,6 +509,8 @@ Lots 1 and 2 are enough to run an app's desktop head with its backend in one ste
 - `Uno.Extensions.Aspire.Tests` runs `UseServiceDefaults` on a host with stub handlers and a
   loopback server: which address a request goes to, how many attempts it makes with and without
   Kiota, what is exported, and what `DiagnosticHandler` logs.
+- `Uno.Extensions.Aspire.UI.Tests`, a runtime test, checks that the injected address wins on Uno's
+  own host builder, the one apps get, before and after the settings are added.
 - `Uno.Extensions.Aspire.Hosting.Tests` works on the application model with endpoints allocated by
   the test: run arguments and environment, target frameworks, the build lock with a real
   `dotnet build` of a project that builds instantly, what is written into the app and logged, and
