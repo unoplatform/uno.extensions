@@ -147,6 +147,7 @@ public class Given_UnoApp
 
 		var environment = (await ExecutionConfiguration.ResolveAsync(builder, desktop.Resource)).EnvironmentVariables;
 		environment.Should().Contain("DOTNET_MODIFIABLE_ASSEMBLIES", "debug");
+		environment.Should().Contain("DOTNET_ENVIRONMENT", "Development");
 		environment.Should().ContainKey("OTEL_EXPORTER_OTLP_ENDPOINT");
 		environment.Should().ContainKey("OTEL_SERVICE_NAME");
 	}
