@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+	<Import Project="..\tfms-non-ui.props" />
+
+	<PropertyGroup>
+		<Description>Aspire AppHost integration that runs the heads of an Uno Platform app as resources</Description>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<!-- Aspire.Hosting sets its own dependency versions; the pins of the app packages do not apply to an AppHost. -->
+		<CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.Hosting" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="Uno.Extensions.Aspire.Hosting.Tests" />
+	</ItemGroup>
+
+</Project>
