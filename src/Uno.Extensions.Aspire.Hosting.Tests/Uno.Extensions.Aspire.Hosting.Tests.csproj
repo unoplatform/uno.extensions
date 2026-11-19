@@ -20,6 +20,8 @@
 		<PackageReference Include="MSTest.TestFramework" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
 		<PackageReference Include="FluentAssertions" />
+		<!-- The package builds against the lowest Aspire it supports; the tests run it on the latest major. -->
+		<PackageReference Include="Aspire.Hosting" VersionOverride="17.0.0" />
 	</ItemGroup>
 
 </Project>
