@@ -376,7 +376,7 @@ public static class RouteExtensions
 			return route;
 		}
 
-		var deepestChild = childRoutes.ToArray().OrderByDescending(x => x.Item2?.ToString().Length ?? 0).FirstOrDefault();
+		var deepestChild = childRoutes.Where(x => x.Item2 is not null).FirstOrDefault();
 
 		if (route is null || route.IsEmpty())
 		{
