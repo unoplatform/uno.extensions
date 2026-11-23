@@ -1,5 +1,5 @@
 ---
-uid: Uno.Extensions.Http.HowToAspire
+uid: Uno.Extensions.Aspire.HowToAspire
 ---
 # How-To: Run an app with its backend under Aspire
 
@@ -14,21 +14,28 @@ The `Uno.Extensions.Aspire` package gives the app the client half of Aspire's se
 ## Step-by-Step Guide
 
 > [!IMPORTANT]
-> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution, with the `Http` or `HttpKiota` UnoFeature, and that the solution already has an Aspire AppHost project that starts your API.
+> This guide assumes you used the template wizard or `dotnet new unoapp` to create your solution, with the `Http` UnoFeature, and that the solution already has an Aspire AppHost project that starts your API.
 
 The steps cover the **desktop** target. For the browser and the Android emulator, see [WebAssembly](#webassembly) and [Android emulator](#android-emulator).
 
 ### 1. Installation
 
-* Add the package to the app project:
+* Add the `Aspire` feature to the `UnoFeatures` of the app project:
+
+    ```xml
+    <UnoFeatures>
+        Http;
+        Aspire;
+    </UnoFeatures>
+    ```
+
+    With an Uno.Sdk that does not have the `Aspire` feature yet, add the package instead, at the same version as the other `Uno.Extensions` packages: an older `Uno.Extensions.Http.Kiota` does not turn its own retries off, see [Kiota clients](#kiota-clients).
 
     ```xml
     <ItemGroup>
         <PackageReference Include="Uno.Extensions.Aspire" />
     </ItemGroup>
     ```
-
-    Add a `Version` if the solution does not use central package management. Use the same version as the other `Uno.Extensions` packages: an older `Uno.Extensions.Http.Kiota` does not turn its own retries off, see [Kiota clients](#kiota-clients).
 
 ### 2. Enable the service defaults
 
@@ -169,7 +176,7 @@ What to know:
 * **Certificate error:** the browser does not trust the API's development certificate. Run `dotnet dev-certs https --trust`.
 * **The app calls `api` by name, or calls nothing:** the address is not in the app. Read the head's log: a warning says when the app does not reference `Uno.Extensions.Aspire`, or names a service address that was left out.
 * **Build warning `UNOASPIRE103`, saying the file was removed:** an AppHost that was killed instead of stopped, as an IDE's stop does, left its addresses in `obj/uno-aspire`. A running AppHost renews them every minute; once they are five minutes old, the next build removes them and the app gets no address from Aspire. Start the head from a running AppHost again.
-* **Build warning `UNOASPIRE101`, asking for the same version of both packages:** the AppHost's `Uno.Extensions.Aspire.Hosting` and the app's `Uno.Extensions.Aspire` differ. Update them to the same version.
+* **Build warning `UNOASPIRE101`:** the AppHost wrote the values in a format this version of `Uno.Extensions.Aspire` does not read. Update both packages to the same version.
 * **Publishing:** do not publish with `--no-build` after a build started by the AppHost. That copies the development address into the output.
 
 ## Android emulator

@@ -8,5 +8,3 @@
   href: xref:Uno.Extensions.Http.HowToEndpointOptions
 - name: "How-To: Create a Kiota Client"
   href: xref:Uno.Extensions.Http.HowToKiota
-- name: "How-To: Run an app with its backend under Aspire"
-  href: xref:Uno.Extensions.Http.HowToAspire
