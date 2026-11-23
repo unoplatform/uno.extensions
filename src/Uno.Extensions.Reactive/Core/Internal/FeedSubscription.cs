@@ -37,7 +37,7 @@ internal class FeedSubscription<T> : IAsyncDisposable, ISourceContextOwner
 		var source = feed;
 		if (FeedConfiguration.EffectiveHotReload.HasFlag(HotReloadSupport.State) || rootContext.IsMockingActive)
 		{
-			source = _hotSwap = new HotSwapFeed<T>(feed);
+			source = _hotSwap = new HotSwapFeed<T>(feed, rootContext.MockingReadsHold);
 		}
 
 		_messages = new ReplayOneAsyncEnumerable<Message<T>>(

@@ -38,6 +38,10 @@ public sealed class SourceContext : IAsyncDisposable
 	// probe (root) or its parent (child), so the bit survives a lazy first subscription even after the
 	// activation scope has exited. Null in a live app -> IsMockingActive is always false -> zero cost.
 	internal static Func<bool>? IsMockingActiveProbe;
+
+	// Mocking (spec 013): the hold in place while a mock is being applied to a model under construction. A mockable
+	// context captures it at creation, like IsMockingActive. Null otherwise.
+	internal static Func<MockingReadsHold?>? MockingReadsHoldProbe;
 	private static readonly ConditionalWeakTable<object, SourceContext> _contexts = new();
 
 	/// <summary>
@@ -217,6 +221,7 @@ public sealed class SourceContext : IAsyncDisposable
 		States = _localStates = new StateStore(this);
 		RequestSource = _localRequests = new NoneRequestSource(); // Currently we do not support messages directly on the root, using None allows AsyncFeed to complete enumeration
 		IsMockingActive = IsMockingActiveProbe?.Invoke() ?? false; // spec 013: capture ambient mocking activation
+		MockingReadsHold = IsMockingActive ? MockingReadsHoldProbe?.Invoke() : null;
 	}
 
 	// Creates a sub context
@@ -238,6 +243,7 @@ public sealed class SourceContext : IAsyncDisposable
 		States = states ?? parent.States; // Note: A child StateStore should forward request to its parent store!
 		RequestSource = requests ?? parent.RequestSource;
 		IsMockingActive = parent.IsMockingActive; // spec 013: mocking activation flows down the context tree
+		MockingReadsHold = parent.MockingReadsHold;
 	}
 
 	/// <summary>
@@ -285,6 +291,12 @@ public sealed class SourceContext : IAsyncDisposable
 	/// This is the per-context gate that <c>MockingService.Enable()</c> drives, read at wrap time in <see cref="FeedSubscription{T}"/>'s constructor.
 	/// </remarks>
 	internal bool IsMockingActive { get; }
+
+	/// <summary>
+	/// The hold that was in place when this context was created inside a mocking scope, if any: its subscriptions
+	/// read their source only once it is released. A released hold delays nothing.
+	/// </summary>
+	internal MockingReadsHold? MockingReadsHold { get; }
 
 
 	/// <summary>

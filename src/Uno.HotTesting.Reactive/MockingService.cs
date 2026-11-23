@@ -31,6 +31,49 @@ public static class MockingService
 		// touched (i.e. Enable() has been called) — a live app never touches this type, so Core's probe
 		// stays null and no context is ever wrapped.
 		SourceContext.IsMockingActiveProbe = static () => _ambient.Value;
+		SourceContext.MockingReadsHoldProbe = static () => _readsHold.Value;
+	}
+
+	private static readonly AsyncLocal<MockingReadsHold?> _readsHold = new();
+
+	/// <summary>
+	/// Holds the first read of the feeds of every mockable model created inside the scope until it is disposed (called
+	/// by generated <c>Create</c>). A view model reads its lists when it is constructed: held, they first read the mock
+	/// that <c>SetMock</c> applies inside the scope, and the real source they were declared with is never run.
+	/// </summary>
+	/// <remarks>
+	/// Dispose it in the method that opened it, with a <c>using</c>: the held feeds read nothing until then.
+	/// </remarks>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	public static IDisposable HoldReads()
+	{
+		var previous = _readsHold.Value;
+		var hold = new MockingReadsHold();
+		_readsHold.Value = hold;
+		return new ReadsHoldScope(previous, hold);
+	}
+
+	private sealed class ReadsHoldScope : IDisposable
+	{
+		private readonly MockingReadsHold? _previous;
+		private readonly MockingReadsHold _hold;
+		private bool _disposed;
+
+		public ReadsHoldScope(MockingReadsHold? previous, MockingReadsHold hold)
+		{
+			_previous = previous;
+			_hold = hold;
+		}
+
+		public void Dispose()
+		{
+			if (!_disposed)
+			{
+				_disposed = true;
+				_readsHold.Value = _previous;
+				_hold.Release();
+			}
+		}
 	}
 
 	/// <summary>

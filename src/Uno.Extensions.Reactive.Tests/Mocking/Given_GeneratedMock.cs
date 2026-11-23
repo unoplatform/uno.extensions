@@ -1,11 +1,14 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Uno.Extensions.Reactive.Bindings;
 using Uno.Extensions.Reactive.Core;
 using Uno.HotTesting.Reactive;
 using Uno.Extensions.Reactive.Testing;
@@ -34,6 +37,109 @@ public class Given_GeneratedMock : FeedUITests
 			await Task.Delay(20);
 		}
 		return result.Count > 0 && result.Last().Current.Data.IsSome(out var last) ? (IImmutableList<T>)last! : null;
+	}
+
+	[TestMethod]
+	public async Task When_ViewModelReadsItsListsAtConstruction_Then_CreateNeverRunsTheRealLoader()
+	{
+		// The UI layer's bindable lists read their source in the view model's constructor: this factory does the same.
+		using var reading = ReadingBindableFactory.ReadListsWhereCreated();
+		var loads = OrdersModel.Loads;
+
+		var vm = OrdersViewModelMock.Create(new OrdersModelMock { Orders = ListFeedMock.Value("a", "bb") });
+		var ctx = SourceContext.GetOrCreate(vm.Model);
+		using var scope = ctx.AsCurrent();
+
+		var (visible, _) = ctx.GetOrCreateListState(vm.Model.VisibleOrders).Record();
+		await visible.WaitForData(items => items.SequenceEqual(new[] { "a", "bb" }));
+
+		OrdersModel.Loads.Should().Be(loads, "Create passes no service for the real loader to call");
+		reading.Errors.Should().BeEmpty("the lists never read the real loader");
+	}
+
+	[TestMethod]
+	public void When_CreateRunsOnAUIThread_Then_TheMockIsReadFromThatThread()
+	{
+		using var reading = ReadingBindableFactory.ReadListsWhereCreated();
+		var readFrom = 0;
+		var orders = ListFeed.Async(async ct =>
+		{
+			readFrom = Environment.CurrentManagedThreadId;
+			return (IImmutableList<string>)ImmutableList.Create("a", "bb");
+		});
+
+		var previous = SynchronizationContext.Current;
+		SynchronizationContext.SetSynchronizationContext(new UIThreadLikeContext());
+		try
+		{
+			OrdersViewModelMock.Create(new OrdersModelMock { Orders = orders });
+
+			// No await: the lists start reading before Create returns, as they do when the view model is constructed.
+			readFrom.Should().Be(Environment.CurrentManagedThreadId);
+		}
+		finally
+		{
+			SynchronizationContext.SetSynchronizationContext(previous);
+		}
+	}
+
+	// A continuation is not run inline on a thread that has a context of its own, as on a UI thread.
+	private sealed class UIThreadLikeContext : SynchronizationContext
+	{
+	}
+
+	// Reads each list where it is created, as the UI layer's factory does, while a test asks for it. It stays installed
+	// for the test run: outside such a test it returns the source untouched, like the default factory.
+	private sealed class ReadingBindableFactory : IBindableFactory
+	{
+		private static readonly ReadingBindableFactory _instance = new();
+		private static readonly AsyncLocal<Reading?> _reading = new();
+
+		public static Reading ReadListsWhereCreated()
+		{
+			BindableHelper.ConfigureFactory(_instance);
+			return _reading.Value = new Reading();
+		}
+
+		public IListFeed<T> CreateList<T>(string name, IListState<T> source)
+		{
+			if (_reading.Value is { } reading)
+			{
+				_ = reading.Read(source);
+			}
+
+			return source;
+		}
+
+		public sealed class Reading : IDisposable
+		{
+			private readonly CancellationTokenSource _stop = new();
+
+			public ConcurrentQueue<Exception> Errors { get; } = new();
+
+			public async Task Read<T>(IListState<T> source)
+			{
+				try
+				{
+					await foreach (var message in source.GetSource(source.Context, _stop.Token).ConfigureAwait(false))
+					{
+						if (message.Current.Error is { } error)
+						{
+							Errors.Enqueue(error);
+						}
+					}
+				}
+				catch (OperationCanceledException)
+				{
+				}
+			}
+
+			public void Dispose()
+			{
+				_reading.Value = null;
+				_stop.Cancel();
+			}
+		}
 	}
 
 	[TestMethod]

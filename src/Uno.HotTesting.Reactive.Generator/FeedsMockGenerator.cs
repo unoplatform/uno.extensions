@@ -661,7 +661,9 @@ public sealed class FeedsMockGenerator : ISourceGenerator
 					// The activation scope is only needed while the VM/Model context is created:
 					// the mockable bit is captured on that context instance, so later SetMock calls
 					// (and lazy first subscriptions) still swap even after the scope is disposed.
+					// The view model reads its lists as it is constructed: held, they first read the mock.
 					using (global::Uno.HotTesting.Reactive.MockingService.Enable())
+					using (global::Uno.HotTesting.Reactive.MockingService.HoldReads())
 					{
 						var vm = new {{vmFull}}({{ctorArguments}});
 						vm.SetMock(mock);
