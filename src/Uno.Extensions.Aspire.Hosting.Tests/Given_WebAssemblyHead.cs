@@ -168,7 +168,7 @@ public class Given_WebAssemblyHead
 	[TestMethod]
 	[DataRow("Uno.Extensions.Aspire/1.0.0", false, DisplayName = "The app references the client package")]
 	[DataRow("Uno.Extensions.Aspire.Hosting/1.0.0", true, DisplayName = "The app references another package only")]
-	public async Task When_AppWasRestored_Then_AMissingClientPackageWarns(string library, bool warns)
+	public void When_AppWasRestored_Then_AMissingClientPackageWarns(string library, bool warns)
 	{
 		// The decoy under "targets" must not count: only "libraries" lists what was restored.
 		Directory.CreateDirectory(Path.Join(_solution.AppFolder, "obj"));
@@ -183,7 +183,7 @@ public class Given_WebAssemblyHead
 		var logger = new ListLogger();
 
 		var wasm = _solution.AddWebAssembly(builder);
-		await TestSolution.WriteClientEnvironmentAsync(builder, wasm.Resource, logger);
+		ClientEnvironment.WarnIfTheAppDoesNotReadIt(logger, wasm.Resource);
 
 		var warnings = logger.Entries.Where(entry => entry.Level == LogLevel.Warning).Select(entry => entry.Message);
 		if (warns)

@@ -246,6 +246,11 @@ public static class UnoProjectBuilderExtensions
 
 			var notifications = @event.Services.GetRequiredService<ResourceNotificationService>();
 			await HeadBuild.RunAsync(head, notifications, executionContext, logger, cancellationToken).ConfigureAwait(false);
+
+			if (clientEnvironment is not null)
+			{
+				ClientEnvironment.WarnIfTheAppDoesNotReadIt(logger, head);
+			}
 		});
 
 		return resource;

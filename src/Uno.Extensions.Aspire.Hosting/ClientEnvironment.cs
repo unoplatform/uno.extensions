@@ -59,11 +59,11 @@ internal static class ClientEnvironment
 		var plan = forHead(BakedEnvironment.Plan(environment, head.ClientEnvironmentNames));
 		BakedEnvironment.Write(head.Name, BakedEnvironment.ValuesPath(head), BakedEnvironment.CreateValues(head.Name, plan.Variables));
 		LogPlan(logger, head.Name, plan);
-		WarnIfTheAppDoesNotReadIt(logger, head);
 	}
 
 	// Without the client package the app's build never reads the values, and nothing else would say so.
-	private static void WarnIfTheAppDoesNotReadIt(ILogger logger, UnoHeadResource head)
+	// Called after the head's build, which restores: an earlier restore may still list the package.
+	internal static void WarnIfTheAppDoesNotReadIt(ILogger logger, UnoHeadResource head)
 	{
 		bool? references;
 		try
