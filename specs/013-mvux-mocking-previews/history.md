@@ -314,6 +314,24 @@ subscription to the state. Fixture: `TasksModel`. Tests: `Given_GeneratedMock` a
 
 ---
 
+## v20 — `Create` holds the reads until the mock is applied
+
+With the UI layer loaded, the bindable lists a view model creates in its constructor start reading at once, so the
+real loader ran over the null-injected service before `SetMock` could swap it. The list reported that failure until
+the mock replaced it, and a view rendered in between showed its error template: always for a list derived from the
+mocked one, and as a race for the mocked list itself. The existing "never runs" assertions did not see it, since
+the test host has no UI bindable factory and nothing reads in the constructor there.
+
+`Create` now wraps construction and `SetMock` in `MockingService.HoldReads()`. The mockable context built inside it
+captures the hold, and `HotSwapFeed` waits for it before its first read, so the first source read is the mock (D14).
+A test factory that reads each list where it is created stands in for the UI layer's.
+
+Dropped draft: a task as the hold. On a thread with a synchronization context of its own its continuations moved
+to the thread pool, so the reads no longer started on the calling thread before `Create` returned. Also considered:
+building the model first, applying the mock to it, then wrapping it in the view model; it needs the construction
+seam D12 dropped. Limits: both packages must be of the same version, as `MockingService` registers a second probe
+on `SourceContext`; a model compiled with an earlier generator keeps the old `Create` until it is rebuilt.
+
 ## Final decision register
 
 | # | Decision | Version |
@@ -330,4 +348,5 @@ subscription to the state. Fixture: `TasksModel`. Tests: `Given_GeneratedMock` a
 | D10 | **Scoped activation**: `using (MockingService.Enable())` — never an app-wide switch; an assembly init can cover a whole run. Outside a scope there is **no wrap** (`HotSwapFeed` has a cost and is forbidden in a live app). Only the internal mechanism was left to the P0-e spike | v6 |
 | D11 | **Fail-hard typed subscription swap**: generated mocking code resolves each member's shared `FeedSubscription` and replaces its source; the MVUX generator emits **no `__Mock_Swap_{Member}`**, only metadata plus the null-inject constructor and command seam. **Difference from hot reload: a member whose subscription cannot be swapped throws** (mocking is strict, not best-effort) | v7, superseded by v17 |
 | D12 | **The mockable gate is the per-context bit `SourceContext.IsMockingActive`**, read by `FeedSubscription`; hot reload uses the same subscription-owned wrapper through `EffectiveHotReload`. Only contexts under a mocking scope pay the mocking indirection (G9/R7 by construction). No separate static and no home-grown `AsyncLocal` (we reuse `AsyncLocal<SourceContext> Current`) | v7, refined by v17 |
+| D14 | **`Create` holds every first read until the mock is applied**: a mockable `SourceContext` created inside `MockingService.HoldReads()` captures the hold next to `IsMockingActive` (same probe seam as v10; the ambient state stays in `MockingService`), and `HotSwapFeed` waits for it before its first read. The hold resumes its readers inline on release, not through a task. No construction seam is added (D12 unchanged for activation) | v20 |
 | D13 | **Mocks are generated for models of the consuming compilation too**, not only for compiled references: D5 still holds (emission stays in the consumer, never in Core), but where the metadata is unreadable because a sibling generator produces it, the mocking generator runs the shared `FeedDependencyAnalysis` over the source. Declared attributes win over the inferred classification, and a project that can already see generated mocks does not emit a second copy | v14 |
