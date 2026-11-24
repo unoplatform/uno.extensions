@@ -159,6 +159,7 @@ public class Given_HeadBuild
 		}
 		catch (OperationCanceledException)
 		{
+			// Timed out: the log never appeared.
 		}
 
 		return false;
