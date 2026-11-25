@@ -278,29 +278,65 @@ app.AddAndroidEmulator().WithReference(api).WaitFor(api);
 
 ### Hot Reload
 
-A head started by the AppHost with nothing else running logs "DevServer endpoint has no port: the
-IDE did not provide a usable endpoint" and never connects. On the sample's desktop head, a XAML
-edit reached the running window once two things were in place:
+Every head connects to a dev server, with or without an IDE. The `uno.devserver` CLI does the
+work; the AppHost only runs it and reads the result.
 
-- **A dev server for the solution.** An IDE with the Uno extension starts one, or
-  `dotnet dnx -y uno.devserver start` from the solution folder does. Either writes the port to the
-  app's `.csproj.user`, which the head's build picks up.
-- **`DOTNET_MODIFIABLE_ASSEMBLIES=debug` on the head.** `dotnet run --no-launch-profile` does not
-  set it.
+- **Which CLI.** The version of the `Uno.WinUI.DevServer` package the app restores, which the
+  Uno.Sdk chooses: the CLI is released with the same version, and another version may not know the
+  options or the dev server of that release. Before any head builds, the AppHost restores the app,
+  under its build lock, and reads the version from the assets file the restore names. The restore
+  is a no-op once done, and keeps the version in step with an Uno.Sdk update or another `obj` folder.
+  A value that is not a package version is not passed to the CLI.
+- **Where.** In the first folder above the app's project that holds a solution: the CLI looks for a
+  solution in its working folder only, and a dev server serves a solution. An app in no solution
+  gets none.
+- **Reuse or start.** Before any resource starts, the AppHost runs the CLI's `start` command with
+  the AppHost as the parent process. The CLI reuses the dev server already running for the
+  solution, an IDE's for example, so the IDE's tools see the heads, and replaces one whose parent
+  process is gone. Otherwise it starts one that stops with the AppHost, even a killed one. The
+  AppHost does not wait for the CLI, which may return or stay to relay the dev server's output: it
+  reads the port from `uno.devserver disco --json`, retrying for two minutes while the dev server
+  registers.
+- **Stop.** The AppHost never stops a dev server itself. One it started notices the AppHost is gone,
+  stops within seconds and removes its registration; one it reused keeps running.
+- **In the dashboard** it is `uno-devserver`: *Running*, with its port, its process and who started
+  it; *Unavailable* or *FailedToStart*, with the reason and how to turn it off; or *Exited*, when it
+  stops during the run. One serves every app of a solution; an app in another solution gets
+  `uno-devserver-2`, and so on. A head shows *Waiting for dev server* until the port is known.
+- **Port.** A head's build gets `-p:UnoRemoteControlPort=<port>`, the property an IDE sets through
+  `.csproj.user`. The Uno.Sdk turns it into the addresses the app connects to, for every head. It
+  overrides a value set in the project, and it is the first build argument, so a port given with
+  `WithArgs` wins. A head waits up to 15 minutes for the port, then builds without one, and that run
+  has no Hot Reload.
+- **Off.** The AppHost setting `Uno:DevServer:Enabled` set to `false`
+  (`Uno__DevServer__Enabled=false` as an environment variable) adds no dev server: heads are built as
+  before, with the port an IDE wrote, if any. A value other than `true` or `false` stops the AppHost.
+  Use it offline, in CI, or to keep a dev server from listening: it accepts connections on every
+  network interface, as one an IDE starts does, and on Windows a first start can ask to add a
+  firewall rule.
+- `DOTNET_MODIFIABLE_ASSEMBLIES=debug` is set on every head: `dotnet run --no-launch-profile` does
+  not set it.
+- An IDE opened after the AppHost starts a dev server of its own: the heads keep the AppHost's for
+  that run. A dev server the AppHost started stops with it, even if an IDE uses it meanwhile.
+- A CLI that cannot start the dev server, or whose output the AppHost does not recognize, leaves the
+  dev server *Unavailable* with its version in the reason.
+- The CLI relays the output of a dev server it starts while it runs: the dev server's later log
+  lines are not in the dashboard.
 
-The two were applied together; which of them a XAML-only edit needs was not isolated.
-
-The integration sets the variable on every head and does nothing else: a solution is expected to
-be open in an IDE, which provides the dev server. The how-to names the command above for a run from
-a terminal.
+Verified on a generated `-preset recommended -server -aspire` app with desktop and WebAssembly
+heads, never built before: the AppHost restored it, the CLI started the dev server, both heads
+connected, a XAML edit reached the desktop window and the browser, and when only the AppHost was
+ended, the dev server stopped within seconds and removed its registration. With a dev server
+already running for the solution, the heads used it and it survived the AppHost. With the setting
+off, no dev server was added.
 
 ### Desktop
 
 Receives its environment like any process. Gets `WithOtlpExporter()` so the dashboard endpoint and
 service name are injected.
 
-With no dev server running, the Hot Reload client's failed connection attempts appear in the
-dashboard as failed requests of the head. They stop once an IDE has the solution open.
+When no dev server is available, the Hot Reload client's failed connection attempts appear in the
+dashboard as failed requests of the head.
 
 ### Baking the environment (WebAssembly and Android)
 

@@ -120,17 +120,14 @@ Aspire's `AddProject` does not accept a project that targets several frameworks.
 
     The dashboard opens, the API starts, and the app starts once the API is ready. Each head is built before it starts: it shows as **Building**, or as **Queued** while another head of the app builds, since heads share the project's `obj` folder. Its build output is in its console log.
 
-* Hot Reload needs a dev server. An IDE that has the solution open provides one. From a terminal, start one in the solution folder before the AppHost:
-
-    ```bash
-    dotnet dnx -y uno.devserver start
-    ```
+* Hot Reload works with or without an IDE. The heads use the dev server an IDE already runs for the solution, or the AppHost starts one with the `uno.devserver` tool. It is the `uno-devserver` resource in the dashboard. A head shows **Waiting for dev server** until it is ready.
+* The dev server accepts connections from your network, and on Windows its first start can ask to add a firewall rule. To run without it, for example offline or in CI, set `Uno__DevServer__Enabled=false` in the AppHost's environment, or `"Uno": { "DevServer": { "Enabled": false } }` in its `appsettings.json`.
 
 ### If the app does not start
 
 * A build error stops the head. The build output is in its console log in the dashboard.
 * A message that the project does not target the head's framework names the ones it does. Set one with `WithTargetFramework`.
-* Failed requests of `app-desktop` to a `localhost` port that is not the API are Hot Reload looking for a dev server. Start one as above, or ignore them.
+* Failed requests of `app-desktop` to a `localhost` port that is not the API are Hot Reload looking for a dev server. The `uno-devserver` resource gives the reason none is available.
 * The values Aspire passes are also visible to the app's build. Do not share a binary log of a build started by the AppHost.
 
 ## WebAssembly
