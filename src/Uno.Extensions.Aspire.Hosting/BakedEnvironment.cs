@@ -126,7 +126,7 @@ internal static partial class BakedEnvironment
 	/// and change <see cref="FormatVersion"/> with the format so a mismatched client warns instead of reading it.
 	/// </summary>
 	internal static string ValuesPath(UnoHeadResource head) =>
-		Path.Join(head.App.ProjectDirectory, "obj", "uno-aspire", $"{head.TargetFramework}.{FormatVersion}.values.proj");
+		Path.Join(head.Project.ProjectDirectory, "obj", "uno-aspire", $"{head.TargetFramework}.{FormatVersion}.values.proj");
 
 	/// <summary>
 	/// The project that returns the values, called by the app's build.

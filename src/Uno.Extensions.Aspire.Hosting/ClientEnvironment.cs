@@ -22,7 +22,7 @@ internal static class ClientEnvironment
 		builder.Eventing.Subscribe<BeforeStartEvent>((@event, _) =>
 		{
 			// The AppHost's own log: at stop, the dashboard that shows a head's log is going away.
-			var logger = @event.Services.GetRequiredService<ILoggerFactory>().CreateLogger(typeof(UnoAppBuilderExtensions));
+			var logger = @event.Services.GetRequiredService<ILoggerFactory>().CreateLogger(typeof(UnoProjectBuilderExtensions));
 			BakedEnvironment.Delete(head, logger);
 			var lease = new Timer(_ => BakedEnvironment.RenewLease(head, logger), null, BakedEnvironment.LeaseRenewal, BakedEnvironment.LeaseRenewal);
 			@event.Services.GetRequiredService<IHostApplicationLifetime>().ApplicationStopping.Register(() =>
@@ -68,7 +68,7 @@ internal static class ClientEnvironment
 		bool? references;
 		try
 		{
-			references = ProjectAssets.References(head.App, ClientPackageId);
+			references = ProjectAssets.References(head.Project, ClientPackageId);
 		}
 		catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or JsonException)
 		{
@@ -83,7 +83,7 @@ internal static class ClientEnvironment
 				"The app of '{Head}' does not reference {Package}, so its build does not read what was written and the app gets no service address. Add the package to '{Project}'.",
 				head.Name,
 				ClientPackageId,
-				head.App.ProjectPath);
+				head.Project.ProjectPath);
 		}
 	}
 

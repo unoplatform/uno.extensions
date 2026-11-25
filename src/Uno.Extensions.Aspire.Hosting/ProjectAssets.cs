@@ -14,7 +14,7 @@ internal static class ProjectAssets
 	/// Whether the restored app references <paramref name="packageId"/>, directly or not; <c>null</c> when there is no
 	/// <c>obj/project.assets.json</c>, before the first restore or with another intermediate output path.
 	/// </summary>
-	internal static bool? References(UnoAppResource app, string packageId)
+	internal static bool? References(UnoProjectResource app, string packageId)
 	{
 		var path = Path.Join(app.ProjectDirectory, "obj", "project.assets.json");
 		if (!File.Exists(path))
