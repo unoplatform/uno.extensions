@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using FluentAssertions;
@@ -175,5 +177,17 @@ public class Given_UnoProject
 
 		desktop.Resource.Annotations.OfType<ExplicitStartupAnnotation>().Should().BeEmpty();
 		desktop.Resource.Annotations.OfType<ManifestPublishingCallbackAnnotation>().Should().Equal(ManifestPublishingCallbackAnnotation.Ignore);
+	}
+
+	[TestMethod]
+	public void When_ExtensionMethodsInspected_Then_EachIsExperimental()
+	{
+		// A call to an extension method does not report the attribute of its class.
+		var methods = typeof(UnoProjectBuilderExtensions).GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly);
+
+		methods.Should().NotBeEmpty();
+		methods.Where(method => method.GetCustomAttribute<ExperimentalAttribute>()?.DiagnosticId != "UNOASPIRE001")
+			.Select(method => method.Name)
+			.Should().BeEmpty();
 	}
 }

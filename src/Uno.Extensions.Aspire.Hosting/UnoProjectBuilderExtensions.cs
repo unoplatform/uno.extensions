@@ -27,6 +27,7 @@ public static class UnoProjectBuilderExtensions
 	/// <param name="name">The name of the resource.</param>
 	/// <param name="projectPath">The path of the app's project file, relative to the AppHost folder or absolute.</param>
 	/// <returns>A builder for the project.</returns>
+	[Experimental(UnoAppDiagnostics.ExperimentalId)]
 	public static IResourceBuilder<UnoProjectResource> AddUnoProject(
 		this IDistributedApplicationBuilder builder,
 		[ResourceName] string name,
@@ -63,6 +64,7 @@ public static class UnoProjectBuilderExtensions
 	/// <param name="builder">The app builder.</param>
 	/// <param name="name">The name of the head, <c>&lt;app&gt;-desktop</c> when omitted.</param>
 	/// <returns>A builder for the head.</returns>
+	[Experimental(UnoAppDiagnostics.ExperimentalId)]
 	public static IResourceBuilder<UnoDesktopResource> AddDesktop(
 		this IResourceBuilder<UnoProjectResource> builder,
 		[ResourceName] string? name = null)
@@ -86,6 +88,7 @@ public static class UnoProjectBuilderExtensions
 	/// <param name="builder">The app builder.</param>
 	/// <param name="name">The name of the head, <c>&lt;app&gt;-wasm</c> when omitted.</param>
 	/// <returns>A builder for the head.</returns>
+	[Experimental(UnoAppDiagnostics.ExperimentalId)]
 	public static IResourceBuilder<UnoWebAssemblyResource> AddWebAssembly(
 		this IResourceBuilder<UnoProjectResource> builder,
 		[ResourceName] string? name = null)
@@ -114,6 +117,7 @@ public static class UnoProjectBuilderExtensions
 	/// <param name="builder">The app builder.</param>
 	/// <param name="name">The name of the head, <c>&lt;app&gt;-android</c> when omitted.</param>
 	/// <returns>A builder for the head.</returns>
+	[Experimental(UnoAppDiagnostics.ExperimentalId)]
 	public static IResourceBuilder<UnoAndroidEmulatorResource> AddAndroidEmulator(
 		this IResourceBuilder<UnoProjectResource> builder,
 		[ResourceName] string? name = null)
@@ -138,6 +142,7 @@ public static class UnoProjectBuilderExtensions
 	/// <param name="builder">The head builder.</param>
 	/// <param name="targetFramework">The target framework, for example <c>net10.0-desktop</c>.</param>
 	/// <returns>The same head builder.</returns>
+	[Experimental(UnoAppDiagnostics.ExperimentalId)]
 	public static IResourceBuilder<T> WithTargetFramework<T>(this IResourceBuilder<T> builder, string targetFramework)
 		where T : UnoHeadResource
 	{
@@ -157,6 +162,7 @@ public static class UnoProjectBuilderExtensions
 	/// <param name="builder">The head builder.</param>
 	/// <param name="profileName">The name of the launch profile.</param>
 	/// <returns>The same head builder.</returns>
+	[Experimental(UnoAppDiagnostics.ExperimentalId)]
 	public static IResourceBuilder<UnoDesktopResource> WithLaunchProfile(this IResourceBuilder<UnoDesktopResource> builder, string profileName)
 	{
 		ArgumentNullException.ThrowIfNull(builder);
