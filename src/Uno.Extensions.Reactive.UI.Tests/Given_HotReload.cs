@@ -23,6 +23,11 @@ public class Given_HotReload
 		HotReloadHelper.DefaultMetadataUpdateTimeout = TimeSpan.FromSeconds(60);
 	}
 
+	// TestHelper.DefaultTimeout is 1s. The hosted Android emulator and iOS simulator are regularly slower
+	// than that right after a load or a previous hot reload (unoplatform/uno.extensions#3313), so every
+	// wait in this class gets this timeout unless it needs its own. It only costs time when a test fails.
+	private static readonly TimeSpan UiTimeout = TimeSpan.FromSeconds(5);
+
 	// UIHelper.Load allows TestHelper.DefaultTimeout (1s) for Loaded, which the first load in a cold
 	// app on a CI emulator or simulator misses (unoplatform/uno.extensions#3242).
 	private static async Task LoadAsync(FrameworkElement element, CancellationToken ct)
@@ -55,7 +60,7 @@ public class Given_HotReload
 		text.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
 		await LoadAsync(ui, ct);
-		await TestHelper.WaitFor(() => text.Text == "original", ct);
+		await TestHelper.WaitFor(() => text.Text == "original", UiTimeout, ct);
 
 		await using var _ = await HotReloadHelper.UpdateSourceFile(
 			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadTarget.cs",
@@ -89,7 +94,7 @@ public class Given_HotReload
 		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("Value") });
 
 		await LoadAsync(ui1, ct);
-		await TestHelper.WaitFor(() => text1.Text == "hello-original", ct);
+		await TestHelper.WaitFor(() => text1.Text == "hello-original", UiTimeout, ct);
 
 		// HR-edit the model itself so a shadow type is generated and registered in `_latestShadow`.
 		// This is what exercises `TryHotPatch`'s self-patch path on the next VM construction.
@@ -126,7 +131,7 @@ public class Given_HotReload
 		childText.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("ChildValue") });
 
 		await LoadAsync(ui, ct);
-		await TestHelper.WaitFor(() => parentText.Text == "parent-original" && childText.Text == "child-original", ct);
+		await TestHelper.WaitFor(() => parentText.Text == "parent-original" && childText.Text == "child-original", UiTimeout, ct);
 
 		// HR-edit the PARENT model. The child instance must:
 		//   (1) see the updated parent feed value (via AsyncFeed's ApplicationUpdated re-fire), and
@@ -153,10 +158,10 @@ public class Given_HotReload
 		text.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("Count") });
 
 		await LoadAsync(ui, ct);
-		await TestHelper.WaitFor(() => text.Text == "0", ct);
+		await TestHelper.WaitFor(() => text.Text == "0", UiTimeout, ct);
 
 		vm.Increment.Execute(null);
-		await TestHelper.WaitFor(() => text.Text == "1", ct);
+		await TestHelper.WaitFor(() => text.Text == "1", UiTimeout, ct);
 
 		// HR: add a feed derived from the existing state (#3226)
 		await using var delta = await HotReloadHelper.UpdateSourceFile(
@@ -199,10 +204,9 @@ public class Given_HotReload
 		list1.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Path = new PropertyPath("Items") });
 		await LoadAsync(new StackPanel { DataContext = vm1, Children = { list1 } }, ct);
 
-		// The previous test's hot-reload update can still be applying on a CI emulator, so the default 1s is too short here.
-		await TestHelper.WaitFor(() => vm1.Add.CanExecute(null), TimeSpan.FromSeconds(5), ct);
+		await TestHelper.WaitFor(() => vm1.Add.CanExecute(null), UiTimeout, ct);
 		vm1.Add.Execute(null);
-		await TestHelper.WaitFor(() => list1.Items.Count == 1, TimeSpan.FromSeconds(5), ct);
+		await TestHelper.WaitFor(() => list1.Items.Count == 1, UiTimeout, ct);
 		Assert.AreEqual("hello-title-1-Food-2026-01-02-original", list1.Items[0]);
 
 		// HR: the command stops awaiting the states and takes them as parameters instead (#3295)
@@ -239,7 +243,7 @@ public class Given_HotReload
 		var list = new ListView();
 		list.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Path = new PropertyPath("Items") });
 		await LoadAsync(new StackPanel { DataContext = vm, Children = { list } }, ct);
-		await TestHelper.WaitFor(() => list.Items.Count == 1, ct);
+		await TestHelper.WaitFor(() => list.Items.Count == 1, UiTimeout, ct);
 		Assert.AreEqual("original", list.Items[0]);
 
 		// HR: the list feed, which is not a list state, produces other items (#3295, spec 025)
@@ -363,7 +367,7 @@ public class Given_HotReload
 		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
 		await LoadAsync(ui1, ct);
-		await TestHelper.WaitFor(() => text1.Text == "hello", ct);
+		await TestHelper.WaitFor(() => text1.Text == "hello", UiTimeout, ct);
 		Assert.AreEqual("hello", text1.Text);
 
 		// HR: Remove the Feed property
@@ -387,7 +391,7 @@ public class Given_HotReload
 		text2.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
 		await LoadAsync(ui2, ct);
-		await TestHelper.WaitFor(() => text2.Text == "hello", ct);
+		await TestHelper.WaitFor(() => text2.Text == "hello", UiTimeout, ct);
 		Assert.AreEqual("hello", text2.Text);
 	}
 
@@ -401,7 +405,7 @@ public class Given_HotReload
 		var ui1 = new StackPanel { DataContext = vm1, Children = { list1 } };
 
 		await LoadAsync(ui1, ct);
-		await TestHelper.WaitFor(() => list1.Items.Count == 3, ct);
+		await TestHelper.WaitFor(() => list1.Items.Count == 3, UiTimeout, ct);
 		Assert.AreEqual(3, list1.Items.Count);
 
 		// HR: Remove the ListFeed property
@@ -425,7 +429,7 @@ public class Given_HotReload
 		var ui2 = new StackPanel { DataContext = vm2, Children = { list2 } };
 
 		await LoadAsync(ui2, ct);
-		await TestHelper.WaitFor(() => list2.Items.Count == 3, ct);
+		await TestHelper.WaitFor(() => list2.Items.Count == 3, UiTimeout, ct);
 		Assert.AreEqual(3, list2.Items.Count);
 	}
 
@@ -439,7 +443,7 @@ public class Given_HotReload
 		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
 		await LoadAsync(ui1, ct);
-		await TestHelper.WaitFor(() => text1.Text == "stateful", ct);
+		await TestHelper.WaitFor(() => text1.Text == "stateful", UiTimeout, ct);
 		Assert.AreEqual("stateful", text1.Text);
 
 		// HR: Remove the State property
@@ -478,7 +482,7 @@ public class Given_HotReload
 		var ui1 = new StackPanel { DataContext = vm1, Children = { text1, list1 } };
 
 		await LoadAsync(ui1, ct);
-		await TestHelper.WaitFor(() => text1.Text == "title" && list1.Items.Count == 3, ct);
+		await TestHelper.WaitFor(() => text1.Text == "title" && list1.Items.Count == 3, UiTimeout, ct);
 
 		await using var delta1a = await HotReloadHelper.UpdateSourceFile(
 			"../../Uno.Extensions.Reactive.UI.Tests/MvuxHotReloadMultiModel.cs",
@@ -512,7 +516,7 @@ public class Given_HotReload
 		var ui2 = new StackPanel { DataContext = vm2, Children = { text2, list2 } };
 
 		await LoadAsync(ui2, ct);
-		await TestHelper.WaitFor(() => text2.Text == "title" && list2.Items.Count == 3, ct);
+		await TestHelper.WaitFor(() => text2.Text == "title" && list2.Items.Count == 3, UiTimeout, ct);
 		Assert.AreEqual("title", text2.Text);
 		Assert.AreEqual(3, list2.Items.Count);
 	}
@@ -527,7 +531,7 @@ public class Given_HotReload
 		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
 		await LoadAsync(ui1, ct);
-		await TestHelper.WaitFor(() => text1.Text == "convertible", ct);
+		await TestHelper.WaitFor(() => text1.Text == "convertible", UiTimeout, ct);
 		Assert.AreEqual("convertible", text1.Text);
 
 		// HR: Convert from IFeed to IState (same value — validates type conversion, not lambda body update)
@@ -560,7 +564,7 @@ public class Given_HotReload
 		text.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
 		await LoadAsync(ui, ct);
-		await TestHelper.WaitFor(() => text.Text == "stateful", ct);
+		await TestHelper.WaitFor(() => text.Text == "stateful", UiTimeout, ct);
 		Assert.AreEqual("stateful", text.Text);
 
 		// HR: Change the State value from "stateful" to "updated"
@@ -595,7 +599,7 @@ public class Given_HotReload
 		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
 		await LoadAsync(ui1, ct);
-		await TestHelper.WaitFor(() => text1.Text == "enumerable", ct);
+		await TestHelper.WaitFor(() => text1.Text == "enumerable", UiTimeout, ct);
 		Assert.AreEqual("enumerable", text1.Text);
 
 		// HR: Remove the AsyncEnumerable Feed property
@@ -632,7 +636,7 @@ public class Given_HotReload
 		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
 		await LoadAsync(ui1, ct);
-		await TestHelper.WaitFor(() => text1.Text == "enumerable", ct);
+		await TestHelper.WaitFor(() => text1.Text == "enumerable", UiTimeout, ct);
 		Assert.AreEqual("enumerable", text1.Text);
 
 		// HR: Change from Feed.AsyncEnumerable to Feed.Async syntax
@@ -678,7 +682,7 @@ public class Given_HotReload
 		text1.SetBinding(TextBlock.TextProperty, new Binding { Path = new PropertyPath("CurrentValue") });
 
 		await LoadAsync(ui1, ct);
-		await TestHelper.WaitFor(() => text1.Text == "round-trip", ct);
+		await TestHelper.WaitFor(() => text1.Text == "round-trip", UiTimeout, ct);
 		Assert.AreEqual("round-trip", text1.Text);
 
 		// HR: Change from Feed.Async to IState (same value — validates type conversion)
