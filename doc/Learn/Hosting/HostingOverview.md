@@ -178,3 +178,13 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 > Avoid writing code that contains logic specific to any environment. All environments should behave as close as possible to each other to minimize any environment specific bugs that may be introduced by environment specific code.
 >
 > Any environment specific secure variables (such as service URLs, application keys, account information) should be set as part of a multi-environment CI/CD pipeline. Non-secure per-environment variables can be included using a settings file which is covered in [Configuration](xref:Uno.Extensions.Configuration.Overview).
+
+## Launch URL Query Parameters (WebAssembly)
+
+On WebAssembly, the host adds each query parameter of the page's URL to the host configuration, so `https://myapp.example/?theme=dark` makes `context.Configuration["theme"]` return `"dark"`.
+
+- A parameter written without a value (`?flag`) is read as an empty string, the same as `?flag=`. Test for it with `context.Configuration["flag"] is not null`.
+- Empty segments, such as a trailing `&` (`?a=1&`) or a doubled `&&`, are ignored.
+- When a parameter appears several times with a value (`?a=1&a=2`), its value is the comma-separated list (`"1,2"`). Names are case-insensitive.
+
+The full URL is also available under the `hostConfiguration:launchUrl` key (`HostingConstants.LaunchUrlKey`).
