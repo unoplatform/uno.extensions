@@ -144,6 +144,7 @@ public static class UnoProjectBuilderExtensions
 	/// <param name="builder">The head builder.</param>
 	/// <param name="name">The name of a variable set on the head, for example with <c>WithEnvironment</c>.</param>
 	/// <returns>The same head builder.</returns>
+	[Experimental(UnoAppDiagnostics.ExperimentalId)]
 	public static IResourceBuilder<UnoWebAssemblyResource> WithClientEnvironment(
 		this IResourceBuilder<UnoWebAssemblyResource> builder,
 		string name)
@@ -162,6 +163,7 @@ public static class UnoProjectBuilderExtensions
 	/// <param name="builder">The head builder.</param>
 	/// <param name="name">The name of a variable set on the head, for example with <c>WithEnvironment</c>.</param>
 	/// <returns>The same head builder.</returns>
+	[Experimental(UnoAppDiagnostics.ExperimentalId)]
 	public static IResourceBuilder<UnoAndroidEmulatorResource> WithClientEnvironment(
 		this IResourceBuilder<UnoAndroidEmulatorResource> builder,
 		string name)
