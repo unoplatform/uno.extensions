@@ -6,9 +6,9 @@ namespace Aspire.Hosting.ApplicationModel;
 /// An Uno Platform app project. It starts no process: each head added to it is a resource of its own.
 /// </summary>
 [Experimental(UnoAppDiagnostics.ExperimentalId)]
-public sealed class UnoAppResource : Resource
+public sealed class UnoProjectResource : Resource
 {
-	internal UnoAppResource(string name, string projectPath, IReadOnlyList<string> targetFrameworks)
+	internal UnoProjectResource(string name, string projectPath, IReadOnlyList<string> targetFrameworks)
 		: base(name)
 	{
 		ProjectPath = projectPath;

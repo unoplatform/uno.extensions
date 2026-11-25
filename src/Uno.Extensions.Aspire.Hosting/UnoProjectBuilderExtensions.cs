@@ -8,7 +8,7 @@ namespace Aspire.Hosting;
 /// Extensions that add an Uno Platform app and its heads to an Aspire application model.
 /// </summary>
 [Experimental(UnoAppDiagnostics.ExperimentalId)]
-public static class UnoAppBuilderExtensions
+public static class UnoProjectBuilderExtensions
 {
 	private const string ModifiableAssembliesVariable = "DOTNET_MODIFIABLE_ASSEMBLIES";
 	private const string EnvironmentVariable = "DOTNET_ENVIRONMENT";
@@ -18,16 +18,16 @@ public static class UnoAppBuilderExtensions
 	private const string EmulatorTargetArgument = "-p:AdbTarget=-e";
 
 	/// <summary>
-	/// Adds an Uno Platform app. It starts nothing until a head is added, for example with <see cref="AddDesktop"/>.
+	/// Adds the project of an Uno Platform app. It starts nothing until a head is added, for example with <see cref="AddDesktop"/>.
 	/// </summary>
 	/// <remarks>
-	/// The app is not a resource of the model: references, waits and environment are set on its heads.
+	/// The project is not a resource of the model: references, waits and environment are set on its heads.
 	/// </remarks>
 	/// <param name="builder">The application builder.</param>
 	/// <param name="name">The name of the resource.</param>
 	/// <param name="projectPath">The path of the app's project file, relative to the AppHost folder or absolute.</param>
-	/// <returns>A builder for the app.</returns>
-	public static IResourceBuilder<UnoAppResource> AddUnoApp(
+	/// <returns>A builder for the project.</returns>
+	public static IResourceBuilder<UnoProjectResource> AddUnoProject(
 		this IDistributedApplicationBuilder builder,
 		[ResourceName] string name,
 		string projectPath)
@@ -50,7 +50,7 @@ public static class UnoAppBuilderExtensions
 		}
 
 		// Not added to the model: the app runs nothing, only its heads appear in the dashboard.
-		return builder.CreateResourceBuilder(new UnoAppResource(name, fullPath, targetFrameworks));
+		return builder.CreateResourceBuilder(new UnoProjectResource(name, fullPath, targetFrameworks));
 	}
 
 	/// <summary>
@@ -64,7 +64,7 @@ public static class UnoAppBuilderExtensions
 	/// <param name="name">The name of the head, <c>&lt;app&gt;-desktop</c> when omitted.</param>
 	/// <returns>A builder for the head.</returns>
 	public static IResourceBuilder<UnoDesktopResource> AddDesktop(
-		this IResourceBuilder<UnoAppResource> builder,
+		this IResourceBuilder<UnoProjectResource> builder,
 		[ResourceName] string? name = null)
 	{
 		ArgumentNullException.ThrowIfNull(builder);
@@ -87,7 +87,7 @@ public static class UnoAppBuilderExtensions
 	/// <param name="name">The name of the head, <c>&lt;app&gt;-wasm</c> when omitted.</param>
 	/// <returns>A builder for the head.</returns>
 	public static IResourceBuilder<UnoWebAssemblyResource> AddWebAssembly(
-		this IResourceBuilder<UnoAppResource> builder,
+		this IResourceBuilder<UnoProjectResource> builder,
 		[ResourceName] string? name = null)
 	{
 		ArgumentNullException.ThrowIfNull(builder);
@@ -115,7 +115,7 @@ public static class UnoAppBuilderExtensions
 	/// <param name="name">The name of the head, <c>&lt;app&gt;-android</c> when omitted.</param>
 	/// <returns>A builder for the head.</returns>
 	public static IResourceBuilder<UnoAndroidEmulatorResource> AddAndroidEmulator(
-		this IResourceBuilder<UnoAppResource> builder,
+		this IResourceBuilder<UnoProjectResource> builder,
 		[ResourceName] string? name = null)
 	{
 		ArgumentNullException.ThrowIfNull(builder);
@@ -193,7 +193,7 @@ public static class UnoAppBuilderExtensions
 	{
 		args.Add("run");
 		args.Add("--project");
-		args.Add(head.App.ProjectPath);
+		args.Add(head.Project.ProjectPath);
 		args.Add("-f");
 		args.Add(head.TargetFramework);
 		// Built just before, under the app's build lock.

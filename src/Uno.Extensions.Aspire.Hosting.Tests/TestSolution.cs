@@ -38,7 +38,7 @@ internal sealed class TestSolution : IDisposable
 		DistributedApplication.CreateBuilder(new DistributedApplicationOptions { Args = [], ProjectDirectory = Folder });
 
 	public IResourceBuilder<UnoWebAssemblyResource> AddWebAssembly(IDistributedApplicationBuilder builder) =>
-		builder.AddUnoApp("app", ProjectPath)
+		builder.AddUnoProject("app", ProjectPath)
 			.AddWebAssembly()
 			.WithEndpoint(UnoWebAssemblyResource.EndpointName, endpoint =>
 			{
@@ -47,7 +47,7 @@ internal sealed class TestSolution : IDisposable
 			});
 
 	public IResourceBuilder<UnoAndroidEmulatorResource> AddAndroidEmulator(IDistributedApplicationBuilder builder) =>
-		builder.AddUnoApp("app", ProjectPath).AddAndroidEmulator();
+		builder.AddUnoProject("app", ProjectPath).AddAndroidEmulator();
 
 	public void Dispose() => Directory.Delete(Folder, recursive: true);
 }

@@ -13,8 +13,8 @@ public sealed class UnoWebAssemblyResource : UnoHeadResource
 	/// </summary>
 	public const string EndpointName = "http";
 
-	internal UnoWebAssemblyResource(string name, UnoAppResource app)
-		: base(name, app, "browserwasm")
+	internal UnoWebAssemblyResource(string name, UnoProjectResource project)
+		: base(name, project, "browserwasm")
 	{
 	}
 }

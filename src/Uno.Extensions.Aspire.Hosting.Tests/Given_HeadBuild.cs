@@ -27,7 +27,7 @@ public class Given_HeadBuild
 		// Aspire's own start subscribers check these paths; nothing is started.
 		builder.Configuration["DcpPublisher:CliPath"] = "dcp";
 		builder.Configuration["DcpPublisher:DashboardPath"] = "dashboard";
-		var head = builder.AddUnoApp("app", _solution.ProjectPath).AddDesktop().Resource;
+		var head = builder.AddUnoProject("app", _solution.ProjectPath).AddDesktop().Resource;
 		return (builder.Build(), head);
 	}
 
@@ -48,7 +48,7 @@ public class Given_HeadBuild
 		await StartAsync(app, head);
 
 		State(app, head).Should().Be("Building");
-		head.App.BuildLock.CurrentCount.Should().Be(1);
+		head.Project.BuildLock.CurrentCount.Should().Be(1);
 	}
 
 	[TestMethod]
@@ -56,7 +56,7 @@ public class Given_HeadBuild
 	{
 		var (app, head) = CreateApp();
 		await using var _ = app;
-		await head.App.BuildLock.WaitAsync();
+		await head.Project.BuildLock.WaitAsync();
 
 		var start = StartAsync(app, head);
 		using (var timeout = new CancellationTokenSource(WaitTimeout))
@@ -65,7 +65,7 @@ public class Given_HeadBuild
 		}
 
 		start.IsCompleted.Should().BeFalse();
-		head.App.BuildLock.Release();
+		head.Project.BuildLock.Release();
 		await start.WaitAsync(WaitTimeout);
 		State(app, head).Should().Be("Building");
 	}
@@ -80,7 +80,7 @@ public class Given_HeadBuild
 		var start = () => StartAsync(app, head);
 
 		await start.Should().ThrowAsync<DistributedApplicationException>().WithMessage("*'app-desktop' failed*");
-		head.App.BuildLock.CurrentCount.Should().Be(1);
+		head.Project.BuildLock.CurrentCount.Should().Be(1);
 	}
 
 	[TestMethod]
@@ -96,7 +96,7 @@ public class Given_HeadBuild
 		var builder = _solution.CreateBuilder();
 		builder.Configuration["DcpPublisher:CliPath"] = "dcp";
 		builder.Configuration["DcpPublisher:DashboardPath"] = "dashboard";
-		var head = builder.AddUnoApp("app", _solution.ProjectPath).AddDesktop().WithArgs("-p:Marker=forwarded").Resource;
+		var head = builder.AddUnoProject("app", _solution.ProjectPath).AddDesktop().WithArgs("-p:Marker=forwarded").Resource;
 		await using var app = builder.Build();
 
 		await StartAsync(app, head);

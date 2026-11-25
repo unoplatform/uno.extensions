@@ -8,8 +8,8 @@ namespace Aspire.Hosting.ApplicationModel;
 [Experimental(UnoAppDiagnostics.ExperimentalId)]
 public sealed class UnoAndroidEmulatorResource : UnoHeadResource
 {
-	internal UnoAndroidEmulatorResource(string name, UnoAppResource app)
-		: base(name, app, "android")
+	internal UnoAndroidEmulatorResource(string name, UnoProjectResource project)
+		: base(name, project, "android")
 	{
 	}
 }

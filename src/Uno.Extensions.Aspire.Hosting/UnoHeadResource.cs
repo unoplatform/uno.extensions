@@ -9,13 +9,13 @@ namespace Aspire.Hosting.ApplicationModel;
 public abstract class UnoHeadResource : ExecutableResource
 {
 	/// <param name="name">The name of the head.</param>
-	/// <param name="app">The app the head belongs to.</param>
+	/// <param name="project">The project the head belongs to.</param>
 	/// <param name="platform">The platform part of the target framework, for example <c>desktop</c>.</param>
-	private protected UnoHeadResource(string name, UnoAppResource app, string platform)
-		: base(name, "dotnet", app.ProjectDirectory)
+	private protected UnoHeadResource(string name, UnoProjectResource project, string platform)
+		: base(name, "dotnet", project.ProjectDirectory)
 	{
-		App = app;
-		TargetFramework = app.TargetFrameworks.FirstOrDefault(framework => IsForPlatform(framework, platform))
+		Project = project;
+		TargetFramework = project.TargetFrameworks.FirstOrDefault(framework => IsForPlatform(framework, platform))
 			?? $"net{Environment.Version.Major}.0-{platform}";
 	}
 
@@ -28,9 +28,9 @@ public abstract class UnoHeadResource : ExecutableResource
 	}
 
 	/// <summary>
-	/// The app this head belongs to.
+	/// The project this head belongs to.
 	/// </summary>
-	public UnoAppResource App { get; }
+	public UnoProjectResource Project { get; }
 
 	/// <summary>
 	/// The target framework the head is built and run for: the one of its platform in the project file, else the

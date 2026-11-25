@@ -8,8 +8,8 @@ namespace Aspire.Hosting.ApplicationModel;
 [Experimental(UnoAppDiagnostics.ExperimentalId)]
 public sealed class UnoDesktopResource : UnoHeadResource
 {
-	internal UnoDesktopResource(string name, UnoAppResource app)
-		: base(name, app, "desktop")
+	internal UnoDesktopResource(string name, UnoProjectResource project)
+		: base(name, project, "desktop")
 	{
 	}
 }

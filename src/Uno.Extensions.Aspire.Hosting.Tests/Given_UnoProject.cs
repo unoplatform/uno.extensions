@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Uno.Extensions.Aspire.Hosting.Tests;
 
 [TestClass]
-public class Given_UnoApp
+public class Given_UnoProject
 {
 	private static readonly string ProjectPath = Path.Join(AppContext.BaseDirectory, "MyApp", "MyApp.csproj");
 
@@ -22,7 +22,7 @@ public class Given_UnoApp
 	{
 		var builder = DistributedApplication.CreateBuilder();
 
-		var app = builder.AddUnoApp("app", ProjectPath);
+		var app = builder.AddUnoProject("app", ProjectPath);
 		app.AddDesktop();
 
 		builder.Resources.Select(resource => resource.Name).Should().Equal("app-desktop");
@@ -34,7 +34,7 @@ public class Given_UnoApp
 		using var solution = new TestSolution("<PropertyGroup><TargetFrameworks>net9.0-android;net9.0-browserwasm;net9.0-desktop</TargetFrameworks></PropertyGroup>");
 		var builder = solution.CreateBuilder();
 
-		var app = builder.AddUnoApp("app", solution.ProjectPath);
+		var app = builder.AddUnoProject("app", solution.ProjectPath);
 
 		app.AddDesktop().Resource.TargetFramework.Should().Be("net9.0-desktop");
 		app.AddWebAssembly().Resource.TargetFramework.Should().Be("net9.0-browserwasm");
@@ -47,7 +47,7 @@ public class Given_UnoApp
 		using var solution = new TestSolution("<PropertyGroup><TargetFrameworks>net10.0-android36.0;net10.0-desktop</TargetFrameworks></PropertyGroup>");
 		var builder = solution.CreateBuilder();
 
-		var android = builder.AddUnoApp("app", solution.ProjectPath).AddAndroidEmulator();
+		var android = builder.AddUnoProject("app", solution.ProjectPath).AddAndroidEmulator();
 
 		android.Resource.TargetFramework.Should().Be("net10.0-android36.0");
 	}
@@ -61,7 +61,7 @@ public class Given_UnoApp
 			""");
 		var builder = solution.CreateBuilder();
 
-		var app = builder.AddUnoApp("app", solution.ProjectPath);
+		var app = builder.AddUnoProject("app", solution.ProjectPath);
 
 		app.Resource.TargetFrameworks.Should().Equal("net9.0-desktop", "net9.0-android");
 	}
@@ -72,28 +72,28 @@ public class Given_UnoApp
 		using var solution = new TestSolution("<PropertyGroup><TargetFrameworks>$(DotNetVersion)-desktop</TargetFrameworks></PropertyGroup>");
 		var builder = solution.CreateBuilder();
 
-		var desktop = builder.AddUnoApp("app", solution.ProjectPath).AddDesktop();
+		var desktop = builder.AddUnoProject("app", solution.ProjectPath).AddDesktop();
 
 		desktop.Resource.TargetFramework.Should().Be($"net{Environment.Version.Major}.0-desktop");
 	}
 
 	[TestMethod]
-	public void When_ProjectFileIsMissing_Then_AddUnoAppThrows()
+	public void When_ProjectFileIsMissing_Then_AddUnoProjectThrows()
 	{
 		var builder = DistributedApplication.CreateBuilder();
 		var missingPath = Path.Join(AppContext.BaseDirectory, "missing", "Missing.csproj");
 
-		var add = () => builder.AddUnoApp("app", missingPath);
+		var add = () => builder.AddUnoProject("app", missingPath);
 
 		add.Should().Throw<DistributedApplicationException>().WithMessage($"*{missingPath}*");
 	}
 
 	[TestMethod]
-	public void When_ProjectFileIsMissingInPublishMode_Then_AddUnoAppDoesNotThrow()
+	public void When_ProjectFileIsMissingInPublishMode_Then_AddUnoProjectDoesNotThrow()
 	{
 		var builder = DistributedApplication.CreateBuilder(["--publisher", "manifest", "--output-path", Path.Join(AppContext.BaseDirectory, "manifest")]);
 
-		var add = () => builder.AddUnoApp("app", Path.Join(AppContext.BaseDirectory, "missing", "Missing.csproj"));
+		var add = () => builder.AddUnoProject("app", Path.Join(AppContext.BaseDirectory, "missing", "Missing.csproj"));
 
 		add.Should().NotThrow();
 	}
@@ -105,7 +105,7 @@ public class Given_UnoApp
 		var relativePath = Path.GetRelativePath(builder.AppHostDirectory, ProjectPath);
 		Path.IsPathRooted(relativePath).Should().BeFalse();
 
-		var app = builder.AddUnoApp("app", relativePath);
+		var app = builder.AddUnoProject("app", relativePath);
 
 		app.Resource.ProjectPath.Should().Be(ProjectPath);
 	}
@@ -115,7 +115,7 @@ public class Given_UnoApp
 	{
 		var builder = DistributedApplication.CreateBuilder();
 
-		var desktop = builder.AddUnoApp("app", ProjectPath).AddDesktop();
+		var desktop = builder.AddUnoProject("app", ProjectPath).AddDesktop();
 
 		desktop.Resource.Command.Should().Be("dotnet");
 		desktop.Resource.WorkingDirectory.Should().Be(Path.GetDirectoryName(ProjectPath));
@@ -128,7 +128,7 @@ public class Given_UnoApp
 	{
 		var builder = DistributedApplication.CreateBuilder();
 
-		var desktop = builder.AddUnoApp("app", ProjectPath)
+		var desktop = builder.AddUnoProject("app", ProjectPath)
 			.AddDesktop("ui")
 			.WithTargetFramework("net9.0-desktop")
 			.WithLaunchProfile("MyApp (Desktop)");
@@ -143,7 +143,7 @@ public class Given_UnoApp
 	{
 		var builder = DistributedApplication.CreateBuilder();
 
-		var desktop = builder.AddUnoApp("app", ProjectPath).AddDesktop();
+		var desktop = builder.AddUnoProject("app", ProjectPath).AddDesktop();
 
 		var environment = (await ExecutionConfiguration.ResolveAsync(builder, desktop.Resource)).EnvironmentVariables;
 		environment.Should().Contain("DOTNET_MODIFIABLE_ASSEMBLIES", "debug");
@@ -160,7 +160,7 @@ public class Given_UnoApp
 			.WithHttpEndpoint(name: "http")
 			.WithEndpoint("http", endpoint => endpoint.AllocatedEndpoint = new AllocatedEndpoint(endpoint, "localhost", 5171));
 
-		var desktop = builder.AddUnoApp("app", ProjectPath).AddDesktop().WithReference(api.GetEndpoint("http"));
+		var desktop = builder.AddUnoProject("app", ProjectPath).AddDesktop().WithReference(api.GetEndpoint("http"));
 
 		var environment = (await ExecutionConfiguration.ResolveAsync(builder, desktop.Resource)).EnvironmentVariables;
 		environment.Should().Contain("services__api__http__0", "http://localhost:5171");
@@ -171,7 +171,7 @@ public class Given_UnoApp
 	{
 		var builder = DistributedApplication.CreateBuilder();
 
-		var desktop = builder.AddUnoApp("app", ProjectPath).AddDesktop();
+		var desktop = builder.AddUnoProject("app", ProjectPath).AddDesktop();
 
 		desktop.Resource.Annotations.OfType<ExplicitStartupAnnotation>().Should().BeEmpty();
 		desktop.Resource.Annotations.OfType<ManifestPublishingCallbackAnnotation>().Should().Equal(ManifestPublishingCallbackAnnotation.Ignore);

@@ -29,10 +29,10 @@ internal static class HeadBuild
 		EnsureTheProjectTargetsIt(head);
 		var forwarded = await ArgumentsForTheBuildAsync(head, executionContext, logger, cancellationToken).ConfigureAwait(false);
 
-		var buildLock = head.App.BuildLock;
+		var buildLock = head.Project.BuildLock;
 		if (!await buildLock.WaitAsync(TimeSpan.Zero, cancellationToken).ConfigureAwait(false))
 		{
-			logger.LogInformation("Waiting for another head of '{App}' to finish building.", head.App.Name);
+			logger.LogInformation("Waiting for another head of '{App}' to finish building.", head.Project.Name);
 			await PublishStateAsync(notifications, head, QueuedState).ConfigureAwait(false);
 			await buildLock.WaitAsync(cancellationToken).ConfigureAwait(false);
 		}
@@ -50,7 +50,7 @@ internal static class HeadBuild
 
 	private static void EnsureTheProjectTargetsIt(UnoHeadResource head)
 	{
-		var frameworks = head.App.TargetFrameworks;
+		var frameworks = head.Project.TargetFrameworks;
 		if (frameworks.Count > 0 && !frameworks.Contains(head.TargetFramework, StringComparer.OrdinalIgnoreCase))
 		{
 			throw new DistributedApplicationException(
@@ -116,12 +116,12 @@ internal static class HeadBuild
 	{
 		var start = new ProcessStartInfo("dotnet")
 		{
-			WorkingDirectory = head.App.ProjectDirectory,
+			WorkingDirectory = head.Project.ProjectDirectory,
 			RedirectStandardOutput = true,
 			RedirectStandardError = true,
 			UseShellExecute = false,
 		};
-		foreach (var argument in new[] { "build", head.App.ProjectPath, "-f", head.TargetFramework }.Concat(forwarded))
+		foreach (var argument in new[] { "build", head.Project.ProjectPath, "-f", head.TargetFramework }.Concat(forwarded))
 		{
 			start.ArgumentList.Add(argument);
 		}
