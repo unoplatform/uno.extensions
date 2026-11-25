@@ -1,6 +1,5 @@
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using Aspire.Hosting.ApplicationModel;
 using Microsoft.Extensions.Logging;
 
@@ -15,6 +14,7 @@ internal static class HeadBuild
 {
 	internal const string QueuedState = "Queued";
 	internal const string BuildingState = "Building";
+	internal const string WaitingForDevServerState = "Waiting for dev server";
 
 	// A first build restores packages and can take minutes; a build stuck longer than this is reported as failed.
 	private static readonly TimeSpan Timeout = TimeSpan.FromMinutes(10);
@@ -27,7 +27,9 @@ internal static class HeadBuild
 		CancellationToken cancellationToken)
 	{
 		EnsureTheProjectTargetsIt(head);
-		var forwarded = await ArgumentsForTheBuildAsync(head, executionContext, logger, cancellationToken).ConfigureAwait(false);
+		var forwarded = WithDevServerPort(
+			await ArgumentsForTheBuildAsync(head, executionContext, logger, cancellationToken).ConfigureAwait(false),
+			await DevServerPortAsync(head, notifications, logger, cancellationToken).ConfigureAwait(false));
 
 		var buildLock = head.Project.BuildLock;
 		if (!await buildLock.WaitAsync(TimeSpan.Zero, cancellationToken).ConfigureAwait(false))
@@ -73,6 +75,37 @@ internal static class HeadBuild
 		return SelectBuildArguments(configuration.Arguments.Select(argument => argument.Value).ToList());
 	}
 
+	// A head built outside an AppHost run, by a test for example, does not wait.
+	private static async Task<int?> DevServerPortAsync(UnoHeadResource head, ResourceNotificationService notifications, ILogger logger, CancellationToken cancellationToken)
+	{
+		if (head.Project.DevServer is not { IsStarting: true } devServer)
+		{
+			return null;
+		}
+
+		if (!devServer.Port.IsCompleted)
+		{
+			logger.LogInformation("Waiting for the dev server '{DevServer}'.", devServer.Name);
+			await PublishStateAsync(notifications, head, WaitingForDevServerState).ConfigureAwait(false);
+		}
+
+		try
+		{
+			return await devServer.Port.WaitAsync(UnoDevServer.HeadWait, cancellationToken).ConfigureAwait(false);
+		}
+		catch (TimeoutException)
+		{
+			logger.LogWarning("The dev server did not start in time: '{Head}' is built without Hot Reload.", head.Name);
+			return null;
+		}
+	}
+
+	// First, so a port given with WithArgs wins.
+	internal static IReadOnlyList<string> WithDevServerPort(IReadOnlyList<string> arguments, int? port) =>
+		port is null
+			? arguments
+			: [$"-p:{UnoDevServer.PortProperty}={port.Value.ToString(CultureInfo.InvariantCulture)}", .. arguments];
+
 	// The options of dotnet build that change what it produces or where, in their joined (-p:A=1, -c:Release) and
 	// separate (-p A=1, -c Release) forms.
 	private static readonly string[] BuildOptions =
@@ -114,64 +147,22 @@ internal static class HeadBuild
 
 	private static async Task BuildAsync(UnoHeadResource head, IReadOnlyList<string> forwarded, ILogger logger, CancellationToken cancellationToken)
 	{
-		var start = new ProcessStartInfo("dotnet")
-		{
-			WorkingDirectory = head.Project.ProjectDirectory,
-			RedirectStandardOutput = true,
-			RedirectStandardError = true,
-			UseShellExecute = false,
-		};
-		foreach (var argument in new[] { "build", head.Project.ProjectPath, "-f", head.TargetFramework }.Concat(forwarded))
-		{
-			start.ArgumentList.Add(argument);
-		}
+		var exitCode = await DotnetCommand.RunAsync(
+			["build", head.Project.ProjectPath, "-f", head.TargetFramework, .. forwarded],
+			head.Project.ProjectDirectory,
+			Timeout,
+			line => logger.LogInformation("{Line}", line),
+			line => logger.LogWarning("{Line}", line),
+			cancellationToken).ConfigureAwait(false);
 
-		using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-		timeout.CancelAfter(Timeout);
-
-		using var process = Process.Start(start) ?? throw new DistributedApplicationException($"'{head.Name}' could not start dotnet build.");
-		var output = ForwardAsync(process.StandardOutput, line => logger.LogInformation("{Line}", line));
-		var errors = ForwardAsync(process.StandardError, line => logger.LogWarning("{Line}", line));
-		try
+		if (exitCode is null)
 		{
-			await process.WaitForExitAsync(timeout.Token).ConfigureAwait(false);
-		}
-		catch (OperationCanceledException)
-		{
-			StopIfRunning(process);
-			if (cancellationToken.IsCancellationRequested)
-			{
-				throw;
-			}
-
 			throw new DistributedApplicationException($"The build of '{head.Name}' did not finish in {Timeout.TotalMinutes} minutes.");
 		}
 
-		await Task.WhenAll(output, errors).ConfigureAwait(false);
-		if (process.ExitCode != 0)
+		if (exitCode != 0)
 		{
 			throw new DistributedApplicationException($"The build of '{head.Name}' failed. Its errors are in the head's log.");
-		}
-	}
-
-	// The build can exit between the timeout and the kill; that must not replace the timeout or the cancellation.
-	private static void StopIfRunning(Process process)
-	{
-		try
-		{
-			process.Kill(entireProcessTree: true);
-		}
-		catch (Exception exception) when (exception is InvalidOperationException or Win32Exception or AggregateException)
-		{
-			// Exited meanwhile, or could not be stopped: either way the caller reports the timeout or the cancellation.
-		}
-	}
-
-	private static async Task ForwardAsync(StreamReader reader, Action<string> log)
-	{
-		while (await reader.ReadLineAsync().ConfigureAwait(false) is { } line)
-		{
-			log(line);
 		}
 	}
 }

@@ -32,4 +32,9 @@ public sealed class UnoProjectResource : Resource
 	/// Taken while a head of this app builds: heads share the project's obj folder.
 	/// </summary>
 	internal SemaphoreSlim BuildLock { get; } = new(1, 1);
+
+	/// <summary>
+	/// The Dev Server the heads connect to for Hot Reload, null outside a run.
+	/// </summary>
+	internal UnoDevServerResource? DevServer { get; set; }
 }

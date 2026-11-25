@@ -20,14 +20,15 @@ public class Given_UnoProject
 	}
 
 	[TestMethod]
-	public void When_AppAdded_Then_OnlyItsHeadsAreInTheModel()
+	public void When_AppAdded_Then_ItsHeadsAreInTheModelButNotTheApp()
 	{
 		var builder = DistributedApplication.CreateBuilder();
 
 		var app = builder.AddUnoProject("app", ProjectPath);
 		app.AddDesktop();
 
-		builder.Resources.Select(resource => resource.Name).Should().Equal("app-desktop");
+		var names = builder.Resources.Select(resource => resource.Name).ToList();
+		names.Should().Contain("app-desktop").And.NotContain("app");
 	}
 
 	[TestMethod]

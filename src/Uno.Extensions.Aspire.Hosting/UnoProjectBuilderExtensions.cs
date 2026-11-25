@@ -46,8 +46,14 @@ public static class UnoProjectBuilderExtensions
 			targetFrameworks = ProjectTargetFrameworks.Read(fullPath);
 		}
 
+		var project = new UnoProjectResource(name, fullPath, targetFrameworks);
+		if (builder.ExecutionContext.IsRunMode)
+		{
+			project.DevServer = UnoDevServer.GetOrAdd(builder, project);
+		}
+
 		// Not added to the model: the app runs nothing, only its heads appear in the dashboard.
-		return builder.CreateResourceBuilder(new UnoProjectResource(name, fullPath, targetFrameworks));
+		return builder.CreateResourceBuilder(project);
 	}
 
 	/// <summary>
