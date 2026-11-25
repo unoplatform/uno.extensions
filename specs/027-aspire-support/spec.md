@@ -197,7 +197,7 @@ Added to `Directory.Packages.props`, referenced by `Uno.Extensions.Aspire` only:
 Uno.Extensions code.
 
 ```csharp
-var app = builder.AddUnoApp("app", "../MyApp/MyApp.csproj");
+var app = builder.AddUnoProject("app", "../MyApp/MyApp.csproj");
 
 app.AddDesktop().WithReference(api).WaitFor(api);
 app.AddWebAssembly().WithReference(api).WaitFor(api);
@@ -206,7 +206,7 @@ app.AddAndroidEmulator().WithReference(api).WaitFor(api);
 
 | Method | Returns |
 |---|---|
-| `AddUnoApp(string name, string projectPath)` | `IResourceBuilder<UnoAppResource>` |
+| `AddUnoProject(string name, string projectPath)` | `IResourceBuilder<UnoProjectResource>` |
 | `AddDesktop(string? name = null)` | `IResourceBuilder<UnoDesktopResource>` |
 | `AddWebAssembly(string? name = null)` | `IResourceBuilder<UnoWebAssemblyResource>` |
 | `AddAndroidEmulator(string? name = null)` | `IResourceBuilder<UnoAndroidEmulatorResource>` |
@@ -222,9 +222,11 @@ app.AddAndroidEmulator().WithReference(api).WaitFor(api);
   Its name does not say how the environment reaches the app: for WebAssembly, delivery at run time
   can replace build time without another rename (see *Alternatives considered*).
 
-- `AddUnoApp` holds the project path and starts no process. It is not a resource in the model,
+- `AddUnoProject` holds the project path and starts no process. It is not a resource in the model,
   so only heads appear in the dashboard. A project file that does not exist fails the AppHost at
   that call. The AppHost has no `ProjectReference` to the app.
+- The names follow Aspire's MAUI integration, `AddMauiProject` and `MauiProjectResource`, which
+  has the same shape: a project path that starts no process, with one resource per platform.
 - The API is in the `Aspire.Hosting` namespace, as Aspire integrations are, and is marked
   experimental under the diagnostic id `UNOASPIRE001`.
 - Default head names are `<app>-desktop`, `<app>-wasm` and `<app>-android`.
@@ -493,7 +495,7 @@ Later lots are one pull request each.
 1. **Client package.** `Uno.Extensions.Aspire`; the `Properties` key read by `AddKiotaClient`;
    header redaction in `DiagnosticHandler`; the size measurement. The how-to under `doc/Learn/`
    ships with the last of the three pull requests, once it can show the whole feature.
-2. **AppHost package, desktop.** `AddUnoApp`, `AddDesktop`, `WithTargetFramework`,
+2. **AppHost package, desktop.** `AddUnoProject`, `AddDesktop`, `WithTargetFramework`,
    `WithLaunchProfile`, the start and stop behavior.
 3. **AppHost package, WebAssembly.** Opens with the baking spike. `AddWebAssembly`, the values
    file and the client package's build logic that reads it, the allow-list.
