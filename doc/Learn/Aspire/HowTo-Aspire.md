@@ -94,13 +94,13 @@ Aspire's `AddProject` does not accept a project that targets several frameworks.
     ```csharp
     var api = builder.AddProject<Projects.MyApp_Api>("api");
 
-    builder.AddUnoApp("app", "../MyApp/MyApp.csproj")
+    builder.AddUnoProject("app", "../MyApp/MyApp.csproj")
         .AddDesktop()
         .WithReference(api)
         .WaitFor(api);
     ```
 
-  * `AddUnoApp` takes the path of the app's project, relative to the AppHost folder.
+  * `AddUnoProject` takes the path of the app's project, relative to the AppHost folder.
   * `AddDesktop()` adds the resource `app-desktop`, which runs the project's desktop target, for example `net10.0-desktop`, and sends its telemetry to the dashboard.
   * `WithReference(api)` passes the API's address to the app.
 
@@ -140,7 +140,7 @@ A browser has no process environment, so the address of the API is written into 
 * Add the head in the AppHost's `Program.cs`, and tell the API which origin the browser calls from:
 
     ```csharp
-    var app = builder.AddUnoApp("app", "../MyApp/MyApp.csproj");
+    var app = builder.AddUnoProject("app", "../MyApp/MyApp.csproj");
 
     app.AddDesktop().WithReference(api).WaitFor(api);
 
