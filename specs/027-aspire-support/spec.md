@@ -38,6 +38,8 @@ Two packages:
   package needs it in the app for the heads whose environment is baked.
 - The client half is a **package, not a project template** as Aspire's own service defaults are:
   an `UnoFeatures` entry needs a package, and the Kiota coordination below needs library code.
+  Uno.Sdk's `Aspire` feature adds it, at the version of the other `Uno.Extensions` packages; with an
+  SDK that predates the feature, the app references the package.
 - The whole `Uno.Extensions.Aspire.Hosting` surface is marked `[Experimental]`. It stays so after
   the Android lot, until stopping a head is verified on macOS and Linux and telemetry questions 1
   and 2 are settled: the Android head also depends on a target of .NET for Android that is not
@@ -360,15 +362,17 @@ The file is valid while the AppHost runs:
 Consequences:
 
 - The app's csproj names no resource, but the app has to reference `Uno.Extensions.Aspire`.
-  Without it the head runs and the app has no address. When the head starts, the AppHost reads the
-  libraries of the app's `obj/project.assets.json`, with a source-generated serializer, and warns if
-  the package is not among them. Before the app's first restore, or with another intermediate
-  output path, there is no such file and nothing is checked.
+  Without it the head runs and the app has no address. After the head's build, which restores, the
+  AppHost reads the libraries of the app's `obj/project.assets.json`, with a source-generated
+  serializer, and warns if the package is not among them: a reference that depends on a property
+  passed to the head is checked on the start that changes it. With another intermediate output
+  path there is no such file and nothing is checked.
 - The path is the app's project folder, so the projects the app references, which have their own
   folder, read nothing.
 - The AppHost and the client package agree on the path and the format of the file. The format
-  version is in the file name: a client that finds only another version's file warns
-  (`UNOASPIRE101`), naming both packages, and reads nothing. They ship at the same version.
+  version is in the file name: a client that finds only another format's file warns
+  (`UNOASPIRE101`) and reads nothing. Packages of different versions that write and read the same
+  format work together; the warning asks for the same version of both, which always agree.
 - Two heads of the same app for the same target framework share one file.
 - Two AppHosts running the same app remove each other's file. A head whose target framework
   changed after an AppHost was killed leaves the old framework's file until it is deleted.

@@ -16,6 +16,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<!-- The build logic the app gets from Uno.Extensions.Aspire, run against what the AppHost writes. -->
+		<None Include="..\Uno.Extensions.Aspire\buildTransitive\Uno.Extensions.Aspire.targets" Link="Uno.Extensions.Aspire.targets" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="MSTest.TestAdapter" />
 		<PackageReference Include="MSTest.TestFramework" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />

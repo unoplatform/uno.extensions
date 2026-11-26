@@ -118,6 +118,54 @@ public class Given_HeadBuild
 		HeadBuild.SelectBuildArguments(run).Should().Equal(expected);
 
 	[TestMethod]
+	public async Task When_TheBuildRestoresWithoutTheClientPackage_Then_TheStartWarns()
+	{
+		// The restore before the start still had the package; the head's own build restores it away.
+		const string RestoreDropsIt = """
+			<Target Name="Build" />
+			<Target Name="Restore">
+				<WriteLinesToFile File="obj/project.assets.json" Lines="{ &quot;version&quot;: 3, &quot;libraries&quot;: { &quot;Other.Package/1.0.0&quot;: { &quot;type&quot;: &quot;package&quot; } } }" Overwrite="true" />
+			</Target>
+			""";
+		_solution = new TestSolution(RestoreDropsIt);
+		Directory.CreateDirectory(Path.Join(_solution.AppFolder, "obj"));
+		File.WriteAllText(
+			Path.Join(_solution.AppFolder, "obj", "project.assets.json"),
+			"""{ "version": 3, "libraries": { "Uno.Extensions.Aspire/1.0.0": { "type": "package" } } }""");
+		var builder = _solution.CreateBuilder();
+		builder.Configuration["DcpPublisher:CliPath"] = "dcp";
+		builder.Configuration["DcpPublisher:DashboardPath"] = "dashboard";
+		var head = _solution.AddWebAssembly(builder).Resource;
+		await using var app = builder.Build();
+		var warned = WatchForLog(app, head, "does not reference Uno.Extensions.Aspire");
+
+		await StartAsync(app, head);
+
+		(await warned).Should().BeTrue("the check reads the restore the head's build made");
+	}
+
+	private static async Task<bool> WatchForLog(DistributedApplication app, UnoHeadResource head, string text)
+	{
+		using var timeout = new CancellationTokenSource(WaitTimeout);
+		try
+		{
+			await foreach (var batch in app.Services.GetRequiredService<ResourceLoggerService>().WatchAsync(head.Name).WithCancellation(timeout.Token))
+			{
+				if (batch.Any(line => line.Content.Contains(text, StringComparison.Ordinal)))
+				{
+					return true;
+				}
+			}
+		}
+		catch (OperationCanceledException)
+		{
+			// Timed out: the log never appeared.
+		}
+
+		return false;
+	}
+
+	[TestMethod]
 	public async Task When_ProjectDoesNotTargetTheFramework_Then_TheStartFailsBeforeBuilding()
 	{
 		var (app, head) = CreateApp("<PropertyGroup><TargetFrameworks>net9.0-android</TargetFrameworks></PropertyGroup>" + TestSolution.BuildTargets);
