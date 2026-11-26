@@ -70,8 +70,13 @@ internal sealed class TestSolution : IDisposable
 
 	public string ValuesPathFor(string targetFramework) => Path.Join(AppFolder, "obj", "uno-aspire", $"{targetFramework}.v1.values.proj");
 
-	public IDistributedApplicationBuilder CreateBuilder() =>
-		DistributedApplication.CreateBuilder(new DistributedApplicationOptions { Args = [], ProjectDirectory = Folder });
+	public IDistributedApplicationBuilder CreateBuilder()
+	{
+		var builder = DistributedApplication.CreateBuilder(new DistributedApplicationOptions { Args = [], ProjectDirectory = Folder });
+		// The dev server runs the uno.devserver CLI: Given_UnoDevServer covers it without starting one.
+		builder.Configuration[UnoDevServer.EnabledSetting] = "false";
+		return builder;
+	}
 
 	public IResourceBuilder<UnoWebAssemblyResource> AddWebAssembly(IDistributedApplicationBuilder builder) =>
 		builder.AddUnoProject("app", ProjectPath)

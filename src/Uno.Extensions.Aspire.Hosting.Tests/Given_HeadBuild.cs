@@ -31,6 +31,27 @@ public class Given_HeadBuild
 		return (builder.Build(), head);
 	}
 
+	private const string RecordsThePort = """
+		<Target Name="Build">
+			<WriteLinesToFile File="marker.txt" Lines="port=$(UnoRemoteControlPort)" Overwrite="true" />
+		</Target>
+		<Target Name="Restore" />
+		""";
+
+	// The dev server is added but not started: the test sets its port.
+	private (DistributedApplication App, UnoDesktopResource Head) CreateAppWithDevServer()
+	{
+		_solution = new TestSolution(RecordsThePort);
+		var builder = _solution.CreateBuilder();
+		builder.Configuration[UnoDevServer.EnabledSetting] = "true";
+		builder.Configuration["DcpPublisher:CliPath"] = "dcp";
+		builder.Configuration["DcpPublisher:DashboardPath"] = "dashboard";
+		var head = builder.AddUnoProject("app", _solution.ProjectPath).AddDesktop().Resource;
+		return (builder.Build(), head);
+	}
+
+	private string ReadMarker() => File.ReadAllText(Path.Join(_solution!.AppFolder, "marker.txt")).Trim();
+
 	private static Task StartAsync(DistributedApplication app, UnoHeadResource head) =>
 		app.Services.GetRequiredService<IDistributedApplicationEventing>().PublishAsync(new BeforeResourceStartedEvent(head, app.Services));
 
@@ -175,5 +196,52 @@ public class Given_HeadBuild
 
 		await start.Should().ThrowAsync<DistributedApplicationException>().WithMessage("*does not target (net9.0-android)*WithTargetFramework*");
 		State(app, head).Should().NotBe("Building");
+	}
+
+	[TestMethod]
+	public async Task When_TheDevServerHasAPort_Then_TheBuildGetsIt()
+	{
+		var (app, head) = CreateAppWithDevServer();
+		await using var _ = app;
+		head.Project.DevServer!.MarkStarting();
+		head.Project.DevServer.SetPort(5000);
+
+		await StartAsync(app, head);
+
+		ReadMarker().Should().Be("port=5000");
+	}
+
+	[TestMethod]
+	public async Task When_TheDevServerIsStillStarting_Then_TheHeadWaitsSaysSoAndBuildsWithoutAPortWhenNoneComes()
+	{
+		var (app, head) = CreateAppWithDevServer();
+		await using var _ = app;
+		head.Project.DevServer!.MarkStarting();
+
+		var start = StartAsync(app, head);
+		using (var timeout = new CancellationTokenSource(WaitTimeout))
+		{
+			await app.Services.GetRequiredService<ResourceNotificationService>().WaitForResourceAsync(head.Name, HeadBuild.WaitingForDevServerState, timeout.Token);
+		}
+
+		start.IsCompleted.Should().BeFalse();
+		head.Project.DevServer.SetPort(null);
+		await start.WaitAsync(WaitTimeout);
+		ReadMarker().Should().Be("port=");
+	}
+
+	[TestMethod]
+	public void When_TheDevServerPortIsKnown_Then_TheBuildGetsItBeforeTheHeadsOwnArguments()
+	{
+		var arguments = HeadBuild.WithDevServerPort(["-p:UnoRemoteControlPort=6000"], 5000);
+
+		// A port given with WithArgs comes last, so it wins.
+		arguments.Should().Equal("-p:UnoRemoteControlPort=5000", "-p:UnoRemoteControlPort=6000");
+	}
+
+	[TestMethod]
+	public void When_NoDevServerIsAvailable_Then_TheBuildArgumentsAreUnchanged()
+	{
+		HeadBuild.WithDevServerPort(["-c", "Debug"], null).Should().Equal("-c", "Debug");
 	}
 }
