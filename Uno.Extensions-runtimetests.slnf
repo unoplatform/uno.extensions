@@ -2,6 +2,8 @@
   "solution": {
     "path": "Uno.Extensions.sln",
     "projects": [
+      "src\\Uno.Extensions.Aspire.UI.Tests\\Uno.Extensions.Aspire.WinUI.Tests.csproj",
+      "src\\Uno.Extensions.Aspire\\Uno.Extensions.Aspire.csproj",
       "src\\Uno.Extensions.Authentication.MSAL\\Uno.Extensions.Authentication.MSAL.WinUI.csproj",
       "src\\Uno.Extensions.Authentication.Oidc\\Uno.Extensions.Authentication.Oidc.WinUI.csproj",
       "src\\Uno.Extensions.Authentication.UI\\Uno.Extensions.Authentication.WinUI.csproj",

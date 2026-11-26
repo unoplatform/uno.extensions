@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Kiota.Abstractions;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
+using Microsoft.Kiota.Http.HttpClientLibrary.Middleware.Options;
 
 namespace Uno.Extensions.Http.Kiota;
 
@@ -70,6 +71,12 @@ public static class ServiceCollectionExtensions
 	where TEndpoint : EndpointOptions, new()
 	{
 		services.AddKiotaHandlers();
+		if (context.Properties.TryGetValue(HttpRetryOwnership.ResilienceHandlerKey, out var ownsRetries) && ownsRetries is true)
+		{
+			// TryAdd: an app-registered option wins. A resilience handler already retries, see specs/027-aspire-support/spec.md
+			services.TryAddSingleton(new RetryHandlerOption { MaxRetry = 0 });
+		}
+
 		var clientName = name ?? typeof(TClient).FullName ?? "DefaultClient";
 
 		return services.AddClientWithEndpoint<TClient, TEndpoint>(
