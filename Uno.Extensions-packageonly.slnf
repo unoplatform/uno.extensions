@@ -2,6 +2,8 @@
   "solution": {
     "path": "Uno.Extensions.sln",
     "projects": [
+      "src\\Uno.Extensions.Aspire.Hosting.Tests\\Uno.Extensions.Aspire.Hosting.Tests.csproj",
+      "src\\Uno.Extensions.Aspire.Hosting\\Uno.Extensions.Aspire.Hosting.csproj",
       "src\\Uno.Extensions.Aspire.Tests\\Uno.Extensions.Aspire.Tests.csproj",
       "src\\Uno.Extensions.Aspire\\Uno.Extensions.Aspire.csproj",
       "src\\Uno.Extensions.Authentication.MSAL.Tests\\Uno.Extensions.Authentication.MSAL.Tests.csproj",
