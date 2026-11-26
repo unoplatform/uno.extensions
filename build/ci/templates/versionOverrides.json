@@ -1,0 +1,4 @@
+[
+  { "PackageId": "Uno.Extensions.Logging.OSLog", "UpdatedVersion": "1.7.0" },
+  { "PackageId": "Uno.Extensions.Logging.WebAssembly.Console", "UpdatedVersion": "1.7.0" }
+]
