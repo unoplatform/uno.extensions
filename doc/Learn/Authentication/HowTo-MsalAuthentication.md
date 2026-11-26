@@ -18,7 +18,6 @@ uid: Uno.Extensions.Authentication.HowToMsalAuthentication
 | Android | ✅ Browser / custom tab | ✅ Handled natively by MSAL |
 | iOS | ✅ Web authentication session | ✅ Handled natively by MSAL — [keychain entitlement required](#ios-keychain-access-group) |
 | WebAssembly | ✅ Popup | ✅ Browser storage, `localStorage` by default — cleartext, see [below](#webassembly-token-cache) |
-| Mac Catalyst | ❌ Not supported (`AddMsal` throws `PlatformNotSupportedException`) | — |
 
 MSAL's own cache (refresh and ID tokens) is what the last column describes. The access token that `IAuthenticationService` hands to HTTP handlers, and a copy of the ID token for [reading claims](#reading-the-users-claims), are kept separately, in the host's default `IKeyValueStorage`, which is `KeyStore` / Keychain on Android and iOS. See [Key-value storage](xref:Uno.Extensions.Storage.Overview#key-value-storage).
 
@@ -160,10 +159,11 @@ The set of identity scenarios (Microsoft accounts, work/school accounts, B2C, so
 
 MSAL composes a Microsoft Entra authority from `Instance` and `TenantId`, so a B2C authority
 (which carries the user flow, or policy, in its path) needs its own setting. Put it in the
-provider's configuration section as `B2CAuthority`:
+provider's configuration section (`Msal` by default, or the `name` passed to `AddMsal`) as
+`B2CAuthority`:
 
 ```json
-"MsalAuthentication": {
+"Msal": {
   "ClientId": "<your-client-id>",
   "B2CAuthority": "https://contoso.b2clogin.com/tfp/contoso.onmicrosoft.com/B2C_1_signupsignin",
   "Scopes": [ "https://contoso.onmicrosoft.com/api/tasks.read" ]
@@ -321,7 +321,7 @@ using Foundation;
 using Microsoft.Identity.Client;
 using UIKit;
 
-public class MsalAppDelegate : Uno.UI.Runtime.Skia.AppleUIKit.UnoUIApplicationDelegate
+public class MsalAppDelegate : Uno.UI.Runtime.AppleUIKit.UnoUIApplicationDelegate
 {
     public override bool OpenUrl(UIApplication application, NSUrl url, NSDictionary options)
         => AuthenticationContinuationHelper.SetAuthenticationContinuationEventArgs(url)

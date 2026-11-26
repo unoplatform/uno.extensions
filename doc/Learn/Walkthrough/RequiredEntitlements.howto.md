@@ -1,18 +1,17 @@
 ---
 uid: Uno.Extensions.Storage.RequiredEntitlements.HowTo
 title: Enable Keychain Entitlements
-tags: [storage, ios, mac-catalyst, entitlements]
+tags: [storage, ios, entitlements]
 ---
 # Enable keychain access for Uno storage
 
-Uno storage uses the Apple Keychain on iOS and Mac Catalyst. To persist secrets successfully you must configure the `keychain-access-groups` entitlement and align it with your provisioning profile.
+Uno storage uses the Apple Keychain on iOS. To persist secrets successfully you must configure the `keychain-access-groups` entitlement and align it with your provisioning profile.
 
 ## Create `Entitlements.plist`
 
-Add an entitlements file per Apple platform in your solution:
+Add an entitlements file to the iOS platform folder of your project:
 
 - `iOS/Entitlements.plist`
-- `MacCatalyst/Entitlements.plist`
 
 ```xml
 <key>keychain-access-groups</key>
@@ -38,11 +37,10 @@ Alternatively, create an Xcode project with the same bundle identifier, add the 
 Update your `.csproj` (typically `*.Mobile.csproj`) with the entitlements path and signing details.
 
 ```xml
-<PropertyGroup>
-  <CodesignEntitlements Condition="$(IsIOS)">iOS\Entitlements.plist</CodesignEntitlements>
-  <CodesignEntitlements Condition="$(IsMacCatalyst)">MacCatalyst\Entitlements.plist</CodesignEntitlements>
+<PropertyGroup Condition="$(IsIOS)">
+  <CodesignEntitlements>iOS\Entitlements.plist</CodesignEntitlements>
   <CodesignKey>Apple Development: Jane Doe (XXXXXXXXXX)</CodesignKey>
-  <CodesignProvision>Mac Catalyst Team Provisioning Profile: com.companyname.maccatalyst</CodesignProvision>
+  <CodesignProvision>iOS Team Provisioning Profile: com.companyname.myapp</CodesignProvision>
 </PropertyGroup>
 ```
 
@@ -50,10 +48,9 @@ Use the exact signing identity and provisioning profile names from the developer
 
 ## Rebuild and verify
 
-After updating entitlements and signing, rebuild the app for iOS or Mac Catalyst. If the configuration is correct, the app launches and the storage extension can read/write secrets from the Keychain. If signing fails, check the system logs via Apple’s Console.app for entitlement or profile errors.
+After updating entitlements and signing, rebuild the app for iOS. If the configuration is correct, the app launches and the storage extension can read/write secrets from the Keychain. If signing fails, check the system logs via Apple’s Console.app for entitlement or profile errors.
 
 ## Resources
 
 - [Apple Keychain access groups](https://developer.apple.com/documentation/bundleresources/entitlements/keychain-access-groups)
 - [Microsoft .NET entitlements (iOS)](https://learn.microsoft.com/dotnet/maui/ios/entitlements)
-- [Microsoft .NET entitlements (Mac Catalyst)](https://learn.microsoft.com/dotnet/maui/mac-catalyst/entitlements)
