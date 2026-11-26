@@ -149,9 +149,13 @@ A browser has no process environment, so the address of the API is written into 
     api.WithEnvironment("Cors__Origin", wasm.GetEndpoint("http"));
     ```
 
-* In the API, allow that origin and no other:
+* In the API, allow that origin and no other. `UseCors` needs the CORS services, so register them before the app is built:
 
     ```csharp
+    builder.Services.AddCors();
+
+    var app = builder.Build();
+
     if (app.Configuration["Cors:Origin"] is { } origin)
     {
         app.UseCors(policy => policy.WithOrigins(origin).AllowAnyHeader().AllowAnyMethod());
