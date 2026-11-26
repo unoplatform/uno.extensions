@@ -25,6 +25,7 @@ namespace Uno.Extensions.Reactive.Operators;
 internal sealed class HotSwapFeed<T> : IFeed<T>
 {
 	private readonly object _gate = new();
+	private readonly MockingReadsHold? _readsHold;
 	private ISignal<Message<T>>? _current;
 
 	private event EventHandler<ISignal<Message<T>>?>? _currentChanged;
@@ -33,9 +34,11 @@ internal sealed class HotSwapFeed<T> : IFeed<T>
 	/// Creates a new instance.
 	/// </summary>
 	/// <param name="feed">The original feed.</param>
-	public HotSwapFeed(ISignal<Message<T>>? feed = null)
+	/// <param name="readsHold">A hold to wait for before the first read of the source, so a source set meanwhile is the first one read.</param>
+	public HotSwapFeed(ISignal<Message<T>>? feed = null, MockingReadsHold? readsHold = null)
 	{
 		_current = feed;
+		_readsHold = readsHold;
 	}
 
 	/// <summary>
@@ -63,6 +66,16 @@ internal sealed class HotSwapFeed<T> : IFeed<T>
 	/// <inheritdoc />
 	public async IAsyncEnumerable<Message<T>> GetSource(SourceContext context, [EnumeratorCancellation] CancellationToken ct = default)
 	{
+		if (_readsHold is { } readsHold)
+		{
+			await readsHold;
+
+			if (ct.IsCancellationRequested)
+			{
+				yield break;
+			}
+		}
+
 #pragma warning disable CA2007 // Consider calling ConfigureAwait on the awaited task, false positive: it's for the DisposeAsync which cannot be configured here
 		await using var session = new Session(this, context, ct);
 #pragma warning restore CA2007

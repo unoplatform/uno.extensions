@@ -131,7 +131,8 @@ For every MVUX model it finds, the generator emits, next to the model:
   view-model** with every constructor parameter null-injected (services,
   navigator, ...) except every parameter typed
   `CommunityToolkit.Mvvm.Messaging.IMessenger`, which gets a fresh messenger of
-  its own, then apply the mock;
+  its own, then apply the mock. The feeds are first read once the mock is
+  applied, so a mocked feed's real loader is never called;
 - a `SetMock(this {Vm}, {Model}Mock)` extension that swaps each mocked feed.
 
 A view-model whose constructors are all non-public cannot be built this way:

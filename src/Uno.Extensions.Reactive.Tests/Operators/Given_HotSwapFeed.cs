@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Operators;
 using Uno.Extensions.Reactive.Testing;
 
@@ -34,6 +36,39 @@ public class Given_HotSwapFeed : FeedTests
 		sut.Set(Feed.Async(async ct => 2));
 
 		(await ReadUntil(reader, 2)).Should().BeTrue("a swap made while no read is pending must not be lost");
+	}
+
+	[TestMethod]
+	public async Task When_ReadsAreHeld_Then_TheSourceSetMeanwhileIsTheOnlyOneRead()
+	{
+		var originalWasRead = false;
+		var hold = new MockingReadsHold();
+		var sut = new HotSwapFeed<int>(Feed.Async(async ct => { originalWasRead = true; return 1; }), hold);
+		var reader = sut.GetSource(Context.SourceContext, CT).GetAsyncEnumerator(CT);
+		var pending = reader.MoveNextAsync().AsTask();
+
+		sut.Set(Feed.Async(async ct => 2));
+		hold.Release();
+
+		(pending.IsCompleted && reader.Current.Current.Data.SomeOrDefault(-1) == 2 || await ReadUntil(reader, 2)).Should().BeTrue();
+		originalWasRead.Should().BeFalse();
+	}
+
+	[TestMethod]
+	public async Task When_TheReaderIsCancelledWhileReadsAreHeld_Then_NoSourceIsRead()
+	{
+		var wasRead = false;
+		var hold = new MockingReadsHold();
+		var sut = new HotSwapFeed<int>(Feed.Async(async ct => { wasRead = true; return 1; }), hold);
+		using var cancel = new CancellationTokenSource();
+		var reader = sut.GetSource(Context.SourceContext, cancel.Token).GetAsyncEnumerator(cancel.Token);
+		var pending = reader.MoveNextAsync().AsTask();
+
+		cancel.Cancel();
+		hold.Release();
+
+		(await pending).Should().BeFalse("a reader that left while held has nothing to read");
+		wasRead.Should().BeFalse();
 	}
 
 	private async Task<(HotSwapFeed<int> sut, IAsyncEnumerator<Message<int>> reader)> StartReadingOriginal()
