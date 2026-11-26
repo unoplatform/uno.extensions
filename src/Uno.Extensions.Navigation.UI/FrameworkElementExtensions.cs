@@ -78,9 +78,13 @@ public static class FrameworkElementExtensions
 					}
 				}
 
+				// Skip start() only for a deep link the initial navigation already landed on (#2607).
+				// With no launch URL the launch route is empty, not null; it must not be compared, or an
+				// initial navigation that also ends on an empty route (no IsDefault route) would skip
+				// initialNavigate and leave a blank screen (#2763).
 				if (launchRoute is null ||
+					launchRoute.IsEmpty() ||
 					!launchRoute.FullPath().Equals(response?.Route?.FullPath(), StringComparison.OrdinalIgnoreCase))
-
 				{
 					await start();
 				}
